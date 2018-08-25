@@ -1,0 +1,124 @@
+This is the original Argumentative Zoning corpus [AZ corpus], created
+and annotated by Simone Teufel and collaborators (Byron
+Georgantopolous, Marc Moens, Vasilis Karaiskos, Anne Wilson, Donald
+Tennant) between 1996-2004. It consists of 80 AZ-annotated conference
+articles in computational linguistics, originally drawn from the Cmplg
+arXiv.  The corpus is distributed under the Creative Commons
+Attribution-NonCommercial 2.0 UK:England and Wales Licence (CC BY-NC
+2.0 UK). It is described in detail in the following book [preferred
+citation]:
+
+@book{Teufel:10,
+  author = 	 {Teufel, Simone},
+  title = 	 {The Structure of Scientific Articles: Applications
+                  to Citation Indexing and Summarization}, 
+  publisher = 	 {CSLI Publications},
+  year = 	 2010
+}
+
+First publication of the AZ corpus was in:
+
+@INPROCEEDINGS{Teufel/Moens:97,
+   author          = {Teufel, Simone and Moens, Marc},
+   title           = {Sentence extraction as a classification task}, 
+   booktitle       = {Proceedings of the ACL/EACL-97 Workshop on Intelligent
+                      Scalable Text Summarization},
+   year            = 1997,
+   editor          = {Mani, Inderjeet and Maybury, Mark T.}
+   crossref        = {Mani/Maybury:97},
+   bibstate        = {present},
+   pages           = {58--65},
+}
+
+The argumentative zoning annotation scheme was published in:
+
+@Article{Teufel/Moens:02,
+  author = 	 {Teufel, Simone and Marc Moens},
+  title = 	 {Summarising Scientific Articles --- Experiments with 
+                  Relevance and Rhetorical Status},
+  journal = 	  {Computational Linguistics},
+  number =        4, 
+  volume =        28, 
+  pages =         {409--446},
+  year = 	  {2002}
+}
+
+I would appreciate a curtesy email if and when you download the AZ
+corpus, and definitely when you publish new research using this
+corpus.
+
+The corpus is in the SciXML format created by Simone Teufel and also
+defined in the above book. 
+
+The SciXML format was first published in:
+
+@InProceedings{Teufel/Elhadad:02,
+  author = 	 {Simone Teufel and Noemie Elhadad},
+  title = 	 {Collection and linguistic processing of a large-scale 
+corpus of medical articles},
+  booktitle = 	 {Proceedings of the Third } # LREC # { (LREC 2002)},
+  year =	 2002,
+  pages =        {1214--1219},
+}
+
+A dtd for this corpus, paper-structure.dtd, which includes definitions
+for AZ annotation, is also given. The file extensions of the data
+files are accordingly "az-scixml".
+
+In the current corpus, each sentence is annotated by one annotator,
+according to the AZ annotation scheme. This is marked in the AZ
+attribute of S and A-S elements.  Details about the AZ annotation
+procedure are in the book, first published in the following paper:
+
+@INPROCEEDINGS{Teufel/etal:99,
+   author          = {Teufel, Simone and Carletta, Jean and Moens, Marc},
+   title           = {An annotation scheme for discourse-level
+                      argumentation in research articles},  
+   booktitle       = {Proceedings of the Ninth } # EACL # { (EACL-99)}, 
+   year            = {1999},
+   pages           = {110--117},
+}
+
+The formal XML schema for the SciXML corpus format created by Simone
+Teufel is given in the DTD file paper-structure.dtd.
+
+Papers have metadata associated with them, manual classification of
+the type of work, authors, title and where the paper was
+published. Abstracts are marked; sentences are
+segmented. Correspondences between sentences in the abstract and the
+document were semi-manually determined and are marked with the
+attributes DOCUMENTC and ABSTRACTC.
+
+Citations in running text are marked (REF). Occurrences of author
+names, without dates, are marked as REFAUTHOR. Attribute SELF marks
+self-citations.  Reference lists are parsed and marked.
+
+Lists of sub-sentences are marked up by the sentence feature
+'TYPE=ITEM'.
+
+When you untar, you should expect to see the following files:
+
+00README	   9410008.az-scixml  9502024.az-scixml  9504007.az-scixml
+9405001.az-scixml  9410009.az-scixml  9502031.az-scixml  9504017.az-scixml
+9405002.az-scixml  9410012.az-scixml  9502033.az-scixml  9504024.az-scixml
+9405004.az-scixml  9410022.az-scixml  9502035.az-scixml  9504026.az-scixml
+9405010.az-scixml  9410032.az-scixml  9502037.az-scixml  9504027.az-scixml
+9405013.az-scixml  9410033.az-scixml  9502038.az-scixml  9504030.az-scixml
+9405022.az-scixml  9411019.az-scixml  9502039.az-scixml  9504033.az-scixml
+9405023.az-scixml  9411021.az-scixml  9503002.az-scixml  9504034.az-scixml
+9405028.az-scixml  9411023.az-scixml  9503004.az-scixml  9505001.az-scixml
+9405033.az-scixml  9412005.az-scixml  9503005.az-scixml  9506004.az-scixml
+9405035.az-scixml  9412008.az-scixml  9503007.az-scixml  9511001.az-scixml
+9407011.az-scixml  9502004.az-scixml  9503009.az-scixml  9511006.az-scixml
+9408003.az-scixml  9502005.az-scixml  9503013.az-scixml  9601004.az-scixml
+9408004.az-scixml  9502006.az-scixml  9503014.az-scixml  9604019.az-scixml
+9408006.az-scixml  9502009.az-scixml  9503015.az-scixml  9604022.az-scixml
+9408011.az-scixml  9502014.az-scixml  9503017.az-scixml  9605013.az-scixml
+9408014.az-scixml  9502015.az-scixml  9503018.az-scixml  9605014.az-scixml
+9409004.az-scixml  9502018.az-scixml  9503023.az-scixml  9605016.az-scixml
+9410001.az-scixml  9502021.az-scixml  9503025.az-scixml  paper-structure.dtd
+9410005.az-scixml  9502022.az-scixml  9504002.az-scixml
+9410006.az-scixml  9502023.az-scixml  9504006.az-scixml
+
+Simone Teufel, August 2014.
+

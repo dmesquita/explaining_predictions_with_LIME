@@ -1,0 +1,617 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9601004</FILENO>
+<APPEARED><CONFERENCE>EACL</CONFERENCE><YEAR>1993</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.St</CLASSIFICATION>
+</METADATA>
+<TITLE> Similarity between Words Computed by Spreading Activation on an  English Dictionary </TITLE>
+<AUTHORLIST>
+<AUTHOR>Hideki Kozima</AUTHOR>
+<AUTHOR>Teiji Furugori</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' DOCUMENTC='S-167' AZ='AIM'> This paper proposes a method for measuring semantic similarity between words as a new tool for text analysis . </A-S>
+<A-S ID='A-1' DOCUMENTC='S-165' AZ='OWN'> The similarity is measured on a semantic network constructed systematically from a subset of the English dictionary , LDOCE ( Longman Dictionary of Contemporary English ) . </A-S>
+<A-S ID='A-2' DOCUMENTC='S-166' AZ='OWN'> Spreading activation on the network can directly compute the similarity between any two words in the Longman Defining Vocabulary , and indirectly the similarity of all the other words in LDOCE . </A-S>
+<A-S ID='A-3' AZ='OWN'> The similarity represents the strength of lexical cohesion or semantic relation , and also provides valuable information about similarity and coherence of texts . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> A text is not just a sequence of words , but it also has coherent structure . </S>
+<S ID='S-1' AZ='BKG'> The meaning of each word in a text depends on the structure of the text . </S>
+<S ID='S-2' AZ='BKG'> Recognizing the structure of text is an essential task in text understanding <REF TYPE='P'>Grosz and Sidner 1986</REF> . </S>
+</P>
+<P>
+<S ID='S-3' AZ='BKG'> One of the valuable indicators of the structure of text is lexical cohesion <REF TYPE='P'>Halliday and Hasan 1976</REF> . </S>
+<S ID='S-4' AZ='BKG'> Lexical cohesion is the relationship between words , classified as follows : </S>
+</P>
+<P>
+<S ID='S-5' AZ='BKG'> Reiteration : </S>
+<EXAMPLE ID='E-0'>
+<EX-S> Molly likes cats . </EX-S>
+<EX-S> She keeps a cat . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-6' AZ='BKG'> Semantic relation : </S>
+<EXAMPLE ID='E-1'>
+<EX-S> Desmond saw a cat . </EX-S>
+<EX-S> It was Molly 's pet . </EX-S>
+<EX-S> Molly goes to the north . </EX-S>
+<EX-S> Not east . </EX-S>
+<EX-S> Desmond goes to a theatre . </EX-S>
+<EX-S> He likes films . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-7' AZ='BKG'> Reiteration of words is easy to capture by morphological analysis . </S>
+<S ID='S-8' AZ='BKG'> Semantic relation between words , which is the focus of this paper , is hard to recognize by computers . </S>
+</P>
+<P>
+<S ID='S-9' AZ='OWN'> We consider lexical cohesion as semantic similarity between words . </S>
+<S ID='S-10' AZ='OWN'> Similarity is computed by spreading activation ( or association ) <REF TYPE='P'>Waltz and Pollack 1985</REF> on a semantic network constructed systematically from an English dictionary . </S>
+<S ID='S-11' AZ='OWN'> Whereas it is edited by some lexicographers , a dictionary is a set of associative relation shared by the people in a linguistic community . </S>
+</P>
+<P>
+<S ID='S-12' AZ='OWN'> The similarity between words is a mapping <EQN/> : <EQN/> , where L is a set of words ( or lexicon ) . </S>
+<S ID='S-13' AZ='OWN'> The following examples suggest the feature of the similarity : </S>
+<IMAGE ID='I-0'/>
+</P>
+<P>
+<S ID='S-14' AZ='OWN'> The value of <EQN/> increases with strength of semantic relation between w and w ' . </S>
+</P>
+<P>
+<S ID='S-15' AZ='TXT'> The following section examines related work in order to clarify the nature of the semantic similarity . </S>
+<S ID='S-16' AZ='TXT'> Section <CREF/> describes how the semantic network is systematically constructed from the English dictionary . </S>
+<S ID='S-17' AZ='TXT'> Section <CREF/> explains how to measure the similarity by spreading activation on the semantic network . </S>
+<S ID='S-18' AZ='TXT'> Section <CREF/> shows applications of the similarity measure -- computing similarity between texts , and measuring coherence of a text . </S>
+<S ID='S-19' AZ='TXT'> Section <CREF/> discusses the theoretical aspects of the similarity . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Related Work on Measuring Similarity </HEADER>
+<P>
+<S ID='S-20' AZ='BKG'> Words in a language are organized by two kinds of relationship . </S>
+<S ID='S-21' AZ='BKG'> One is a syntagmatic relation : how the words are arranged in sequential texts . </S>
+<S ID='S-22' AZ='BKG'> The other is a paradigmatic relation : how the words are associated with each other . </S>
+<S ID='S-23' AZ='BKG'> Similarity between words can be defined by either a syntagmatic or a paradigmatic relation . </S>
+</P>
+<P>
+<S ID='S-24' AZ='OTH'> Syntagmatic similarity is based on co-occurrence data extracted from corpora <REF TYPE='P'>Church and Hanks 1990</REF> , definitions in dictionaries <REF TYPE='P'>Wilks et al. 1989</REF> , and so on . </S>
+<S ID='S-25' AZ='OTH'> Paradigmatic similarity is based on association data extracted from thesauri <REF TYPE='P'>Morris and Hirst 1991</REF> , psychological experiments <REF TYPE='P'>Osgood 1952</REF> , and so on . </S>
+</P>
+<P>
+<S ID='S-26' AZ='OWN'> This paper concentrates on paradigmatic similarity , because a paradigmatic relation can be established both inside a sentence and across sentence boundaries , while syntagmatic relations can be seen mainly inside a sentence -- like syntax deals with sentence structure . </S>
+<S ID='S-27' AZ='TXT'> The rest of this section focuses on two related works on measuring paradigmatic similarity -- a psycholinguistic approach and a thesaurus-based approach . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-2'> A Psycholinguistic Approach </HEADER>
+<P>
+<S ID='S-28' AZ='OTH'> Psycholinguists have been proposed methods for measuring similarity . </S>
+<S ID='S-29' AZ='OTH'> One of the pioneering works is ` semantic differential ' <REF TYPE='P'>Osgood 1952</REF> which analyses meaning of words into a range of different dimensions with the opposed adjectives at both ends ( see Figure <CREF/> ) , and locates the words in the semantic space . </S>
+<IMAGE ID='I-1'/>
+<IMAGE ID='I-2'/>
+<IMAGE ID='I-3'/>
+</P>
+<P>
+<S ID='S-30' AZ='OTH'> Recent works on knowledge representation are somewhat related to <REFAUTHOR>Osgood</REFAUTHOR> 's semantic differential . </S>
+<S ID='S-31' AZ='OTH'> Most of them describe meaning of words using special symbols like microfeatures <REF TYPE='P'>Waltz and Pollack 1985</REF> , <REF TYPE='P'>Hendler 1989</REF> that correspond to the semantic dimensions . </S>
+</P>
+<P>
+<S ID='S-32' AZ='CTR'> However , the following problems arise from the semantic differential procedure as measurement of meaning . </S>
+<S ID='S-33' AZ='CTR'> The procedure is not based on the denotative meaning of a word , but only on the connotative emotions attached to the word ; it is difficult to choose the relevant dimensions , i.e. the dimensions required for the sufficient semantic space . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-3'> A Thesaurus-based Approach </HEADER>
+<P>
+<S ID='S-34' AZ='OTH'> <REF TYPE='A'>Morris and Hirst 1991</REF> used <REFAUTHOR>Roget</REFAUTHOR> 's thesaurus as knowledge base for determining whether or not two words are semantically related . </S>
+<S ID='S-35' AZ='OTH'> For example , the semantic relation of truck / car and drive / car are captured in the following way : </S>
+<IMAGE ID='I-4'/>
+</P>
+<P>
+<S ID='S-36' AZ='OTH'> This method can capture almost all types of semantic relations ( except emotional and situational relation ) , such as paraphrasing by superordinate ( ex . cat / pet ) , systematic relation ( ex .  north / east ) , and non-systematic relation ( ex .  theatre / film ) . </S>
+</P>
+<P>
+<S ID='S-37' AZ='CTR'> However , thesauri provide neither information about semantic difference between words juxtaposed in a category , nor about strength of the semantic relation between words -- both are to be dealt in this paper . </S>
+<S ID='S-38' AZ='BKG'> The reason is that thesauri are designed to help writers find relevant words , not to provide the meaning of words . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-4'> Paradigme : A Field for Measuring Similarity </HEADER>
+<P>
+<S ID='S-39' AZ='OWN'> We analyse word meaning in terms of the semantic space defined by a semantic network , called Paradigme . </S>
+<S ID='S-40' AZ='OWN'> Paradigme is systematically constructed from Glossme , a subset of an English dictionary . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-5'> Glossme - a Closed Subsystem of English </HEADER>
+<P>
+<S ID='S-41' AZ='BKG'> A dictionary is a closed paraphrasing system of natural language . </S>
+<S ID='S-42' AZ='BKG'> Each of its headwords is defined by a phrase which is composed of the headwords and their derivations . </S>
+<S ID='S-43' AZ='BKG'> A dictionary , viewed as a whole , looks like a tangled network of words . </S>
+</P>
+<P>
+<S ID='S-44' AZ='BAS'> We adopted Longman Dictionary of Contemporary English  <REF TYPE='P'>LDOCE 1987</REF> as such a closed system of English . </S>
+<S ID='S-45' AZ='OTH'> LDOCE has a unique feature that each of its 56,000 headwords is defined by using the words in Longman Defining Vocabulary ( hereafter , LDV ) and their derivations . </S>
+<S ID='S-46' AZ='OTH'> LDV consists of 2,851 words ( as the headwords in LDOCE ) based on the survey of restricted vocabulary <REF TYPE='P'>West 1953</REF> . </S>
+</P>
+<P>
+<S ID='S-47' AZ='OWN'> We made a reduced version of LDOCE , called Glossme . </S>
+<S ID='S-48' AZ='OWN'> Glossme has every entry of LDOCE whose headword is included in LDV . </S>
+<S ID='S-49' AZ='OWN'> Thus , LDV is defined by Glossme , and Glossme is composed of LDV . </S>
+<S ID='S-50' AZ='OWN'> Glossme is a closed subsystem of English . </S>
+<S ID='S-51' AZ='OWN'> Glossme has 2,851 entries that consist of 101,861 words ( 35.73 words / entry on the average ) . </S>
+<S ID='S-52' AZ='OWN'> An item of Glossme has a headword , a word-class , and one or more units corresponding to numbered definitions in the entry of LDOCE . </S>
+<S ID='S-53' AZ='OWN'> Each unit has one head-part and several det-parts . </S>
+<S ID='S-54' AZ='OWN'> The head-part is the first phrase in the definition , which describes the broader meaning of the headword . </S>
+<S ID='S-55' AZ='OWN'> The det-parts restrict the meaning of the head-part . </S>
+<S ID='S-56' AZ='OWN'> ( See Figure <CREF/> . ) </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-6'> Paradigme - a Semantic Network </HEADER>
+<P>
+<S ID='S-57' AZ='OWN'> We then translated Glossme into a semantic network Paradigme . </S>
+<S ID='S-58' AZ='OWN'> Each entry in Glossme is mapped onto a node in Paradigme . </S>
+<S ID='S-59' AZ='OWN'> Paradigme has 2,851 nodes and 295,914 unnamed links between the nodes ( 103.79 links / node on the average ) . </S>
+<S ID='S-60' AZ='OWN'> Figure <CREF/> shows a sample node red_1 . </S>
+<S ID='S-61' AZ='OWN'> Each node consists of a headword , a word-class , an activity-value , and two sets of links : a rfrant and a rfr . </S>
+</P>
+<P>
+<S ID='S-62' AZ='OWN'> A rfrant of a node consists of several subrfrants correspond to the units of Glossme . </S>
+<S ID='S-63' AZ='OWN'> As shown in Figure <CREF/> and <CREF/> , a morphological analysis maps the word brownish in the second unit onto a link to the node brown_1 , and the word colour onto two links to colour_1 ( adjective ) and colour_2 ( noun ) . </S>
+</P>
+<P>
+<S ID='S-64' AZ='OWN'> A rfr of a node p records the nodes referring to p . </S>
+<S ID='S-65' AZ='OWN'> For example , the rfr of red_1 is a set of links to nodes ( ex. apple_1 ) that have a link to red_1 in their rfrants . </S>
+<S ID='S-66' AZ='OWN'> The rfr provides information about the extension of red_1 , not the intension shown in the rfrant . </S>
+<IMAGE ID='I-5'/>
+</P>
+<P>
+<S ID='S-67' AZ='OWN'> Each link has thickness <EQN/> , which is computed from the frequency of the word <EQN/> in Glossme and other information , and normalized as <EQN/> in each subrfrant or rfr . </S>
+<S ID='S-68' AZ='OWN'> Each subrfrant also has thickness ( for example , 0.333333 in the first subrfrant of red_1 ) , which is computed by the order of the units which represents significance of the definitions . </S>
+<S ID='S-69' AZ='OWN'> Appendix A describes the structure of Paradigme in detail . </S>
+<IMAGE ID='I-6'/>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-7'> Computing Similarity between Words </HEADER>
+<P>
+<S ID='S-70' AZ='OWN'> Similarity between words is computed by spreading activation on Paradigme . </S>
+<S ID='S-71' AZ='OWN'> Each of its nodes can hold activity , and it moves through the links . </S>
+<S ID='S-72' AZ='OWN'> Each node computes its activity value <EQN/> at time <EQN/> as follows : </S>
+<IMAGE ID='I-7'/>
+</P>
+<P>
+<S ID='S-73' AZ='OWN'> where <EQN/> and <EQN/> are the sum of weighted activity ( at time T ) of the nodes referred in the rfrant and rfr respectively . </S>
+<S ID='S-74' AZ='OWN'> And , <EQN/> is activity given from outside ( at time T ) ; to ` activate a node ' is to let <EQN/> . </S>
+<S ID='S-75' AZ='OWN'> The output function <EQN/> sums up three activity values in appropriate proportion and limits the output value to [ 0,1 ] . </S>
+<S ID='S-76' AZ='OWN'> Appendix B gives the details of the spreading activation . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-8'> Measuring Similarity </HEADER>
+<P>
+<S ID='S-77' AZ='OWN'> Activating a node for a certain period of time causes the activity to spread over Paradigme and produce an activated pattern on it . </S>
+<S ID='S-78' AZ='OWN'> The activated pattern approximately gets equilibrium after 10 steps , whereas it will never reach the actual equilibrium . </S>
+<S ID='S-79' AZ='OWN'> The pattern thus produced represents the meaning of the node or of the words related to the node by morphological analysis . </S>
+</P>
+<P>
+<S ID='S-80' AZ='OWN'> The activated pattern , produced from a word w , suggests similarity between w and any headword in LDV . </S>
+<S ID='S-81' AZ='OWN'> The similarity <EQN/> is computed in the following way . </S>
+<S ID='S-82' AZ='OWN'> ( See also Figure <CREF/> ) </S>
+</P>
+<P>
+<S ID='S-83' AZ='OWN'> Reset activity of all nodes in Paradigme . </S>
+</P>
+<P>
+<S ID='S-84' AZ='OWN'> Activate w with strength s(w) for 10 steps , where s(w) is significance of the word w. </S>
+<S ID='S-85' AZ='OWN'> Then , an activated pattern P(w) is produced on Paradigme . </S>
+</P>
+<P>
+<S ID='S-86' AZ='OWN'> Observe <EQN/> -- an activity value of the node w ' in P(w) . </S>
+<S ID='S-87' AZ='OWN'> Then , <EQN/> is <EQN/> . </S>
+</P>
+<P>
+<S ID='S-88' AZ='BAS'> The word significance <EQN/> is defined as the normalized information of the word w in the corpus <REF TYPE='P'>West 1953</REF> . </S>
+<S ID='S-89' AZ='OWN'> For example , the word red appears 2,308 times in the 5,487,056 - word corpus , and the word and appears 106,064 times . </S>
+<S ID='S-90' AZ='OWN'> So , <EQN/> and <EQN/> are computed as follows : </S>
+<IMAGE ID='I-8'/>
+<IMAGE ID='I-9'/>
+</P>
+<P>
+<S ID='S-91' AZ='BAS'> We estimated the significance of the words excluded from the word list <REF TYPE='P'>West 1953</REF> at the average significance of their word classes . </S>
+<S ID='S-92' AZ='BAS'> This interpolation virtually enlarged <REFAUTHOR>West</REFAUTHOR> 's 5,000,000 - word corpus . </S>
+</P>
+<P>
+<S ID='S-93' AZ='OWN'> For example , let us consider the similarity between red and orange . </S>
+<S ID='S-94' AZ='OWN'> First , we produce an activated pattern <EQN/> on Paradigme . </S>
+<S ID='S-95' AZ='OWN'> ( See Figure <CREF/> . ) In this case , both of the nodes red_1 ( adjective ) and red_2 ( noun ) are activated with strength <EQN/> . </S>
+<S ID='S-96' AZ='OWN'> Next , we compute <EQN/> , and observe <EQN/> . </S>
+<S ID='S-97' AZ='OWN'> Then , the similarity between red and orange is obtained as follows : </S>
+<IMAGE ID='I-10'/>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-9'> Examples of Similarity between Words </HEADER>
+<P>
+<S ID='S-98' AZ='OWN'> The procedure described above can compute the similarity <EQN/> between any two words w , w ' in LDV and their derivations . </S>
+<S ID='S-99' AZ='OWN'> Computer programs of this procedure -- spreading activation ( in C ) , morphological analysis and others ( in Common Lisp ) -- can compute <EQN/> within 2.5 seconds on a workstation ( SPARCstation 2 ) . </S>
+</P>
+<P>
+<S ID='S-100' AZ='OWN'> The similarity <EQN/> between words works as an indicator of the lexical cohesion . </S>
+<S ID='S-101' AZ='OWN'> The following examples illustrate that <EQN/> increases with the strength of semantic relation : </S>
+<IMAGE ID='I-11'/>
+</P>
+<P>
+<S ID='S-102' AZ='OWN'> The similarity <EQN/> also increases with the co-occurrence tendency of words , for example : </S>
+<IMAGE ID='I-12'/>
+</P>
+<P>
+<S ID='S-103' AZ='OWN'> Note that <EQN/> has direction ( from w to w ' ) , so that <EQN/> may not be equal to <EQN/> : </S>
+<IMAGE ID='I-13'/>
+</P>
+<P>
+<S ID='S-104' AZ='OWN'> Meaningful words should have higher similarity ; meaningless words ( especially , function words ) should have lower similarity . </S>
+<S ID='S-105' AZ='OWN'> The similarity <EQN/> increases with the significance s(w) and s ( w ' ) that represent meaningfulness of w and w ' : </S>
+<IMAGE ID='I-14'/>
+</P>
+<P>
+<S ID='S-106' AZ='OWN'> Note that the reflective similarity <EQN/> also depends on the significance s(w) , so that <EQN/> : </S>
+<IMAGE ID='I-15'/>
+<IMAGE ID='I-16'/>
+<IMAGE ID='I-17'/>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-10'> Similarity of Extra Words </HEADER>
+<P>
+<S ID='S-107' AZ='OWN'> The similarity of words in LDV and their derivations is measured directly on Paradigme ; the similarity of extra words is measured indirectly on Paradigme by treating an extra word as a word list <EQN/> of its definition in LDOCE . </S>
+<S ID='S-108' AZ='OWN'> ( Note that each <EQN/> is included in LDV or their derivations . ) </S>
+</P>
+<P>
+<S ID='S-109' AZ='OWN'> The similarity between the word lists W , W ' is defined as follows . </S>
+<S ID='S-110' AZ='OWN'> ( See also Figure <CREF/> . ) </S>
+<IMAGE ID='I-18'/>
+</P>
+<P>
+<S ID='S-111' AZ='OWN'> where P(w) is the activated pattern produced from W by activating each <EQN/> with strength <EQN/> for 10 steps . </S>
+<S ID='S-112' AZ='OWN'> And , <EQN/> is an output function which limits the value to [ 0,1 ] . </S>
+</P>
+<P>
+<S ID='S-113' AZ='OWN'> As shown in Figure <CREF/> , bottle_1 and wine_1 have high activity in the pattern produced from the phrase `` red alcoholic drink '' . </S>
+<S ID='S-114' AZ='OWN'> So , we may say that the overlapped pattern implies `` a bottle of wine '' . </S>
+</P>
+<P>
+<S ID='S-115' AZ='OWN'> For example , the similarity between linguistics and stylistics , both are the extra words , is computed as follows : </S>
+<IMAGE ID='I-19'/>
+</P>
+<P>
+<S ID='S-116' AZ='OWN'> Obviously , both <EQN/> and <EQN/> , where W is an extra word and w is not , are also computable . </S>
+<S ID='S-117' AZ='OWN'> Therefore , we can compute the similarity between any two headwords in LDOCE and their derivations . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-11'> Applications of the Similarity </HEADER>
+<P>
+<S ID='S-118' AZ='TXT'> This section shows the application of the similarity between words to text analysis -- measuring similarity between texts , and measuring text coherence . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-12'> Measuring Similarity between Texts </HEADER>
+<P>
+<S ID='S-119' AZ='OWN'> Suppose a text is a word list without syntactic structure . </S>
+<S ID='S-120' AZ='OWN'> Then , the similarity <EQN/> between two texts X , X ' can be computed as the similarity of extra words described above . </S>
+<IMAGE ID='I-20'/>
+</P>
+<P>
+<S ID='S-121' AZ='OWN'> The following examples suggest that the similarity between texts indicates the strength of coherence relation between them : </S>
+<IMAGE ID='I-21'/>
+</P>
+<P>
+<S ID='S-122' AZ='OWN'> It is worth noting that meaningless iteration of words ( especially , of function words ) has less influence on the text similarity : </S>
+<IMAGE ID='I-22'/>
+</P>
+<P>
+<S ID='S-123' AZ='OWN'> The text similarity provides a semantic space for text retrieval -- to recall the most similar text in <EQN/> to the given text X . </S>
+<S ID='S-124' AZ='OWN'> Once the activated pattern P ( X ) of the text X is produced on Paradigme , we can compute and compare the similarity <EQN/> immediately . </S>
+<S ID='S-125' AZ='OWN'> ( See Figure <CREF/> . ) . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-13'> Measuring Text Coherence </HEADER>
+<P>
+<S ID='S-126' AZ='OWN'> Let us consider the reflective similarity <EQN/> of a text X , and use the notation c ( X ) for <EQN/> . </S>
+<S ID='S-127' AZ='OWN'> Then , c ( X ) can be computed as follows : </S>
+<IMAGE ID='I-23'/>
+</P>
+<P>
+<S ID='S-128' AZ='OWN'> The activated pattern P ( X ) , as shown in Figure <CREF/> , represents the average meaning of <EQN/> . </S>
+<S ID='S-129' AZ='OWN'> So , c ( X ) represents cohesiveness of X -- or semantic closeness of <EQN/> , or semantic compactness of X . </S>
+<S ID='S-130' AZ='OWN'> ( It is also closely related to distortion in clustering . ) </S>
+</P>
+<P>
+<S ID='S-131' AZ='OWN'> The following examples suggest that c ( X ) indicates the strength of coherence of X : </S>
+<EXAMPLE ID='E-2'>
+<EX-S> c ( She opened the world with her typewriter . </EX-S>
+<EX-S> Her work was typing . </EX-S>
+<EX-S> But She did not type quickly . )</EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-132' AZ='OWN'> = 0.502510 ( coherent ) , </S>
+<EXAMPLE ID='E-3'>
+<EX-S> c ( Put on your clothes at once . </EX-S>
+<EX-S> I can not walk ten miles . </EX-S>
+<EX-S> There is no one here but me . )</EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-133' AZ='OWN'> = 0.250840 ( incoherent ) . </S>
+<S ID='S-134' AZ='OWN'> However , a cohesive text can be incoherent ; the following example shows cohesiveness of the incoherent text -- three sentences randomly selected from LDOCE : </S>
+<EXAMPLE ID='E-4'>
+<EX-S> c ( I saw a lion . </EX-S>
+<EX-S> A lion belongs to the cat family . </EX-S>
+<EX-S> My family keeps a pet . )</EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-135' AZ='OWN'> = 0.560172 ( incoherent , but cohesive ) . </S>
+<S ID='S-136' AZ='OWN'> Thus , c ( X ) can not capture all the aspects of text coherence . </S>
+<S ID='S-137' AZ='OWN'> This is because c ( X ) is based only on the lexical cohesion of the words in X . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-14'> Discussion </HEADER>
+<P>
+<S ID='S-138' AZ='OWN'> The structure of Paradigme represents the knowledge system of English , and an activated state produced on it represents word meaning . </S>
+<S ID='S-139' AZ='TXT'> This section discusses the nature of the structure and states of Paradigme , and also the nature of the similarity computed on it . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-15'> Paradigme and Semantic Space </HEADER>
+<P>
+<S ID='S-140' AZ='OWN'> The set of all the possible activated patterns produced on Paradigme can be considered as a semantic space where each state is represented as a point . </S>
+<S ID='S-141' AZ='OWN'> The semantic space is a 2,851 - dimensional hypercube ; each of its edges corresponds to a word in LDV . </S>
+</P>
+<P>
+<S ID='S-142' AZ='OWN'> LDV is selected according to the following information : the word frequency in written English , and the range of contexts in which each word appears . </S>
+<S ID='S-143' AZ='OWN'> So , LDV has a potential for covering all the concepts commonly found in the world . </S>
+</P>
+<P>
+<S ID='S-144' AZ='OWN'> This implies the completeness of LDV as dimensions of the semantic space . </S>
+<S ID='S-145' AZ='CTR'> <REFAUTHOR>Osgood</REFAUTHOR> 's semantic differential procedure used 50 adjective dimensions ; our semantic measurement uses 2,851 dimensions with completeness and objectivity . </S>
+</P>
+<P>
+<S ID='S-146' AZ='OWN'> Our method can be applied to construct a semantic network from an ordinary dictionary whose defining vocabulary is not restricted . </S>
+<S ID='S-147' AZ='OWN'> Such a network , however , is too large to spread activity over it . </S>
+<S ID='S-148' AZ='OWN'> Paradigme is the small and complete network for measuring the similarity . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-16'> Connotation and Extension of Words </HEADER>
+<P>
+<S ID='S-149' AZ='OWN'> The proposed similarity is based only on the denotational and intensional definitions in the dictionary LDOCE . </S>
+<S ID='S-150' AZ='OWN'> Lack of the connotational and extensional knowledge causes some unexpected results of measuring the similarity . </S>
+<S ID='S-151' AZ='OWN'> For example , consider the following similarity : </S>
+<IMAGE ID='I-24'/>
+</P>
+<P>
+<S ID='S-152' AZ='OWN'> This is due to the nature of the dictionary definitions -- they only indicate sufficient conditions of the headword . </S>
+<S ID='S-153' AZ='OWN'> For example , the definition of tree in LDOCE tells nothing about leaves : tree n 1 a tall plant with a wooden trunk and branches , that lives for many years 2 a bush or other plant with a treelike form 3 a drawing with a branching form , esp . </S>
+<S ID='S-154' AZ='OWN'> as used for showing family relationships However , the definition is followed by pictures of leafy trees providing readers with connotational and extensional stereotypes of trees . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-17'> Paradigmatic and Syntagmatic Similarity </HEADER>
+<P>
+<S ID='S-155' AZ='OWN'> In the proposed method , the definitions in LDOCE are treated as word lists , though they are phrases with syntactic structures . </S>
+<S ID='S-156' AZ='OWN'> Let us consider the following definition of lift : </S>
+<EXAMPLE ID='E-5'>
+<EX-S> lift v 1 to bring from a lower to a higher level ; raise 2 ( of movable parts ) to be able to be lifted 3 ...</EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-157' AZ='OWN'> Anyone can imagine that something is moving upward . </S>
+<S ID='S-158' AZ='OWN'> But , such a movement can not be represented in the activated pattern produced from the phrase . </S>
+<S ID='S-159' AZ='OWN'> The meaning of a phrase , sentence , or text should be represented as pattern changing in time , though what we need is static and paradigmatic relation . </S>
+</P>
+<P>
+<S ID='S-160' AZ='OWN'> This paradox also arises in measuring the similarity between texts and the text coherence . </S>
+<S ID='S-161' AZ='OWN'> As we have seen in Section <CREF/> , there is a difference between the similarity of texts and the similarity of word lists , and also between the coherence of a text and cohesiveness of a word list . </S>
+</P>
+<P>
+<S ID='S-162' AZ='OWN'> However , so far as the similarity between words is concerned , we assume that activated patterns on Paradigme will approximate the meaning of words , like a still picture can express a story . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-18'> Conclusion </HEADER>
+<P>
+<S ID='S-163' AZ='AIM'> We described measurement of semantic similarity between words . </S>
+<S ID='S-164' ABSTRACTC='A-1' AZ='OWN'> The similarity between words is computed by spreading activation on the semantic network Paradigme which is systematically constructed from a subset of the English dictionary LDOCE . </S>
+<S ID='S-165' ABSTRACTC='A-2' AZ='OWN'> Paradigme can directly compute the similarity between any two words in LDV , and indirectly the similarity of all the other words in LDOCE . </S>
+</P>
+<P>
+<S ID='S-166' ABSTRACTC='A-0' AZ='OWN'> The similarity between words provides a new method for analysing the structure of text . </S>
+<S ID='S-167' AZ='OWN'> It can be applied to computing the similarity between texts , and measuring the cohesiveness of a text which suggests coherence of the text , as we have seen in Section <CREF/> . </S>
+<S ID='S-168' AZ='OWN'> And , we are now applying it to text segmentation <REF TYPE='P'>Grosz and Sidner 1986</REF> , <REF TYPE='P'>Youmans 1991</REF> , i.e. to capture the shifts of coherent scenes in a story . </S>
+</P>
+<P>
+<S ID='S-169' AZ='OWN'> In future research , we intend to deal with syntagmatic relations between words . </S>
+<S ID='S-170' AZ='OWN'> Meaning of a text lies in the texture of paradigmatic and syntagmatic relations between words <REF TYPE='P'>Hjelmslev 1943</REF> . </S>
+<S ID='S-171' AZ='OWN'> Paradigme provides the former dimension -- an associative system of words -- as a screen onto which the meaning of a word is projected like a still picture . </S>
+<S ID='S-172' AZ='OWN'> The latter dimension -- syntactic process -- will be treated as a film projected dynamically onto Paradigme . </S>
+<S ID='S-173' AZ='OWN'> This enables us to measure the similarity between texts as a syntactic process , not as word lists . </S>
+</P>
+<P>
+<S ID='S-174' AZ='OWN'> We regard Paradigme as a field for the interaction between text and episodes in memory -- the interaction between what one is hearing or reading and what one knows <REF TYPE='P'>Schank 1990</REF> . </S>
+<S ID='S-175' AZ='OWN'> The meaning of words , sentences , or even texts can be projected in a uniform way on Paradigme , as we have seen in Section <CREF/> and <CREF/> . </S>
+<S ID='S-176' AZ='OWN'> Similarly , we can project text and episodes , and recall the most relevant episode for interpretation of the text . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-19'> Appendix A. Structure of Paradigme - Mapping Glossme onto Paradigme </HEADER>
+<P>
+<S ID='S-177' AZ='OWN'> The semantic network Paradigme is systematically constructed from the small and closed English dictionary Glossme . </S>
+<S ID='S-178' AZ='OWN'> Each entry of Glossme is mapped onto a node of Paradigme in the following way . </S>
+<S ID='S-179' AZ='OWN'> ( See also Figure <CREF/> and <CREF/> . ) </S>
+<EXAMPLE ID='E-6'>
+<EX-S> Step 1  </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-180' AZ='OWN'> For each entry <EQN/> in Glossme , map each unit <EQN/> in <EQN/> onto a subrfrant <EQN/> of the corresponding node <EQN/> in Paradigme . </S>
+<S ID='S-181' AZ='OWN'> Each word <EQN/> is mapped onto a link or links in <EQN/> , in the following way : </S>
+</P>
+<P>
+<S ID='S-182' AZ='OWN'> Let <EQN/> be the reciprocal of the number of appearance of <EQN/> ( as its root form ) in Glossme . </S>
+</P>
+<P>
+<S ID='S-183' AZ='OWN'> If <EQN/> is in a head-part , let <EQN/> be doubled . </S>
+</P>
+<P>
+<S ID='S-184' AZ='OWN'> Find nodes <EQN/> corresponds to <EQN/> ( ex. red <EQN/> { red_1 , red_2 } ) . </S>
+<S ID='S-185' AZ='OWN'> Then , divide <EQN/> into <EQN/> in proportion to their frequency . </S>
+</P>
+<P>
+<S ID='S-186' TYPE='ITEM' AZ='OWN' > Add links <EQN/> to <EQN/> , where <EQN/> is a link to the node <EQN/> with thickness <EQN/> . </S>
+</P>
+<P>
+<S ID='S-187' AZ='OWN'> Thus , <EQN/> becomes a set of links : <EQN/> , where <EQN/> is a link with thickness <EQN/> . </S>
+<S ID='S-188' AZ='OWN'> Then , normalize thickness of the links as <EQN/> , in each <EQN/> . </S>
+<S ID='S-189' TYPE='ITEM' AZ='OWN' > Step 2 . </S>
+<S ID='S-190' AZ='OWN'> For each node <EQN/> , compute thickness <EQN/> of each subrfrant <EQN/> in the following way : </S>
+<S ID='S-191' TYPE='ITEM' AZ='OWN' > Let <EQN/> be the number of subrfrants of <EQN/> . </S>
+</P>
+<P>
+<S ID='S-192' AZ='OWN'> Let <EQN/> be <EQN/> . </S>
+<S ID='S-193' AZ='OWN'> ( Note that <EQN/> = 2:1 . ) </S>
+</P>
+<P>
+<S ID='S-194' AZ='OWN'> Normalize thickness <EQN/> as <EQN/> , in each <EQN/> . </S>
+</P>
+<P>
+<S ID='S-195' TYPE='ITEM' AZ='OWN' > Step 3 . </S>
+<S ID='S-196' AZ='OWN'> Generate rfr of each node in Paradigme , in the following way : </S>
+</P>
+<P>
+<S ID='S-197' AZ='OWN'> For each node <EQN/> in Paradigme , let its rfr <EQN/> be an empty set . </S>
+</P>
+<P>
+<S ID='S-198' AZ='OWN'> For each <EQN/> , for each subrfrant <EQN/> of <EQN/> , for each link <EQN/> in <EQN/> : </S>
+<S ID='S-199' TYPE='ITEM' AZ='OWN' > Let <EQN/> be the node referred by <EQN/> , and let <EQN/> be thickness of <EQN/> . </S>
+<S ID='S-200' TYPE='ITEM' AZ='OWN' > Add a new link l ' to rfr of <EQN/> , where l ' is a link to <EQN/> with thickness <EQN/> . </S>
+</P>
+<P>
+<S ID='S-201' AZ='OWN'> Thus , each <EQN/> becomes a set of links : <EQN/> , where <EQN/> is a link with thickness <EQN/> . </S>
+<S ID='S-202' AZ='OWN'> Then , normalize thickness of the links as <EQN/> , in each <EQN/> . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-20'> Appendix B. Function of Paradigme - Spreading Activation Rules </HEADER>
+<P>
+<S ID='S-203' AZ='OWN'> Each node <EQN/> of the semantic network Paradigme computes its activity value <EQN/> at time <EQN/> as follows : </S>
+<IMAGE ID='I-25'/>
+</P>
+<P>
+<S ID='S-204' AZ='OWN'> where <EQN/> and <EQN/> are activity ( at time T ) collected from the nodes referred in the rfrant and rfr respectively ; <EQN/> is activity given from outside ( at time T ) ; the output function <EQN/> limits the value to [ 0,1 ] . </S>
+</P>
+<P>
+<S ID='S-205' AZ='OWN'> <EQN/> is activity of the most plausible subrfrant in <EQN/> , defined as follows : </S>
+<IMAGE ID='I-26'/>
+</P>
+<P>
+<S ID='S-206' AZ='OWN'> where <EQN/> is thickness of the j-th subrfrant of <EQN/> . </S>
+<S ID='S-207' AZ='OWN'> <EQN/> is the sum of weighted activity of the nodes referred in the j-th subrfrant of <EQN/> , defined as follows : </S>
+<IMAGE ID='I-27'/>
+</P>
+<P>
+<S ID='S-208' AZ='OWN'> where <EQN/> is thickness of the k-th link of <EQN/> , and <EQN/> is activity ( at time T ) of the node referred by the k-th link of <EQN/> . </S>
+</P>
+<P>
+<S ID='S-209' AZ='OWN'> <EQN/> is weighted activity of the nodes referred in the rfr <EQN/> of <EQN/> : </S>
+<IMAGE ID='I-28'/>
+</P>
+<P>
+<S ID='S-210' AZ='OWN'> where <EQN/> is thickness of the k-th link of <EQN/> , and <EQN/> is activity ( at time T ) of the node referred by the k-th link of <EQN/> . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+K. <SURNAME>Church</SURNAME> and P. <SURNAME>Hanks</SURNAME>.
+Word association norms, mutual information, and lexicography.
+Computational Linguistics, 16:22-29, <DATE>1990</DATE>.
+</REFERENCE>
+<REFERENCE>
+B. J. <SURNAME>Grosz</SURNAME> and C. L. <SURNAME>Sidner</SURNAME>.
+Attention, intentions, and the structure of discourse.
+Computational Linguistics, 12:175-204, <DATE>1986</DATE>.
+</REFERENCE>
+<REFERENCE>
+M. A. K. <SURNAME>Halliday</SURNAME> and R. <SURNAME>Hasan</SURNAME>.
+Cohesion in English.
+Longman, Harlow, Essex, <DATE>1976</DATE>.
+</REFERENCE>
+<REFERENCE>
+J. A. <SURNAME>Hendler</SURNAME>.
+Marker-passing over microfeatures: Towards a hybrid symbolic /
+  connectionist model.
+Cognitive Science, 13:79-106, <DATE>1989</DATE>.
+</REFERENCE>
+<REFERENCE>
+L. <SURNAME>Hjelmslev</SURNAME>.
+Omkring Sprogteoriens Grundlggelse.
+Akademisk Forlag, Kbenhavn, <DATE>1943</DATE>.
+</REFERENCE>
+<REFERENCE>
+Longman <SURNAME>Dictionary</SURNAME> of Contemporary English.
+Longman, Harlow, Essex, new edition, <DATE>1987</DATE>.
+</REFERENCE>
+<REFERENCE>
+J. <SURNAME>Morris</SURNAME> and G. <SURNAME>Hirst</SURNAME>.
+Lexical cohesion computed by thesaural relations as an indicator of
+  the structure of text.
+Computational Linguistics, 17:21-48, <DATE>1991</DATE>.
+</REFERENCE>
+<REFERENCE>
+C. E. <SURNAME>Osgood</SURNAME>.
+The nature and measurement of meaning.
+Psychological Bulletin, 49:197-237, <DATE>1952</DATE>.
+</REFERENCE>
+<REFERENCE>
+R. C. <SURNAME>Schank</SURNAME>.
+Tell Me a Story: A New Look at Real and Artificial Memory.
+Scribner, New York, <DATE>1990</DATE>.
+</REFERENCE>
+<REFERENCE>
+D. L. <SURNAME>Waltz</SURNAME> and J. B. <SURNAME>Pollack</SURNAME>.
+Massively parallel parsing: A strongly interactive model of natural
+  language interpretation.
+Cognitive Science, 9:51-74, <DATE>1985</DATE>.
+</REFERENCE>
+<REFERENCE>
+M. <SURNAME>West</SURNAME>.
+A General Service List of English Words.
+Longman, Harlow, Essex, <DATE>1953</DATE>.
+</REFERENCE>
+<REFERENCE>
+Y. <SURNAME>Wilks</SURNAME>, D. <SURNAME>Fass</SURNAME>, C. M. <SURNAME>Guo</SURNAME>, J. <SURNAME>McDonald</SURNAME>, T. <SURNAME>Plate</SURNAME>, and B. <SURNAME>Slator</SURNAME>.
+A tractable machine dictionary as a resource for computational
+  semantics.
+In B. Boguraev and E. J. Briscoe, editors, Computational
+  Lexicography for Natural Language Processing. Longman, Harlow, Essex, <DATE>1989</DATE>.
+</REFERENCE>
+<REFERENCE>
+G. <SURNAME>Youmans</SURNAME>.
+A new tool for discourse analysis: The vocabulary-management profile.
+Language, 67:763-789, <DATE>1991</DATE>.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

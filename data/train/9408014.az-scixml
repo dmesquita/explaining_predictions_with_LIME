@@ -1,0 +1,722 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9408014</FILENO>
+<APPEARED><CONFERENCE TYPE='Workshop'>ACL</CONFERENCE><YEAR>1994</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.St Lg.Pr.Sm </CLASSIFICATION>
+</METADATA>
+<TITLE> Qualitative and Quantitative Models of Speech Translation </TITLE>
+<AUTHORLIST>
+<AUTHOR>Hiyan Alshawi</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' AZ='AIM'> This paper compares a qualitative reasoning model of translation with a quantitative statistical model . </A-S>
+<A-S ID='A-1' AZ='OWN'> We consider these models within the context of two hypothetical speech translation systems , starting with a logic-based design and pointing out which of its characteristics are best preserved or eliminated in moving to the second , quantitative design . </A-S>
+<A-S ID='A-2' AZ='OWN'> The quantitative language and translation models are based on relations between lexical heads of phrases . </A-S>
+<A-S ID='A-3' AZ='OWN'> Statistical parameters for structural dependency , lexical transfer , and linear order are used to select a set of implicit relations between words in a source utterance , a corresponding set of relations between target language words , and the most likely translation of the original utterance . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> In recent years there has been a resurgence of interest in statistical approaches to natural language processing . </S>
+<S ID='S-1' AZ='BKG'> Such approaches are not new , witness the statistical approach to machine translation suggested by <REF TYPE='A'>Weaver 1955</REF> , but the current level of interest is largely due to the success of applying hidden Markov models and N-gram language models in speech recognition . </S>
+<S ID='S-2' AZ='BKG'> This success was directly measurable in terms of word recognition error rates , prompting language processing researchers to seek corresponding improvements in performance and robustness . </S>
+<S ID='S-3' AZ='BKG'> A speech translation system , which by necessity combines speech and language technology , is a natural place to consider combining the statistical and conventional approaches and much of this paper describes probabilistic models of structural language analysis and translation . </S>
+<S ID='S-4' AZ='AIM'> Our aim will be to provide an overall model for translation with the best of both worlds . </S>
+<S ID='S-5' AZ='OWN'> Various factors will lead us to conclude that a lexicalist statistical model with dependency relations is well suited to this goal . </S>
+</P>
+<P>
+<S ID='S-6' AZ='OWN'> As well as this quantitative approach , we will consider a constraint / logic based approach and try to distinguish characteristics that we wish to preserve from those that are best replaced by statistical models . </S>
+<S ID='S-7' AZ='OWN'> Although perhaps implicit in many conventional approaches to translation , a characterization in logical terms of what is being done is rarely given , so we will attempt to make that explicit here , more or less from first principles . </S>
+</P>
+<P>
+<S ID='S-8' AZ='TXT'> Before proceeding , I will first examine some fashionable distinctions in section <CREF/> in order to clarify the issues involved in comparing these approaches . </S>
+<S ID='S-9' AZ='TXT'> I will attempt to argue that the important distinction is not so much a rational-empirical or symbolic-statistical distinction but rather a qualitative-quantitative one . </S>
+<S ID='S-10' AZ='TXT'> This is followed by discussion of the logic-based model in section <CREF/> , the overall quantitative model in section <CREF/> , monolingual models in section <CREF/> , translation models in section <CREF/> , and some conclusions in section <CREF/> . </S>
+<S ID='S-11' AZ='OWN'> We concentrate throughout on what information about language and translation is coded and how it is expressed as logical constraints or statistical parameters . </S>
+<S ID='S-12' AZ='OWN'> Although important , we will say little about search algorithms , rule acquisition , or parameter estimation . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Qualitative and Quantitative Models </HEADER>
+<P>
+<S ID='S-13' AZ='BKG'> One contrast often taken for granted is the identification of a ` statistical-symbolic ' distinction in language processing as an instance of the empirical vs. rational debate . </S>
+<S ID='S-14' AZ='OWN'> I believe this contrast has been exaggerated though historically it has had some validity in terms of accepted practice . </S>
+<S ID='S-15' AZ='BKG'> Rule based approaches have become more empirical in a number of ways : </S>
+<S ID='S-16' AZ='BKG'> First , a more empirical approach is being adopted to grammar development whereby the rule set is modified according to its performance against corpora of natural text <REF TYPE='P'>Taylor et al. 1989</REF> . </S>
+<S ID='S-17' AZ='BKG'> Second , there is a class of techniques for learning rules from text , a recent example being <REF TYPE='A'>Brill 1993</REF> . </S>
+<S ID='S-18' AZ='BKG'> Conversely , it is possible to imagine building a language model in which all probabilities are estimated according to intuition without reference to any real data , giving a probabilistic model that is not empirical . </S>
+</P>
+<P>
+<S ID='S-19' AZ='BKG'> Most language processing labeled as statistical involves associating real-number valued parameters to configurations of symbols . </S>
+<S ID='S-20' AZ='BKG'> This is not surprising given that natural language , at least in written form , is explicitly symbolic . </S>
+<S ID='S-21' AZ='BKG'> Presumably , classifying a system as symbolic must refer to a different set of ( internal ) symbols , but even this does not rule out many statistical systems modeling events involving nonterminal categories and word senses . </S>
+<S ID='S-22' AZ='OWN'> Given that the notion of a symbol , let alone an ` internal symbol ' , is itself a slippery one , it may be unwise to build our theories of language , or even the way we classify different theories , on this notion . </S>
+</P>
+<P>
+<S ID='S-23' AZ='BKG'> Instead , it would seem that the real contrast driving the shift towards statistics in language processing is a contrast between qualitative systems dealing exclusively with combinatoric constraints , and quantitative systems that involve computing numerical functions . </S>
+<S ID='S-24' AZ='BKG'> This bears directly on the problems of brittleness and complexity that discrete approaches to language processing share with , for example , reasoning systems based on traditional logical inference . </S>
+<S ID='S-25' AZ='CTR'> It relates to the inadequacy of the dominant theories in linguistics to capture ` shades ' of meaning or degrees of acceptability which are often recognized by people outside the field as important inherent properties of natural language . </S>
+<S ID='S-26' AZ='OTH'> The qualitative-quantitative distinction can also be seen as underlying the difference between classification systems based on feature specifications , as used in unification formalisms <REF TYPE='P'>Shieber 1986</REF> , and clustering based on a variable degree of granularity <REF TYPE='P'>Pereira et al. 1993</REF> . </S>
+</P>
+<P>
+<S ID='S-27' AZ='OWN'> It seems unlikely that these continuously variable aspects of fluent natural language can be captured by a purely combinatoric model . </S>
+<S ID='S-28' AZ='OWN'> This naturally leads to the question of how best to introduce quantitative modeling into language processing . </S>
+<S ID='S-29' AZ='OWN'> It is not , of course , necessary for the quantities of a quantitative model to be probabilities . </S>
+<S ID='S-30' AZ='OWN'> For example , we may wish to define real-valued functions on parse trees that reflect the extent to which the trees conform to , say , minimal attachment and parallelism between conjuncts . </S>
+<S ID='S-31' AZ='OTH'> Such functions have been used in tandem with statistical functions in experiments on disambiguation <REF TYPE='P' SELF="YES">Alshawi and Carter 1994</REF> . </S>
+<S ID='S-32' AZ='OWN'> Another example is connection strengths in neural network approaches to language processing , though it has been shown that certain networks are effectively computing probabilities <REF TYPE='P'>Richard and Lippmann 1991</REF> . </S>
+</P>
+<P>
+<S ID='S-33' AZ='BKG'> Nevertheless , probability theory does offer a coherent and relatively well understood framework for selecting between uncertain alternatives , making it a natural choice for quantitative language processing . </S>
+<S ID='S-34' AZ='BKG'> The case for probability theory is strengthened by a well developed empirical methodology in the form of statistical parameter estimation . </S>
+<S ID='S-35' AZ='BKG'> There is also the strong connection between probability theory and the formal theory of information and communication , a connection that has been exploited in speech recognition , for example using the concept of entropy to provide a motivated way of measuring the complexity of a recognition problem <REF TYPE='P'>Jelinek et al. 1992</REF> . </S>
+</P>
+<P>
+<S ID='S-36' AZ='BKG'> Even if probability theory remains , as it currently is , the method of choice in making language processing quantitative , this still leaves the field wide open in terms of carving up language processing into an appropriate set of events for probability theory to work with . </S>
+<S ID='S-37' AZ='OTH'> For translation , a very direct approach using parameters based on surface positions of words in source and target sentences was adopted in the Candide system <REF TYPE='P'>Brown et al. 1990</REF> . </S>
+<S ID='S-38' AZ='CTR'> However , this does not capture important structural properties of natural language . </S>
+<S ID='S-39' AZ='CTR'> Nor does it take into account generalizations about translation that are independent of the exact word order in source and target sentences . </S>
+<S ID='S-40' AZ='BKG'> Such generalizations are , of course , central to qualitative structural approaches to translation <REF TYPE='P'>Isabelle and Macklovitch 1986</REF> , <REF TYPE='P' SELF="YES">Alshawi et al. 1992</REF> . </S>
+</P>
+<P>
+<S ID='S-41' AZ='AIM'> The aim of the quantitative language and translation models presented in sections <CREF/> and <CREF/> is to employ probabilistic parameters that reflect linguistic structure without discarding rich lexical information or making the models too complex to train automatically . </S>
+<S ID='S-42' AZ='OWN'> In terms of a traditional classification , this would be seen as a ` hybrid symbolic-statistical ' system because it deals with linguistic structure . </S>
+<S ID='S-43' AZ='OWN'> From our perspective , it can be seen as a quantitative version of the logic-based model because both models attempt to capture similar information ( about the organization of words into phrases and relations holding between these phrases or their referents ) , though the tools of modeling are substantially different . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-2'> Dissecting a Logic-Based System </HEADER>
+<P>
+<S ID='S-44' AZ='OWN'> We now consider a hypothetical speech translation system in which the language processing components follow a conventional qualitative transfer design . </S>
+<S ID='S-45' AZ='BAS'> Although hypothetical , this design and its components are similar to those used in existing database query <REF TYPE='P' SELF="YES">Rayner and Alshawi 1992</REF> and translation systems <REF SELF="YES" TYPE='P'>Alshawi et al. 1992</REF> . </S>
+<S ID='S-46' AZ='OWN'> More recent versions of these systems have been gradually taking on a more quantitative flavor , particularly with respect to choosing between alternative analyses , but our hypothetical system will be more purist in its qualitative approach . </S>
+</P>
+<P>
+<S ID='S-47' AZ='OWN'> The overall design is as follows . </S>
+<S ID='S-48' AZ='OWN'> We assume that a speech recognition subsystem delivers a list of text strings corresponding to transcriptions of an input utterance . </S>
+<S ID='S-49' AZ='OWN'> These recognition hypotheses are passed to a parser which applies a logic-based grammar and lexicon to produce a set of logical forms , specifically formulas in first order logic corresponding to possible interpretations of the utterance . </S>
+<S ID='S-50' AZ='OWN'> The logical forms are filtered by contextual and word-sense constraints , and one of them is passed to the translation component . </S>
+<S ID='S-51' AZ='OWN'> The translation relation is expressed by a set of first order axioms which are used by a theorem prover to derive a target language logical form that is equivalent ( in some context ) to the source logical form . </S>
+<S ID='S-52' AZ='OWN'> A grammar for the target language is then applied to the target form , generating a syntax tree whose fringe is passed to a speech synthesizer . </S>
+</P>
+<P>
+<S ID='S-53' AZ='OWN'> Taking the various components in turn , we make a note of undesirable properties that might be improved by quantitative modeling . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-3'> Analysis and Generation </HEADER>
+<P>
+<S ID='S-54' AZ='OWN'> A grammar , expressed as a set of syntactic rules ( axioms ) <EQN/> and a set of semantic rules ( axioms ) <EQN/> is used to support a relation form holding between strings s and logical forms <EQN/> expressed in first order logic : </S>
+</P>
+<IMAGE ID='I-0'/>
+<P>
+<S ID='S-55' AZ='OWN'> The relation form is many-to-many , associating a string with linguistically possible logical form interpretations . </S>
+<S ID='S-56' AZ='OWN'> In the analysis direction , we are given s and search for logical forms <EQN/> , while in generation we search for strings s given <EQN/> . </S>
+</P>
+<P>
+<S ID='S-57' AZ='OWN'> For analysis and generation , we are treating strings s and logical forms <EQN/> as object level entities . </S>
+<S ID='S-58' AZ='OWN'> In interpretation and translation , we will move down from this meta-level reasoning to reasoning with the logical forms as propositions . </S>
+</P>
+<P>
+<S ID='S-59' AZ='OWN'> The list of text strings handed by the recognizer to the parser can be assumed to be ordered in accordance with some acoustic scoring scheme internal to the recognizer . </S>
+<S ID='S-60' AZ='OWN'> The magnitude of the scores is ignored by our qualitative language processor ; it simply processes the hypotheses one at a time until it finds one for which it can produce a complete logical form interpretation that passes grammatical and interpretation constraints , at which point it discards the remaining hypotheses . </S>
+<S ID='S-61' AZ='OWN'> Clearly , discarding the acoustic score and taking the first hypothesis that satisfies the constraints may lead to an interpretation that is less plausible than one derivable from a hypothesis further down in the recognition list . </S>
+<S ID='S-62' AZ='OWN'> But there is no point in processing these later hypotheses since we will be forced to select one interpretation essentially at random . </S>
+</P>
+<DIV DEPTH='3'>
+<HEADER ID='H-4'> Syntax </HEADER>
+<P>
+<S ID='S-63' AZ='OWN'> The syntactic rules in <EQN/> relate ` category ' predicates <EQN/> holding of a string and two spanning substrings ( we limit the rules here to two daughters for simplicity ) : </S>
+</P>
+<IMAGE ID='I-1'/>
+<P>
+<S ID='S-64' AZ='OWN'> ( Here , and subsequently , variables like <EQN/> and <EQN/> are implicitly universally quantified . )</S>
+<S ID='S-65' AZ='OWN'> <EQN/> also includes lexical axioms for particular strings w consisting of single words : </S>
+<S ID='S-66' AZ='OWN'> <EQN/> , ... <EQN/> </S>
+<S ID='S-67' AZ='OWN'> For a feature-based grammar , these rules can include conjuncts constraining the values , <EQN/> , of discrete-valued functions f on the strings : </S>
+</P>
+<IMAGE ID='I-2'/>
+<P>
+<S ID='S-68' AZ='OWN'> The main problem here is that such grammars have no notion of a degree of grammatical acceptability - a sentence is either grammatical or ungrammatical . </S>
+<S ID='S-69' AZ='OWN'> For small grammars this means that perfectly acceptable strings are often rejected ; for large grammars we get a vast number of alternative trees so the chance of selecting the correct tree for simple sentences can get worse as the grammar coverage increases . </S>
+<S ID='S-70' AZ='OWN'> There is also the problem of requiring increasingly complex feature sets to describe idiosyncrasies in the lexicon . </S>
+</P>
+</DIV>
+<DIV DEPTH='3'>
+<HEADER ID='H-5'> Semantics </HEADER>
+<P>
+<S ID='S-71' AZ='OWN'> Semantic grammar axioms belonging to <EQN/> specify a ` composition ' function g for deriving a logical form for a phrase from those for its subphrases : </S>
+</P>
+<IMAGE ID='I-3'/>
+<P>
+<S ID='S-72' AZ='OWN'> The interpretation rules for strings bottom out in a set of lexical semantic rules associating words with predicates ( <EQN/> ) corresponding to ` word senses ' . </S>
+<S ID='S-73' AZ='OWN'> For a particular word and syntactic category , there will be a ( small , possibly empty ) finite set of such word sense predicates : </S>
+</P>
+<IMAGE ID='I-4'/>
+<P>
+<S ID='S-74' AZ='OWN'> First order logic was assumed as the semantic representation language because it comes with well understood , if not very practical , inferential machinery for constraint solving . </S>
+<S ID='S-75' AZ='OWN'> However , applying this machinery requires making logical forms fine grained to a degree often not warranted by the information the speaker of an utterance intended to convey . </S>
+<S ID='S-76' AZ='OWN'> An example of this is explicit scoping which leads ( again ) to large numbers of alternatives which the qualitative model has difficulty choosing between . </S>
+<S ID='S-77' AZ='OWN'> Also , many natural language sentences cannot be expressed in first order logic without resort to elaborate formulas requiring complex semantic composition rules . </S>
+<S ID='S-78' AZ='OWN'> These rules can be simplified by using a higher order logic but at the expense of even less practical inferential machinery . </S>
+</P>
+<P>
+<S ID='S-79' AZ='OWN'> In applying the grammar in generation we are faced with the problem of balancing over and under-generation by tweaking grammatical constraints , there being no way to prefer fully grammatical target sentences over more marginal ones . </S>
+<S ID='S-80' AZ='OWN'> Qualitative approaches to grammar tend to emphasize the ability to capture generalizations as the main measure of success in linguistic modeling . </S>
+<S ID='S-81' AZ='OWN'> This might explain why producing appropriate lexical collocations is rarely addressed seriously in these models , even though lexical collocations are important for fluent generation . </S>
+<S ID='S-82' AZ='OWN'> The study of collocations for generation fits in more naturally with statistical techniques , as illustrated by <REF TYPE='P'>Smadja and McKeown 1990</REF> . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-6'> Interpretation </HEADER>
+<P>
+<S ID='S-83' AZ='OWN'> In the logic-based model , interpretation is the process of identifying from the possible interpretations <EQN/> of s for which <EQN/> hold , ones that are consistent with the context of interpretation . </S>
+<S ID='S-84' AZ='OWN'> We can state this as follows : </S>
+</P>
+<IMAGE ID='I-5'/>
+<P>
+<S ID='S-85' AZ='OWN'> Here , we have separated the context into a contingent set of contextual propositions S and a set R of ( monolingual ) ` meaning postulates ' , or selectional restrictions , that constrain the word sense predicates in all contexts . </S>
+<S ID='S-86' AZ='OWN'> A is a set of assumptions sufficient to support the interpretation <EQN/> given S and R . </S>
+<S ID='S-87' AZ='OWN'> In other words , this is ` interpretation as abduction ' <REF TYPE='P'>Hobbs et al. 1988</REF> , since abduction , not deduction , is needed to arrive at the assumptions A . </S>
+</P>
+<P>
+<S ID='S-88' AZ='OWN'> The most common types of meaning postulates in R are those for restriction , hyponymy , and disjointness , expressed as follows : </S>
+<S ID='S-89' AZ='OWN'> <EQN/> restriction ; </S>
+<S ID='S-90' AZ='OWN'> <EQN/> hyponymy ; </S>
+<S ID='S-91' AZ='OWN'> <EQN/> disjointness . </S>
+<S ID='S-92' AZ='CTR'> Although there are compilation techniques <REF TYPE='P'>Mellish 1988</REF> which allow selectional constraints stated in this fashion to be implemented efficiently , the scheme is problematic in other respects . </S>
+<S ID='S-93' AZ='CTR'> To start with , the assumption of a small set of senses for a word is at best awkward because it is difficult to arrive at an optimal granularity for sense distinctions . </S>
+<S ID='S-94' AZ='CTR'> Disambiguation with selectional restrictions expressed as meaning postulates is also problematic because it is virtually impossible to devise a set of postulates that will always filter all but one alternative . </S>
+<S ID='S-95' AZ='OWN'> We are thus forced to under-filter and make an arbitrary choice between remaining alternatives . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-7'> Logic based translation </HEADER>
+<P>
+<S ID='S-96' AZ='OWN'> In both the quantitative and qualitative models we take a transfer approach to translation . </S>
+<S ID='S-97' AZ='OWN'> We do not depend on interlingual symbols , but instead map a representation with constants associated with the source language into a corresponding expression with constants from the target language . </S>
+<S ID='S-98' AZ='OWN'> For the qualitative model , the operable notion of correspondence is based on logical equivalence and the constants are source word sense predicates <EQN/> and target sense predicates <EQN/> . </S>
+</P>
+<P>
+<S ID='S-99' AZ='OWN'> More specifically , we will say the translation relation between a source logical form <EQN/> and a target logical form <EQN/> holds if we have </S>
+</P>
+<IMAGE ID='I-6'/>
+<P>
+<S ID='S-100' AZ='OWN'> where B is a set of monolingual and bilingual meaning postulates , and S is a set of formulas characterizing the current context . </S>
+<S ID='S-101' AZ='OWN'> A' is a set of assumptions that includes the assumptions A which supported <EQN/> . </S>
+<S ID='S-102' AZ='OWN'> Here bilingual meaning postulates are first order axioms relating source and target sense predicates . </S>
+<S ID='S-103' AZ='OWN'> A typical bilingual postulate for translating between <EQN/> and <EQN/> might be of the form :</S>
+</P>
+<IMAGE ID='I-7'/>
+<P>
+<S ID='S-104' AZ='OWN'> The need for the assumptions A' arises when a source language word is vaguer that its possible translations in the target language , so different choices of target words will correspond to translations under different assumptions . </S>
+<S ID='S-105' AZ='OWN'> For example , the condition <EQN/> above might be proved from the input logical form , or it might need to be assumed . </S>
+</P>
+<P>
+<S ID='S-106' AZ='OWN'> In the general case , finding solutions ( i.e. <EQN/> pairs ) for the abductive schema is an undecidable theorem proving problem . </S>
+<S ID='S-107' AZ='OWN'> This can be alleviated by placing restrictions on the form of meaning postulates and input formulas and using heuristic search methods . </S>
+<S ID='S-108' AZ='CTR'> Although such an approach was applied with some success in a limited-domain system translating logical forms into database queries <REF TYPE='P' SELF="YES">Rayner and Alshawi 1992</REF> , it is likely to be impractical for language translation with tens of thousands of sense predicates and related axioms . </S>
+</P>
+<P>
+<S ID='S-109' AZ='OWN'> Setting aside the intractability issue , this approach does not offer a principled way of choosing between alternative solutions proposed by the prover . </S>
+<S ID='S-110' AZ='OWN'> One would like to prefer solutions with ` minimal ' sets of assumptions , but it is difficult to find motivated definitions for this minimization in a purely qualitative framework . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-8'> Quantitative Model Components </HEADER>
+<DIV DEPTH='2'>
+<HEADER ID='H-9'> Moving to a Quantitative Model </HEADER>
+<P>
+<S ID='S-111' AZ='OWN' TYPE='ITEM'> In moving to a quantitative architecture , we propose to retain many of the basic characteristics of the qualitative model : </S>
+</P>
+<P>
+<S ID='S-112' TYPE='ITEM' AZ='OWN'> A transfer organization with analysis , transfer , and generation components . </S>
+<S ID='S-113' TYPE='ITEM' AZ='OWN'> Monolingual models that can be used for both analysis and generation . </S>
+<S ID='S-114' TYPE='ITEM' AZ='OWN'> Translation models that exclusively code contrastive ( cross-linguistic ) information . </S>
+<S ID='S-115' TYPE='ITEM' AZ='OWN'> Hierarchical phrases capturing recursive linguistic structure . </S>
+</P>
+<P>
+<S ID='S-116' AZ='OWN'> Instead of feature based syntax trees and first-order logical forms we will adopt a simpler , monostratal representation that is more closely related to those found in dependency grammars <REF TYPE='P'>Hudson 1984</REF> . </S>
+<S ID='S-117' AZ='OWN'> Dependency representations have been used in large scale qualitative machine translation systems , notably by <REF TYPE='A'>McCord 1988</REF> . </S>
+<S ID='S-118' AZ='OWN'> The notion of a lexical ` head ' of a phrase is central to these representations because they concentrate on relations between such lexical heads . </S>
+<S ID='S-119' AZ='OWN'> In our case , the dependency representation is monostratal in that the relations may include ones normally classified as belonging to syntax , semantics or pragmatics . </S>
+</P>
+<P>
+<S ID='S-120' AZ='OWN'> One salient property of our language model is that it is strongly lexical : it consists of statistical parameters associated with relations between lexical items and the number and ordering of dependents of lexical heads . </S>
+<S ID='S-121' AZ='OWN'> This lexical anchoring facilitates statistical training and sensitivity to lexical variation and collocations . </S>
+<S ID='S-122' AZ='OWN'> In order to gain the benefits of probabilistic modeling , we replace the task of developing large rule sets with the task of estimating large numbers of statistical parameters for the monolingual and translation models . </S>
+<S ID='S-123' AZ='OWN'> This gives rise to a new cost trade-off in human annotation / judgement versus barely tractable fully automatic training . </S>
+<S ID='S-124' AZ='OWN'> It also necessitates further research on lexical similarity and clustering <REF TYPE='P'>Pereira et al. 1993</REF> , <REF TYPE='P'>Dagan et al. 1993</REF> to improve parameter estimation from sparse data . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-10'> Translation via Lexical Relation Graphs </HEADER>
+<P>
+<S ID='S-125' AZ='OWN'> The model associates phrases with relation graphs . </S>
+<S ID='S-126' AZ='OWN'> A relation graph is a directed labeled graph consisting of a set of relation edges . </S>
+<S ID='S-127' AZ='OWN'> Each edge has the form of an atomic proposition </S>
+</P>
+<IMAGE ID='I-8'/>
+<P>
+<S ID='S-128' AZ='OWN'> where r is a relation symbol , <EQN/> is the lexical head of a phrase and <EQN/> is the lexical head of another phrase ( typically a subphrase of the phrase headed by <EQN/> ) . </S>
+<S ID='S-129' AZ='OWN'> The nodes <EQN/> and <EQN/> are word occurrences representable by a word and an index , the indices uniquely identifying particular occurrences of the words in a discourse or corpus . </S>
+<S ID='S-130' AZ='OWN'> The set of relation symbols is open ended , but the first argument of the relation is always interpreted as the head and the second as the dependent with respect to this relation . </S>
+<S ID='S-131' AZ='OWN'> The relations in the models for the source and target languages need not be the same , or even overlap . </S>
+<S ID='S-132' AZ='OWN'> To keep the language models simple , we will mainly restrict ourselves here to dependency graphs that are trees with unordered siblings . </S>
+<S ID='S-133' AZ='OWN'> In particular , phrases will always be contiguous strings of words and dependents will always be heads of subphrases . </S>
+</P>
+<P>
+<S ID='S-134' AZ='OWN'> Ignoring algorithmic issues relating to compactly representing and efficiently searching the space of alternative hypotheses , the overall design of the quantitative system is as follows . </S>
+<S ID='S-135' AZ='OWN'> The speech recognizer produces a set of word-position hypotheses ( perhaps in the form of a word lattice ) corresponding to a set of string hypotheses for the input . </S>
+<S ID='S-136' AZ='OWN'> The source language model is used to compute a set of possible relation graphs , with associated probabilities , for each string hypothesis . </S>
+<S ID='S-137' AZ='OWN'> A probabilistic graph translation model then provides , for each source relation graph , the probabilities of deriving corresponding graphs with word occurrences from the target language . </S>
+<S ID='S-138' AZ='OWN'> These target graphs include all the words of possible translations of the utterance hypotheses but do not specify the surface order of these words . </S>
+<S ID='S-139' AZ='OWN'> Probabilities for different possible word orderings are computed according to ordering parameters which form part of the target language model . </S>
+</P>
+<P>
+<S ID='S-140' AZ='TXT'> In the following section we explain how the probabilities for these various processing stages are combined to select the most likely target word sequence . </S>
+<S ID='S-141' AZ='OWN'> This word sequence can then be handed to the speech synthesizer . </S>
+<S ID='S-142' AZ='OWN'> For tighter integration between generation and synthesis , information about the derivation of the target utterance can also be passed to the synthesizer . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-11'> Integrated Statistical Model </HEADER>
+<P>
+<S ID='S-143' AZ='OWN'> The probabilities associated with phrases in the above description are computed according to the statistical models for analysis , translation , and generation . </S>
+<S ID='S-144' AZ='TXT'> In this section we show the relationship between these models to arrive at an overall statistical model of speech translation . </S>
+<S ID='S-145' AZ='OWN'> We are not considering training issues in this paper , though a number of now familiar techniques ranging from methods for maximum likelihood estimation to direct estimation using fully annotated data are applicable . </S>
+</P>
+<P>
+<S ID='S-146' AZ='OWN'> The objects involved in the overall model are as follows ( we omit target speech synthesis under the assumption that it proceeds deterministically from a target language word string ) : </S>
+</P>
+<P>
+<S ID='S-147' TYPE='ITEM' AZ='OWN'> <EQN/> : ( acoustic evidence for ) source language speech </S>
+<S ID='S-148' TYPE='ITEM' AZ='OWN'> <EQN/> : source language word string </S>
+<S ID='S-149' TYPE='ITEM' AZ='OWN'> <EQN/> : target language word string </S>
+<S ID='S-150' TYPE='ITEM' AZ='OWN'> <EQN/> : source language relation graph </S>
+<S ID='S-151' TYPE='ITEM' AZ='OWN'> <EQN/> : target language relation graph . </S>
+</P>
+<P>
+<S ID='S-152' AZ='OWN'> Given a spoken input in the source language , we wish to find a target language string that is the most likely translation of the input . </S>
+<S ID='S-153' AZ='OWN'> We are thus interested in the conditional probability of <EQN/> given <EQN/> . </S>
+<S ID='S-154' AZ='OWN'> This conditional probability can be expressed as follows <REF TYPE='P'>Chang and Su 1993</REF> : </S>
+</P>
+<IMAGE ID='I-9'/>
+<P>
+<S ID='S-155' AZ='OWN'> We now apply some simplifying independence assumptions concerning relation graphs . </S>
+<S ID='S-156' AZ='OWN'> Specifically , that their derivation from word strings is independent of acoustic information ; that their translation is independent of the original words and acoustics involved ; and that target word string generation from target relation edges is independent of the source language representations . </S>
+<S ID='S-157' AZ='OWN'> The extent to which these ( Markovian ) assumptions hold depend on the extent to which relation edges represent all the relevant information for translation . </S>
+<S ID='S-158' AZ='OWN'> In particular it means they should express aspects of surface relevant to meaning , such as topicalization , as well as predicate argument structure . </S>
+<S ID='S-159' AZ='OWN'> In any case , the simplifying assumptions give the following : </S>
+</P>
+<IMAGE ID='I-10'/>
+<P>
+<S ID='S-160' AZ='OWN'> This can be rewritten with two applications of Bayes rule : </S>
+</P>
+<IMAGE ID='I-11'/>
+<P>
+<S ID='S-161' AZ='OWN'> Since <EQN/> is given , <EQN/> is a constant which can be ignored in finding the maximum of <EQN/> . </S>
+<S ID='S-162' AZ='OWN'> Determining <EQN/> that maximizes <EQN/> therefore involves the following factors : </S>
+</P>
+<P>
+<S ID='S-163' TYPE='ITEM' AZ='OWN'> <EQN/> : source language acoustics </S>
+<S ID='S-164' TYPE='ITEM' AZ='OWN'> <EQN/> : source language generation </S>
+<S ID='S-165' TYPE='ITEM' AZ='OWN'> <EQN/> : source content relations </S>
+<S ID='S-166' TYPE='ITEM' AZ='OWN'> <EQN/> : source to target transfer </S>
+<S ID='S-167' TYPE='ITEM' AZ='OWN'> <EQN/> : target language generation . </S>
+</P>
+<P>
+<S ID='S-168' AZ='OWN'> We assume that the speech recognizer provides acoustic scores proportional to <EQN/> ( or logs thereof ) . </S>
+<S ID='S-169' AZ='OWN'> Such scores are normally computed by speech recognition systems , although they are usually also multiplied by word-based language model probabilities <EQN/> which we do not require in this application context . </S>
+<S ID='S-170' AZ='TXT'> Our approach to language modeling , which covers the content analysis and language generation factors , is presented in section <CREF/> and the transfer probabilities fall under the translation model of section <CREF/> . </S>
+</P>
+<P>
+<S ID='S-171' AZ='OWN'> Finally note that by another application of Bayes rule we can replace the two factors <EQN/> by <EQN/> without changing other parts of the model . </S>
+<S ID='S-172' AZ='OWN'> This latter formulation allows us to apply constraints imposed by the target language model to filter inappropriate possibilities suggested by analysis and transfer . </S>
+<S ID='S-173' AZ='OWN'> In some respects this is similar to <REF TYPE='A'>Dagan and Itai 1994</REF> 's approach to word sense disambiguation using statistical associations in a second language . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-12'> Language Models </HEADER>
+<DIV DEPTH='2'>
+<HEADER ID='H-13'> Language Production Model </HEADER>
+<P>
+<S ID='S-174' AZ='OWN'> Our language model can be viewed in terms of a probabilistic generative process based on the choice of lexical ` heads ' of phrases and the recursive generation of subphrases and their ordering . </S>
+<S ID='S-175' AZ='OWN'> For this purpose , we can define the head word of a phrase to be the word that most strongly influences the way the phrase may be combined with other phrases . </S>
+<S ID='S-176' AZ='OTH'> This notion has been central to a number of approaches to grammar for some time , including theories like dependency grammar <REF TYPE='P'>Hudson 1976</REF> , <REF TYPE='P'>Hudson 1990</REF> and HPSG <REF TYPE='P'>Pollard and Sag 1987</REF> . </S>
+<S ID='S-177' AZ='OTH'> More recently , the statistical properties of associations between words , and more particularly heads of phrases , has become an active area of research <REF TYPE='P'>Chang et al. 1992</REF> , <REF TYPE='P'>Hindle and Rooth 1993</REF> . </S>
+</P>
+<P>
+<S ID='S-178' AZ='OWN'> The language model factors the statistical derivation of a sentence with word string W as follows : <EQN/> where C ranges over relation graphs . </S>
+<S ID='S-179' AZ='OWN'> The content model , <EQN/> , and generation model , <EQN/> , are components of the overall statistical model for spoken language translation given earlier . </S>
+<S ID='S-180' AZ='OWN'> This decomposition of <EQN/> can be viewed as first deciding on the content of a sentence , formulated as a set of relation edges according to a statistical model for <EQN/> , and then deciding on word order according to <EQN/> . </S>
+</P>
+<P>
+<S ID='S-181' AZ='OWN'> Of course , this decomposition simplifies the realities of language production in that real language is always generated in the context of some situation S ( real or imaginary ) , so a more comprehensive model would be concerned with <EQN/> , i.e. language production in context . </S>
+<S ID='S-182' AZ='OWN'> This is less important , however , in the translation setting since we produce <EQN/> in the context of a source relation graph <EQN/> and we assume the availability of a model for <EQN/> . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-14'> Content Derivation Model </HEADER>
+<P>
+<S ID='S-183' AZ='OWN'> The model for deriving the relation graph of a phrase is taken to consist of choosing a lexical head <EQN/> for the phrase ( what the phrase is ` about ' ) followed by a series of ` node expansion ' steps . </S>
+<S ID='S-184' AZ='OWN'> An expansion step takes a node and chooses a possibly empty set of edges ( relation labels and ending nodes ) starting from that node . </S>
+<S ID='S-185' AZ='OWN'> Here we consider only the case of relation graphs that are trees with unordered siblings . </S>
+</P>
+<P>
+<S ID='S-186' AZ='OWN'> To start with , let us take the simplified case where a head word h has no optional or duplicated dependents ( i.e. exactly one for each relation ) . </S>
+<S ID='S-187' AZ='OWN'> There will be a set of edges </S>
+</P>
+<IMAGE ID='I-12'/>
+<P>
+<S ID='S-188' AZ='OWN'> corresponding to the local tree rooted at h with dependent nodes <EQN/> . </S>
+<S ID='S-189' AZ='OWN'> The set of relation edges for the entire derivation is the union of these local edge sets . </S>
+</P>
+<P>
+<S ID='S-190' AZ='OWN'> To determine the probability of deriving a relation graph C for a phrase headed by <EQN/> we make use of parameters ( ` dependency parameters ' ) <EQN/> for the probability , given a node h and a relation r , that w is an r-dependent of h. Under the assumption that the dependents of a head are chosen independently from each other , the probability of deriving C is : </S>
+</P>
+<IMAGE ID='I-13'/>
+<P>
+<S ID='S-191' AZ='OWN'> where <EQN/> is the probability of choosing <EQN/> to start the derivation . </S>
+<S ID='S-192' AZ='OWN'> If we now remove the assumption made earlier that there is exactly one r-dependent of a head , we need to elaborate the derivation model to include choosing the number of such dependents . </S>
+<S ID='S-193' AZ='OWN'> We model this by parameters </S>
+</P>
+<IMAGE ID='I-14'/>
+<P>
+<S ID='S-194' AZ='OWN'> that is , the probability that head h has n r-dependents . </S>
+<S ID='S-195' AZ='OWN'> We will refer to this probability as a ` detail parameter ' . </S>
+<S ID='S-196' AZ='OWN'> Our previous assumption amounted to stating that this was always 1 for n = 1 or for n = 0 . </S>
+<S ID='S-197' AZ='OWN'> Detail parameters allow us to model , for example , the number of adjectival modifiers of a noun or the ` degree ' to which a particular argument of a verb is optional . </S>
+<S ID='S-198' AZ='OWN'> The probability of an expansion of h giving rise to local edges <EQN/> is now : </S>
+</P>
+<IMAGE ID='I-15'/>
+<P>
+<S ID='S-199' AZ='OWN'> where r ranges over the set of relation labels and h has <EQN/> r-dependents <EQN/> . </S>
+<S ID='S-200' AZ='OWN'> <EQN/> is a combinatoric constant for taking account of the fact that we are not distinguishing permutations of the dependents ( e.g. there are <EQN/> permutations of the r-dependents of h if these dependents are all distinct ) . </S>
+</P>
+<P>
+<S ID='S-201' AZ='OWN'> So if <EQN/> is the root of a tree C , we have </S>
+</P>
+<IMAGE ID='I-16'/>
+<P>
+<S ID='S-202' AZ='OWN'> where heads ( C ) is the set of nodes in C and <EQN/> is the set of edges headed by h in C . </S>
+<S ID='S-203' AZ='OWN'> The above formulation is only an approximation for relation graphs that are not trees because the independence assumptions which allow the dependency parameters to be simply multiplied together no longer hold for the general case . </S>
+<S ID='S-204' AZ='OWN'> Dependency graphs with cycles do arise as the most natural analyses of certain linguistic constructions , but calculating their probabilities on a node by node basis as above may still provide probability estimates that are accurate enough for practical purposes . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-15'> Generation Model </HEADER>
+<P>
+<S ID='S-205' AZ='OWN'> We now return to the generation model <EQN/> . </S>
+<S ID='S-206' AZ='OWN'> As mentioned earlier , since C includes the words in W and a set of relations between them , the generation model is concerned only with surface order . </S>
+<S ID='S-207' AZ='OWN'> One possibility is to use ` bi-relation ' parameters for the probability that an <EQN/> - dependent immediately follows an <EQN/> - dependent . </S>
+<S ID='S-208' AZ='OWN'> This approach is problematic for our overall statistical model because such parameters are not independent from the ` detail ' parameters specifying the number of r-dependents of a head . </S>
+</P>
+<P>
+<S ID='S-209' AZ='OWN'> We therefore adopt the use of ` sequencing ' parameters , these being probabilities of particular orderings of dependents given that the multiset of dependency relations is known . </S>
+<S ID='S-210' AZ='OWN'> We let the identity relation e stand for the head itself . </S>
+<S ID='S-211' AZ='OWN'> Specifically , we have parameters </S>
+</P>
+<IMAGE ID='I-17'/>
+<P>
+<S ID='S-212' AZ='OWN'> where s is a sequence of relation labels including an occurrence of e and M ( s ) is the multiset for this sequence . </S>
+<S ID='S-213' AZ='OWN'> For a head h in a relation graph C , let <EQN/> be the sequence of dependent relations induced by a particular word string W generated from C . </S>
+<S ID='S-214' AZ='OWN'> We now have </S>
+</P>
+<IMAGE ID='I-18'/>
+<P>
+<S ID='S-215' AZ='OWN'> where h ranges over all the heads in C , and <EQN/> is the number of occurrences of r in <EQN/> , assuming that all orderings of <EQN/> - dependents are equally likely . </S>
+<S ID='S-216' AZ='OWN'> We can thus use these sequencing parameters directly in our overall model . </S>
+</P>
+<P>
+<S ID='S-217' AZ='OWN'> To summarize , our monolingual models are specified by : </S>
+</P>
+<P>
+<S ID='S-218' TYPE='ITEM' AZ='OWN'> topmost head parameters <EQN/></S>
+<S ID='S-219' TYPE='ITEM' AZ='OWN'> dependency parameters <EQN/></S>
+<S ID='S-220' TYPE='ITEM' AZ='OWN'>detail parameters <EQN/></S>
+<S ID='S-221' TYPE='ITEM' AZ='OWN'>sequencing parameters <EQN/></S>
+</P>
+<P>
+<S ID='S-222' AZ='OWN'> The overall model splits the contributions of content <EQN/> ordering <EQN/> . </S>
+<S ID='S-223' AZ='OWN'> However , we may also want a model for <EQN/> , for example for pruning speech recognition hypotheses . </S>
+<S ID='S-224' AZ='OWN'> Combining our content and ordering models we get : </S>
+</P>
+<IMAGE ID='I-19'/>
+<P>
+<S ID='S-225' AZ='OWN'> The parameters <EQN/> can be derived by combining sequencing parameters with the detail parameters for h . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-16'> Translation Model </HEADER>
+<DIV DEPTH='2'>
+<HEADER ID='H-17'> Mapping Relation Graphs </HEADER>
+<P>
+<S ID='S-226' AZ='OWN'> As already mentioned , the translation model defines mappings between relation graphs <EQN/> for the source language and <EQN/> for the target language . </S>
+<S ID='S-227' AZ='OWN'> A direct ( though incomplete ) justification of translation via relation graphs may be based on a simple referential view of natural language semantics . </S>
+<S ID='S-228' AZ='OWN'> Thus nominals and their modifiers pick out entities in a ( real or imaginary ) world , verbs and their modifiers refer to actions or events in which the entities participate in roles indicated by the edge relations . </S>
+<S ID='S-229' AZ='OWN'> Under this view , the purpose of the translation mapping is to determine a target language relation graph that provides the best approximation to the referential function induced by the source relation graph . </S>
+<S ID='S-230' AZ='OWN'> We call this approximating referential equivalence . </S>
+</P>
+<P>
+<S ID='S-231' AZ='OWN'> This referential view of semantics is not adequate for taking account of much of the complexity of natural language including many aspects of quantification , distributivity and modality . </S>
+<S ID='S-232' AZ='OWN'> This means it cannot capture some of the subtleties that a theory based on logical equivalence might be expected to . </S>
+<S ID='S-233' AZ='OWN'> On the other hand , when we proposed a logic based approach as our qualitative model , we had to restrict it to a simple first order logic anyway for computational reasons , and even then it did not appear to be practical . </S>
+<S ID='S-234' AZ='OWN'> Thus using the more impoverished lexical relations representation may not be costing us much in practice . </S>
+</P>
+<P>
+<S ID='S-235' AZ='OWN'> One aspect of the representation that is particularly useful in the translation application is its convenience for partial and / or incremental representation of content - we can refine the representation by the addition of further edges . </S>
+<S ID='S-236' AZ='OWN'> A fully specified denotation of the meaning of a sentence is rarely required for translation , and as we pointed out when discussing logic representations , a complete specification may not have been intended by the speaker . </S>
+<S ID='S-237' AZ='OWN'> Although we have not provided a denotational semantics for sets of relation edges , we anticipate that this will be possible along the lines developed in monotonic semantics <REF SELF="YES" TYPE='P'>Alshawi and Crouch 1992</REF> . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-18'> Translation Parameters </HEADER>
+<P>
+<S ID='S-238' AZ='OWN'> To be practical , a model for <EQN/> needs to decompose the source and target graphs <EQN/> and <EQN/> into subgraphs small enough that subgraph translation parameters can be estimated . </S>
+<S ID='S-239' AZ='OWN'> We do this with the help of ` node alignment relations ' between the nodes of these graphs . </S>
+<S ID='S-240' AZ='BAS'> These alignment relations are similar in some respects to the alignments used by <REF TYPE='A'>Brown et al. 1990</REF> in their surface translation model . </S>
+<S ID='S-241' AZ='OWN'> The translation probability is then the sum of probabilities over different alignments f : </S>
+</P>
+<IMAGE ID='I-20'/>
+<P>
+<S ID='S-242' AZ='OWN'> There are different ways to model <EQN/> corresponding to different kinds of alignment relations and different independence assumptions about the translation mapping . </S>
+</P>
+<P>
+<S ID='S-243' AZ='OWN'> For our quantitative design , we adopt a simple model in which lexical and relation ( structural ) probabilities are assumed to be independent . </S>
+<S ID='S-244' AZ='OWN'> In this model the alignment relations are functions from the word occurrence nodes of <EQN/> to the word occurrences of <EQN/> . </S>
+<S ID='S-245' AZ='OWN'> The idea is that <EQN/> means that the source word occurrence <EQN/> ` gave rise ' to the target word occurrence <EQN/> . </S>
+<S ID='S-246' AZ='OWN'> The inverse relation <EQN/> need not be a function , allowing different numbers of words in the source and target sentences . </S>
+</P>
+<P>
+<S ID='S-247' AZ='OWN'> We decompose <EQN/> into ` lexical ' and ` structural ' probabilities as follows : </S>
+</P>
+<IMAGE ID='I-21'/>
+<P>
+<S ID='S-248' AZ='OWN'> where <EQN/> and <EQN/> are the node sets for <EQN/> and <EQN/> respectively , and <EQN/> is the set of edges for the target graph . </S>
+<S ID='S-249' AZ='OWN'> The first factor <EQN/> is the lexical component in that it does not take into account any of the relations in the source graph <EQN/> . </S>
+<S ID='S-250' AZ='OWN'> This lexical component is the product of alignment probabilities for each node of <EQN/> : </S>
+</P>
+<IMAGE ID='I-22'/>
+<P>
+<S ID='S-251' AZ='OWN'> That is , the probability that f maps exactly the ( possibly empty ) subset <EQN/> of <EQN/> to <EQN/> . </S>
+<S ID='S-252' AZ='OWN'> These sets are assumed to be disjoint for different source graph nodes , so we can replace the factors in the above product with parameters : </S>
+</P>
+<IMAGE ID='I-23'/>
+<P>
+<S ID='S-253' AZ='OWN'> where w is a source language word and M is a multiset of target language words . </S>
+<S ID='S-254' AZ='OWN'> We will derive a target set of edges <EQN/> of <EQN/> by k derivation steps which partition the set of source edges <EQN/> into subgraphs <EQN/> . </S>
+<S ID='S-255' AZ='OWN'> These subgraphs give rise to disjoint sets of relation edges <EQN/> which together form <EQN/> . </S>
+<S ID='S-256' AZ='OWN'> The structural component of our translation model will be the sum of derivation probabilities for such an edge set <EQN/> . </S>
+</P>
+<P>
+<S ID='S-257' AZ='OWN'> For simplicity , we assume here that the source graph <EQN/> is a tree . </S>
+<S ID='S-258' AZ='OWN'> This is consistent with our earlier assumptions about the source language model . </S>
+<S ID='S-259' AZ='OWN'> We take our partitions of the source graph to be the edge sets for local trees . </S>
+<S ID='S-260' AZ='OWN'> This ensures that the the partitioning is deterministic so the probability of a derivation is the product of the probabilities of derivation steps . </S>
+<S ID='S-261' AZ='OWN'> More complex models with larger partitions rooted at a node are possible but these require additional parameters for partitioning . </S>
+<S ID='S-262' AZ='OWN'> For the simple model it remains to specify derivation step probabilities . </S>
+</P>
+<P>
+<S ID='S-263' AZ='OWN'> The probability of a derivation step is given by parameters of the form : </S>
+</P>
+<IMAGE ID='I-24'/>
+<P>
+<S ID='S-264' AZ='OWN'> where <EQN/> and <EQN/> are unlabeled graphs and <EQN/> is a node alignment function from <EQN/> to <EQN/> . </S>
+<S ID='S-265' AZ='OWN'> Unlabeled graphs are just like our relation edge graphs except that the nodes are not labeled with words ( the edges still have relation labels ) . </S>
+<S ID='S-266' AZ='OWN'> To apply a derivation step we need a notion of graph matching that respects edge labels : g is an isomorphism ( modulo node labels ) from a graph G to a graph H if g is a one-one and onto function from the nodes of G to the nodes of H such that </S>
+</P>
+<IMAGE ID='I-25'/>
+<P>
+<S ID='S-267' AZ='OWN' TYPE='ITEM'> The derivation step with parameter <EQN/> is applicable to the source edges <EQN/> , under the alignment f , giving rise to the target edges <EQN/> if </S>
+<S ID='S-268' TYPE='ITEM' AZ='OWN'> there is an isomorphism <EQN/> from <EQN/> to <EQN/> </S>
+<S ID='S-269' TYPE='ITEM' AZ='OWN'> there is an isomorphism <EQN/> from <EQN/> to <EQN/> </S>
+<S ID='S-270' TYPE='ITEM' AZ='OWN'> for any node v of <EQN/> it must be the case that </S>
+</P>
+<IMAGE ID='I-26'/>
+<P>
+<S ID='S-271' AZ='OWN'> This last condition ensures that the target graph partitions join up in a way that is compatible with the node alignment f . </S>
+</P>
+<P>
+<S ID='S-272' AZ='OWN'> The factoring of the translation model into these lexical and structural components means that it will overgenerate because these aspects are not independent in translation between real natural languages . </S>
+<S ID='S-273' AZ='OWN'> It is therefore appropriate to filter translation hypotheses by rescoring according to the version of the overall statistical model that included the factors <EQN/> so that the target language model constrains the output of the translation model . </S>
+<S ID='S-274' AZ='OWN'> Of course , in this case we need to model the translation relation in the ` reverse ' direction . </S>
+<S ID='S-275' AZ='OWN'> This can be done in a parallel fashion to the forward direction described above . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-19'> Conclusions </HEADER>
+<P>
+<S ID='S-276' AZ='OWN'> Our qualitative and quantitative models have a similar overall structure and there are clear parallels between the factoring of logical constraints and statistical parameters , for example monolingual postulates and dependency parameters , bilingual postulates and translation parameters . </S>
+<S ID='S-277' AZ='OWN'> The parallelism would have been closer if we had adopted ID / LP style rules <REF TYPE='P'>Gazdar et al. 1985</REF> in the qualitative model . </S>
+<S ID='S-278' AZ='OWN'> However , we argued in section <CREF/> that our qualitative model suffered from lack of robustness , from having only the crudest means for choosing between competing hypotheses , and from being computationally intractable for large vocabularies . </S>
+</P>
+<P>
+<S ID='S-279' AZ='OWN'> The quantitative model is in a much better position to cope with these problems . </S>
+<S ID='S-280' AZ='OWN'> It is less brittle because statistical associations have replaced constraints ( featural , selectional , etc. ) that must be satisfied exactly . </S>
+<S ID='S-281' AZ='OWN'> The probabilistic models give us a systematic and well motivated way of ranking alternative hypotheses . </S>
+<S ID='S-282' AZ='OWN'> Computationally , the quantitative model lets us escape from the undecidability of logic-based reasoning . </S>
+<S ID='S-283' AZ='OWN'> Because this model is highly lexical , we can hope that the input words will allow effective pruning by limiting the number of search paths having significantly high probabilities . </S>
+</P>
+<P>
+<S ID='S-284' AZ='OWN'> We retained some of the basic assumptions about the structure of language when moving to the quantitative model . </S>
+<S ID='S-285' AZ='OWN'> In particular , we preserved the notion of hierarchical phrase structure . </S>
+<S ID='S-286' AZ='OWN'> Relations motivated by dependency grammar made it possible to do this without giving up sensitivity to lexical collocations which underpin simple statistical models like N-grams . </S>
+<S ID='S-287' AZ='OWN'> The quantitative model also reduced overall complexity in terms of the sets of symbols used . </S>
+<S ID='S-288' AZ='OWN'> In addition to words , it only required symbols for dependency relations , whereas the qualitative model required symbol sets for linguistic categories and features , and a set of word sense symbols . </S>
+<S ID='S-289' AZ='OWN'> Despite their apparent importance to translation , the quantitative system can avoid the use of word sense symbols ( and the problems of granularity they give rise to ) by exploiting statistical associations between words in the target language to filter implicit sense choices . </S>
+</P>
+<P>
+<S ID='S-290' AZ='OWN' TYPE='ITEM'> Finally , here is a summary of our reasons for combining statistical methods with dependency representations in our language and translation models : </S>
+</P>
+<P>
+<S ID='S-291' TYPE='ITEM' AZ='OWN' > inherent lexical sensitivity of dependency representations , facilitating parameter estimation ; </S>
+<S ID='S-292' TYPE='ITEM' AZ='OWN' > quantitative preference based on probabilistic derivation and translation ; </S>
+<S ID='S-293' TYPE='ITEM' AZ='OWN' > incremental and / or partial specification of the content of utterances , particularly useful in translation ; </S>
+<S ID='S-294' TYPE='ITEM' AZ='OWN' > decomposition of complex utterances through recursive linguistic structure . </S>
+</P>
+<P>
+<S ID='S-295' AZ='OWN'> These factors suggest that dependency grammar will play an increasingly important role as language processing systems seek to combine both structural and collocational information . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+<SURNAME>Alshawi</SURNAME>, H., D. <SURNAME>Carter</SURNAME>, B. <SURNAME>Gamback</SURNAME> and M. <SURNAME>Rayner</SURNAME>. <DATE>1992</DATE>.
+``Swedish-English QLF Translation''. In H. Alshawi (ed.)
+The Core Language Engine, Cambridge, Mass.: MIT Press.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Alshawi</SURNAME>, H. and R. <SURNAME>Crouch</SURNAME>. <DATE>1992</DATE>. ``Monotonic Semantic Interpretation''.
+Proceedings of the 30th Annual Meeting of the Association for
+Computational Linguistics, Newark, Delaware.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Alshawi</SURNAME>, H. and D. <SURNAME>Carter</SURNAME>. <DATE>1994</DATE>. ``Training and Scaling Preference
+Functions for Disambiguation''. <DATE>To appear</DATE> in Computational
+Linguistics.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Brill</SURNAME>, E. <DATE>1993</DATE>. ``Automatic Grammar Induction and Parsing Free
+Text: A Transformation-Based Approach''.Proceedings of the 31st
+Annual Meeting of the Association for Computational Linguistics,
+259-265.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Brown</SURNAME>, P., J. <SURNAME>Cocke</SURNAME>, S. Della <SURNAME>Pietra</SURNAME>, V. Della <SURNAME>Pietra</SURNAME>, F. <SURNAME>Jelinek</SURNAME>,
+J. <SURNAME>Lafferty</SURNAME>, R. <SURNAME>Mercer</SURNAME> and P. <SURNAME>Rossin</SURNAME>. <DATE>1990</DATE>. ``A Statistical Approach
+to Machine Translation''. Computational Linguistics 16:79-85.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Chang</SURNAME>, J., Y. <SURNAME>Luo</SURNAME>, and K. <SURNAME>Su</SURNAME>. <DATE>1992</DATE>. ``GPSM: A Generalized Probabilistic
+Semantic Model for Ambiguity Resolution''. Proceedings of the 30th
+Annual Meeting of the Association for Computational Linguistics,
+177-192.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Chang</SURNAME>, J., K. <SURNAME>Su</SURNAME>. <DATE>1993</DATE>. ``A Corpus-Based Statistics-Oriented
+Transfer and Generation Model for Machine Translation''.
+Proceedings of the 5th International Conference on Theoretical and
+Methodological Issues in Machine Translation.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Dagan</SURNAME>, I., and A. <SURNAME>Itai</SURNAME>. <DATE>1994</DATE>. ``Word Sense Disambiguation Using a
+Second Language Monolingual Corpus''. <DATE>To appear</DATE> in Computational
+Linguistics.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Dagan</SURNAME>, I., S. <SURNAME>Marcus</SURNAME> and S. <SURNAME>Markovitch</SURNAME>. <DATE>1993</DATE>. ``Contextual Word
+Similarity and Estimation from Sparse Data''.
+Proceedings of the 31st meeting of the
+Association for Computational Linguistics, ACL, 164-171.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Gazdar</SURNAME>, G., E. <SURNAME>Klein</SURNAME>, G.K. <SURNAME>Pullum</SURNAME>, and I.A.<SURNAME>Sag</SURNAME>. <DATE>1985</DATE>.
+Generalised Phrase Structure Grammar. Oxford: Blackwell.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Hindle</SURNAME>, D. and M. <SURNAME>Rooth</SURNAME>. <DATE>1993</DATE>. ``Structural Ambiguity and Lexical
+Relations''. Computational Linguistics 19:103-120.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Hobbs</SURNAME>, J.R., M. <SURNAME>Stickel</SURNAME>, P. <SURNAME>Martin</SURNAME> and D. <SURNAME>Edwards</SURNAME>. <DATE>1988</DATE>.
+``Interpretation as Abduction'', Proceedings of the 26th
+Annual Meeting of the Association for Computational Linguistics,
+Buffalo, New York, 95-103.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Hudson</SURNAME>, R.A. <DATE>1984</DATE>. Word Grammar. Oxford: Blackwell.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Isabelle</SURNAME>, P. and E. <SURNAME>Macklovitch</SURNAME>. <DATE>1986</DATE>. ``Transfer and MT
+Modularity'', Eleventh International Conference on Computational
+Linguistics, Bonn, 115-117.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Jelinek</SURNAME>, F., R.L. <SURNAME>Mercer</SURNAME> and S. <SURNAME>Roukos</SURNAME>. <DATE>1992</DATE>. ``Principles of Lexical
+Language Modeling for Speech Recognition''.
+In S. Furui and M.M. Sondhi (eds.), Advances in Speech Signal
+Processing, New York: Marcel Dekker Inc.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Mellish</SURNAME>, C.S. <DATE>1988</DATE>. ``Implementing Systemic Classification by
+Unification''.  Computational Linguistics 14:40-51.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>McCord</SURNAME>, M. <DATE>1988</DATE>. ``A Multi-Target Machine Translation System''.
+Proceedings of the International Conference on Fifth Generation
+Computer Systems, Tokyo, Japan, <DATE>1141</DATE>-<DATE>1149</DATE>.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Pereira</SURNAME>, F., N. <SURNAME>Tishby</SURNAME> and L. <SURNAME>Lee</SURNAME>. <DATE>1993</DATE>. ``Distributional Clustering
+of English Words''. Proceedings of the 31st meeting of the
+Association for Computational Linguistics, ACL, 183-190.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Pollard</SURNAME>, C.J. and I.A. <SURNAME>Sag</SURNAME>. <DATE>1987</DATE>. Information Based Syntax
+and Semantics: Volume I -- Fundamentals. CSLI Lecture Notes,
+Number 13. Center for the Study of Language and Information,
+Stanford, California.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Rayner</SURNAME>, M. and H.  <SURNAME>Alshawi</SURNAME>.  <DATE>1992</DATE>.  ``Deriving Database Queries from
+Logical Forms by Abductive Definition Expansion''. Proceedings
+of the Third Conference on Applied Natural Language Processing,
+Trento, Italy.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Richard</SURNAME>, M.D. and R.P. <SURNAME>Lippmann</SURNAME>. <DATE>1991</DATE>. ``Neural Network Classifiers
+Estimate Bayesian a posteriori Probabilities''.
+Neural Computation 3:461-483.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Shieber</SURNAME>, S.M. <DATE>1986</DATE>. An Introduction to Unification-Based
+Approaches to Grammar.  CSLI Lecture Notes,
+Number 4. Center for the Study of Language and
+Information, Stanford, California.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Smajda</SURNAME>, F. and K. <SURNAME>McKeown</SURNAME>. <DATE>1990</DATE>. ``Automatically Extracting
+and Representing Collocations for Language Generation''.
+In Proceedings of the 28th Annual Meeting  of the
+Association for Computational Linguistics, Pittsburgh.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Taylor</SURNAME>, L., C. <SURNAME>Grover</SURNAME>, and E.J. <SURNAME>Briscoe</SURNAME>. <DATE>1989</DATE>. ``The Syntactic
+Regularity of English Noun Phrases''. Proceedings of the 4th
+European ACL Conference, 256-263.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Weaver</SURNAME>, W. <DATE>1955</DATE>. ``Translation''. In W. Locke and A. Booth (eds.),
+Machine Translation of Languages,
+Cambridge, Mass.: MIT Press.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

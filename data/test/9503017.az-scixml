@@ -1,0 +1,546 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9503017</FILENO>
+<APPEARED><CONFERENCE>COLING</CONFERENCE><YEAR>1992</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.Dc </CLASSIFICATION>
+</METADATA>
+<TITLE> Redundancy in Collaborative Dialogue </TITLE>
+<AUTHORLIST>
+<AUTHOR>Marilyn Walker</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' AZ='BKG'> In dialogues in which both agents are autonomous , each agent deliberates whether to accept or reject the contributions of the current speaker . </A-S>
+<A-S ID='A-1' AZ='BKG'> A speaker cannot simply assume that a proposal or an assertion will be accepted . </A-S>
+<A-S ID='A-2' AZ='BKG'> However , an examination of a corpus of naturally-occurring problem-solving dialogues shows that agents often do not explicitly indicate acceptance or rejection . </A-S>
+<A-S ID='A-3' AZ='BKG'> Rather the speaker must infer whether the hearer understands and accepts the current contribution based on indirect evidence provided by the hearer 's next dialogue contribution . </A-S>
+<A-S ID='A-4' AZ='AIM'> In this paper , I propose a model of the role of informationally redundant utterances in providing evidence to support inferences about mutual understanding and acceptance . </A-S>
+<A-S ID='A-5' AZ='OWN'> The model </A-S>
+<A-S ID='A-6' TYPE='ITEM' AZ='OWN'> requires a theory of mutual belief that supports mutual beliefs of various strengths ; </A-S>
+<A-S ID='A-7' TYPE='ITEM' AZ='OWN'> explains the function of a class of informationally redundant utterances that cannot be explained by other accounts ; and </A-S>
+<A-S ID='A-8' TYPE='ITEM' AZ='OWN'> contributes to a theory of dialogue by showing how mutual beliefs can be inferred in the absence of the master-slave assumption . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> It seems a perfectly valid rule of conversation not to tell people what they already know . </S>
+<S ID='S-1' AZ='OTH'> Indeed , <REFAUTHOR>Grice</REFAUTHOR> 's QUANTITY maxim has often been interpreted this way : Do not make your contribution more informative than is required <REF TYPE='P'>Grice 1967</REF> . </S>
+<S ID='S-2' AZ='OTH'> <REFAUTHOR>Stalnaker</REFAUTHOR> , as well , suggests that to assert something that is already presupposed is to attempt to do something that is already done <REF TYPE='P'>Stalnaker 1978</REF> . </S>
+<S ID='S-3' AZ='OTH'> Thus , the notion of what is informative is judged against a background of what is presupposed , i.e. propositions that all conversants assume are mutually known or believed . </S>
+<S ID='S-4' AZ='OTH'> These propositions are known as the COMMON GROUND <REF  TYPE='P'>Lewis 1969</REF>, <REF  TYPE='P'>Grice 1967</REF> . </S>
+</P>
+<P>
+<S ID='S-5' AZ='OTH'> The various formulations of this ` no redundancy ' rule permeate many computational analyses of natural language and notions of cooperativity . </S>
+<S ID='S-6' AZ='BKG'> However consider the following excerpt from the middle of an advisory dialogue between Harry ( h ) , a talk show host , and Ray ( r ) his caller . </S>
+</P>
+<EXAMPLE ID='E-0'>
+<EX-S> r. uh 2 tax questions . </EX-S>
+<EX-S> one : since April 81 we have had an 85 year old mother living with us . </EX-S>
+<EX-S> her only income has been social security plus approximately $3000 from a certificate of deposit and i wonder what 's the situation as far as claiming her as a dependent or does that income from the certificate of deposit rule her out as a dependent ? </EX-S>
+<EX-S> h. yes it does . </EX-S>
+<EX-S> r. IT DOES . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-7' AZ='BKG'> h. YUP THAT KNOCKS HER OUT . </S>
+</P>
+<P>
+<S ID='S-8' AZ='BKG'> In standard information theoretic terms , both <CREF/> and <CREF/> are REDUNDANT . </S>
+<S ID='S-9' AZ='BKG'> Harry 's assertion in <CREF/> simply paraphrases what was said in <CREF/> and <CREF/> and so it cannot be adding beliefs to the common ground . </S>
+<S ID='S-10' AZ='BKG'> Furthermore , the truth of <CREF/> cannot be in question , for instead of <CREF/> , Harry could not say Yup , but that doesn't knock her out . </S>
+<S ID='S-11' AZ='BKG'> So why does Ray ( r ) in <CREF/> REPEAT Harry 's ( h ) assertion of it does , and why does Harry PARAPHRASE himself and Ray in <CREF/> . </S>
+</P>
+<P>
+<S ID='S-12' AZ='OWN' TYPE='ITEM'> My claim is that informationally redundant utterances ( IRU 's ) have two main discourse functions : </S>
+<S ID='S-13' TYPE='ITEM' AZ='OWN' > to provide EVIDENCE to support the assumptions underlying the inference of mutual beliefs , </S>
+<S ID='S-14' TYPE='ITEM' AZ='OWN' > to CENTER a proposition , ie. make or keep a proposition salient <REF TYPE='P'>Grosz et al. 1986</REF> . </S>
+<S ID='S-15' AZ='AIM'> This paper will focus on <CREF/> leaving <CREF/> for future work . </S>
+</P>
+<P>
+<S ID='S-16' AZ='OWN'> First consider the notion of evidence . </S>
+<S ID='S-17' AZ='OWN' TYPE='ITEM'> One reason why agents need EVIDENCE for beliefs is that they only have partial information about : </S>
+<S ID='S-18' TYPE='ITEM' AZ='OWN' > the state of world ; </S>
+<S ID='S-19' TYPE='ITEM' AZ='OWN' > the effects of actions ; </S>
+<S ID='S-20' TYPE='ITEM' AZ='OWN' > other agent 's beliefs , preferences and goals . </S>
+<S ID='S-21' AZ='OWN'> This is especially true when it comes to modelling the effects of linguistic actions . </S>
+<S ID='S-22' AZ='OWN'> Linguistic actions are different than physical actions . </S>
+<S ID='S-23' AZ='OWN'> An agent 's prior beliefs , preferences and goals cannot be ascertained by direct inspection . </S>
+<S ID='S-24' AZ='OWN'> This means that it is difficult for the speaker to verify when an action has achieved its expected result , and so giving and receiving evidence is critical and the process of establishing mutual beliefs is carefully monitored by the conversants . </S>
+</P>
+<P>
+<S ID='S-25' AZ='OTH'> The characterization of IRU 's as informationally redundant follows from an axiomatization of action in dialogue that I will call the DETERMINISTIC MODEL . </S>
+<S ID='S-26' AZ='OTH'> This model consists of a number of simplifying assumptions such as : </S>
+<S ID='S-27' TYPE='ITEM' AZ='OTH' > Propositions are are either believed or not believed , </S>
+<S ID='S-28' TYPE='ITEM' AZ='OTH' > Propositions representing beliefs and intentions get added to the context by the unilateral action of one conversant , </S>
+<S ID='S-29' TYPE='ITEM' AZ='OTH' > Agents are logically omniscient . </S>
+<S ID='S-30' TYPE='ITEM' AZ='OTH' > The context of a discourse is an undifferentiated set of propositions with no specific relations between them . </S>
+<S ID='S-31' AZ='CTR'> I claim that these assumptions must be dropped in order to explain the function of IRU 's in dialogue . </S>
+</P>
+<P>
+<S ID='S-32' AZ='TXT'> Section <CREF/> discusses assumption <CREF/> ; section <CREF/> shows how assumption <CREF/> can be dropped ; section <CREF/> discusses <CREF/> ; section <CREF/> shows that some IRU 's facilitate the inference of relations between adjacent propositions . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Mutual Beliefs in a Shared Environment </HEADER>
+<P>
+<S ID='S-33' AZ='BAS'> The account proposed here of how the COMMON GROUND is augmented , is based is <REFAUTHOR>Lewis</REFAUTHOR> 's SHARED ENVIRONMENT model for common knowledge <REF  TYPE='P'>Lewis 1969</REF>, <REF  TYPE='P'>Clark and Marshall 1981</REF> . </S>
+<S ID='S-34' AZ='OTH'> In this model , mutual beliefs depend on evidence , openly available to the conversants , plus a number of underlying assumptions . </S>
+</P>
+<P>
+<S ID='S-35' AZ='OTH'> Shared Environment Mutual Belief Induction Schema </S>
+<S ID='S-36' AZ='OTH'> It is mutually believed in a population P that <EQN/> if and only if some situation <EQN/> holds such that : </S>
+<S ID='S-37' TYPE='ITEM' AZ='OTH' > Everyone in P has reason to believe that <EQN/> holds . </S>
+<S ID='S-38' TYPE='ITEM' AZ='OTH' > <EQN/> indicates to everyone in P that everyone in P has reason to believe that <EQN/> holds . </S>
+<S ID='S-39' TYPE='ITEM' AZ='OTH' > <EQN/> indicates to everyone in P that <EQN/> . </S>
+</P>
+<P>
+<S ID='S-40' AZ='OTH'> The situation <EQN/> , used above in the mutual belief induction schema , is the context of what has been said . </S>
+<S ID='S-41' AZ='OTH'> This schema supports a weak model of mutual beliefs , that is more akin to mutual assumptions or mutual suppositions <REF TYPE='P'>Prince 1987</REF> . </S>
+<S ID='S-42' AZ='OTH'> Mutual beliefs can be inferred based on some evidence , but these beliefs may depend on underlying assumptions that are easily defeasible . </S>
+<S ID='S-43' AZ='OTH'> This model can be implemented using <REFAUTHOR>Gallier</REFAUTHOR> 's theory of autonomous belief revision and the corresponding system <REF TYPE='P'>Galliers 1991</REF> . </S>
+</P>
+<P>
+<S ID='S-44' AZ='OTH'> A key part of this model is that some types of evidence provide better support for beliefs than other types . </S>
+<S ID='S-45' AZ='OTH'> The types of evidence considered are categorized and ordered based on the source of the evidence : hypothesis  &#60;  default  &#60;  inference  &#60;  linguistic  &#60;  physical <REF TYPE='P'>Clark and Marshall 1981</REF> , <REF TYPE='P'>Galliers 1991</REF> ) . </S>
+<S ID='S-46' AZ='OTH'> This ordering reflects the relative defeasibility of different assumptions . </S>
+<S ID='S-47' AZ='OTH'> Augmenting the strength of an assumption thus decreases its relative defeasibility . </S>
+</P>
+<P>
+<S ID='S-48' AZ='OWN'> A claim of this paper is that one role of IRU 's is to ensure that these assumptions are supported by evidence , thus decreasing the defeasibility of the mutual beliefs that depend on them <REF TYPE='P'>Galliers 1991</REF> . </S>
+</P>
+<P>
+<S ID='S-49' AZ='OWN'> Thus mutual beliefs depend on a defeasible inference process . </S>
+<S ID='S-50' AZ='OWN'> All inferences depend on the evidence to support them , and stronger evidence can defeat weaker evidence . </S>
+<S ID='S-51' AZ='OWN'> So a mutual belief supported as an inference can get defeated by linguistic information . </S>
+<S ID='S-52' AZ='OWN'> In addition , I adopt an an assumption that a chain of reasoning is only as strong as its weakest link : </S>
+</P>
+<P>
+<S ID='S-53' AZ='OWN'> Weakest Link Assumption : </S>
+<S ID='S-54' AZ='OWN'> The strength of a belief P depending on a set of underlying assumptions <EQN/> is MIN ( Strength ( <EQN/> ) ) . </S>
+<S ID='S-55' AZ='OWN'> This seems intuitively plausible and means that the strength of belief depends on the strength of underlying assumptions , and that for all inference rules that depend on multiple premises , the strength of an inferred belief is the weakest of the supporting beliefs . </S>
+</P>
+<P>
+<S ID='S-56' AZ='CTR'> This representation of mutual belief differs from the common representation in terms of an iterated conjunction <REF TYPE='P'>Litman and Allen 1990</REF> in that : </S>
+<S ID='S-57' TYPE='ITEM' AZ='CTR' > it relocates information from mental states to the environment in which utterances occur ; </S>
+<S ID='S-58' TYPE='ITEM' AZ='CTR' > it allows one to represent the different kinds of evidence for mutual belief ; </S>
+<S ID='S-59' TYPE='ITEM' AZ='CTR' > it controls reasoning when discrepancies in mutual beliefs are discovered since evidence and assumptions can be inspected ; </S>
+<S ID='S-60' TYPE='ITEM' AZ='CTR' > it does not consist of an infinite list of statements . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-2'> Inference of Understanding </HEADER>
+<P>
+<S ID='S-61' AZ='OTH'> This section examines the assumption from the DETERMINISTIC MODEL that : <CREF/> Propositions representing beliefs and intentions get added to the context by the unilateral action of one conversant . </S>
+<S ID='S-62' AZ='TXT'> This assumption will also be examined in section <CREF/> . </S>
+</P>
+<P>
+<S ID='S-63' AZ='OWN'> The key claim of this section is that agents monitor the effects of their utterance actions and that the next action by the addressee is taken as evidence of the effect of the speaker 's utterance . </S>
+<S ID='S-64' AZ='OWN'> That the utterance will have the intended effect is only a hypothesis at the point where the utterance has just been made , irrespective of the intentions of the speaker . </S>
+<S ID='S-65' AZ='CTR'> This distinguishes this account from others that assume either that utterance actions always succeed or that they succeed unless the addressee previously believed otherwise <REF  TYPE='P'>Litman and Allen 1990</REF>, <REF  TYPE='P'>Grosz and Sidner 1990</REF> . </S>
+</P>
+<P>
+<S ID='S-66' AZ='OWN'> I adopt the assumption that the participants in a dialogue are trying to achieve some purpose <REF TYPE='P'>Grosz and Sidner 1986</REF> . </S>
+<S ID='S-67' AZ='OWN'> Some aspects of the structure of dialogue arises from the structure of these purposes and their relation to one another . </S>
+<S ID='S-68' AZ='OWN'> The minimal purpose of any dialogue is that an utterance be understood , and this goal is a prerequisite to achieving other goals in dialogue , such as commitment to future action . </S>
+<S ID='S-69' AZ='OWN'> Thus achieving mutual belief of understanding is an instance of the type of activity that agents must perform as they collaborate to achieve the purposes of the dialogue . </S>
+<S ID='S-70' AZ='OWN'> I claim that a model of the achievement of mutual belief of understanding can be extended to the achievement of other goals in dialogue . </S>
+<IMAGE ID='I-0'/>
+</P>
+<P>
+<S ID='S-71' AZ='OWN'> Achieving understanding is not unproblematic , it is a process that must be managed , just as other goal achieving processes are <REF TYPE='P'>Clark and Schaefer 1989</REF> . </S>
+<S ID='S-72' AZ='OWN'> Inference of mutual understanding relies upon some evidence , e.g. the utterance that is made , and a number of underlying assumptions . </S>
+<S ID='S-73' AZ='OWN'> The assumptions are given with the inference rule below . </S>
+<IMAGE ID='I-1'/>
+</P>
+<P>
+<S ID='S-74' AZ='OWN'> This schema means that when A says u to B intending to convey p , that this leads to the mutual belief that B understands u as p under certain assumptions . </S>
+<S ID='S-75' AZ='OWN'> The assumptions are that A and B were copresent , that B was attending to the utterance event , that B heard the utterance , and that B believes that the utterance u realizes the intended meaning p . </S>
+</P>
+<P>
+<S ID='S-76' AZ='OWN'> The [ evidence-type ] annotation indicates the strength of evidence supporting the assumption . </S>
+<S ID='S-77' AZ='OWN'> All of the assumptions start out supported by no evidence ; their evidence type is therefore hypothesis . </S>
+<S ID='S-78' AZ='OWN'> It isn't until after the addressee 's next action that an assumption can have its strength modified . </S>
+</P>
+<P>
+<S ID='S-79' AZ='OWN'> The claim here is that one class of IRU 's addresses these assumptions underlying the inference of mutual understanding . </S>
+<S ID='S-80' AZ='OWN'> Each type of IRU , the assumption addressed and the evidence type provided is given in Figure <CREF/> . </S>
+<S ID='S-81' AZ='TXT'> Examples are provided in sections <CREF/> and <CREF/> . </S>
+</P>
+<P>
+<S ID='S-82' AZ='OWN'> It is also possible that A intends that BY saying u , which realizes p , B should make a certain inference q. Then B 's understanding of u should include B making this inference . </S>
+<S ID='S-83' AZ='OWN'> This adds an additional assumption : </S>
+<IMAGE ID='I-2'/>
+</P>
+<P>
+<S ID='S-84' AZ='OWN'> Thus assuming that q was inferred relies on the assumption that B believes that p licenses q in the context . </S>
+</P>
+<P>
+<S ID='S-85' AZ='OWN'> Figure <CREF/> says that prompts , repetitions , paraphrases and making inferences explicit all provide linguistic evidence of attention . </S>
+<S ID='S-86' AZ='OWN'> All that prompts such as uh huh do is provide evidence of attention . </S>
+<S ID='S-87' AZ='OWN'> However repetitions , paraphrases and making inferences explicit also demonstrate complete hearing . </S>
+<S ID='S-88' AZ='OWN'> In addition , a paraphrase and making an inference explicit provides linguistic evidence of what proposition the paraphraser believes the previous utterance realizes . </S>
+<S ID='S-89' AZ='OWN'> Explicit inferences additionally provide evidence of what inferences the inferrer believes the realized proposition licenses in this context . </S>
+</P>
+<P>
+<S ID='S-90' AZ='OWN'> In each case , the IRU addresses one or more assumptions that have to be made in order to infer that mutual understanding has actually been achieved . </S>
+<S ID='S-91' AZ='OWN'> The assumption , rather than being a hypothesis or a default , get upgraded to a support type of linguistic as a result of the IRU . </S>
+<S ID='S-92' AZ='OWN'> The fact that different IRU 's address different assumptions leads to the perception that some IRU 's are better evidence for understanding than others , e.g. a PARAPHRASE is stronger evidence of understanding than a REPEAT <REF TYPE='P'>Clark and Schaefer 1989</REF> . </S>
+</P>
+<P>
+<S ID='S-93' AZ='OWN'> In addition , any next utterance by the addressee can upgrade the strength of the underlying assumptions to default ( See Figure <CREF/> ) . </S>
+<S ID='S-94' AZ='OWN'> Of course default evidence is weaker than linguistic evidence . </S>
+<S ID='S-95' AZ='TXT'> The basis for these default inferences will be discussed in section <CREF/> . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-3'> Example of a Repetition </HEADER>
+<P>
+<S ID='S-96' AZ='OWN'> Consider example <CREF/> in section <CREF/> . </S>
+<S ID='S-97' AZ='OWN'> Ray , in <CREF/> , repeats Harry 's assertion from <CREF/> . </S>
+<S ID='S-98' AZ='OWN'> This upgrades the evidence for the assumptions of hearing and attention associated with utterance <CREF/> from hypothesis to linguistic . </S>
+<S ID='S-99' AZ='OWN'> The assumption about what proposition p 7 is realized by u 7 remains a default . </S>
+<S ID='S-100' AZ='OWN'> This instantiates the inference rule for understanding as follows : </S>
+<IMAGE ID='I-3'/>
+</P>
+<P>
+<S ID='S-101' AZ='OWN'> Because of the WEAKEST LINK assumption , the belief about understanding is still a default . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-4'> Example of a Paraphrase </HEADER>
+<P>
+<S ID='S-102' AZ='OWN'> Consider the following excerpt : </S>
+<EXAMPLE ID='E-1'>
+<EX-S> h. i see . </EX-S>
+<EX-S> are there any other children beside your wife ? </EX-S>
+<EX-S> d. no </EX-S>
+<EX-S> h. YOUR WIFE IS AN ONLY CHILD </EX-S>
+<EX-S> d. right . </EX-S>
+<EX-S> and uh wants to give her some security . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-103' AZ='OWN'> Harry 's utterance of <CREF/> is said with a falling intonational contour and hence is unlikely to be a question . </S>
+<S ID='S-104' AZ='OWN'> This utterance results in an instantiation of the inference rule as follows : </S>
+<IMAGE ID='I-4'/>
+</P>
+<P>
+<S ID='S-105' AZ='OWN'> In this case , the belief about understanding is supported by linguistic evidence since all of the supporting assumptions are supported by linguistic evidence . </S>
+<S ID='S-106' AZ='OWN'> Thus a paraphrase provides excellent evidence that an agent actually understood what another agent meant . </S>
+</P>
+<P>
+<S ID='S-107' AZ='OWN'> In addition , these IRU 's leave a proposition salient , where otherwise the discourse might have moved on to other topics . </S>
+<S ID='S-108' AZ='OWN'> This is part of the CENTERING function of IRU 's and is left to future work . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-5'> Making Inferences Explicit </HEADER>
+<P>
+<S ID='S-109' AZ='OTH'> This section discusses assumption <CREF/> of the determistic model , namely that : Agents are logically omniscient . </S>
+<S ID='S-110' AZ='CTR'> This assumption is challenged by a number of cases in naturally occurring dialogues where inferences that follow from what has been said are made explicit . </S>
+<S ID='S-111' AZ='OWN' TYPE='ITEM'> I restrict the inferences that I discuss to those that are </S>
+<S ID='S-112' TYPE='ITEM' AZ='OWN' > based on information explicitly provided in the dialogue or , </S>
+<S ID='S-113' TYPE='ITEM' AZ='OWN' > licensed by applications of Gricean Maxims such as scalar implicature inferences <REF TYPE='P'>Hirschberg 1985</REF> . </S>
+<S ID='S-114' AZ='OWN'> For example the logical omniscience assumption would mean that if <CREF/> and <CREF/> below are in the context , then <CREF/> will be as well since it is entailed from <CREF/> and <CREF/> . </S>
+</P>
+<P>
+<S ID='S-115' TYPE='ITEM' AZ='OWN' > You can buy an I R A if and only if you do NOT have an existing pension plan . </S>
+<S ID='S-116' TYPE='ITEM' AZ='OWN' > You have an existing pension plan . </S>
+<S ID='S-117' TYPE='ITEM' AZ='OWN' > You cannot buy an I R A . </S>
+</P>
+<P>
+<S ID='S-118' AZ='OWN'> The following excerpt demonstrates this structure . </S>
+<S ID='S-119' AZ='OWN'> Utterance <CREF/> realizes <CREF/> , utterance <CREF/> realizes <CREF/> , and utterance <CREF/> makes the inference explicit that is given in <CREF/> for the particular tax year of 1981 . </S>
+<EXAMPLE ID='E-2'>
+<EX-S> h. oh no . </EX-S>
+<EX-S> IRA 's were available as long as you are not a participant in an existing pension </EX-S>
+<EX-S> j. oh i see . </EX-S>
+<EX-S> well i did work i do work for a company that has a pension </EX-S>
+<EX-S> h. ahh . </EX-S>
+<EX-S> THEN YOU 'RE NOT ELIGIBLE FOR EIGHTY ONE </EX-S>
+<EX-S> j. i see , but i am for 82 . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-120' AZ='OWN'> After <CREF/> , since the propositional content of <CREF/> is inferrable , the assumption that Harry has made this inference is supported by the inference evidence type : </S>
+<IMAGE ID='I-5'/>
+</P>
+<P>
+<S ID='S-121' AZ='OWN'> According to the model of achieving mutual understanding that was outlined in section <CREF/> , utterance <CREF/> provides linguistic evidence that Harry ( h ) believes that the proposition realized by utterance <CREF/> licenses the inference of <CREF/> in this context . </S>
+<IMAGE ID='I-6'/>
+</P>
+<P>
+<S ID='S-122' AZ='OWN'> Furthermore , the context here consists of a discussion of two tax years 1981 and 1982 . </S>
+<S ID='S-123' AZ='OWN'> Utterance <CREF/> selects eighty one , with a narrow focus pitch accent . </S>
+<S ID='S-124' AZ='OWN'> This implicates that there is some other tax year for which Joe is eligible , namely 1982 <REF TYPE='P'>Hirschberg 1985</REF> . </S>
+<S ID='S-125' AZ='OWN'> Joe 's next utterance , but I am for 82 , reinforces the implicature that Harry makes in <CREF/> , and upgrades the evidence underlying the assumption that <CREF/> licenses <CREF/> to linguistic . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-6'> Supporting Inferences </HEADER>
+<P>
+<S ID='S-126' AZ='CTR'> A subcase of ensuring that certain inferences get made involves the juxtaposition of two propositions . </S>
+<S ID='S-127' AZ='CTR'> These cases challenge the assumption that : <CREF/> The context of a discourse is an undifferentiated set of propositions with no specific relations between them . </S>
+<S ID='S-128' AZ='OTH'> While this assumption is certainly not made in most discourse models , it is often made in semantic models of the context <REF TYPE='P'>Stalnaker 1987</REF> . </S>
+<S ID='S-129' AZ='BKG'> In the following segment , Jane ( j ) describes her financial situation to Harry ( h ) and a choice between a settlement and an annuity . </S>
+<EXAMPLE ID='E-3'>
+<EX-S> j. hello harry , my name is jane </EX-S>
+<EX-S> h. welcome jane j. </EX-S>
+<EX-S> i just retired december first , and in addition to my pension and social security , I have a supplemental annuity </EX-S>
+<EX-S> h. yes </EX-S>
+<EX-S> j. which i contributed to while i was employed </EX-S>
+<EX-S> h. right </EX-S>
+<EX-S> j. from the state of NJ mutual fund . </EX-S>
+<EX-S> and I 'm entitled to a lump sum settlement which would be between 16,800 and 17,800 , or a lesser life annuity . </EX-S>
+<EX-S> and the choices of the annuity um would be $125.45 per month . </EX-S>
+<EX-S> That would be the maximum with no beneficiaries </EX-S>
+<EX-S> h. You can stop right there : take your money . </EX-S>
+<EX-S> j. take the money . </EX-S>
+<EX-S> h. absolutely . </EX-S>
+<EX-S> YOU 'RE ONLY GETTING 1500 A YEAR . </EX-S>
+<EX-S> at 17,000 , no trouble at all to get 10 percent on 17,000 bucks . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-130' AZ='OWN'> Harry interrupts her at <CREF/> since he believes he has enough information to suggest a course of action , and tells her take your money . </S>
+<S ID='S-131' AZ='OWN'> To provide SUPPORT for this course of action he produces an inference that follows from what she has told him in <CREF/> , namely You 're only getting 1500 ( dollars ) a year . </S>
+<S ID='S-132' AZ='OWN'> SUPPORT is a general relation that holds between beliefs and intentions in this model . </S>
+</P>
+<P>
+<S ID='S-133' AZ='OWN'> Presumably Jane would have no trouble calculating that $125.45 a month for 12 months amounts to a little over $1500 a year , and thus can easily accept this statement that is intended to provide the necessary SUPPORT relation , ie. the juxtaposition of this fact against the advice to take the money conveys that the fact that she is only getting 1500 dollars a year is a reason for her to adopt the goal of taking the money , although this is not explicitly stated . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-7'> Evidence of Acceptance </HEADER>
+<P>
+<S ID='S-134' AZ='TXT'> In section <CREF/> , I examine the assumption that : <CREF/> Propositions representing beliefs and intentions get added to the context by the unilateral action of one conversant . </S>
+<S ID='S-135' AZ='OWN'> I suggested that this assumption can be replaced by adopting a model in which agents ' behavior provides evidence for whether or not mutual understanding has been achieved . </S>
+<S ID='S-136' AZ='OWN'> I also discussed some of the effects of resource bounds , ie. cases of ensuring that or providing evidence that certain inferences dependent on what is said are made . </S>
+</P>
+<P>
+<S ID='S-137' AZ='OWN'> Achieving understanding and compensating for resource bounds are issues for a model of dialogue whether or not agents are autonomous . </S>
+<S ID='S-138' AZ='OWN'> But agents ' autonomy means there are a number of other reasons why A 's utterance to B conveying a proposition p might not achieve its intended effect : </S>
+<S ID='S-139' TYPE='ITEM' AZ='OWN' > p may not cohere with B 's beliefs , </S>
+<S ID='S-140' TYPE='ITEM' AZ='OWN' > B may not think that p is relevant , </S>
+<S ID='S-141' TYPE='ITEM' AZ='OWN' > B may believe that p does not contribute to the common goal , </S>
+<S ID='S-142' TYPE='ITEM' AZ='OWN' > B may prefer doing or believing some q where p is mutually exclusive with q , </S>
+<S ID='S-143' TYPE='ITEM' AZ='OWN' > If p is about an action , B may want to partially modify p with additional constraints about how , or when p . </S>
+</P>
+<P>
+<S ID='S-144' AZ='OWN'> Therefore it is important to distinguish an agent actually ACCEPTING the belief that p or intending to perform an action described by p from merely understanding that p was conveyed . </S>
+<S ID='S-145' AZ='OWN'> Other accounts legislate that helpful agents should adopt other 's beliefs and intentions or that acceptance depends on whether or not the agent previously believed <EQN/> p <REF  TYPE='P'>Litman and Allen 1990</REF>, <REF  TYPE='P'>Grosz and Sidner 1990</REF> . </S>
+<S ID='S-146' AZ='OWN'> But agents can decide whether as well as how to revise their beliefs <REF TYPE='P'>Galliers 1991</REF> . </S>
+</P>
+<P>
+<S ID='S-147' AZ='OWN'> Evidence of acceptance may be given explicitly , but acceptance can be inferred in some dialogue situations via the operation of a simple principle of cooperative dialogue : </S>
+</P>
+<P>
+<S ID='S-148' AZ='OWN'> COLLABORATIVE PRINCIPLE : </S>
+<S ID='S-149' AZ='OWN'> Conversants must provide evidence of a detected discrepancy in belief as soon as possible . </S>
+<S ID='S-150' AZ='OWN'> This principle claims that evidence of conflict should be made apparent in order to keep default inferences about acceptance or understanding from going through . </S>
+<S ID='S-151' AZ='OWN'> IRU 's such as PROMPTS , REPETITIONS , PARAPHRASES , and making an INFERENCE explicit cannot function as evidence for conflicts in beliefs or intentions via their propositional content since they are informationally redundant . </S>
+<S ID='S-152' AZ='OWN'> If they are realized with question intonation , the inference of acceptance is blocked . </S>
+</P>
+<P>
+<S ID='S-153' AZ='OWN'> In the dialogue below between Harry ( h ) and Ruth ( r ) , Ruth in <CREF/> , first ensures that she understood Harry correctly , and then provides explicit evidence of non-acceptance in <CREF/> , based on her autonomous preferences about how her money is invested . </S>
+<EXAMPLE ID='E-4'>
+<EX-S> h. and I 'd like 15 thousand in a 2 and a half year certificate </EX-S>
+<EX-S> r. the full 15 in a 2 and a half ? </EX-S>
+<EX-S> h. that 's correct </EX-S>
+<EX-S> r. GEE . </EX-S>
+<EX-S> NOT AT MY AGE . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-154' AZ='OWN'> In the following example , Joe in <CREF/> makes a statement that provides propositional content that conflicts with Harry 's statement in <CREF/> and thus provides evidence of non-acceptance . </S>
+<EXAMPLE ID='E-5'>
+<EX-S> h. and -- there 's no reason why you shouldn't have an IRA for last year </EX-S>
+<EX-S> j. WELL I THOUGHT THEY JUST STARTED THIS YEAR . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-155' AZ='OWN'> Joe 's statement is based on his prior beliefs . </S>
+<S ID='S-156' AZ='OWN'> In both of these cases this evidence for conflict is given immediately . </S>
+<S ID='S-157' AZ='OWN'> However when there is no evidence to the contrary , and goals of the discourse require achievement of acceptance , inferences about acceptance are licensed as default . </S>
+<S ID='S-158' AZ='OWN'> They can be defeated later by stronger evidence . </S>
+</P>
+<P>
+<S ID='S-159' AZ='OWN'> Without this principle , a conversant might not bring up an objection until much later in the conversation , at which point the relevant belief and some inferences following from that belief will have been added to the common ground as defaults . </S>
+<S ID='S-160' AZ='OWN'> The result of this is that the retraction of that belief results in many beliefs being revised . </S>
+<S ID='S-161' AZ='OWN'> The operation of this principle helps conversants avoid replanning resulting from inconsistency in beliefs , and thus provides a way to manage the augmentation of the common ground efficiently . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-8'> Other Hypotheses </HEADER>
+<P>
+<S ID='S-162' AZ='OWN'> The first point to note is that the examples here are only a subset of the types of IRU 's that occur in dialogues . </S>
+<S ID='S-163' AZ='OWN'> I use the term antecedent to refer to the most recent utterance which should have added the proposition to the context . </S>
+<S ID='S-164' AZ='OWN' TYPE='ITEM'> This paper has mainly focused on cases where the IRU : </S>
+<S ID='S-165' TYPE='ITEM' AZ='OWN' > is adjacent to its antecedent , rather than remote ; </S>
+<S ID='S-166' TYPE='ITEM' AZ='OWN' > realizes a proposition whose antecedent was said by another conversant , </S>
+<S ID='S-167' TYPE='ITEM' AZ='OWN' > has only one antecedent . </S>
+<S ID='S-168' AZ='OWN'> It is with respect to this subset of the data that the alternate hypotheses are examined . </S>
+</P>
+<P>
+<S ID='S-169' AZ='OWN'> A distributional analysis of a subset of the corpus ( 171 IRU 's from 24 dialogues consisting of 976 turns ) , on the relation of an IRU to its antecedent and the context , shows that 35 % of the tokens occur remotely from their antecedents , that 32 % have more than one antecedent , that 48 % consist of the speaker repeating something that he said before and 52 % consist of the speaker repeating something that the other conversant said . </S>
+<S ID='S-170' AZ='OWN'> So the data that this paper focuses on accounts for about 30 % of the data . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-9'> Indirect Question Hypothesis </HEADER>
+<P>
+<S ID='S-171' AZ='OWN'> In example <CREF/> of section <CREF/> , an alternative account of Ray 's repetition in <CREF/> is that it is a question of some kind . </S>
+<S ID='S-172' AZ='OWN'> This raises a number of issues : </S>
+<S ID='S-173' TYPE='ITEM' AZ='OWN' > Why doesn't it have the form of a question ? , </S>
+<S ID='S-174' TYPE='ITEM' AZ='OWN' > What is it a question about ? , and </S>
+<S ID='S-175' TYPE='ITEM' AZ='OWN' > Why is it never denied ?</S>
+</P>
+<P>
+<S ID='S-176' AZ='OWN'> Of 171 IRU 's , only 28 are realized with rising question intonation . </S>
+<S ID='S-177' AZ='OWN'> Of these 28 , 6 are actually redundant questions with question syntax , and 14 are followed by affirmations . </S>
+</P>
+<P>
+<S ID='S-178' AZ='OWN'> If these are generally questions , then one possible answer to what the question is about is that Ray is questioning whether he actually heard properly . </S>
+<S ID='S-179' AZ='OWN'> But then why doesn't he use an intonational contour that conveys this fact as Ruth does in example <CREF/> ? </S>
+<S ID='S-180' AZ='OWN'> On an efficiency argument , it is hard to imagine that it would have cost Ray any more effort to have done so . </S>
+</P>
+<P>
+<S ID='S-181' AZ='OWN'> Finally , if it were a question it would seem that it should have more than one answer . </S>
+<S ID='S-182' AZ='OWN'> While 50 of these IRU 's are followed by an affirmation such as that 's correct , right , yup , none of them are ever followed by a denial of their content . </S>
+<S ID='S-183' AZ='OWN'> It seems an odd question that only has one answer . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-10'> Dead Air Hypothesis </HEADER>
+<P>
+<S ID='S-184' AZ='OWN'> Another hypothesis is that IRU 's result from the radio talk show environment in which silence is not tolerated . </S>
+<S ID='S-185' AZ='OWN'> So agents produce IRU 's because they cannot think of anything else to say but feel as though they must say something . </S>
+</P>
+<P>
+<S ID='S-186' AZ='OWN'> The first point to note is that IRU 's actually occur in dialogues that aren't on the radio <REF TYPE='P'>Carletta 1992</REF> . </S>
+<S ID='S-187' AZ='OWN'> The second question is why an agent would produce an IRU , rather than some other trivial statement such as I didn't know that . </S>
+<S ID='S-188' AZ='OWN'> Third , why don't these utterance correlate with typical stalling behavior such as false starts , pauses , and filled pauses such as uhhh . </S>
+</P>
+<P>
+<S ID='S-189' AZ='OWN'> The dead air hypothesis would seem to rely on an assumption that at unpredictable intervals , agents just can't think very well . </S>
+<S ID='S-190' AZ='OWN'> My claim is that IRU 's are related to goals , that they support inferencing and address assumptions underlying mutual beliefs , ie. they are not random . </S>
+<S ID='S-191' AZ='OWN'> In order to prove this it must be possible to test the hypothesis that it is only important propositions that get repeated , paraphrased or made explicit . </S>
+<S ID='S-192' AZ='OWN'> This can be based on analyzing when the information that is repeated has been specifically requested , such as in the caller 's opening question or by a request for information from Harry . </S>
+<S ID='S-193' AZ='OWN'> It should also be possible to test whether the IRU realizes a proposition that plays a role in the final plan that Harry and the caller negotiate . </S>
+<S ID='S-194' AZ='OWN'> However this type of strong evidence against the dead air hypothesis is left to future work . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-11'> Discussion </HEADER>
+<P>
+<S ID='S-195' AZ='OWN'> It should be apparent from the account that the types of utterances examined here are not really redundant . </S>
+<S ID='S-196' AZ='OTH'> The reason that many models of belief transfer in dialogue would characterize them as redundant follows from a combination of facts : </S>
+<S ID='S-197' TYPE='ITEM' AZ='OTH' > The representation of belief in these models has been binary ; </S>
+<S ID='S-198' TYPE='ITEM' AZ='OTH' > The effects of utterance actions are either assumed to always hold , or to hold as defaults unless the listener already believed otherwise . </S>
+<S ID='S-199' AZ='CTR'> This means that these accounts cannot represent the fact that a belief must be supported by some kind of evidence and that the evidence may be stronger or weaker . </S>
+<S ID='S-200' AZ='CTR'> It also follows from <CREF/> that these models assume that agents are not autonomous , or at least do not have control over their own mental states . </S>
+<S ID='S-201' AZ='CTR'> But belief revision is surely an autonomous process ; agents can choose whether to accept a new belief or revise old beliefs <REF  TYPE='P'>Galliers 1991</REF>, <REF  TYPE='P'>Grosz and Sidner 1990</REF> . </S>
+</P>
+<P>
+<S ID='S-202' AZ='OWN'> The occurrence of IRU 's in dialogue has many ramifications for a model of dialogue . </S>
+<S ID='S-203' AZ='OWN'> Accounting for IRU 's has two direct effects on a dialogue model . </S>
+<S ID='S-204' AZ='OWN'> First it requires a model of mutual beliefs that specifies how mutual beliefs are inferred and how some mutual beliefs can be as weak as mutual suppositions . </S>
+<S ID='S-205' AZ='OWN'> One function of IRU 's is to address the assumptions on which mutual beliefs are based . </S>
+<S ID='S-206' AZ='OWN'> Second the assumption that propositions representing beliefs and intentions get added to the context by the unilateral action of one conversant must be dropped . </S>
+<S ID='S-207' AZ='OWN'> This account replaces that assumption with a model in which the evidence of the hearer must be considered to establish mutual beliefs . </S>
+<S ID='S-208' AZ='OWN'> The claim here is that both understanding and acceptance are monitored . </S>
+<S ID='S-209' AZ='OWN'> The model outlined here can be used for different types of dialogue , including dialogues in which agents are constructing mutual beliefs to support future action by them jointly or alone . </S>
+</P>
+<P>
+<S ID='S-210' AZ='OWN'> How and when agents decide to augment the strength of evidence for a belief has not been addressed in this work as yet . </S>
+<S ID='S-211' AZ='OWN'> Future work includes analyzing the corpus with respect to whether the IRU plays a role in the final plan that is negotiated between the conversants . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+Jean C. <SURNAME>Carletta</SURNAME>.
+Risk Taking and Recovery in Task-Oriented Dialogue.
+PhD thesis, Edinburgh University, <DATE>1992</DATE>.
+</REFERENCE>
+<REFERENCE>
+Herbert H. <SURNAME>Clark</SURNAME> and Catherine R. <SURNAME>Marshall</SURNAME>.
+Definite reference and mutual knowledge.
+In Joshi, Webber, and Sag, editors, Elements of Discourse
+  Understanding, pages 10-63. CUP, Cambridge, <DATE>1981</DATE>.
+</REFERENCE>
+<REFERENCE>
+Herbert H. <SURNAME>Clark</SURNAME> and Edward F. <SURNAME>Schaefer</SURNAME>.
+Contributing to discourse.
+Cognitive Science, 13:259-294, <DATE>1989</DATE>.
+</REFERENCE>
+<REFERENCE>
+Julia R. <SURNAME>Galliers</SURNAME>.
+Cooperative interaction as strategic belief revision.
+In M.S. Deen, editor, Cooperating Knowledge Based Systems,
+  page 1. Springer Verlag, <DATE>1991</DATE>.
+</REFERENCE>
+<REFERENCE>
+H. P. <SURNAME>Grice</SURNAME>.
+William James Lectures.
+<DATE>1967</DATE>.
+</REFERENCE>
+<REFERENCE>
+Barbara J. <SURNAME>Grosz</SURNAME>, Aravind K. <SURNAME>Joshi</SURNAME>, and Scott <SURNAME>Weinstein</SURNAME>.
+Towards a computational theory of discourse interpretation.
+Unpublished Manuscript, <DATE>1986</DATE>.
+</REFERENCE>
+<REFERENCE>
+Barbara J. <SURNAME>Grosz</SURNAME> and Candace L. <SURNAME>Sidner</SURNAME>.
+Attentions, intentions and the structure of discourse.
+Computational Linguistics, 12:175-204, <DATE>1986</DATE>.
+</REFERENCE>
+<REFERENCE>
+Barbara J. <SURNAME>Grosz</SURNAME> and Candace L. <SURNAME>Sidner</SURNAME>.
+Plans for discourse.
+In Cohen, Morgan and Pollack, eds. Intentions in Communication,
+  MIT Press, <DATE>1990</DATE>.
+</REFERENCE>
+<REFERENCE>
+Julia <SURNAME>Hirschberg</SURNAME>.
+A Theory of Scalar Implicature.
+PhD thesis, University of Pennsylvania, Computer and Information
+  Science, <DATE>1985</DATE>.
+</REFERENCE>
+<REFERENCE>
+David <SURNAME>Lewis</SURNAME>.
+Convention.
+Harvard University Press, <DATE>1969</DATE>.
+</REFERENCE>
+<REFERENCE>
+Diane <SURNAME>Litman</SURNAME> and James <SURNAME>Allen</SURNAME>.
+Recognizing and relating discourse intentions and task-oriented
+  plans.
+In Cohen, Morgan and Pollack, eds. Intentions in Communication,
+  MIT Press, <DATE>1990</DATE>.
+</REFERENCE>
+<REFERENCE>
+Martha <SURNAME>Pollack</SURNAME>, Julia <SURNAME>Hirschberg</SURNAME>, and Bonnie <SURNAME>Webber</SURNAME>.
+User participation in the reasoning process of expert systems.
+In AAAI82, <DATE>1982</DATE>.
+</REFERENCE>
+<REFERENCE>
+Ellen F. <SURNAME>Prince</SURNAME>.
+On the function of existential presupposition in discourse.
+In Papers from 14th Regional Meeting. CLS, Chicago, IL, <DATE>1978</DATE>.
+</REFERENCE>
+<REFERENCE>
+Robert C. <SURNAME>Stalnaker</SURNAME>.
+Assertion.
+In Peter Cole, editor, Syntax and Semantics, Volume 9:
+  Pragmatics, pages 315-332. Academic Press, <DATE>1978</DATE>.
+</REFERENCE>
+<REFERENCE>
+Marilyn A. <SURNAME>Walker</SURNAME> and Steve <SURNAME>Whittaker</SURNAME>.
+Mixed initiative in dialogue: An investigation into discourse
+  segmentation.
+In Proc. 28th Annual Meeting of the ACL, pages 70-79, <DATE>1990</DATE>.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

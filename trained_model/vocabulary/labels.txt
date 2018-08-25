@@ -1,0 +1,7 @@
+OWN
+OTH
+BKG
+CTR
+AIM
+BAS
+TXT

@@ -1,0 +1,378 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9503025</FILENO>
+<APPEARED><CONFERENCE>COLING</CONFERENCE><YEAR>1994</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.St </CLASSIFICATION>
+</METADATA>
+<TITLE> Occurrence Vectors from Corpora Vs. Distance Vectors from Dictionaries </TITLE>
+<AUTHORLIST>
+<AUTHOR>Yoshiki Niwa</AUTHOR>
+<AUTHOR>Yoshihiko Nitta</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' DOCUMENTC='S-106' AZ='AIM'> A comparison was made of vectors derived by using ordinary co-occurrence statistics from large text corpora and of vectors derived by measuring the inter-word distances in dictionary definitions . </A-S>
+<A-S ID='A-1' DOCUMENTC='S-107' AZ='OWN'> The precision of word sense disambiguation by using co-occurrence vectors from the 1987 Wall Street Journal ( 20 M total words ) was higher than that by using distance vectors from the Collins English Dictionary ( head words + definition words ) . </A-S>
+<A-S ID='A-2' DOCUMENTC='S-109' AZ='OWN'> However , other experimental results suggest that distance vectors contain some different semantic information from co-occurrence vectors . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> Word vectors reflecting word meanings are expected to enable numerical approaches to semantics . </S>
+<S ID='S-1' AZ='OTH'> Some early attempts at vector representation in psycholinguistics were the semantic differential approach <REF TYPE='P'>Osgood et al. 1957</REF> and the associative distribution approach <REF TYPE='P'>Deese 1962</REF> . </S>
+<S ID='S-2' AZ='CTR'> However , they were derived manually through psychological experiments . </S>
+<S ID='S-3' AZ='OTH'> An early attempt at automation was made by <REF TYPE='A'>Wilks et al. 1990</REF> using co-occurrence statistics . </S>
+<S ID='S-4' AZ='OTH'> Since then , there have been some promising results from using co-occurrence vectors , such as word sense disambiguation <REF TYPE='P'>Schuetze 1993</REF> , and word clustering <REF TYPE='P'>Pereira et al. 1993</REF> . </S>
+</P>
+<P>
+<S ID='S-5' AZ='CTR'> However , using the co-occurrence statistics requires a huge corpus that covers even most rare words . </S>
+<S ID='S-6' AZ='OTH'> We recently developed word vectors that are derived from an ordinary dictionary by measuring the inter-word distances in the word definitions <REF SELF="YES" TYPE='P'>Niwa and Nitta 1993</REF> . </S>
+<S ID='S-7' AZ='OTH'> This method , by its nature , has no problem handling rare words . </S>
+<S ID='S-8' AZ='AIM'> In this paper we examine the usefulness of these distance vectors as semantic representations by comparing them with co-occurrence vectors . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Distance Vectors </HEADER>
+<P>
+<S ID='S-9' AZ='OTH'> A reference network of the words in a dictionary ( Fig. <CREF/> ) is used to measure the distance between words . </S>
+<S ID='S-10' AZ='OTH'> The network is a graph that shows which words are used in the definition of each word <REF SELF="YES" TYPE='P'>Nitta 1988</REF> . </S>
+<S ID='S-11' AZ='OTH'> The network shown in Fig. <CREF/> is for a very small portion of the reference network for the Collins English Dictionary ( 1979 edition ) in the CD-ROM I <REF TYPE='P'>Liberman 1991</REF> , with 60K head words + 1.6M definition words . </S>
+</P>
+<IMAGE ID='I-0'/>
+<P>
+<S ID='S-12' AZ='OTH'> For example , the definition for dictionary is `` a book in which the words of a language are listed alphabetically ... '' </S>
+<S ID='S-13' AZ='OTH'> The word dictionary is thus linked to the words book , word , language , and alphabetical . </S>
+<S ID='S-14' AZ='OTH'> A word vector is defined as the list of distances from a word to a certain set of selected words , which we call origins . </S>
+<S ID='S-15' AZ='OTH'> The words in Fig. <CREF/> marked with <EQN/> ( unit , book , and people ) are assumed to be origin words . </S>
+<S ID='S-16' AZ='OTH'> In principle , origin words can be freely chosen . </S>
+<S ID='S-17' AZ='OTH'> In our experiments we used middle frequency words : the 51st to 1050th most frequent words in the reference Collins English Dictionary ( CED ) . </S>
+</P>
+<P>
+<S ID='S-18' AZ='OTH'> The distance vector for dictionary is derived as follows : </S>
+</P>
+<IMAGE ID='I-1'/>
+<P>
+<S ID='S-19' AZ='OTH'> The i-th element is the distance ( the length of the shortest path ) between dictionary and the i-th origin , <EQN/> . </S>
+<S ID='S-20' AZ='OTH'> To begin , we assume every link has a constant length of 1 . </S>
+<S ID='S-21' AZ='OTH'> The actual definition for link length will be given later . </S>
+</P>
+<P>
+<S ID='S-22' AZ='OTH'> If word A is used in the definition of word B , these words are expected to be strongly related . </S>
+<S ID='S-23' AZ='OTH'> This is the basis of our hypothesis that the distances in the reference network reflect the associative distances between words <REF SELF="YES" TYPE='P'>Nitta 1993</REF> . </S>
+</P>
+<P>
+<S ID='S-24' AZ='OTH'> Use of Reference Networks</S>
+<S ID='S-25' AZ='OTH'> Reference networks have been successfully used as neural networks ( by <REF TYPE='A'>Vronis and Ide 1990</REF> for word sense disambiguation ) and as fields for artificial association , such as spreading activation ( by <REF TYPE='A'>Kozima and Furugori 1993</REF> for context-coherence measurement ) . </S>
+<S ID='S-26' AZ='OTH'> The distance vector of a word can be considered to be a list of the activation strengths at the origin nodes when the word node is activated . </S>
+<S ID='S-27' AZ='OTH'> Therefore , distance vectors can be expected to convey almost the same information as the entire network , and clearly they are much easier to handle . </S>
+</P>
+<P>
+<S ID='S-28' AZ='OTH'> Dependence on Dictionaries</S>
+<S ID='S-29' AZ='OTH'> As a semantic representation of words , distance vectors are expected to depend very weakly on the particular source dictionary . </S>
+<S ID='S-30' AZ='OTH'> We compared two sets of distance vectors , one from LDOCE <REF TYPE='P'>Procter 1978</REF> and the other from COBUILD <REF TYPE='P'>Sinclair 1987</REF> , and verified that their difference is at least smaller than the difference of the word definitions themselves <REF SELF="YES" TYPE='P'>Niwa and Nitta 1993</REF> . </S>
+</P>
+<P>
+<S ID='S-31' AZ='TXT'> We will now describe some technical details about the derivation of distance vectors . </S>
+</P>
+<P>
+<S ID='S-32' AZ='OTH'> Link Length</S>
+<S ID='S-33' AZ='OTH'> Distance measurement in a reference network depends on the definition of link length . </S>
+<S ID='S-34' AZ='OTH'> Previously , we assumed for simplicity that every link has a constant length . </S>
+<S ID='S-35' AZ='CTR'> However , this simple definition seems unnatural because it does not reflect word frequency . </S>
+<S ID='S-36' AZ='OWN'> Because a path through low-frequency words ( rare words ) implies a strong relation , it should be measured as a shorter path . </S>
+<S ID='S-37' AZ='OWN'> Therefore , we use the following definition of link length , which takes account of word frequency . </S>
+<IMAGE ID='I-2'/>
+<S ID='S-38' AZ='OWN'> This shows the length of the links between words W <EQN/> in Fig. <CREF/> , where N <EQN/> denotes the total number of links from and to W <EQN/> and n denotes the number of direct links between these two words . </S>
+<IMAGE ID='I-3'/>
+</P>
+<P>
+<S ID='S-39' AZ='OWN'> Normalization</S>
+<S ID='S-40' AZ='OWN'> Distance vectors are normalized by first changing each coordinate into its deviation in the coordinate : </S>
+<IMAGE ID='I-4'/>
+<S ID='S-41' AZ='OWN'> where <EQN/> are the average and the standard deviation of the distances from the <EQN/> - th origin . </S>
+<S ID='S-42' AZ='OWN'> Next , each coordinate is changed into its deviation in the vector : </S>
+<IMAGE ID='I-5'/>
+<S ID='S-43' AZ='OWN'> where <EQN/> are the average and the standard deviation of <EQN/> </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-2'> Co-Occurrence Vectors </HEADER>
+<P>
+<S ID='S-44' AZ='BAS'> We use ordinary co-occurrence statistics and measure the co-occurrence likelihood between two words , X and Y , by the mutual information estimate <REF TYPE='P'>Church and Hanks 1989</REF> . </S>
+<IMAGE ID='I-6'/>
+</P>
+<P>
+<S ID='S-45' AZ='OWN'> where <EQN/> is the occurrence density of word X in a whole corpus , and the conditional probability <EQN/> is the density of X in a neighborhood of word Y. Here the neighborhood is defined as 50 words before or after any appearance of word Y . </S>
+<S ID='S-46' AZ='BAS'> ( There is a variety of neighborhood definitions such as `` 100 surrounding words '' <REF TYPE='P'>Yarowsky 1992</REF> and `` within a distance of no more than 3 words ignoring function words '' <REF TYPE='P'>Dagan et al. 1993</REF> . ) </S>
+<S ID='S-47' AZ='OWN'> The logarithm with ` + ' is defined to be 0 for an argument less than 1 . </S>
+<S ID='S-48' AZ='OWN'> Negative estimates were neglected because they are mostly accidental except when X and Y are frequent enough <REF TYPE='P'>Church and Hanks 1989</REF> . </S>
+</P>
+<P>
+<S ID='S-49' AZ='OTH'> A co-occurence vector of a word is defined as the list of co-occurrence likelihood of the word with a certain set of origin words . </S>
+<S ID='S-50' AZ='OTH'> We used the same set of origin words as for the distance vectors . </S>
+<IMAGE ID='I-7'/>
+</P>
+<P>
+<S ID='S-51' AZ='OTH'> When the frequency of X or Y is zero , we can not measure their co-occurence likelihood , and such cases are not exceptional . </S>
+<S ID='S-52' AZ='OTH'> This sparseness problem is well-known and serious in the co-occurrence statistics . </S>
+<S ID='S-53' AZ='BAS'> We used as a corpus the 1987 Wall Street Journal in the CD-ROM I <REF TYPE='P'>Liberman 1991</REF> , which has a total of 20 M words . </S>
+<S ID='S-54' AZ='OWN'> The number of words which appeared at least once was about 50 % of the total 62 K head words of CED , and the percentage of the word-origin pairs which appeared at least once was about 16 % of total 62 K <EQN/> 1 K ( = 62 M ) pairs . </S>
+<S ID='S-55' AZ='OWN'> When the co-occurrence likelihood can not be measured , the value <EQN/> was set to 0 . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-3'> Experimental Results </HEADER>
+<P>
+<S ID='S-56' AZ='OWN'> We compared the two vector representations by using them for the following two semantic tasks . </S>
+<S ID='S-57' AZ='OWN'> The first is word sense disambiguation ( WSD ) based on the similarity of context vectors ; the second is the learning of or meanings from example words . </S>
+</P>
+<P>
+<S ID='S-58' AZ='OWN'> With WSD , the precision by using co-occurrence vectors from a 20 M words corpus was higher than by using distance vectors from the CED . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-4'> Word Sense Disambiguation </HEADER>
+<P>
+<S ID='S-59' AZ='BKG'> Word sense disambiguation is a serious semantic problem . </S>
+<S ID='S-60' AZ='BKG'> A variety of approaches have been proposed for solving it . </S>
+<S ID='S-61' AZ='OTH'> For example , <REF TYPE='A'>Vronis and Ide 1990</REF> used reference networks as neural networks , <REF TYPE='A'>Hearst 1991</REF> used ( shallow ) syntactic similarity between contexts , <REF TYPE='A'>Cowie et al. 1992</REF> used simulated annealing for quick parallel disambiguation , and <REF TYPE='A'>Yarowsky 1992</REF> used co-occurrence statistics between words and thesaurus categories . </S>
+</P>
+<P>
+<S ID='S-62' AZ='BAS'> Our disambiguation method is based on the similarity of context vectors , which was originated by <REF TYPE='A'>Wilks et al. 1990</REF> . </S>
+<S ID='S-63' AZ='OTH'> In this method , a context vector is the sum of its constituent word vectors ( except the target word itself ) . </S>
+<S ID='S-64' AZ='OTH'> That is , the context vector for context ,  </S>
+<IMAGE ID='I-8'/>
+</P>
+<P>
+<S ID='S-65' AZ='OTH'> is </S>
+<IMAGE ID='I-9'/>
+</P>
+<P>
+<S ID='S-66' AZ='OTH'> The similarity of contexts is measured by the angle of their vectors ( or actually the inner product of their normalized vectors ) . </S>
+<IMAGE ID='I-10'/>
+</P>
+<P>
+<S ID='S-67' AZ='OTH'> Let word <EQN/> , and each sense have the following context examples . </S>
+<IMAGE ID='I-11'/>
+</P>
+<P>
+<S ID='S-68' AZ='OTH'> We infer that the sense of word <EQN/> in an arbitrary context <EQN/> is <EQN/> , is maximum among all the context examples . </S>
+</P>
+<P>
+<S ID='S-69' AZ='OTH'> Another possible way to infer the sense is to choose sense <EQN/> such that the average of <EQN/> over <EQN/> is maximum . </S>
+<S ID='S-70' AZ='OWN'> We selected the first method because a peculiarly similar example is more important than the average similarity . </S>
+</P>
+<P>
+<S ID='S-71' AZ='OWN'> Figure <CREF/> ( next page ) shows the disambiguation precision for 9 words . </S>
+<S ID='S-72' AZ='OWN'> For each word , we selected two senses shown over each graph . </S>
+<S ID='S-73' AZ='OWN'> These senses were chosen because they are clearly different and we could collect sufficient number ( more than 20 ) of context examples . </S>
+<S ID='S-74' AZ='OWN'> The names of senses were chosen from the category names in Roget 's International Thesaurus , except organ 's . </S>
+</P>
+<P>
+<S ID='S-75' AZ='OWN'> The results using distance vectors are shown by dots ( <EQN/> <EQN/> <EQN/> ) , and using co-occurrence vectors from the 1987 WSJ ( 20 M words ) by circles ( <EQN/> <EQN/> <EQN/> ) . </S>
+</P>
+<P>
+<S ID='S-76' AZ='OWN'> A context size ( x-axis ) of , for example , 10 means 10 words before the target word and 10 words after the target word . </S>
+<S ID='S-77' AZ='OWN'> We used 20 examples per sense ; they were taken from the 1988 WSJ . </S>
+<S ID='S-78' AZ='OWN'> The test contexts were from the 1987 WSJ : The number of test contexts varies from word to word ( 100 to 1000 ) . </S>
+<S ID='S-79' AZ='OWN'> The precision is the simple average of the respective precisions for the two senses . </S>
+</P>
+<P>
+<S ID='S-80' AZ='OWN'> The results of Fig. <CREF/> show that the precision by using co-occurrence vectors are higher than that by using distance vectors except two cases , interest and customs . </S>
+<S ID='S-81' AZ='OWN'> And we have not yet found a case where the distance vectors give higher precision . </S>
+<S ID='S-82' AZ='OWN'> Therefore we conclude that co-occurrence vectors are advantageous over distance vectors to WSD based on the context similarity . </S>
+</P>
+<P>
+<S ID='S-83' AZ='OWN'> The sparseness problem for co-occurrence vectors is not serious in this case because each context consists of plural words . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-5'> Learning of positive-or-negative </HEADER>
+<P>
+<S ID='S-84' AZ='OWN'> Another experiment using the same two vector representations was done to measure the learning of or meanings . </S>
+<S ID='S-85' AZ='OWN'> Figure <CREF/> shows the changes in the precision ( the percentage of agreement with the authors ' combined judgement ) . </S>
+<S ID='S-86' AZ='OWN'> The x-axis indicates the number of example words for each or pair . </S>
+<S ID='S-87' AZ='OWN'> Judgement was again done by using the nearest example . </S>
+<S ID='S-88' AZ='OWN'> The example and test words are shown in Tables <CREF/> and <CREF/> , respectively . </S>
+<IMAGE ID='I-12'/>
+</P>
+<P>
+<S ID='S-89' AZ='OWN'> In this case , the distance vectors were advantageous . </S>
+<S ID='S-90' AZ='OWN'> The precision by using distance vectors increased to about 80 % and then leveled off , while the precision by using co-occurrence vectors stayed around 60 % . </S>
+<S ID='S-91' AZ='OWN'> We can therefore conclude that the property of positive-or-negative is reflected in distance vectors more strongly than in co-occurrence vectors . </S>
+<S ID='S-92' AZ='OWN'> The sparseness problem is supposed to be a major factor in this case . </S>
+<IMAGE ID='I-13'/>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-6'> Supplementary Data </HEADER>
+<P>
+<S ID='S-93' AZ='OWN'> In the experiments discussed above , the corpus size for co-occurrence vectors was set to 20 M words ( ' 87 WSJ ) and the vector dimension for both co-occurrence and distance vectors was set to 1000 . </S>
+<S ID='S-94' AZ='OWN'> Here we show some supplementary data that support these parameter settings </S>
+</P>
+<P>
+<S ID='S-95' AZ='OWN'> Corpus size ( for co-occurrence vectors ) . </S>
+<S ID='S-96' AZ='OWN'> Figure <CREF/> shows the change in disambiguation precision as the corpus size for co-occurrence statistics increases from 200 words to 20 M words . </S>
+<S ID='S-97' AZ='OWN'> ( The words are suit , issue and race , the context size is 10 , and the number of examples per sense is 10 . ) These three graphs level off after around 1 M words . </S>
+<S ID='S-98' AZ='OWN'> Therefore , a corpus size of 20 M words is not too small . </S>
+<IMAGE ID='I-14'/>
+</P>
+<P>
+<S ID='S-99' AZ='OWN'> Vector Dimension . </S>
+<S ID='S-100' AZ='OWN' TYPE='ITEM'> Figure <CREF/> ( next page ) shows the dependence of disambiguation precision on the vector dimension for </S>
+<S ID='S-101' TYPE='ITEM' AZ='OWN' > co-occurrence and </S>
+<S ID='S-102' TYPE='ITEM' AZ='OWN' > distance vectors . </S>
+<S ID='S-103' AZ='OWN'> As for co-occurrence vectors , the precision levels off near a dimension of 100 . </S>
+<S ID='S-104' AZ='OWN'> Therefore , a dimension size of 1000 is sufficient or even redundant . </S>
+<S ID='S-105' AZ='OWN'> However , in the distance vector 's case , it is not clear whether the precision is leveling or still increasing around 1000 dimension . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-7'> Conclusion </HEADER>
+<P>
+<S ID='S-106' ABSTRACTC='A-0' AZ='AIM'> A comparison was made of co-occurrence vectors from large text corpora and of distance vectors from dictionary definitions . </S>
+</P>
+<P>
+<S ID='S-107' ABSTRACTC='A-1' AZ='CTR'> For the word sense disambiguation based on the context similarity , co-occurrence vectors from the 1987 Wall Street Journal ( 20 M total words ) was advantageous over distance vectors from the Collins English Dictionary ( head words + definition words ) . </S>
+</P>
+<P>
+<S ID='S-108' AZ='CTR'> For learning or meanings from example words , distance vectors gave remarkably higher precision than co-occurrence vectors . </S>
+<S ID='S-109' ABSTRACTC='A-2' AZ='OWN'> This suggests , though further investigation is required , that distance vectors contain some different semantic information from co-occurrence vectors . </S>
+<IMAGE ID='I-15'/>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+Kenneth W. <SURNAME>Church</SURNAME> and Patrick <SURNAME>Hanks</SURNAME>.
+<DATE>1989</DATE>.
+Word association norms, mutual information, and lexicography.
+In Proceedings of the 27th Annual Meeting of the Association
+for Computational Linguistics, pages 76-83, Vancouver, Canada.
+</REFERENCE>
+<REFERENCE>
+Jim <SURNAME>Cowie</SURNAME>, Joe <SURNAME>Guthrie</SURNAME>, and Louise <SURNAME>Guthrie</SURNAME>.
+<DATE>1992</DATE>.
+Lexical disambiguation using simulated annealing.
+In Proceedings of COLING-92, pages 359-365, Nantes, France.
+</REFERENCE>
+<REFERENCE>
+Ido <SURNAME>Dagan</SURNAME>, Shaul <SURNAME>Marcus</SURNAME>, and Shaul <SURNAME>Markovitch</SURNAME>.
+<DATE>1993</DATE>.
+Contextual word similarity and estimation from sparse data.
+In Proceedings of the 31st Annual Meeting of the Association
+for Computational Linguistics, pages 164-171, Columbus, Ohio.
+</REFERENCE>
+<REFERENCE>
+James <SURNAME>Deese</SURNAME>.
+<DATE>1962</DATE>.
+On the structure of associative meaning.
+Psychological Review, 69(3):161-175.
+</REFERENCE>
+<REFERENCE>
+Marti A. <SURNAME>Hearst</SURNAME>.
+<DATE>1991</DATE>.
+Noun homograph disambiguation using local context in large text
+  corpora.
+In Proceedings of the 7th Annual Conference of the University of
+  Waterloo Center for the New OED and Text Research, pages 1-22, Oxford.
+</REFERENCE>
+<REFERENCE>
+Hideki <SURNAME>Kozima</SURNAME> and Teiji <SURNAME>Furugori</SURNAME>.
+<DATE>1993</DATE>.
+Similarity between words computed by spreading activation on an
+  english dictionary.
+In Proceedings of EACL-93, pages 232-239, Utrecht, the
+  Netherlands.
+</REFERENCE>
+<REFERENCE>
+Mark <SURNAME>Liberman</SURNAME>, editor.
+<DATE>1991</DATE>.
+CD-ROM I.
+Association for Computational Linguistics Data Collection Initiative,
+  University of Pennsylvania.
+</REFERENCE>
+<REFERENCE>
+Yoshihiko <SURNAME>Nitta</SURNAME>.
+<DATE>1988</DATE>.
+The referential structure of the word definitions in ordinary
+  dictionaries.
+In Proceedings of the Workshop on the Aspects of Lexicon for
+  Natural Language Processing, LNL88-8, JSSST, pages 1-21, Fukuoka
+  University, Japan.
+(in Japanese).
+</REFERENCE>
+<REFERENCE>
+Yoshihiko <SURNAME>Nitta</SURNAME>.
+<DATE>1993</DATE>.
+Referential structure - a mechanism for giving word-definition in
+  ordinary lexicons.
+In C. Lee and B. Kang, editors, Language, Information and
+  Computation, pages 99-110. Thaehaksa, Seoul.
+</REFERENCE>
+<REFERENCE>
+Yoshiki <SURNAME>Niwa</SURNAME> and Yoshihiko <SURNAME>Nitta</SURNAME>.
+<DATE>1993</DATE>.
+Distance vector representation of words, derived from reference
+  networks in ordinary dictionaries.
+MCCS 93-253, Computing Research Laboratory, New Mexico State
+  University, Las Cruces.
+</REFERENCE>
+<REFERENCE>
+C. E. <SURNAME>Osgood</SURNAME>, G. F. <SURNAME>Such</SURNAME>, and P. H. <SURNAME>Tannenbaum</SURNAME>.
+<DATE>1957</DATE>.
+The Measurement of Meaning.
+University of Illinois Press, Urbana.
+</REFERENCE>
+<REFERENCE>
+Fernando <SURNAME>Pereira</SURNAME>, Naftali <SURNAME>Tishby</SURNAME>, and Lillian <SURNAME>Lee</SURNAME>.
+<DATE>1993</DATE>.
+Distributional clustering of english words.
+In Proceedings of the 31st Annual Meeting of the Association for
+  Computational Linguistics, pages 183-190, Columbus, Ohio.
+</REFERENCE>
+<REFERENCE>
+Paul <SURNAME>Procter</SURNAME>, editor.
+<DATE>1978</DATE>.
+Longman Dictionary of Contemporary English (LDOCE).
+Longman, Harlow, Essex, first edition.
+</REFERENCE>
+<REFERENCE>
+Hinrich <SURNAME>Schtze</SURNAME>.
+<DATE>1993</DATE>.
+Word space.
+In J. D. Cowan S. J. Hanson and C. L. Giles, editors, Advances
+  in Neural Information Processing Systems, pages 895-902. Morgan Kaufmann,
+  San Mateo, California.
+</REFERENCE>
+<REFERENCE>
+John <SURNAME>Sinclair</SURNAME>, editor.
+<DATE>1987</DATE>.
+Collins COBUILD English Language Dictionary.
+Collins and the University of Birmingham, London.
+</REFERENCE>
+<REFERENCE>
+Jean <SURNAME>Vronis</SURNAME> and Nancy M. <SURNAME>Ide</SURNAME>.
+<DATE>1990</DATE>.
+Word sense disambiguation with very large neural networks extracted
+  from machine readable dictionaries.
+In Proceedings of COLING-90, pages 389-394, Helsinki.
+</REFERENCE>
+<REFERENCE>
+Yorick <SURNAME>Wilks</SURNAME>, Dan <SURNAME>Fass</SURNAME>, Cheng ming Guo, James E. McDonald, Tony Plate, and
+  Brian M. Slator.
+<DATE>1990</DATE>.
+Providing machine tractable dictionary tools.
+Machine Translation, 5(2):99-154.
+</REFERENCE>
+<REFERENCE>
+David <SURNAME>Yarowsky</SURNAME>.
+<DATE>1992</DATE>.
+Word-sense disambiguation using statistical models of roget's
+  categories trained on large corpora.
+In Proceedings of COLING-92, pages 454-460, Nantes, France.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

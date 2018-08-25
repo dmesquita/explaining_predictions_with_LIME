@@ -1,0 +1,234 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9502031</FILENO>
+<APPEARED><CONFERENCE TYPE='Student'>EACL</CONFERENCE><YEAR>1995</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.Gr.Ps Lg.Pr.Ap.Ot </CLASSIFICATION>
+</METADATA>
+<TITLE> Cooperative Error Handling and Shallow Processing </TITLE>
+<AUTHORLIST>
+<AUTHOR>Tanya Bowden</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' AZ='AIM'> This paper is concerned with the detection and correction of sub-sentential English text errors . </A-S>
+<A-S ID='A-1' AZ='OTH'> Previous spelling programs , unless restricted to a very small set of words , have operated as post-processors . </A-S>
+<A-S ID='A-2' AZ='OTH'> And to date , grammar checkers and other programs which deal with ill-formed input usually step directly from spelling considerations to a full-scale parse , assuming a complete sentence . </A-S>
+<A-S ID='A-3' AZ='AIM'> Work described below is aimed at evaluating the effectiveness of shallow ( sub-sentential ) processing and the feasibility of cooperative error checking , through building and testing appropriately an error-processing system . </A-S>
+<A-S ID='A-4' AZ='AIM'> A system under construction is outlined which incorporates morphological checks ( using new two-level error rules ) over a directed letter graph , tag positional trigrams and partial parsing . </A-S>
+<A-S ID='A-5' AZ='OWN'> Intended testing is discussed . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> Unless a keyboard user is particularly proficient , a frustrating amount of time is usually spent backtracking to pick up mis-typed or otherwise mistaken input . </S>
+<S ID='S-1' AZ='AIM'> Work described in this paper started from an idea of an error processor that would sit on top of an editor , detecting / correcting errors just after entry , while the user continued with further text , relieved from tedious backtracking . </S>
+<S ID='S-2' AZ='OWN'> Hence ` co-operative ' error processing . </S>
+<S ID='S-3' AZ='OWN'> But if a program is to catch such errors very soon after they are entered , it will have to operate with less than the complete sentence . </S>
+</P>
+<P>
+<S ID='S-4' AZ='AIM'> Work underway focuses on shallow processing : how far error detection and correction can proceed when the system purview is set to a stretch of text which does not admit complete sentential analysis . </S>
+<S ID='S-5' AZ='OTH'> To date , grammar checkers and other programs which deal with illformed input usually step directly from spelling considerations to a full-scale sentence parse . </S>
+<S ID='S-6' AZ='CTR'> However treating the sentence as a basic unit loses meaning when the ` sentence ' is incomplete or illformed . </S>
+<S ID='S-7' AZ='OWN'> Shallow processing is also interesting because it should be cheaper and faster than a complete analysis of the whole sentence . </S>
+</P>
+<P>
+<S ID='S-8' AZ='OWN'> To investigate issues involved in shallow processing and cooperative error handling , the PET ( processing errors in text ) system is being built . </S>
+<S ID='S-9' AZ='OWN'> The focus is on these two issues ; no attempt is being made to produce a complete product . </S>
+<S ID='S-10' AZ='OWN'> PET operates over a shifting window of text ( it can be attached simply and asynchronously to the Emacs editor ) . </S>
+<S ID='S-11' AZ='OWN'> One word in this purview is in focus at a time . </S>
+<S ID='S-12' AZ='OWN'> PET will give one of three responses to this word ; it will accept the word , suggest a correction , or indicate that it found an error it couldn't correct . </S>
+<S ID='S-13' AZ='TXT'> Below follow an outline and discussion of the ( linguistic ) components of PET and discussion of testing and evaluation of the system . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> PET System </HEADER>
+<DIV DEPTH='2'>
+<HEADER ID='H-2'> Morphological Processing &amp; Spelling Checking </HEADER>
+<P>
+<S ID='S-14' AZ='BAS'> The word in focus is first passed through a two-level morphological analysis stage , based on an adaption of <REF TYPE='A'>Pulman 1991</REF> . </S>
+<S ID='S-15' AZ='OWN'> Two purposes are served here : checking the word is lexical ( i.e. in the lexicon or a permissible inflection of a word in the lexicon ) and collecting the possible categories , which are represented as sets of feature specifications <REF TYPE='P'>Grover et al. 1993</REF> . </S>
+</P>
+<P>
+<S ID='S-16' AZ='OWN'> This morphological lookup operates over a character trie which has been compressed into a ( directed ) graph . </S>
+<S ID='S-17' AZ='OWN'> Common endings are shared and category information is stored on the first unique transition . </S>
+<S ID='S-18' AZ='OWN' TYPE='ITEM'> The advantages of this compression are that </S>
+<S ID='S-19' TYPE='ITEM' AZ='OWN' > a word / morpheme is recognised ( and category affixation rules <REF TYPE='P'>Grover 1993</REF> checked ) as soon as the initial letters allow uniqueness , rather than at the end of the word , and </S>
+<S ID='S-20' TYPE='ITEM' AZ='OWN' > there is an immense saving of space . </S>
+<S ID='S-21' AZ='OWN'> There was a reduction of over half the transitions on the trie formed from the Alvey lexicon . </S>
+</P>
+<P>
+<S ID='S-22' AZ='OWN'> If the word is unknown , the system reconsiders analysis from the point where it broke down with the added possibility of an error rule . </S>
+<S ID='S-23' AZ='BAS'> There are currently four error rules , corresponding to the four <REFAUTHOR>Damerau</REFAUTHOR> transformations : omission , insertion , transposition , substitution <REF TYPE='P'>Damerau 1964</REF> - considered in that order <REF TYPE='P'>Pollock 1983</REF> . </S>
+<S ID='S-24' AZ='OWN'> The error rules are in two level format and integrate seamlessly into morphological analysis . </S>
+</P>
+<IMAGE ID='I-0'/>
+<P>
+<S ID='S-25' AZ='OWN'> This says that any letter ( ` X ' ) can be inserted , with asterisks indicating that it can occur in any context ( compare with <REF TYPE='A'>Pulman 1991</REF> ) . </S>
+<S ID='S-26' AZ='OWN'> The right hand side represents the ` error surface ' and the left hand side the surface with error removed . </S>
+</P>
+<P>
+<S ID='S-27' AZ='OWN'> If this doesn't succeed , it backtracks to try an error rule at an earlier point in the analysis . </S>
+<S ID='S-28' AZ='OWN'> At present it will not apply more than one error rule per word , in keeping with findings on error frequencies <REF TYPE='P'>Pollock 1983</REF> . </S>
+</P>
+<P>
+<S ID='S-29' AZ='BAS'> As an alternative , a program was developed which uses positional binary trigrams <REF TYPE='P'>Riseman 1974</REF> ( p.b.t. 's ) to spot the error position and to check candidate corrections generated by reverse <REFAUTHOR>Damerau</REFAUTHOR> transformations . </S>
+<S ID='S-30' AZ='OWN'> This should have the advantage over the two level error rules in that it uses a good method of calculating likely error positions and because a set of correction possibilities can be generated fairly cheaply . </S>
+<S ID='S-31' AZ='OWN'> ( Correction possibilities are ranked using frequency information on <REFAUTHOR>Damerau</REFAUTHOR> errors and by giving preference to very common words .  )</S>
+<S ID='S-32' AZ='OWN'> However initial tests over a small file of constructed errors showed that the error rules did just as well ( slightly better in fact ) at choosing the ` correct correction ' . </S>
+</P>
+<P>
+<S ID='S-33' AZ='OWN'> The error rules are applied when ordinary morphological rules fail - which is usually a place p.b.t. 's would mark as in error - but the rules don't ignore error locations p.b.t. 's accept as allowable letter combinations . </S>
+<S ID='S-34' AZ='OWN'> Most importantly , the error rules operate over a letter graph of the lexicon , so only ever consider lexical words ( unknown letters are instantiated to the letters associated with the transition options ) . </S>
+<S ID='S-35' AZ='OWN'> The disadvantage remains that generating many correction possibilities ( with SICStus backtracking ) is time-consuming . </S>
+<S ID='S-36' AZ='OWN'> At present this phase postulates only one grapheme at a time , although all its possible categories are passed along together to later stages . </S>
+<S ID='S-37' AZ='OWN'> If all of these categories eventually fail analysis , backtracking to alternative correction candidates ( different graphemes ) will occur .</S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-3'> Tag Checking &amp; Partial Parsing </HEADER>
+<P>
+<S ID='S-38' AZ='OWN'> The Alvey features are mapped on to the CLAWS tagset used in the LOB corpus <REF TYPE='P'>Garside et al. 1987</REF> . </S>
+<S ID='S-39' AZ='OWN'> Tag transitions are checked against an occurrence matrix of the tagged LOB corpus using positional binary trigrams similar to those used in the spelling checks mentioned above . </S>
+<S ID='S-40' AZ='OWN'> Tag checks though the current set of categories stop when one category passes , but backtrack and continue if parsing then fails . </S>
+</P>
+<P>
+<S ID='S-41' AZ='OTH'> The Core Language Engine ( CLE ) is an application independent , unification based `` general purpose device for mapping between natural language sentences and logical form representations <REF TYPE='P'>Alshawi 1992</REF> . </S>
+<S ID='S-42' AZ='OTH'> Its intermediate syntactic stages involve phrasal parsing followed by full syntactic analysis ( top-down , left-corner ) . </S>
+<S ID='S-43' AZ='OTH'> If the latter stage fails , CLE invokes partial parsing . </S>
+</P>
+<P>
+<S ID='S-44' AZ='BAS'> The phrasal phase and partial parsing have been extracted and are being adapted to the present purpose . </S>
+<S ID='S-45' AZ='OWN'> After mapping onto CLE tags , application of the phrasal phase , which implements bottom-up parsing , is straightforward . </S>
+<S ID='S-46' AZ='OWN'> CLE partial parsing , using left-corner analysis combined with top-down prediction on the results of the phrasal phase , looks for complete phrases and breaks down a wordstring into maximal segments . </S>
+</P>
+<IMAGE ID='I-1'/>
+<P>
+<S ID='S-47' AZ='OWN'> For example , <CREF/> produces 1 segment and <CREF/> produces 4 segments - whereas `` ate the nice friendly cat would produce 1 segment . </S>
+</P>
+<P>
+<S ID='S-48' AZ='OWN'> Partial parsing needs to be adapted to support the idea of the PET purview ; partial parsing that accepts any string likely to constitute part of a sentence . </S>
+<S ID='S-49' AZ='OWN'> To achieve this the ends of the wordstring delimited by the purview need to be treated differently . </S>
+<S ID='S-50' AZ='OWN'> On the right hand end , ` can start rule ' possibilities of words can be considered , using the prediction facility already built into the parsing process . </S>
+<S ID='S-51' AZ='OWN'> The left hand side could be treated by ` can end ' possibilities , but a better idea should be to keep within the purview ( ` remember ' ) previously derived constituents that involve current words . </S>
+</P>
+<P>
+<S ID='S-52' AZ='OWN'> There is a phase to be added after detection of a tag or partial parsing error . </S>
+<S ID='S-53' AZ='OWN'> Currently processing will just backtrack to the intraword correction level , but particularly if there has been no correction yet made , PET should consider here the possibility of a simple phrase error . </S>
+<S ID='S-54' AZ='OWN'> Examples are word doubling and omission of a common function word . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-4'> Various Extensions </HEADER>
+<P>
+<S ID='S-55' AZ='OWN'> <REFAUTHOR>Damerau</REFAUTHOR> transformations involving the space character ( e.g. splitting a word ) have not been implemented yet . </S>
+<S ID='S-56' AZ='OWN'> Handling deletion of a space , or substitution of another character for a space , are straightforward additions to the morphological process . </S>
+<S ID='S-57' AZ='OWN'> Transposition of a space could be dealt with by setting up an expectation upon discovering deletion of the last character of a word that the ` deleted ' character may be attached to the beginning of the next word . </S>
+<S ID='S-58' AZ='OWN'> Addition of a space is trickier because of the focus on the word as a processing unit , e.g. corrections for `` the re could include `` there or `` the red , but the present system will not generate the former possibility . </S>
+</P>
+<P>
+<S ID='S-59' AZ='OWN'> At present the word in focus is always the newest word in the purview . </S>
+<S ID='S-60' AZ='OWN'> Altering this would provide some right hand context information , which would among other things facilitate handling space addition . </S>
+<S ID='S-61' AZ='OWN'> Allowing this change would necessitate a more complex backtracking mechanism , as there would be a focus lag between morphological processing and later phases . </S>
+</P>
+<P>
+<S ID='S-62' AZ='OWN'> It would be sensible to keep a reference to the wider context , i.e. be able to refer to earlier detections / corrections . </S>
+<S ID='S-63' AZ='OWN'> With respect to the editor that PET is attached to , this could correspond to a log of errors already encountered in the file being edited . </S>
+<S ID='S-64' AZ='OWN'> A recent Microsoft product keeps a record of personal habitual mistakes . </S>
+<S ID='S-65' AZ='OWN'> Either could be a valuable aid in choosing the correct correction . </S>
+</P>
+<P>
+<S ID='S-66' AZ='OWN'> The system could possibly make better use of the graph state of its lexicon . </S>
+<S ID='S-67' AZ='OWN'> Word transformation implies either implicit or explicit string comparison . </S>
+<S ID='S-68' AZ='OWN'> The advantage of a graph over a trie is that it allows for comparison from the end of the word and well as the beginning . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-5'> Testing and Evaluation </HEADER>
+<P>
+<S ID='S-69' AZ='OWN'> With the aim of evaluating the effectiveness of shallow processing , tests will be carried out to see what proportion of different types of errors can be dealt with elegantly , adequately and / or efficiently . </S>
+<S ID='S-70' AZ='OWN'> Under examination will be the number of errors missed / caught and wrongly / rightly corrected . </S>
+<S ID='S-71' AZ='OWN'> Different components and configurations of the system will be compared , for example the error rules v. p.b.t. 's . </S>
+<S ID='S-72' AZ='OWN'> Parameters of the system will be varied , for example the breadth of the purview , the position of the purview focus , the number of correction candidates and the timing of their generation . </S>
+<S ID='S-73' AZ='OWN'> Will shallow processing miss too many of the errors cooperative error processing is aimed at ? </S>
+</P>
+<P>
+<S ID='S-74' AZ='OWN'> There are two significant difficulties with collecting test data . </S>
+<S ID='S-75' AZ='OWN'> The central difficulty is finding a representative sample of genuine errors by native speakers , in context , with the correct version of the text attached . </S>
+<S ID='S-76' AZ='OWN'> Apart from anything else , ` representative ' is hard to decide - spectrum of errors or distribution of errors ? </S>
+<S ID='S-77' AZ='OWN'> Secondly , any corpus of text usually contains only those errors that were left undetected in the text . </S>
+<S ID='S-78' AZ='OWN'> Cooperative processing deals with errors that one backtracks to catch ; if not a different class or range , these at least might have a different distribution of error types . </S>
+</P>
+<P>
+<S ID='S-79' AZ='OWN'> The ideal data would be records of peoples ' keystrokes when interacting with an editor while creating or editing a piece of text . </S>
+<S ID='S-80' AZ='OWN'> This would allow one measure of the ( linguistic ) feasibility of cooperative error processing : the effectiveness of shallow processing over errors revealed by the keystroke-record data . </S>
+<S ID='S-81' AZ='OWN'> There does not appear to be an English source of this kind , so it is planned to compile one . </S>
+</P>
+<P>
+<S ID='S-82' AZ='OWN'> For comparison , a variety of other data has been collected . </S>
+<S ID='S-83' AZ='OWN'> Preliminary tests used generated errors , from a program that produces random <REFAUTHOR>Damerau</REFAUTHOR> slips according to an observed distribution <REF TYPE='P'>Pollock 1983</REF> , using confusion matrices where appropriate <REF TYPE='P'>Kernighan et al. 1990</REF> . </S>
+<S ID='S-84' AZ='OWN'> Assembled data includes the Birkbeck corpus <REF TYPE='P'>Mitton 1986</REF> and multifarious misspelling lists ( without context ) . </S>
+<S ID='S-85' AZ='OWN'> Suggestions have been made to look for low frequency words in corpora and news / mail archives , and to the Longmans learner corpus ( not native speakers ) . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-6'> Acknowledgements </HEADER>
+<P>
+<S ID='S-86' AZ='OWN'> Thanks to all who offered advice on finding data , and to Dough McIlroy , Sue Blackwell and Neil Rowe for sending me their misspelling lists . </S>
+<S ID='S-87' AZ='OWN'> This work is supported by a British Telecom Scholarship , administered by the Cambridge Commonwealth Trust in conjunction with the Foreign and Commonwealth Office . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+  Hiyan <SURNAME>Alshawi</SURNAME>. <DATE>1992</DATE>.
+The Core Language Engine. Cambridge, Massachusetts: The MIT Press.
+</REFERENCE>
+<REFERENCE>
+  Fred J. <SURNAME>Damerau</SURNAME>. <DATE>1964</DATE>.
+``A Technique for Computer Detection and Correction of Spelling Errors,
+</REFERENCE>
+<REFERENCE>
+  Roger <SURNAME>Garside</SURNAME>, Geoffrey <SURNAME>Leech</SURNAME> and Geoffrey <SURNAME>Sampson</SURNAME>, eds.
+<DATE>1987</DATE>.
+The Computational Analysis of English.  Longman.
+Commun. ACM, 7(3):171-176.
+</REFERENCE>
+<REFERENCE>
+  Claire <SURNAME>Grover</SURNAME>, John <SURNAME>Carroll</SURNAME> and Ted <SURNAME>Briscoe</SURNAME>. <DATE>1993</DATE>.
+``The Alvey Natural Language Tools Grammar (4th Release),
+Tech. Rep. 284, Computer Lab, University of Cambridge.
+</REFERENCE>
+<REFERENCE>
+  Mark D. <SURNAME>Kernighan</SURNAME>, Kenneth W. <SURNAME>Church</SURNAME> and William A. <SURNAME>Gale</SURNAME>.
+<DATE>1990</DATE>.
+``A Spelling Correction Program Based on a Noisy Channel Model,
+Proc. Coling-90, pp 205-210.
+</REFERENCE>
+<REFERENCE>
+  Roger <SURNAME>Mitton</SURNAME>, ed. <DATE>1986</DATE>.
+A Collection of Computer-Readable Corpora of English Spelling Errors (ver. 2).
+Birkbeck College, University of London.
+</REFERENCE>
+<REFERENCE>
+  Joseph J. <SURNAME>Pollock</SURNAME> and Antonio <SURNAME>Zamora</SURNAME>. <DATE>1983</DATE>.
+``Collection and Characterization of Spelling Errors in Scientific and
+Scholarly Text,
+J. Am. Soc. Inf. Sci., 34(1):51-58.
+</REFERENCE>
+<REFERENCE>
+  Stephen G. <SURNAME>Pulman</SURNAME> and Mark R. <SURNAME>Hepple</SURNAME>. <DATE>1993</DATE>.
+``A feature-based formalism for two-level phonology: a description and
+implementation,
+Computer Speech and Language, 7(4):333-358.
+</REFERENCE>
+<REFERENCE>
+  Edward M. <SURNAME>Riseman</SURNAME> and Allen R. <SURNAME>Hanson</SURNAME>. <DATE>1974</DATE>.
+``A Contextual Postprocessing System for Error Correction Using Binary 
+n-Grams,
+IEEE Trans. Comput., C-23(5):480-493.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

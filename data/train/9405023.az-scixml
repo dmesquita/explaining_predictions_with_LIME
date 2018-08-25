@@ -1,0 +1,203 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9405023</FILENO>
+<APPEARED><CONFERENCE TYPE='Student'>ACL</CONFERENCE><YEAR>1994</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.Gr.Ps </CLASSIFICATION>
+</METADATA>
+<TITLE> An Integrated Heuristic Scheme for Partial Parse Evaluation </TITLE>
+<AUTHORLIST>
+<AUTHOR>Alon Lavie</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' DOCUMENTC='S-9' AZ='OTH'> GLR* is a recently developed robust version of the Generalized LR Parser <REF TYPE='P'>Tomita 1986</REF> , that can parse almost any input sentence by ignoring unrecognizable parts of the sentence . </A-S>
+<A-S ID='A-1' AZ='OTH'> On a given input sentence , the parser returns a collection of parses that correspond to maximal , or close to maximal , parsable subsets of the original input . </A-S>
+<A-S ID='A-2' DOCUMENTC='S-27' AZ='AIM'> This paper describes recent work on developing an integrated heuristic scheme for selecting the parse that is deemed `` best '' from such a collection . </A-S>
+<A-S ID='A-3' AZ='OWN'> We describe the heuristic measures used and their combination scheme . </A-S>
+<A-S ID='A-4' DOCUMENTC='S-67' AZ='OWN'> Preliminary results from experiments conducted on parsing speech recognized spontaneous speech are also reported . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> The GLR* Parser </HEADER>
+<DIV DEPTH='2'>
+<HEADER ID='H-1'> The GLR Parsing Algorithm </HEADER>
+<P>
+<S ID='S-0' AZ='OTH'> The Generalized LR Parser , developed by <REF TYPE='A'>Tomita 1986</REF> , extended the original LR parsing algorithm to the case of non-LR languages , where the parsing tables contain entries with multiple parsing actions . </S>
+<S ID='S-1' AZ='OTH'> <REFAUTHOR>Tomita</REFAUTHOR> 's algorithm uses a Graph Structured Stack ( GSS ) in order to efficiently pursue in parallel the different parsing options that arise as a result of the multiple entries in the parsing tables . </S>
+<S ID='S-2' AZ='OTH'> A second data structure uses pointers to keep track of all possible parse trees throughout the parsing of the input , while sharing common subtrees of these different parses . </S>
+<S ID='S-3' AZ='OTH'> A process of local ambiguity packing allows the parser to pack sub-parses that are rooted in the same non-terminal into a single structure that represents them all . </S>
+</P>
+<P>
+<S ID='S-4' AZ='OTH'> The GLR parser is the syntactic engine of the Universal Parser Architecture developed at CMU <REF TYPE='P'>Tomita et al. 1988</REF> . </S>
+<S ID='S-5' AZ='OTH'> The architecture supports grammatical specification in an LFG framework , that consists of context-free grammar rules augmented with feature bundles that are associated with the non-terminals of the rules . </S>
+<S ID='S-6' AZ='OTH'> Feature structure computation is , for the most part , specified and implemented via unification operations . </S>
+<S ID='S-7' AZ='OTH'> This allows the grammar to constrain the applicability of context-free rules . </S>
+<S ID='S-8' AZ='OTH'> The result of parsing an input sentence consists of both a parse tree and the computed feature structure associated with the non-terminal at the root of the tree . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-2'> The GLR* Parser </HEADER>
+<P>
+<S ID='S-9' ABSTRACTC='A-0' AZ='BAS'> GLR* is a recently developed robust version of the Generalized LR Parser , that allows the skipping of unrecognizable parts of the input sentence <REF SELF="YES" TYPE='P'>Lavie and Tomita 1993</REF> . </S>
+<S ID='S-10' AZ='OTH'> It is designed to enhance the parsability of domains such as spontaneous speech , where the input is likely to contain deviations from the grammar , due to either extra-grammaticalities or limited grammar coverage . </S>
+<S ID='S-11' AZ='OTH'> In cases where the complete input sentence is not covered by the grammar , the parser attempts to find a maximal subset of the input that is parsable . </S>
+<S ID='S-12' AZ='OTH'> In many cases , such a parse can serve as a good approximation to the true parse of the sentence . </S>
+</P>
+<P>
+<S ID='S-13' AZ='OTH'> The parser accommodates the skipping of words of the input string by allowing shift operations to be performed from inactive state nodes in the Graph Structured Stack ( GSS ) . </S>
+<S ID='S-14' AZ='OTH'> Shifting an input symbol from an inactive state is equivalent to skipping the words of the input that were encountered after the parser reached the inactive state and prior to the current word that is being shifted . </S>
+<S ID='S-15' AZ='OTH'> Since the parser is LR(0) , previous reduce operations remain valid even when words further along in the input are skipped . </S>
+<S ID='S-16' AZ='OTH'> Information about skipped words is maintained in the symbol nodes that represent parse sub-trees . </S>
+</P>
+<P>
+<S ID='S-17' AZ='OTH'> To guarantee runtime feasibility , the GLR* parser is coupled with a `` beam '' search heuristic , that dynamically restricts the skipping capability of the parser , so as to focus on parses of maximal and close to maximal substrings of the input . </S>
+<S ID='S-18' AZ='OTH'> The efficiency of the parser is also increased by an enhanced process of local ambiguity packing and pruning . </S>
+<S ID='S-19' AZ='OTH'> Locally ambiguous symbol nodes are compared in terms of the words skipped within them . </S>
+<S ID='S-20' AZ='OTH'> In cases where one phrase has more skipped words than the other , the phrase with more skipped words is discarded in favor of the more complete parsed phrase . </S>
+<S ID='S-21' AZ='OTH'> This operation significantly reduces the number of parses being pursued by the parser . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-3'> The Parse Evaluation Heuristics </HEADER>
+<P>
+<S ID='S-22' AZ='OTH'> At the end of the process of parsing a sentence , the GLR* parser returns with a set of possible parses , each corresponding to some grammatical subset of words of the input sentence . </S>
+<S ID='S-23' AZ='OTH'> Due to the beam search heuristic and the ambiguity packing scheme , this set of parses is limited to maximal or close to maximal grammatical subsets . </S>
+<S ID='S-24' AZ='OTH'> The principle goal is then to find the maximal parsable subset of the input string ( and its parse ) . </S>
+<S ID='S-25' AZ='CTR'> However , in many cases there are several distinct maximal parses , each consisting of a different subset of words of the original sentence . </S>
+<S ID='S-26' AZ='CTR'> Furthermore , our experience has shown that in many cases , ignoring an additional one or two input words may result in a parse that is syntactically and / or semantically more coherent . </S>
+<S ID='S-27' ABSTRACTC='A-2' AZ='AIM'> We have thus developed an evaluation heuristic that combines several different measures , in order to select the parse that is deemed overall `` best '' . </S>
+</P>
+<P>
+<S ID='S-28' AZ='OWN'> Our heuristic uses a set of features by which each of the parse candidates can be evaluated and compared . </S>
+<S ID='S-29' AZ='OWN'> We use features of both the candidate parse and the ignored parts of the original input sentence . </S>
+<S ID='S-30' AZ='OWN'> The features are designed to be general and , for the most part , grammar and domain independent . </S>
+<S ID='S-31' AZ='OWN'> For each parse , the heuristic computes a penalty score for each of the features . </S>
+<S ID='S-32' AZ='OWN'> The penalties of the different features are then combined into a single score using a linear combination . </S>
+<S ID='S-33' AZ='OWN'> The weights used in this scheme are adjustable , and can be optimized for a particular domain and / or grammar . </S>
+<S ID='S-34' AZ='OWN'> The parser then selects the parse ranked best ( i.e. the parse of lowest overall score ) . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-4'> The Parse Evaluation Features </HEADER>
+<P>
+<S ID='S-35' AZ='OWN' TYPE='ITEM'> So far , we have experimented with the following set of evaluation features : </S>
+</P>
+<P>
+<S ID='S-36' TYPE='ITEM' AZ='OWN'> The number and position of skipped words </S>
+<S ID='S-37' TYPE='ITEM' AZ='OWN'> The number of substituted words </S>
+<S ID='S-38' TYPE='ITEM' AZ='OWN'> The fragmentation of the parse analysis </S>
+<S ID='S-39' TYPE='ITEM' AZ='OWN'> The statistical score of the disambiguated parse tree . </S>
+</P>
+<P>
+<S ID='S-40' AZ='OWN'> The penalty scheme for skipped words is designed to prefer parses that correspond to fewer skipped words . </S>
+<S ID='S-41' AZ='OWN'> It assigns a penalty in the range of ( 0.95 - 1.05 ) for each word of the original sentence that was skipped . </S>
+<S ID='S-42' AZ='OWN'> The scheme is such that words that are skipped later in the sentence receive the slightly higher penalty . </S>
+<S ID='S-43' AZ='OWN'> This preference was designed to handle the phenomena of false starts , which is common in spontaneous speech . </S>
+</P>
+<P>
+<S ID='S-44' AZ='OTH'> The GLR* parser has a capability for handling common word substitutions when the parser 's input string is the output of a speech recognition system . </S>
+<S ID='S-45' AZ='OTH'> When the input contains a pre-determined commonly substituted word , the parser attempts to continue with both the original input word and a specified `` correct '' word . </S>
+<S ID='S-46' AZ='OWN'> The number of substituted words is used as an evaluation feature , so as to prefer an analysis with fewer substituted words . </S>
+</P>
+<P>
+<S ID='S-47' AZ='OWN'> The grammars we have been working with allow a single input sentence to be analyzed as several grammatical `` sentences '' or fragments . </S>
+<S ID='S-48' AZ='OWN'> Our experiments have indicated that , in most cases , a less fragmented analysis is more desirable . </S>
+<S ID='S-49' AZ='OWN'> We therefore use the sum of the number of fragments in the analysis as an additional feature . </S>
+</P>
+<P>
+<S ID='S-50' AZ='OWN'> We have recently augmented the parser with a statistical disambiguation module . </S>
+<S ID='S-51' AZ='BAS'> We use a framework similar to the one proposed by <REF TYPE='A'>Briscoe and Carroll 1993</REF> , in which the shift and reduce actions of the LR parsing tables are directly augmented with probabilities . </S>
+<S ID='S-52' AZ='OWN'> Training of the probabilities is performed on a set of disambiguated parses . </S>
+<S ID='S-53' AZ='OWN'> The probabilities of the parse actions induce statistical scores on alternative parse trees , which are used for disambiguation . </S>
+<S ID='S-54' AZ='OWN'> However , additionally , we use the statistical score of the disambiguated parse as an additional evaluation feature across parses . </S>
+<S ID='S-55' AZ='OWN'> The statistical score value is first converted into a confidence measure , such that more `` common '' parse trees receive a lower penalty score . </S>
+<S ID='S-56' AZ='OWN'> This is done using the following formula : </S>
+</P>
+<IMAGE ID='I-0'/>
+<P>
+<S ID='S-57' AZ='OWN'> The penalty scores of the features are then combined by a linear combination . </S>
+<S ID='S-58' AZ='OWN'> The weights assigned to the features determine the way they interact . </S>
+<S ID='S-59' AZ='OWN'> In our experiments so far , we have fined tuned these weights manually , so as to try and optimize the results on a training set of data . </S>
+<S ID='S-60' AZ='OWN'> However , we plan on investigating the possibility of using some known optimization techniques for this task . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-5'> The Parse Quality Heuristic </HEADER>
+<P>
+<S ID='S-61' AZ='OWN'> The utility of a parser such as GLR* obviously depends on the semantic coherency of the parse results that it returns . </S>
+<S ID='S-62' AZ='OWN'> Since the parser is designed to succeed in parsing almost any input , parsing success by itself can no longer provide a likely guarantee of such coherency . </S>
+<S ID='S-63' AZ='OWN'> Although we believe this task would ultimately be better handled by a domain dependent semantic analyzer that would follow the parser , we have attempted to partially handle this problem using a simple filtering scheme . </S>
+</P>
+<IMAGE ID='I-1'/>
+<P>
+<S ID='S-64' AZ='OWN'> The filtering scheme 's task is to classify the parse chosen as best by the parser into one of two categories : `` good '' or `` bad '' . </S>
+<S ID='S-65' AZ='OWN'> Our heuristic takes into account both the actual value of the parse 's combined penalty score and a measure relative to the length of the input sentence . </S>
+<S ID='S-66' AZ='OWN'> Similar to the penalty score scheme , the precise thresholds are currently fine tuned to try and optimize the classification results on a training set of data . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-6'> Parsing of Spontaneous Speech Using GLR* </HEADER>
+<P>
+<S ID='S-67' ABSTRACTC='A-4' AZ='OWN'> We have recently conducted some new experiments to test the utility of the GLR* parser and our parse evaluation heuristics when parsing speech recognized spontaneous speech in the ATIS domain . </S>
+<S ID='S-68' AZ='OWN'> We modified an existing partial coverage syntactic grammar into a grammar for the ATIS domain , using a development set of some 300 sentences . </S>
+<S ID='S-69' AZ='OWN'> The resulting grammar has 458 rules , which translate into a parsing table of almost 700 states . </S>
+</P>
+<P>
+<S ID='S-70' AZ='OWN'> A list of common appearing substitutions was constructed from the development set . </S>
+<S ID='S-71' AZ='OWN'> The correct parses of 250 grammatical sentences were used to train the parse table statistics that are used for disambiguation and parse evaluation . </S>
+<S ID='S-72' AZ='OWN'> After some experimentation , the evaluation feature weights were set in the following way . </S>
+<S ID='S-73' AZ='OWN'> As previously described , the penalty for a skipped word ranges between 0.95 and 1.05 , depending on the word 's position in the sentence . </S>
+<S ID='S-74' AZ='OWN'> The penalty for a substituted word was set to 0.9 , so that substituting a word would be preferable to skipping the word . </S>
+<S ID='S-75' AZ='OWN'> The fragmentation feature was given a weight of 1.1 , to prefer skipping a word if it reduces the fragmentation count by at least one . </S>
+<S ID='S-76' AZ='OWN'> The three penalties are then summed , together with the converted statistical score of the parse . </S>
+</P>
+<P>
+<S ID='S-77' AZ='OWN'> We then used a set of 120 new sentences as a test set . </S>
+<S ID='S-78' AZ='OWN'> Our goal was three-fold . </S>
+<S ID='S-79' AZ='OWN'> First , we wanted to compare the parsing capability of the GLR* parser with that of the original GLR parser . </S>
+<S ID='S-80' AZ='OWN'> Second , we wished to test the effectiveness of our evaluation heuristics in selecting the best parse . </S>
+<S ID='S-81' AZ='OWN'> Third , we wanted to evaluate the ability of the parse quality heuristic to correctly classify GLR* parses as `` good '' or `` bad '' . </S>
+<S ID='S-82' AZ='OWN'> We ran the parser three times on the test set . </S>
+<S ID='S-83' AZ='OWN'> The first run was with skipping disabled . </S>
+<S ID='S-84' AZ='OWN'> This is equivalent to running the original GLR parser . </S>
+<S ID='S-85' AZ='OWN'> The second run was conducted with skipping enabled and full heuristics . </S>
+<S ID='S-86' AZ='OWN'> The third run was conducted with skipping enabled , and with a simple heuristic that prefers parses based only on the number of words skipped . </S>
+<S ID='S-87' AZ='OWN'> In all three runs , the single selected parse result for each sentence was manually evaluated to determine if the parser returned with a `` correct '' parse . </S>
+</P>
+<P>
+<S ID='S-88' AZ='OWN'> The results of the experiment can be seen in Table <CREF/> . </S>
+<S ID='S-89' AZ='OWN'> The results indicate that using the GLR* parser results in a significant improvement in performance . </S>
+<S ID='S-90' AZ='OWN'> When using the full heuristics , the percentage of sentences , for which the parser returned a parse that matched or almost matched the `` correct '' parse increased from 50 % to 75 % . </S>
+<S ID='S-91' AZ='OWN'> As a result of its skipping capabilities , GLR* succeeds to parse 58 sentences ( 48 % ) that were not parsable by the original GLR parser . </S>
+<S ID='S-92' AZ='OWN'> Fully 96 % of the test sentences ( all but 5 ) are parsable by GLR* . </S>
+<S ID='S-93' AZ='OWN'> However , a significant portion of these sentences ( 23 out of the 58 ) return with bad parses , due to the skipping of essential words of the input . </S>
+<S ID='S-94' AZ='OWN'> We looked at the effectiveness of our parse quality heuristic in identifying such bad parses . </S>
+<S ID='S-95' AZ='OWN'> The heuristic is successful in labeling 21 of the 25 bad parses as `` bad '' . </S>
+<S ID='S-96' AZ='OWN'> 67 of the 90 good / close parses are labeled as `` good '' by the heuristic . </S>
+<S ID='S-97' AZ='OWN'> Thus , although somewhat overly harsh , the heuristic is quite effective in identifying bad parses . </S>
+</P>
+<P>
+<S ID='S-98' AZ='OWN'> Our results indicate that our full integrated heuristic scheme for selecting the best parse out-performs the simple heuristic , that considers only the number of words skipped . </S>
+<S ID='S-99' AZ='OWN'> With the simple heuristic , good / close parses were returned in 24 out of the 53 sentences that involved some degree of skipping . </S>
+<S ID='S-100' AZ='OWN'> With our integrated heuristic scheme , good / close parses were returned in 30 sentences ( 6 additional sentences ) . </S>
+<S ID='S-101' AZ='OWN'> Further analysis showed that only 2 sentences had parses that were better than those selected by our integrated parse evaluation heuristic . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+T. <SURNAME>Briscoe</SURNAME> and J. <SURNAME>Carroll</SURNAME>. Generalized Probabilistic LR Parsing of Natural Language (corpora) with Unification-Based Grammars. Computational Linguistics, 19(1):25-59, <DATE>1993</DATE>.
+</REFERENCE>
+<REFERENCE>
+A. <SURNAME>Lavie</SURNAME> and M. <SURNAME>Tomita</SURNAME>. GLR* - An Efficient Noise-Skipping Parsing Algorithm for Context-free Grammars. In Proceedings of Third International Workshop on Parsing Technologies, pages 123-134, <DATE>1993</DATE>.
+</REFERENCE>
+<REFERENCE>
+M. <SURNAME>Tomita</SURNAME>, T. <SURNAME>Mitramura</SURNAME>, H. <SURNAME>Musha</SURNAME>, and M. <SURNAME>Kee</SURNAME>. The Generalized LR Parser/Compiler - Version 8.1: User's Guide. Technical Report CMU-CMT-88-MEMO, <DATE>1988</DATE>.
+</REFERENCE>
+<REFERENCE>
+M. <SURNAME>Tomita</SURNAME>. Efficient Parsing for Natural Language. Kluwer Academic Publishers, Hingham, MA., <DATE>1986</DATE>.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

@@ -1,0 +1,407 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9502004</FILENO>
+<APPEARED><CONFERENCE>COLING</CONFERENCE><YEAR>1994</YEAR></APPEARED>
+<CLASSIFICATION> Lo.Pr  </CLASSIFICATION>
+</METADATA>
+<TITLE> Bottom-Up Earley Deduction </TITLE>
+<AUTHORLIST>
+<AUTHOR>Gregor Erbach</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' DOCUMENTC='S-8' AZ='AIM'> We propose a bottom-up variant of Earley deduction . </A-S>
+<A-S ID='A-1' AZ='OWN'> Bottom-up deduction is preferable to top-down deduction because it allows incremental processing ( even for head-driven grammars ) , it is data-driven , no subsumption check is needed , and preference values attached to lexical items can be used to guide best-first search . </A-S>
+<A-S ID='A-2' AZ='OWN'> We discuss the scanning step for bottom-up Earley deduction and indexing schemes that help avoid useless deduction steps . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> Recently , there has been a lot of interest in Earley deduction <REF TYPE='P'>Pereira and Warren 1983</REF> with applications to parsing and generation <REF TYPE='P'>Shieber 1988</REF> , <REF TYPE='P'>Gerdeman 1991</REF> , <REF  TYPE='P'>Johnson 1993</REF>, <REF  TYPE='P'>Doerre 1993</REF> . </S>
+</P>
+<P>
+<S ID='S-1' AZ='BAS' TYPE='ITEM'> Earley deduction is a very attractive framwork for natural language processing because it has the following properties and applications . </S>
+</P>
+<P>
+<S ID='S-2' TYPE='ITEM' AZ='BAS'> Memoization and reuse of partial results </S>
+<S ID='S-3' TYPE='ITEM' AZ='BAS'> Incremental processing by addition of new items </S>
+<S ID='S-4' TYPE='ITEM' AZ='BAS'> Hypothetical reasoning by keeping track of dependencies between items </S>
+<S ID='S-5' TYPE='ITEM' AZ='BAS'> Best-first search by means of an agenda . </S>
+</P>
+<P>
+<S ID='S-6' AZ='OTH'> Like <REFAUTHOR>Earley</REFAUTHOR> 's algorithm , all of these approaches operate top-down ( backward chaining ) . </S>
+<S ID='S-7' AZ='OTH'> The interest has naturally focussed on top-down methods because they are at least to a certain degree goal-directed . </S>
+</P>
+<P>
+<S ID='S-8' ABSTRACTC='A-0' AZ='AIM'> In this paper , we present a bottom-up variant of Earley deduction , which we find advantageous for the following reasons : </S>
+</P>
+<P>
+<S ID='S-9' AZ='OWN'> Incrementality : </S>
+<S ID='S-10' AZ='OWN'> Portions of an input string can be analysed as soon as they are produced ( or generated as soon as the what-to-say component has decided to verbalize them ) , even for grammars where one cannot assume that the left-corner has been predicted before it is scanned . </S>
+</P>
+<P>
+<S ID='S-11' AZ='OWN'> Data-Driven Processing : </S>
+<S ID='S-12' AZ='CTR'> Top-down algorithms are not well suited for processing grammatical theories like Categorial Grammar or HPSG that would only allow very general predictions because they make use of general schemata instead of construction-specific rules . </S>
+<S ID='S-13' AZ='OWN'> For these grammars data-driven bottom-up processing is more appropriate . </S>
+<S ID='S-14' AZ='OWN'> The same is true for large-coverage rule-based grammars which lead to the creation of very many predictions . </S>
+</P>
+<P>
+<S ID='S-15' AZ='OWN'> Subsumption Checking : </S>
+<S ID='S-16' AZ='OWN'> Since the bottom-up algorithm does not have a prediction step , there is no need for the costly operation of subsumption checking . </S>
+</P>
+<P>
+<S ID='S-17' AZ='OWN'> Search Strategy : </S>
+<S ID='S-18' AZ='OWN'> In the case where lexical entries have been associated with preference information , this information can be exploited to guide the heuristic search . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Bottom-up Earley Deduction </HEADER>
+<P>
+<S ID='S-19' AZ='OTH'> Earley deduction <REF TYPE='P'>Pereira and Warren 1983</REF> is based on grammars encoded as definite clauses . </S>
+<S ID='S-20' AZ='OWN'> The instantiation ( prediction ) rule of top-down Earley deduction is not needed in bottom-up Earley deduction , because there is no prediction . </S>
+<S ID='S-21' AZ='OWN'> There is only one inference rule , namely the reduction rule <CREF/> . </S>
+<S ID='S-22' AZ='OWN'> In <CREF/> , X , G and G ' are literals , <EQN/> is a ( possibly empty ) sequence of literals , and <EQN/> is the most general unifier of G and G ' . </S>
+<S ID='S-23' AZ='OWN'> The leftmost literal in the body of a non-unit clause is always the selected literal . </S>
+<IMAGE ID='I-0'/>
+</P>
+<P>
+<S ID='S-24' AZ='OWN'> In principle , this rule can be applied to any pair of unit clauses and non-unit clauses of the program to derive any consequences of the program . </S>
+<S ID='S-25' AZ='OWN'> In order to reduce this search space and achieve a more goal-directed behaviour , the rule is not applied to any pair of clauses , but clauses are only selected if they can contribute to a proof of the goal . </S>
+<S ID='S-26' AZ='OWN'> The set of selected clauses is called the chart . </S>
+<S ID='S-27' AZ='TXT'> The selection of clauses is guided by a scanning step ( section <CREF/> ) and indexing of clauses ( section <CREF/> ) . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-2'> Scanning </HEADER>
+<P>
+<S ID='S-28' AZ='OTH'> The purpose of the scanning step , which corresponds to lexical lookup in chart parsers , is to look up base cases of recursive definitions to serve as a starting point for bottom-up processing . </S>
+<S ID='S-29' AZ='OTH'> The scanning step selects clauses that can appear as leaves in the proof tree for a given goal G . </S>
+</P>
+<P>
+<S ID='S-30' AZ='OTH'> Consider the following simple definition of an HPSG , with the recursive definition of the predicate sign/1 . </S>
+<IMAGE ID='I-1'/>
+</P>
+<P>
+<S ID='S-31' AZ='OTH'> The predicate sign/1 is defined recursively , and the base case is the predicate lexical _ sign/1 . </S>
+<S ID='S-32' AZ='CTR'> But , clearly it is not restrictive enough to find only the predicate name of the base case for a given goal . </S>
+<S ID='S-33' AZ='OWN'> The base cases must also be instantiated in order to find those that are useful for proving a given goal . </S>
+<S ID='S-34' AZ='OWN'> In the case of parsing , the lookup of base cases ( lexical items ) will depend on the words that are present in the input string . </S>
+<S ID='S-35' AZ='OWN'> This is implied by the first goal of the predicate principles/3 , the constituent order principle , which determines how the PHON value of a constituent is constructed from the PHON values of its daughters . </S>
+<S ID='S-36' AZ='OWN'> In general , we assume that the constituent order principle makes use of a linear and non-erasing operation for combining strings . </S>
+<S ID='S-37' AZ='OWN'> If this is the case , then all the words contained in the PHON value of the goal can have their lexical items selected as unit clauses to start bottom-up processing . </S>
+</P>
+<P>
+<S ID='S-38' AZ='OTH'> For generation , an analogous condition on logical forms has been proposed by <REF TYPE='A'>Shieber 1988</REF> as the `` semantic monotonicity condition , '' which requires that the logical form of every base case must subsume some portion of the goal 's logical form . </S>
+</P>
+<P>
+<S ID='S-39' AZ='OTH'> Base case lookup must be defined specifically for different grammatical theories and directions of processing by the predicate lookup/2 , whose first argument is the goal and whose second argument is the selected base case . </S>
+<S ID='S-40' AZ='OTH'> The following clause defines the lookup relation for parsing with HPSG . </S>
+<IMAGE ID='I-2'/>
+</P>
+<P>
+<S ID='S-41' AZ='OTH'> Note that the base case clauses can become further instantiated in this step . </S>
+<S ID='S-42' AZ='OTH'> If concatenation ( of difference lists ) is used as the operation on strings , then each base case clause can be instantiated with the string that follows it . </S>
+<S ID='S-43' AZ='OTH'> This avoids combination of items that are not adjacent in the input string . </S>
+<IMAGE ID='I-3'/>
+</P>
+<P>
+<S ID='S-44' AZ='OWN'> In bottom-up Earley deduction , the first step towards proving a goal is perform lookup for the goal , and to add all the resulting ( unit ) clauses to the chart . </S>
+<S ID='S-45' AZ='OWN'> Also , all non-unit clauses of the program , which can appear as internal nodes in the proof tree of the goal , are added to the chart . </S>
+</P>
+<P>
+<S ID='S-46' AZ='OWN'> The scanning step achieves a certain degree of goal-directedness for bottom-up algorithms because only those clauses which can appear as leaves in the proof tree of the goal are added to the chart . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-3'> Indexing </HEADER>
+<P>
+<S ID='S-47' AZ='OTH'> An item in normal context-free chart parsing can be regarded as a pair <EQN/> consisting of a dotted rule R and the substring S that the item covers ( a pair of starting and ending position ) . </S>
+<S ID='S-48' AZ='OTH'> The fundamental rule of chart parsing makes use of these string positions to ensure that only adjacent substrings are combined and that the result is the concatenation of the substrings . </S>
+</P>
+<P>
+<S ID='S-49' AZ='OTH'> In grammar formalisms like DCG or HPSG , the complex nonterminals have an argument or a feature ( PHON ) that represents the covered substring explicitly . </S>
+<S ID='S-50' AZ='OTH'> The combination of the substrings is explicit in the rules of the grammar . </S>
+<S ID='S-51' AZ='OTH'> As a consequence , Earley deduction does not need to make use of string positions for its clauses , as <REF TYPE='A'>Pereira and Warren 1983</REF> point out . </S>
+</P>
+<P>
+<S ID='S-52' AZ='OTH'> Moreover , the use of string positions known from chart parsing is too inflexible because it allows only concatenation of adjacent contiguous substrings . </S>
+<S ID='S-53' AZ='OTH' TYPE='ITEM'> In linguistic theory , the interest has shifted from phrase structure rules that combine adjacent and contiguous constituents to  </S>
+</P>
+<P>
+<S ID='S-54' TYPE='ITEM' AZ='OTH'> principle-based approaches to grammar that state general well-formedness conditions instead of describing particular constructions ( e.g. HPSG ) </S>
+<S ID='S-55' TYPE='ITEM' AZ='OTH'> operations on strings that go beyond concatenation ( head wrapping <REF TYPE='P'>Pollard 1984</REF> , tree adjoining <REF TYPE='P'>Shanker et al. 1987</REF> , sequence union <REF TYPE='P'>Reape 1990</REF> ) . </S>
+</P>
+<P>
+<S ID='S-56' AZ='OTH'> The string positions known from chart parsing are also inadequate for generation , as pointed out by <REF TYPE='A'>Shieber 1988</REF> in whose generator all items go from position 0 to 0 so that any item can be combined with any item . </S>
+</P>
+<P>
+<S ID='S-57' AZ='OWN'> However , the string positions are useful as an indexing of the items so that it can be easily detected whether their combination can contribute to a proof of the goal . </S>
+<S ID='S-58' AZ='OWN'> This is especially important for a bottom-up algorithm which is not goal-directed like top-down processing . </S>
+<S ID='S-59' AZ='OWN'> Without indexing , there are too many combinations of items which are useless for a proof of the goal , in fact there may be infinitely many items so that termination problems can arise . </S>
+</P>
+<P>
+<S ID='S-60' AZ='OWN'> For example , in an order-monotonic grammar formalism that uses sequence union as the operation for combining strings , a combination of items would be useless which results in a sign in which the words are not in the same order as in the input string <REF TYPE='P'>van Noord 1993</REF> . </S>
+</P>
+<P>
+<S ID='S-61' AZ='OWN'> We generalize the indexing scheme from chart parsing in order to allow different operations for the combination of strings . </S>
+<S ID='S-62' AZ='OWN'> Indexing improves efficiency by detecting combinations that would fail anyway and by avoiding combinations of items that are useless for a proof of the goal . </S>
+</P>
+<P>
+<S ID='S-63' AZ='OWN'> We define an item as a pair of a clause Cl and an index Idx , written as <EQN/> . </S>
+</P>
+<P>
+<S ID='S-64' AZ='TXT'> Below , we give some examples of possible indexing schemes . </S>
+<S ID='S-65' AZ='OWN'> Other indexing schemes can be used if they are needed . </S>
+</P>
+<P>
+<S ID='S-66' AZ='OWN'> Non-reuse of Items : </S>
+<S ID='S-67' AZ='OWN'> This is useful for LCFRS , where no word of the input string can be used twice in a proof , or for generation where no part of the goal logical form should be verbalized twice in a derivation . </S>
+</P>
+<P>
+<S ID='S-68' AZ='OWN'> Non-adjacent combination : </S>
+<S ID='S-69' AZ='OWN'> This indexing scheme is useful for order-monotonic grammars . </S>
+</P>
+<P>
+<S ID='S-70' AZ='OWN'> Non-directional adjacent combination : </S>
+<S ID='S-71' AZ='OWN'> This indexing is used if only adjacent constituents can be combined , but the order of combination is not prescribed ( e.g. non-directional basic categorial grammars ) . </S>
+</P>
+<P>
+<S ID='S-72' AZ='OWN'> Directional adjacent combination : </S>
+<S ID='S-73' AZ='OWN'> This is used for grammars with a `` context-free backbone . </S>
+</P>
+<P>
+<S ID='S-74' AZ='OWN'> Free combination : </S>
+<S ID='S-75' AZ='OWN'> Allows an item to be used several times in a proof , for example for the non-unit clauses of the program , which would be represented as items of the form <EQN/> . </S>
+</P>
+<P>
+<S ID='S-76' AZ='OWN'> The following table summarizes the properties of these five combination schemes . </S>
+<S ID='S-77' AZ='OWN'> Index 1 ( I1 ) is the index associated with the non-unit clause , Index 2 ( I2 ) is associated with the unit clause , and <EQN/> is the result of combining the indices . </S>
+<IMAGE ID='I-4'/>
+</P>
+<P>
+<S ID='S-78' AZ='OWN'> In case 2 ( `` non-adjacent combination '' ) , the indices X and Y consist of a set of string positions , and the operation <EQN/> is the union of these string positions , provided that no two string positions from X and Y do overlap . </S>
+</P>
+<P>
+<S ID='S-79' AZ='OWN'> In <CREF/> , the reduction rule is augmented to handle indices . </S>
+<S ID='S-80' AZ='OWN'> <EQN/> denotes the combination of the indices X and Y . </S>
+<IMAGE ID='I-5'/>
+</P>
+<P>
+<S ID='S-81' AZ='OWN'> With the use of indices , the lookup relation becomes a relation between goals and items . </S>
+<S ID='S-82' AZ='OWN'> The following specification of the lookup relation provides indexing according to string positions as in a chart parser ( usable for combination schemes 2 , 3 , and 4 ) . </S>
+<IMAGE ID='I-6'/>
+<IMAGE ID='I-7'/>
+<IMAGE ID='I-8'/>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-4'> Goal Types </HEADER>
+<P>
+<S ID='S-83' AZ='OWN'> In constraint-based grammars there are some predicates that are not adequately dealt with by bottom-up Earley deduction , for example the Head Feature Principle and the Subcategorization Principle of HPSG . </S>
+<S ID='S-84' AZ='OWN'> The Head Feature Principle just unifies two variables , so that it can be executed at compile time and need not be called as a goal at runtime . </S>
+<S ID='S-85' AZ='OWN'> The Subcategorization Principle involves an operation on lists ( append/3 or delete/3 in different formalizations ) that does not need bottom-up processing , but can better be evaluated by top-down resolution if its arguments are sufficiently instantiated . </S>
+<S ID='S-86' AZ='OWN'> Creating and managing items for these proofs is too much of a computational overhead , and , moreover , a proof may not terminate in the bottom-up case because infinitely many consequences may be derived from the base case of a recursively defined relation . </S>
+</P>
+<P>
+<S ID='S-87' AZ='OWN'> In order to deal with such goals , we associate the goals in the body of a clause with goal types . </S>
+<S ID='S-88' AZ='OWN'> The goals that are relevant for bottom-up Earley deduction are called waiting goals because they wait until they are activated by a unit clause that unifies with the goal . </S>
+<S ID='S-89' AZ='OWN'> Whenever a unit clause is combined with a non-unit clause all goals up to the first waiting goal of the resulting clause are proved according to their goal type , and then a new clause is added whose selected goal is the first waiting goal . </S>
+</P>
+<P>
+<S ID='S-90' AZ='OWN'> In the following inference rule for clauses with mixed goal types , <EQN/> is a ( possibly empty ) sequence of goals without any waiting goals , and <EQN/> is a ( possibly empty ) sequence of goals starting with a waiting goal . </S>
+<S ID='S-91' AZ='OWN'> <EQN/> is the most general unifier of G and G ' , and the substitution <EQN/> is the solution which results from proving the sequence of goals <EQN/> . </S>
+<IMAGE ID='I-9'/>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-5'> Correctness and Completeness </HEADER>
+<P>
+<S ID='S-92' AZ='OWN'> In order to show the correctness of the system , we must show that the scanning step only adds consequences of the program to the chart , and that any items derived by the inference rule are consequences of the program clauses . </S>
+<S ID='S-93' AZ='OWN'> The former is easy to show because all clauses added by the scanning step are instances of program clauses , and the inference rule performs a resolution step whose correctness is well-known in logic programming . </S>
+<S ID='S-94' AZ='OWN'> The other goal types are also proved by resolution . </S>
+</P>
+<P>
+<S ID='S-95' AZ='OWN'> There are two potential sources of incompleteness in the algorithm . </S>
+<S ID='S-96' AZ='OWN'> One is that the scanning step may not add all the program clauses to the chart that are needed for proving a goal , and the other is that the indexing may prevent the derivation of a clause that is needed to prove the goal . </S>
+</P>
+<P>
+<S ID='S-97' AZ='OWN'> In order to avoid incompleteness , the scanning step must add all program clauses that are needed for a proof of the goal to the chart , and the combination of indices may only fail for inference steps which are useless for a proof of the goal . </S>
+<S ID='S-98' AZ='OWN'> That the lookup relation and the indexing scheme satisfy this property must be shown for particular grammar formalisms . </S>
+</P>
+<P>
+<S ID='S-99' AZ='OWN'> In order to keep the search space small ( and finite to ensure termination ) the scanning step should ( ideally ) add only those items that are needed for proving the goal to the chart , and the indexing should be chosen in such a way that it excludes derived items that are useless for a proof of the goal . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-6'> Best-First Search </HEADER>
+<P>
+<S ID='S-100' AZ='OWN'> For practical NL applications , it is desirable to have a best-first search strategy , which follows the most promising paths in the search space first , and finds preferred solutions before the less preferred ones . </S>
+</P>
+<P>
+<S ID='S-101' AZ='OWN' TYPE='ITEM'> There are often situations where the criteria to guide the search are available only for the base cases , for example  </S>
+</P>
+<P>
+<S ID='S-102' TYPE='ITEM' AZ='OWN'> weighted word hypotheses from a speech recognizer </S>
+<S ID='S-103' TYPE='ITEM' AZ='OWN'> readings for ambigous words with probabilities , possibly assigned by a stochastic tagger <REF TYPE='P'>Brew 1993</REF> . </S>
+<S ID='S-104' TYPE='ITEM' AZ='OWN'> hypotheses for correction of string errors which should be delayed <REF SELF="YES" TYPE='P'>Erbach 1993</REF> . </S>
+</P>
+<P>
+<S ID='S-105' AZ='OWN'> Goals and clauses are associated with preference values that are intended to model the degree of confidence that a particular solution is the ` correct ' one . </S>
+<S ID='S-106' AZ='OWN'> Unit clauses are associated with a numerical preference value , and non-unit clauses with a formula that determines how its preference value is computed from the preference values of the goals in the body of the clause . </S>
+<S ID='S-107' AZ='OWN'> Preference values can ( but need not ) be interpreted as probabilities . </S>
+</P>
+<P>
+<S ID='S-108' AZ='OWN'> The preference values are the basis for giving priorities to items . </S>
+<S ID='S-109' AZ='OWN'> For unit clauses , the priority is identified with the preference value . </S>
+<S ID='S-110' AZ='OWN'> For non-unit clauses , where the preference formula may contain uninstantiated variables , the priority is the value of the formula with the free variables instantiated to the highest possible preference value ( in case of an interpretation as probabilities : 1 ) , so that the priority is equal to the maximal possible preference value for the clause . </S>
+<S ID='S-111' AZ='OWN'> The implementation of best-first search does not combine new items with the chart immediately , but makes use of an agenda <REF TYPE='P'>Kay 1980</REF> , on which new items are ordered in order of descending priority . </S>
+<S ID='S-112' AZ='OWN'> The following is the algorithm for bottom-up best-first Earley deduction . </S>
+<IMAGE ID='I-10'/>
+</P>
+<P>
+<S ID='S-113' AZ='OWN'> The algorithm is parametrized with respect to the relation lookup/2 and the choice of the indexing scheme , which are specific for different grammatical theories and directions of processing . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-7'> Implementation </HEADER>
+<P>
+<S ID='S-114' AZ='OWN'> The bottom-up Earley deduction algorithm described here has been implemented in Quintus Prolog as part of the GeLD system . </S>
+<S ID='S-115' AZ='OWN'> GeLD ( Generalized Linguistic Deduction ) is an extension of Prolog which provides typed feature descriptions and preference values as additions to the expressivity of the language , and partial evaluation , top-down , head-driven , and bottom-up Earley deduction as processing strategies . </S>
+<S ID='S-116' AZ='OWN'> Tests of the system with small grammars have shown promising results , and a medium-scale HPSG for German is presently being implemented in GeLD . </S>
+<S ID='S-117' AZ='OWN'> The lookup relation and the choice of an indexing scheme must be specified by the user of the system . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-8'> Conclusion and Future Work </HEADER>
+<P>
+<S ID='S-118' AZ='AIM'> We have proposed bottom-up Earley deduction as a useful alternative to the top-down methods which require subsumption checking and restriction to avoid prediction loops . </S>
+</P>
+<P>
+<S ID='S-119' AZ='OWN'> The proposed method should be improved in two directions . </S>
+<S ID='S-120' AZ='OWN'> The first is that the lookup predicate should not have to be specified by the user , but automatically inferred from the program . </S>
+</P>
+<P>
+<S ID='S-121' AZ='OWN'> The second problem is that all non-unit clauses of the program are added to the chart . </S>
+<S ID='S-122' AZ='OWN'> The addition of non-unit clauses should be made dependent on the goal and the base cases in order to go from a purely bottom-up algorithm to a directed algorithm that combines the advantages of top-down and bottom-up processing . </S>
+<S ID='S-123' AZ='OTH'> It has been repeatedly noted <REF TYPE='P'>Kay 1980</REF> , <REF TYPE='P'>Wiren 1987</REF> , <REF TYPE='P'>Bouma and van Noord 1993</REF> that directed methods are more efficient than pure top-down or bottom-up methods . </S>
+<S ID='S-124' AZ='CTR'> However , it is not clear how well the directed methods are applicable to grammars which do not depend on concatenation and have no unique ` left corner ' which should be connected to the start symbol . </S>
+</P>
+<P>
+<S ID='S-125' AZ='OWN'> It remains to be seen how bottom-up Earley deduction compares with ( and can be combined with ) the improved top-down Earley deduction of <REF TYPE='A'>Doerre 1993</REF> , <REF TYPE='A'>Johnson 1993</REF> and <REF TYPE='A'>Neumann forthcoming</REF> , and to head-driven methods with well-formed substring tables <REF TYPE='P'>Bouma and van Noord 1993</REF> , and which methods are best suited for which kinds of problems ( e.g. parsing , generation , noisy input , incremental processing etc . ) </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+Gosse <SURNAME>Bouma</SURNAME> and Gertjan van <SURNAME>Noord</SURNAME>.
+Head-driven parsing for lexicalist grammars: Experimental results.
+In EACL93, pages 71 - 80, Utrecht, NL, <DATE>1993</DATE>.
+</REFERENCE>
+<REFERENCE>
+Chris <SURNAME>Brew</SURNAME>.
+Adding preferences to CUF.
+In Jochen Drre, editor, DYANA-2 Deliverable R1.2.A:
+  Computational Aspects of Constraint-Based Linguistic Description I, pages
+  57 - 69. Esprit Basic Research Project 6852, <DATE>1993</DATE>.
+</REFERENCE>
+<REFERENCE>
+Jochen <SURNAME>Drre</SURNAME>.
+Generalizing Earley deduction for constraint-based grammars.
+In Jochen Drre, editor, DYANA-2 Deliverable R1.2.A:
+  Computational Aspects of Constraint-Based Linguistic Description I, pages
+  23 - 41. Esprit Basic Research Project 6852, <DATE>1993</DATE>.
+</REFERENCE>
+<REFERENCE>
+Gregor <SURNAME>Erbach</SURNAME>.
+Using preference values in typed feature structures to exploit
+  non-absolute constraints for disambiguation.
+In Harald Trost, editor, Feature Formalisms and Linguistic
+  Ambiguity. Ellis-Horwood, <DATE>1993</DATE>.
+</REFERENCE>
+<REFERENCE>
+Gregor <SURNAME>Erbach</SURNAME>.
+Towards a theory of degrees of grammaticality.
+In Carlos Martn-Vide, editor, Current Issues in
+  Mathematical Linguistics. North-Holland, Amsterdam, <DATE>to appear</DATE>.
+Also published as CLAUS Report 34, Universitt des Saarlandes,
+  <DATE>1993</DATE>.
+</REFERENCE>
+<REFERENCE>
+Dale <SURNAME>Douglas</SURNAME> Gerdemann.
+Parsing and Generation of Unification Grammars.
+PhD thesis, University of Illinois at Urbana-Champaign, <DATE>1991</DATE>.
+Cognitive Science technical report CS-91-06 (Language Series).
+</REFERENCE>
+<REFERENCE>
+Mark <SURNAME>Johnson</SURNAME>.
+Memoization in constraint logic programming.
+Department of Cognitive Science, Brown University. Presented at the
+  1st International Conference on Constraint Programming, Newport, Rhode
+  Island; <DATE>to appear</DATE> in the proceedings, <DATE>1993</DATE>.
+</REFERENCE>
+<REFERENCE>
+Martin <SURNAME>Kay</SURNAME>.
+Algorithm schemata and data structures in syntactic processing.
+Technical Report CSL-80-12, XEROX PARC, Palo Alto, CA, <DATE>1980</DATE>.
+</REFERENCE>
+<REFERENCE>
+Gnter <SURNAME>Neumann</SURNAME>.
+A Uniform Tabular Algorithm for Natural Language Parsing and
+  Generation and its Use within Performance-based Methods.
+PhD thesis, University Saarbrcken.
+<DATE>forthcoming</DATE>.
+</REFERENCE>
+<REFERENCE>
+Fernando C. <SURNAME>Pereira</SURNAME> and David H. <SURNAME>Warren</SURNAME>.
+Parsing as deduction.
+In ACL Proceedings, 21st Annual Meeting, pages 137-144, <DATE>1983</DATE>.
+</REFERENCE>
+<REFERENCE>
+Carl <SURNAME>Pollard</SURNAME>.
+Generalized Context-Free Grammars, Head Grammars, and Natural
+  Language.
+PhD thesis, Stanford, <DATE>1984</DATE>.
+</REFERENCE>
+<REFERENCE>
+Mike <SURNAME>Reape</SURNAME>.
+A theory of word order and discontinuous constituency in West
+  Germanic.
+In E. Engdahl and M. Reape, editors, Parametric Variation in
+  Germanic and Romance: Preliminary Investigations, pages 25-40. ESPRIT
+  Basic Research Action 3175 DYANA, Deliverable R1.1.A, <DATE>1990</DATE>.
+</REFERENCE>
+<REFERENCE>
+Stuart M. <SURNAME>Shieber</SURNAME>.
+A uniform architecture for parsing and generation.
+In Proceedings of the 12th International Conference on
+  Computational Linguistics (COLING), Budapest, <DATE>1988</DATE>.
+</REFERENCE>
+<REFERENCE>
+Gertjan van <SURNAME>Noord</SURNAME>.
+Reversibility in Natural Language Processing.
+PhD thesis, Rijksuniversiteit Utrecht, NL, <DATE>1993</DATE>.
+</REFERENCE>
+<REFERENCE>
+K. <SURNAME>Vijay-Shanker</SURNAME>, David J. <SURNAME>Weir</SURNAME>, and Aravind K. <SURNAME>Joshi</SURNAME>.
+Characterizing structural descriptions produced by various
+  grammatical formalisms.
+In 25th Annual Meeting, pages 104-111, Stanford, CA, <DATE>1987</DATE>.
+  Association for Computational Linguistics.
+</REFERENCE>
+<REFERENCE>
+David J. <SURNAME>Weir</SURNAME>.
+Characterizing Mildly Context-Sensitive Grammar Formalisms.
+PhD thesis, Department of Computer and Information Science,
+  University of Pennsylvania, <DATE>1988</DATE>.
+</REFERENCE>
+<REFERENCE>
+Mats <SURNAME>Wirn</SURNAME>.
+A comparison of rule-invocation strategies in context-free chart
+  parsing.
+In ACL Proceedings, Third European Conference, pages 226-235,
+  <DATE>1987</DATE>.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

@@ -1,0 +1,363 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9405033</FILENO>
+<APPEARED><CONFERENCE>ACL</CONFERENCE><YEAR>1994</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.Gr.Ps </CLASSIFICATION>
+</METADATA>
+<TITLE> Relating Complexity to Practical Performance in Parsing with Wide-Coverage Unification Grammars </TITLE>
+<AUTHORLIST>
+<AUTHOR>John Carroll</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' AZ='OWN'> The paper demonstrates that exponential complexities with respect to grammar size and input length have little impact on the performance of three unification-based parsing algorithms , using a wide-coverage grammar . </A-S>
+<A-S ID='A-1' DOCUMENTC='S-120' AZ='OWN'> The results imply that the study and optimisation of unification-based parsing must rely on empirical data until complexity theory can more accurately predict the practical behaviour of such parsers . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> General-purpose natural language ( NL ) analysis systems have recently started to use declarative unification-based sentence grammar formalisms ; systems of this type include SRI 's CLARE system <REF TYPE='P'>Alshawi et al. 1992</REF> and the Alvey NL Tools ( ANLT ) <REF TYPE='P' SELF="YES">Briscoe et al. 1987a</REF> . </S>
+<S ID='S-1' AZ='BKG'> Using a declarative formalism helps ease the task of developing and maintaining the grammar <REF TYPE='P'>Kaplan 1987</REF> . </S>
+<S ID='S-2' AZ='BKG'> In addition to syntactic processing , the systems incorporate lexical , morphological , and semantic processing , and have been applied successfully to the analysis of naturally-occurring texts <REF TYPE='P'>Alshawi et al. 1992</REF> , <REF TYPE='P' SELF="YES">Briscoe and Carroll 1993</REF> . </S>
+</P>
+<P>
+<S ID='S-3' AZ='OTH'> Evaluations of the grammars in these particular systems have shown them to have wide coverage <REF TYPE='P'>Alshawi et al. 1992 </REF> , <REF TYPE='P'>Taylor et al. 1989</REF> . </S>
+<S ID='S-4' AZ='CTR'> However , although the practical throughput of parsers with such realistic grammars is important , for example when processing large amounts of text or in interactive applications , there is little published research that compares the performance of different parsing algorithms using wide-coverage unification-based grammars . </S>
+<S ID='S-5' AZ='CTR'> Previous comparisons have either focussed on context-free ( CF ) or augmented CF parsing <REF TYPE='P'>Tomita 1987</REF> , <REF TYPE='P'>Billot and Lang 1989</REF> , or have used relatively small , limited-coverage unification grammars and lexicons <REF TYPE='P'>Shann 1989</REF> , <REF TYPE='P'>Bouma and van Noord 1993</REF> , <REF TYPE='P'>Maxwell and Kaplan 1993</REF> . </S>
+<S ID='S-6' AZ='CTR'> It is not clear that these results scale up to reflect accurately the behaviour of parsers using realistic , complex unification-based grammars : in particular , with grammars admitting less ambiguity parse time will tend to increase more slowly with increasing input length , and also with smaller grammars rule application can be constrained tightly with relatively simple predictive techniques . </S>
+<S ID='S-7' AZ='CTR'> Also , since none of these studies relate observed performance to that of other comparable parsing systems , implementational oversights may not be apparent and so be a confounding factor in any general conclusions made . </S>
+</P>
+<P>
+<S ID='S-8' AZ='OTH'> Other research directed towards improving the throughput of unification-based parsing systems has been concerned with the unification operation itself , which can consume up to 90 % of parse time <REF TYPE='P'>Tomabechi 1991</REF>  in systems using lexicalist grammar formalisms ( e.g. HPSG ) <REF TYPE='P'>Pollard and Sag 1987</REF> . </S>
+<S ID='S-9' AZ='CTR'> However , parsing algorithms assume more importance for grammars having more substantial phrase structure components , such as CLARE ( which although employing some HPSG-like analyses still contains several tens of rules ) and the ANLT ( which uses a formalism derived from GPSG ) <REF TYPE='P'>Gazdar et al. 1985</REF> , since the more specific rule set can be used to control which unifications are performed . </S>
+</P>
+<P>
+<S ID='S-10' AZ='BKG'> In NL analysis , the syntactic information associated with lexical items makes top-down parsing less attractive than bottom-up ( e.g. CKY ) <REF TYPE='P'>Kasami 1965</REF> , <REF TYPE='P'>Younger 1967</REF> , although the latter is often augmented with top-down prediction to improve performance <REF TYPE='P'>Earley 1970</REF> , <REF TYPE='P'>Lang 1974</REF> , <REF TYPE='P'>Pratt 1975</REF> . </S>
+<S ID='S-11' AZ='TXT'> Section <CREF/> describes three unification-based parsers which are related to polynomial-complexity bottom-up CF parsing algorithms . </S>
+<S ID='S-12' AZ='TXT'> Although incorporating unification increases their complexity to exponential on grammar size and input length ( section <CREF/> ) , this appears to have little impact on practical performance ( section <CREF/> ) . </S>
+<S ID='S-13' AZ='TXT'> Sections <CREF/> and <CREF/> discuss these findings and present conclusions . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> The Parsers </HEADER>
+<P>
+<S ID='S-14' AZ='OTH'> The three parsers in this study are : a bottom-up left-corner parser , a ( non-deterministic ) LR parser , and an LR-like parser based on an algorithm devised by <REF TYPE='A'>Schabes 1991</REF> . </S>
+<S ID='S-15' AZ='OTH'> All three parsers accept grammars written in the ANLT formalism <REF TYPE='P' SELF="YES">Briscoe et al. 1987a</REF> , and the first two are distributed as part of the ANLT package . </S>
+<S ID='S-16' AZ='OTH'> The parsers create parse forests <REF TYPE='P'>Tomita 1987</REF> that incorporate subtree sharing ( in which identical sub-analyses are shared between differing superordinate analyses ) and node packing ( where sub-analyses covering the same portion of input whose root categories are in a subsumption relationship are merged into a single node ) . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-2'> The Bottom-Up Left-Corner Parser </HEADER>
+<P>
+<S ID='S-17' AZ='OTH'> The bottom-up left-corner ( BU-LC ) parser operates left-to-right and breadth-first , storing partial ( active ) constituents in a chart ; <REF TYPE='A' SELF="YES">Carroll 1993</REF> gives a full description . </S>
+<S ID='S-18' AZ='OTH'> Although pure bottom-up parsing is not usually thought of as providing high performance , the actual implementation achieves very good throughput ( see section <CREF/> ) due to a number of significant optimisations , amongst which are : </S>
+</P>
+<P>
+<S ID='S-19' TYPE='ITEM' AZ='OTH'> Efficient rule invocation from cheap ( static ) rule indexing , using discrimination trees keyed on the feature values in each rule 's first daughter to interleave rule access with unification and also to share unification results across groups of rules . </S>
+<S ID='S-20' TYPE='ITEM' AZ='OTH'> Dynamic indexing of partial and complete constituents on category types to avoid attempting unification or subsumption operations which static analysis shows will always fail . </S>
+<S ID='S-21' TYPE='ITEM' AZ='OTH'> Dynamic storage minimisation , deferring structure copying -- e.g. required by the unification operation or by constituent creation -- until absolutely necessary ( e.g. unification success or parse success , respectively ) . </S>
+</P>
+<P>
+<S ID='S-22' AZ='OTH'> The optimisations improve throughput by a factor of more than three . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-3'> The Non-Deterministic LR Parser </HEADER>
+<P>
+<S ID='S-23' AZ='OTH'> <REF TYPE='A' SELF="YES">Briscoe and Carroll 1993</REF> describe a methodology for constructing an LR parser for a unification-based grammar , in which a CF ` backbone ' grammar is automatically constructed from the unification grammar , a parse table is constructed from the backbone grammar , and a parser is driven by the table and further controlled by unification of the ` residue ' of features in the unification grammar that are not encoded in the backbone . </S>
+<S ID='S-24' AZ='OTH'> In this parser , the LALR(1) technique <REF TYPE='P'>Aho et al. 1986</REF> is used , in conjunction with a graph-structured stack <REF TYPE='P'>Tomita 1987</REF> , adapting for unification-based parsing <REF TYPE='A'>Kipps 1989</REF> 's <REFAUTHOR>Tomita</REFAUTHOR> - like recogniser that achieves polynomial complexity on input length through caching . </S>
+</P>
+<P>
+<S ID='S-25' AZ='OTH'> On each reduction the parser performs the unifications specified by the unification grammar version of the CF backbone rule being applied . </S>
+<S ID='S-26' AZ='OTH'> This constitutes an on-line parsing algorithm . </S>
+<S ID='S-27' AZ='OTH'> In the general case , the off-line variant ( in which all unifications are deferred until the complete CF parse forest has been constructed ) is not guaranteed to terminate ; indeed , it usually does not do so with the ANLT grammar . </S>
+<S ID='S-28' AZ='OTH'> However , a drawback to the on-line algorithm is that a variant of <REFAUTHOR>Kipps</REFAUTHOR> 's caching cannot be used , since the cache must necessarily assume that all reductions at a given vertex with all rules with the same number of daughters build exactly the same constituent every time ; in general this is not the case when the daughters are unification categories . </S>
+<S ID='S-29' AZ='OTH'> A weaker kind of cache on partial analyses ( and thus unification results ) was found to be necessary in the implementation , though , to avoid duplication of unifications ; this sped the parser up by a factor of about three , at little space cost . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-4'> The Compiled-Earley Parser </HEADER>
+<P>
+<S ID='S-30' AZ='OTH'> The Compiled - <REFAUTHOR>Earley</REFAUTHOR> ( CE ) parser is based on a predictive chart-based CF parsing algorithm devised by <REF TYPE='A'>Schabes 1991</REF> which is driven by a table compiling out the predictive component of <REF TYPE='A'>Earley 1970</REF> 's parser . </S>
+<S ID='S-31' AZ='OTH'> The size of the table is related linearly to the size of the grammar ( unlike the LR technique ) . </S>
+<S ID='S-32' AZ='OTH'> <REFAUTHOR>Schabes</REFAUTHOR> demonstrates that this parser always takes fewer steps than <REFAUTHOR>Earley</REFAUTHOR> 's , although its time complexity is the same : <EQN/> . </S>
+<S ID='S-33' AZ='OTH'> The space complexity is also cubic , since the parser uses <REFAUTHOR>Earley</REFAUTHOR> 's representation of parse forests . </S>
+</P>
+<P>
+<S ID='S-34' AZ='OWN'> The incorporation of unification into the CE parser follows the methodology developed for unification-based LR parsing described in the previous section : a table is computed from a CF ` backbone ' , and a parser , augmented with on-line unification and feature-based subsumption operations , is driven by the table . </S>
+<S ID='S-35' AZ='OWN'> To allow meaningful comparison with the LR parser , the CE parser uses a one-word lookahead version of the table , constructed using a modified LALR technique <REF SELF="YES" TYPE='P'>Carroll 1993</REF> . </S>
+</P>
+<P>
+<S ID='S-36' AZ='OWN'> To achieve the cubic time bound , the parser must be able to retrieve in unit time all items in the chart having a given state , and start and end position in the input string . </S>
+<S ID='S-37' AZ='OWN'> However , the obvious array implementation , for say a ten word sentence with the ANLT grammar , would contain almost 500000 elements . </S>
+<S ID='S-38' AZ='OWN'> For this reason , the implementation employs a sparse representation for the array , since only a small proportion of the elements are ever filled . </S>
+<S ID='S-39' AZ='OWN'> In this parser , the same sort of duplication of unifications occurs as in the LR parser , so lists of partial analyses are cached in the same way . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-5'> Complexities of the Parsers </HEADER>
+<P>
+<S ID='S-40' AZ='BKG'> The two variables that determine a parser 's computational complexity are the grammar and the input string <REF TYPE='P'>Barton et al. 1987</REF> . </S>
+<S ID='S-41' AZ='TXT'> These are considered separately in the next two sections . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-6'> Grammar-Dependent Complexity </HEADER>
+<P>
+<S ID='S-42' AZ='OTH'> The term dependent on the grammar in the time complexity of the BU-LC unification-based parser described above is <EQN/> , where <EQN/> is the number of categories implicit in the grammar , and <EQN/> , the number of rules . </S>
+<S ID='S-43' AZ='OTH'> The space complexity is dominated by the size of the parse forest , <EQN/> ( these results are proved by <REF TYPE='A' SELF="YES">Carroll 1993</REF> ) . </S>
+<S ID='S-44' AZ='OTH'> For the ANLT grammar , in which features are nested to a maximum depth of two , <EQN/> is finite but nevertheless extremely large <REF SELF="YES" TYPE='P'>Briscoe et al. 1987b</REF> . </S>
+</P>
+<P>
+<S ID='S-45' AZ='CTR'> The grammar-dependent complexity of the LR parser makes it also appear intractable : <REF TYPE='A'>Johnson 1989</REF> shows that the number of LR(0) states for certain ( pathological ) grammars is exponentially related to the size of the grammar , and that there are some inputs which force an LR parser to visit all of these states in the course of a parse . </S>
+<S ID='S-46' AZ='CTR'> Thus the total number of operations performed , and also space consumed ( by the vertices in the graph-structured stack ) , is an exponential function of the size of the grammar . </S>
+</P>
+<P>
+<S ID='S-47' AZ='OWN'> To avoid this complexity , the CE parser employs a table construction method which ensures that the number of states in the parse table is linearly related to the size of the grammar , resulting in the number of operations performed by the parser being at worst a polynomial function of grammar size . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-7'> Input-Dependent Complexity </HEADER>
+<P>
+<S ID='S-48' AZ='BKG'> Although the complexity of returning all parses for a string is always related exponentially to its length ( since the number of parses is exponential , and they must all at least be enumerated ) , the complexity of a parser is usually measured for the computation of a parse forest ( unless extracting a single analysis from the forest is worse than linear ) . </S>
+</P>
+<P>
+<S ID='S-49' AZ='OWN'> If one of the features of the ANLT grammar formalism , the kleene operator ( allowing indefinite repetition of rule daughters ) , is disallowed , then the complexity of the BU-LC parser with respect to the length of the input string is <EQN/> , where <EQN/> is the maximum number of daughters in a rule <REF SELF="YES" TYPE='P'>Carroll 1993</REF> . </S>
+<S ID='S-50' AZ='OWN'> The inclusion of the operator increases the complexity to exponential . </S>
+<S ID='S-51' AZ='OWN'> To retain the polynomial time bound , new rules can be introduced to produce recursive tree structures instead of an iterated flat tree structure . </S>
+<S ID='S-52' AZ='OWN'> However , when this technique is applied to the ANLT grammar the increased overheads in rule invocation and structure building actually slow the parser down . </S>
+</P>
+<P>
+<S ID='S-53' AZ='OWN'> Although the time and space complexities of CF versions of the LR and CE parsers are <EQN/> , the unification versions of these parsers both turn out to have time bounds that are greater than cubic , in the general case . </S>
+<S ID='S-54' AZ='OWN'> The CF versions implicitly pack identical sequences of sub-analyses , and in all reductions at a given point with rules with the same number of daughters , the packed sequences can be formed into higher-level constituents as they stand without further processing . </S>
+<S ID='S-55' AZ='OWN'> However , in the unification versions , on each reduce action the daughters of the rule involved have to be unified with every possible alternative sequence of the sub-analyses that are being consumed by the rule ( in effect expanding and flattening out the packed sequences ) , leading to a bound of <EQN/> on the total number of unifications . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-8'> Practical Results </HEADER>
+<P>
+<S ID='S-56' AZ='AIM'> To assess the practical performance of the three unification-based parsers described above , a series of experiments were conducted using the ANLT grammar <REF TYPE='P' SELF="YES">Grover et al. 1993</REF> , a wide-coverage grammar of English . </S>
+<S ID='S-57' AZ='OWN'> The grammar is defined in metagrammatical formalism which is compiled into a unification-based ` object grammar ' -- a syntactic variant of the Definite Clause Grammar formalism <REF TYPE='P'>Pereira and Warren 1980</REF> -- containing 84 features and 782 phrase structure rules . </S>
+<S ID='S-58' AZ='OWN'> Parsing uses fixed-arity term unification . </S>
+<S ID='S-59' AZ='OWN'> The grammar provides full coverage of the following constructions : declarative sentences , imperatives and questions ( yes / no , tag and wh-questions ) ; all unbounded dependency types ( topicalisation , relativisation , wh-questions ) ; a relatively exhaustive treatment of verb and adjective complement types ; phrasal and prepositional verbs of many complement types ; passivisation ; verb phrase extraposition ; sentence and verb phrase modification ; noun phrase complements and pre - and post-modification ; partitives ; coordination of all major category types ; and nominal and adjectival comparatives . </S>
+</P>
+<P>
+<S ID='S-60' AZ='OWN'> Although the grammar is linked to a lexicon containing definitions for 40000 base forms of words , the experiments draw on a much smaller lexicon of 600 words ( consisting of closed class vocabulary and , for open-class vocabulary , definitions of just a sample of words which taken together exhibit the full range of possible complementation patterns ) , since issues of lexical coverage are of no concern here . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-9'> Comparing the Parsers </HEADER>
+<P>
+<S ID='S-61' AZ='OWN'> In the first experiment , the ANLT grammar was loaded and a set of sentences was input to each of the three parsers . </S>
+<S ID='S-62' AZ='OWN'> In order to provide an independent basis for comparison , the same sentences were also input to the SRI Core Language Engine ( CLE ) parser <REF TYPE='P'>Moore and Alshawi 1992</REF> with the CLARE2.5 grammar <REF TYPE='P'>Alshawi et al. 1992</REF> , a state-of-the-art system accessible to the author . </S>
+</P>
+<P>
+<S ID='S-63' AZ='OWN'> The sentences were taken from an initial sample of 175 representative sentences extracted from a corpus of approximately 1500 that form part of the ANLT package . </S>
+<S ID='S-64' AZ='OWN'> This corpus , implicitly defining the types of construction the grammar is intended to cover , was written by the linguist who developed the ANLT grammar and is used to check for any adverse effects on coverage when the grammar is modified during grammar development . </S>
+<S ID='S-65' AZ='OWN'> Of the initial 175 sentences , the CLARE2.5 grammar failed to parse 42 ( in several cases because punctuation is strictly required but is missing from the corpus ) . </S>
+<S ID='S-66' AZ='OWN'> The ANLT grammar also failed to parse three of these , plus an additional four . </S>
+<S ID='S-67' AZ='OWN'> These sentences were removed from the sample , leaving 129 ( mean length 6.7 words ) of which 47 were declarative sentences , 38 wh-questions and other sentences with gaps , 20 passives , and 24 sentences containing co-ordination . </S>
+</P>
+<P>
+<S ID='S-68' AZ='OWN'> Table <CREF/> shows the total parse times and storage allocated for the BU-LC parser , the LR parser , and the CE parser , all with ANLT grammar and lexicon . </S>
+</P>
+<IMAGE ID='I-0'/>
+<P>
+<S ID='S-69' AZ='OWN'> All three parsers have been implemented by the author to a similar high standard : similar implementation techniques are used in all the parsers , the parsers share the same unification module , run in the same Lisp environment , have been compiled with the same optimisation settings , and have all been profiled with the same tools and hand-optimised to a similar extent . </S>
+<S ID='S-70' AZ='OWN'> ( Thus any difference in performance of more than around 15 % is likely to stem from algorithmic rather than implementational reasons ) . </S>
+<S ID='S-71' AZ='OWN'> Both of the predictive parsers employ one symbol of lookahead , incorporated into the parsing tables by the LALR technique . </S>
+<S ID='S-72' AZ='OWN'> Table <CREF/> also shows the results for the CLE parser with the CLARE2.5 grammar and lexicon . </S>
+<S ID='S-73' AZ='OWN'> The figures include garbage collection time , and phrasal ( where appropriate ) processing , but not parse forest unpacking . </S>
+<S ID='S-74' AZ='OWN'> Both grammars give a total of around 280 analyses at a similar level of detail . </S>
+</P>
+<P>
+<S ID='S-75' AZ='OWN'> The results show that the LR parser is approximately 35 % faster than the BU-LC parser , and allocates about 30 % less storage . </S>
+<S ID='S-76' AZ='OWN'> The magnitude of the speed-up is less than might be expected , given the enthusiastic advocation of non-deterministic CF LR parsing for NL by some researchers <REF TYPE='P'>Tomita 1987</REF> , <REF TYPE='P'>Wright et al. 1991</REF> , and in the light of improvements observed for predictive over pure bottom-up parsing <REF TYPE='P'>Moore and Dowding 1991</REF> . </S>
+<S ID='S-77' AZ='OWN'> However , on the assumption that incorrect prediction of gaps is the main avoidable source of performance degradation ( c.f. <REFAUTHOR>Moore and Dowding</REFAUTHOR> ) , further investigation shows that the speed-up is near the maximum that is possible with the ANLT grammar ( around 50 % ) . </S>
+</P>
+<P>
+<S ID='S-78' AZ='OWN'> The throughput of the CE parser is half that of the LR parser , and also less than that of the BU-LC parser . </S>
+<S ID='S-79' AZ='OWN'> However , it is intermediate between the two in terms of storage allocated . </S>
+<S ID='S-80' AZ='OWN'> Part of the difference in performance between it and the LR parser is due to the fact that it performs around 15 % more unifications . </S>
+<S ID='S-81' AZ='OWN'> This might be expected since the corresponding finite state automaton is not determinised -- to avoid theoretical exponential time complexity on grammar size -- thus paying a price at run time . </S>
+<S ID='S-82' AZ='OWN'> Additional reasons for the relatively poor performance of the CE parser are the overheads involved in maintaining a sparse representation of the chart , and the fact that with the ANLT grammar it generates less `` densely packed '' parse forests , since its parse table , with 14 % more states ( though fewer actions ) than the LALR(1) table , encodes more contextual distinctions <REF TYPE='P'>Billot and Lang 1989</REF> . </S>
+</P>
+<P>
+<S ID='S-83' AZ='OWN'> Given that the ANLT and CLARE2.5 grammars have broadly similar ( wide ) coverage and return very similar numbers of syntactic analyses for the same inputs , the significantly better throughput of the three parsers described in this paper over the CLE parser indicates that they do not contain any significant implementational deficiencies which would bias the results . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-10'> Swapping the Grammars Over </HEADER>
+<P>
+<S ID='S-84' AZ='OWN'> A second experiment was carried out with the CLE parser , in which the built-in grammar and lexicon were replaced by versions of the ANLT object grammar and lexical entries translated ( automatically ) into the CLE formalism . </S>
+<S ID='S-85' AZ='OWN'> ( The reverse of this configuration , in which the CLARE2.5 grammar is translated into the ANLT formalism , is not possible since some central rules contain sequences of daughters specified by a single ` list ' variable , which has no counterpart in the ANLT and cannot directly be simulated ) . </S>
+<S ID='S-86' AZ='OWN'> The throughput of this configuration was only one fiftieth of that of the BU-LC parser . </S>
+<S ID='S-87' AZ='OWN'> The ANLT grammar contains more than five times as many rules than does the sentence-level portion of the CLARE2.5 grammar , and <REFAUTHOR>Alshawi</REFAUTHOR> ( personal communication ) points out that the CLE parser had not previously been run with a grammar containing such a large number of rules , in contrast to the ANLT parsers . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-11'> The Effect of Sentence Length </HEADER>
+<P>
+<S ID='S-88' AZ='OWN'> Although the mean sentence length in the first two experiments is much shorter than the 20 - 30 word length ( depending on genre etc. ) that is common in real texts , the test sentences cover a wide range of syntactic constructions and exhibit less constructional bias than would a set of sentences extracted at random from a single corpus . </S>
+<S ID='S-89' AZ='OWN'> However , to investigate performance on longer sentences and the relationship between sentence length and parse time , a further set of 100 sentences with lengths distributed uniformly between 13 and 30 words was created by hand by the author and added to the previous test data . </S>
+<S ID='S-90' AZ='OWN'> Table <CREF/> shows the relationship between sentence length and mean parse time with the BU-LC and LR parsers . </S>
+</P>
+<IMAGE ID='I-1'/>
+<IMAGE ID='I-2'/>
+<P>
+<S ID='S-91' AZ='OWN'> In contrast to the results from the first experiment , the throughput of the LR parser is only 4 % better than that of the BU-LC parser for sentences of 13 - 27 words in length . </S>
+<S ID='S-92' AZ='OWN'> The former parses many sentences up to twice as fast , but a small proportion of the others are parsed almost twice as slowly . </S>
+<S ID='S-93' AZ='OWN'> As well as their wide variability with respect to the BU-LC parser , the absolute variability of the LR parse times is high ( reflected in large standard deviations -- <EQN/> -- see Table <CREF/> ) . </S>
+<S ID='S-94' AZ='OWN'> Most of the sentences for which LR performance is worse contain more than one occurrence of the passive construction : due to their length this is particularly the case for the group of sentences of 28 - 30 words with which the LR parser performed particularly badly . </S>
+<S ID='S-95' AZ='OWN'> However , it is likely that if the constraining power of the parse table were improved in this area the difference in throughput between LR and BU-LC would revert to nearer the 35 % figure seen in the first experiment . </S>
+</P>
+<P>
+<S ID='S-96' AZ='OWN'> The standard deviations for numbers of parses are also relatively large . </S>
+<S ID='S-97' AZ='OWN'> The maximum number of parses was 2736 for one 29-word sentence , but on the other hand some of even the longest sentences had fewer than ten parses . </S>
+<S ID='S-98' AZ='OWN'> ( But note that since the time taken for parse forest unpacking is not included in parse times , the latter do not vary by such a large magnitude ) . </S>
+</P>
+<P>
+<S ID='S-99' AZ='OWN'> The results of this experiment are displayed graphically in Figure 1 , together with a quadratic function . </S>
+<S ID='S-100' AZ='OWN'> Comparison with the function suggests that , at least for the BU-LC parser , parse time is related roughly quadratically to input length . </S>
+</P>
+<P>
+<S ID='S-101' AZ='CTR'> In previous work with the ANLT <REF TYPE='P' SELF="YES">Briscoe and Carroll 1993</REF> , throughput with raw corpus data was worse than that observed in these experiments , though probably only by a constant factor . </S>
+<S ID='S-102' AZ='OWN'> This could be due to the fact that the vocabulary of the corpus concerned exhibits significantly higher lexical ambiguity ; however , for sentences taken from a specific corpus , constructional bias observed in a training phase could be exploited to improve performance <REF TYPE='P'>Samuelsson and Rayner 1991</REF> . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-12'> Discussion </HEADER>
+<P>
+<S ID='S-103' AZ='OWN'> All three of the parsers have theoretical worst-case complexities that are either exponential , or polynomial on grammar size but with an extremely large multiplier . </S>
+<S ID='S-104' AZ='OWN'> Despite this , in the practical experiments reported in the previous section the parsers achieve relatively good throughput with a general-purpose wide-coverage grammar of a natural language . </S>
+<S ID='S-105' AZ='OWN'> It therefore seems likely that grammars of the type considered in this paper ( i.e. with relatively detailed phrase structure components , but comparatively simple from a unification perspective ) , although realistic , do not bring the parsing algorithms involved anywhere near the worst-case complexity . </S>
+</P>
+<P>
+<S ID='S-106' AZ='OWN'> In the experiments , the CE technique results in a parser with worse performance than the normal LR technique . </S>
+<S ID='S-107' AZ='OWN'> Indeed , for the ANLT grammar , the number of states -- the term that the CE technique reduces from exponential to linear on the grammar size -- is actually smaller in the standard LALR(1) table . </S>
+<S ID='S-108' AZ='OWN'> This suggests that , when considering the complexity of parsers , the issue of parse table size is of minor importance for realistic NL grammars ( as long as an implementation represents the table compactly ) , and that improvements to complexity results with respect to grammar size , although interesting from a theoretical standpoint , may have little practical relevance for the processing of natural language . </S>
+</P>
+<P>
+<S ID='S-109' AZ='OWN'> Although <REF TYPE='A'>Schabes 1991</REF> claims that the problem of exponential grammar complexity `` is particularly acute for natural language processing since in this context the input length is typically small ( 10 - 20 words ) and the grammar size very large ( hundreds or thousands of rules and symbols ) '' , the experiments indicate that , with a wide-coverage NL grammar , inputs of this length can be parsed quite quickly ; however , longer inputs ( of more than about 30 words in length ) -- which occur relatively frequently in written text -- are a problem . </S>
+<S ID='S-110' AZ='OWN'> Unless grammar size takes on proportionately much more significance for such longer inputs , which seems implausible , it appears that in fact the major problems do not lie in the area of grammar size , but in input length . </S>
+</P>
+<P>
+<S ID='S-111' AZ='OWN'> All three parsers have worst-case complexities that are exponential on input length . </S>
+<S ID='S-112' AZ='OWN'> This theoretical bound might suggest that parsing performance would be severely degraded on long sentences ; however , the relationship between length of sentence and parse time with the ANLT grammar and the sentences tested appears to be approximately only quadratic . </S>
+<S ID='S-113' AZ='OWN'> There are probably many reasons why performance is much better than the complexity results suggest , but the most important may be that : </S>
+</P>
+<P>
+<S ID='S-114' TYPE='ITEM' AZ='OWN'> kleene star is used only in a very limited context ( for the analysis of coordination ) , </S>
+<S ID='S-115' TYPE='ITEM' AZ='OWN'> more than 90 % of the rules in the grammar have no more than two daughters , and </S>
+<S ID='S-116' TYPE='ITEM' AZ='OWN'> very few rules license both left and right recursion ( for instance of the sort that is typically used to analyse noun compounding , i.e. <EQN/> ) . </S>
+</P>
+<P>
+<S ID='S-117' AZ='OWN'> Despite little apparent theoretical difference between the CLE and ANLT grammar formalisms , and the fact that no explicit or formal process of ` tuning ' parsers and grammars to perform well with each other has been carried out in either of the ANLT or CLARE systems , the results of the experiment comparing the performance of the respective parsers using the ANLT grammar suggests that the parallel development of the software and grammars that has occurred nevertheless appears to have caused this to happen automatically . </S>
+<S ID='S-118' AZ='OWN'> It therefore seems likely that implementational decisions and optimisations based on subtle properties of specific grammars can , and may very often be , more important than worst-case complexity when considering the practical performance of parsing algorithms . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-13'> Conclusions </HEADER>
+<P>
+<S ID='S-119' AZ='BAS'> The research reported is in a similar vein to that of , for example , <REF TYPE='A'>Moore and Dowding 1991</REF> , <REF TYPE='A'>Samuelsson and Rayner 1991</REF> , and <REF TYPE='A'>Maxwell and Kaplan 1993</REF> , in that it relies on empirical results for the study and optimisation of parsing algorithms rather than on traditional techniques of complexity analysis . </S>
+<S ID='S-120' ABSTRACTC='A-1' AZ='OWN'> The paper demonstrates that research in this area will have to rely on empirical data until complexity theory is developed to a point where it is sufficiently fine-grained and accurate to predict how the properties of individual unification-based grammars will interact with particular parsing algorithms to determine practical performance . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE> <SURNAME>Aho</SURNAME>, A., R. <SURNAME>Sethi</SURNAME> amp; J. Ullman (<DATE>1986</DATE>) Compilers: principles, techniques and tools. Reading, MA: Addison-Wesley.
+</REFERENCE>
+<REFERENCE> <SURNAME>Alshawi</SURNAME>, H., D. <SURNAME>Carter</SURNAME>, R. <SURNAME>Crouch</SURNAME>, S. <SURNAME>Pulman</SURNAME>, M. <SURNAME>Rayner</SURNAME> amp; A. Smith (<DATE>1992</DATE>) CLARE: a contextual reasoning and cooperative response framework for
+the Core Language Engine. SRI International, Cambridge, UK.
+</REFERENCE>
+<REFERENCE> <SURNAME>Barton</SURNAME>, G., R. <SURNAME>Berwick</SURNAME> amp; E. Ristad (<DATE>1987</DATE>) Computational complexity and natural language. Cambridge, MA: MIT Press.
+</REFERENCE>
+<REFERENCE> <SURNAME>Billot</SURNAME>, S. amp; B. Lang (<DATE>1989</DATE>) ``The structure of shared forests in ambiguous parsing.'' In Proceedings of the
+27th Meeting of the Association for Computational Linguistics. 143-151.
+</REFERENCE>
+<REFERENCE> <SURNAME>Bouma</SURNAME>, G. amp; G. van Noord (<DATE>1993</DATE>) ``Head-driven parsing for lexicalist grammars: experimental results.'' In Proceedings of the
+6th Conference of the European Chapter of the Association for Computational
+Linguistics. 101-105.
+</REFERENCE>
+<REFERENCE> <SURNAME>Briscoe</SURNAME>, E., C. <SURNAME>Grover</SURNAME>, B. <SURNAME>Boguraev</SURNAME> amp; J. Carroll (<DATE>1987a</DATE>) ``A formalism and environment for the development of a large grammar of
+English.'' In Proceedings of the
+10th International Joint Conference on Artificial Intelligence. 703-708.
+</REFERENCE>
+<REFERENCE> <SURNAME>Briscoe</SURNAME>, E., C. <SURNAME>Grover</SURNAME>, B. <SURNAME>Boguraev</SURNAME> amp; J. Carroll (<DATE>1987b</DATE>) ``Feature defaults, propagation and reentrancy.'' In Categories, Polymorphism and Unification, edited by E. Klein amp; J. van Benthem,
+Centre for Cognitive Science, Edinburgh University, UK. 19-34.
+</REFERENCE>
+<REFERENCE> <SURNAME>Briscoe</SURNAME>, E. amp; J. Carroll (<DATE>1993</DATE>) ``Generalised probabilistic LR parsing of natural language (corpora) with
+unification-based grammars.'' Computational Linguistics, 19(1): 25-59.
+</REFERENCE>
+<REFERENCE> <SURNAME>Carroll</SURNAME>, J. (<DATE>1993</DATE>) Practical unification-based parsing of natural language. Computer Laboratory, Cambridge University, UK, Technical Report 314.
+</REFERENCE>
+<REFERENCE> <SURNAME>Carroll</SURNAME>, J. amp; E. Briscoe (<DATE>1992</DATE>) ``Probabilistic normalisation and unpacking of packed parse
+forests for unification-based grammars.'' In Proceedings of the
+AAAI Fall Symposium on Probabilistic Approaches to Natural Language. 33-38.
+</REFERENCE>
+<REFERENCE> <SURNAME>Earley</SURNAME>, J. (<DATE>1970</DATE>) ``An efficient context-free parsing algorithm.'' Communications of the ACM, 13.2: 94-102.
+</REFERENCE>
+<REFERENCE> <SURNAME>Gazdar</SURNAME>, G., E. <SURNAME>Klein</SURNAME>, G. <SURNAME>Pullum</SURNAME> amp; I. Sag (<DATE>1985</DATE>) Generalized phrase structure grammar. Oxford, UK: Blackwell.
+</REFERENCE>
+<REFERENCE> <SURNAME>Grover</SURNAME>, C., J. <SURNAME>Carroll</SURNAME> amp; E. Briscoe (<DATE>1993</DATE>) The Alvey natural language tools grammar (4th release). Computer Laboratory, Cambridge University, UK, Technical Report 284.
+</REFERENCE>
+<REFERENCE> <SURNAME>Johnson</SURNAME>, M. (<DATE>1989</DATE>) ``The computational complexity of Tomita's algorithm.'' In Proceedings of the
+1st International Workshop on Parsing Technologies. 203-208.
+</REFERENCE>
+<REFERENCE> <SURNAME>Kaplan</SURNAME>, R. (<DATE>1987</DATE>) ``Three seductions of computational psycholinguistics.'' In Linguistic Theory and Computer Applications, edited by P. Whitelock et al.,
+New York: Academic Press. 149-188.
+</REFERENCE>
+<REFERENCE> <SURNAME>Kasami</SURNAME>, J. (<DATE>1965</DATE>) An efficient recognition and syntax analysis algorithm for context-free
+languages. Air Force Cambridge Research Laboratory, Bedford, MA, Report AFCRL-65-758.
+</REFERENCE>
+<REFERENCE> <SURNAME>Kipps</SURNAME>, J. (<DATE>1989</DATE>) ``Analysis of Tomita's algorithm for general context-free parsing.'' In Proceedings of the
+1st International Workshop on Parsing Technologies. 193-202.
+</REFERENCE>
+<REFERENCE> <SURNAME>Lang</SURNAME>, B. (<DATE>1974</DATE>) ``Deterministic techniques for efficient non-deterministic parsers.'' In Automata, Languages and Programming, Lecture Notes in Computer Science 14, edited by J. Loeckx,
+Berlin, Germany: Springer-Verlag. 255-269.
+</REFERENCE>
+<REFERENCE> <SURNAME>Maxwell</SURNAME>, J. III amp; R. Kaplan (<DATE>1993</DATE>) ``The interface between phrasal and functional constraints.'' Computational Linguistics, 19(4): 571-590.
+</REFERENCE>
+<REFERENCE> <SURNAME>Moore</SURNAME>, R. amp; H. Alshawi (<DATE>1992</DATE>) ``Syntactic and semantic processing.'' In The Core Language Engine, edited by H. Alshawi,
+Cambridge, MA: MIT Press. 129-148.
+</REFERENCE>
+<REFERENCE> <SURNAME>Moore</SURNAME>, R. amp; J. Dowding (<DATE>1991</DATE>) ``Efficient bottom-up parsing.'' In Proceedings of the
+DARPA Speech and Natural Language Workshop. 200-203.
+</REFERENCE>
+<REFERENCE> <SURNAME>Pereira</SURNAME>, F. amp; D. Warren (<DATE>1980</DATE>) ``Definite clause grammars for language analysis--a survey of the formalism and
+a comparison with augmented transition networks.'' Artificial Intelligence, 13(3): 231-278.
+</REFERENCE>
+<REFERENCE> <SURNAME>Pollard</SURNAME>, C. amp; I. Sag (<DATE>1987</DATE>) Information-based syntax and semantics: volume 1-fundamentals. Chicago, IL: University of Chicago Press.
+</REFERENCE>
+<REFERENCE> <SURNAME>Pratt</SURNAME>, V. (<DATE>1975</DATE>) ``LINGOL - a progress report.'' In Proceedings of the
+5th International Joint Conference on Artificial Intelligence. 422-428.
+</REFERENCE>
+<REFERENCE> <SURNAME>Samuelsson</SURNAME>, C. amp; M. Rayner (<DATE>1991</DATE>) ``Quantitative evaluation of explanation-based learning as an optimization tool
+for a large-scale natural language system.'' In Proceedings of the
+12th International Joint Conference on Artificial Intelligence. 609-615.
+</REFERENCE>
+<REFERENCE> <SURNAME>Schabes</SURNAME>, Y. (<DATE>1991</DATE>) ``Polynomial time and space shift-reduce parsing of arbitrary context-free
+grammars.'' In Proceedings of the
+29th Annual Meeting of the Association for Computational Linguistics. 106-113.
+</REFERENCE>
+<REFERENCE> <SURNAME>Taylor</SURNAME>, L., C. <SURNAME>Grover</SURNAME> amp; E. Briscoe (<DATE>1989</DATE>) ``The syntactic regularity of English noun phrases.'' In Proceedings of the
+4th European Meeting of the Association for Computational Linguistics. 256-263.
+</REFERENCE>
+<REFERENCE> <SURNAME>Tomabechi</SURNAME>, H. (<DATE>1991</DATE>) ``Quasi-destructive graph unification.'' In Proceedings of the
+29th Annual Meeting of the Association for Computational Linguistics. 315-322.
+</REFERENCE>
+<REFERENCE> <SURNAME>Tomita</SURNAME>, M. (<DATE>1987</DATE>) ``An efficient augmented-context-free parsing algorithm.'' Computational Linguistics, 13(1): 31-46.
+</REFERENCE>
+<REFERENCE> <SURNAME>Shann</SURNAME>, P. (<DATE>1989</DATE>) ``The selection of a parsing strategy for an on-line machine translation system
+in a sublanguage domain. A new practical comparison.'' In Proceedings of the
+1st International Workshop on Parsing Technologies. 264-276.
+</REFERENCE>
+<REFERENCE> <SURNAME>Wright</SURNAME>, J., E. <SURNAME>Wrigley</SURNAME> amp; R. Sharman (<DATE>1991</DATE>) ``Adaptive probabilistic generalized LR parsing.'' In Proceedings of the
+2nd International Workshop on Parsing Technologies. 154-163.
+</REFERENCE>
+<REFERENCE> <SURNAME>Younger</SURNAME>, D. (<DATE>1967</DATE>) ``Recognition and parsing of context-free languages in time n3.'' Information and Control, 10(2): 189-208.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

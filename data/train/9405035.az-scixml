@@ -1,0 +1,263 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9405035</FILENO>
+<REFLABEL>Wang 1994</REFLABEL>    
+<APPEARED><CONFERENCE TYPE='Student'>ACL</CONFERENCE><YEAR>1994</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Nn </CLASSIFICATION>
+</METADATA>
+<TITLE> Dual-Coding Theory and Connectionist Lexical Selection </TITLE>
+<AUTHORLIST>
+<AUTHOR>Ye-Yi Wang</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' AZ='AIM'> We introduce the bilingual dual-coding theory as a model for bilingual mental representation . </A-S>
+<A-S ID='A-1' DOCUMENTC='S-8' AZ='AIM'> Based on this model , lexical selection neural networks are implemented for a connectionist transfer project in machine translation . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='OWN'> Psycholinguistic knowledge would be greatly helpful , as we believe , in constructing an artificial language processing system . </S>
+<S ID='S-1' AZ='OWN' TYPE='ITEM'> As for machine translation , we should take advantage of our understandings of </S>
+<S ID='S-2' TYPE='ITEM' AZ='OWN'> how the languages are represented in human mind ; </S>
+<S ID='S-3' TYPE='ITEM' AZ='OWN'> how the representation is mapped from one language to another ; </S>
+<S ID='S-4' TYPE='ITEM' AZ='OWN'> how the representation and mapping are acquired by human . </S>
+</P>
+<P>
+<S ID='S-5' AZ='BAS'> The bilingual dual-coding theory <REF TYPE='P'>Paivio 1986</REF> partially answers the above questions . </S>
+<S ID='S-6' AZ='OTH'> It depicts the verbal representations for two different languages as two separate but connected logogen systems , characterizes the translation process as the activation along the connections between the logogen systems , and attributes the acquisition of the representation to some unspecified statistical processes . </S>
+</P>
+<P>
+<S ID='S-7' AZ='AIM'> We have explored an information theoretical neural network <REF TYPE='P'>Gorin and Levinson 1989</REF> that can acquire the verbal associations in the dual-coding theory . </S>
+<S ID='S-8' ABSTRACTC='A-1' AZ='OWN'> It provides a learnable lexical selection sub-system for a connectionist transfer project in machine translation . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Dual-Coding Theory </HEADER>
+<P>
+<S ID='S-9' AZ='BKG'> There is a well-known debate in psycholinguistics concerning the bilingual mental representation : independence position assumes that bilingual memory is represented by two functionally independent storage and retrieval systems , whereas interdependence position hypothesizes that all information of languages exists in a common memory store . </S>
+<S ID='S-10' AZ='BKG'> Studies on cross-language transfer and cross-language priming have provided evidence for both hypotheses <REF  TYPE='P'>de Groot and Nas 1991</REF>, <REF  TYPE='P'>Lambert et al. 1958</REF> . </S>
+</P>
+<P>
+<S ID='S-11' AZ='OTH'> Dual-coding theory explains the coexistence of independent and interdependent phenomena with separate but connected structures . </S>
+<S ID='S-12' AZ='OTH'> The general dual-coding theory hypothesizes that human represents language with dual systems -- the verbal system and the imagery system . </S>
+<S ID='S-13' AZ='OTH'> The elements of the verbal system are logogens for words in a language . </S>
+<S ID='S-14' AZ='OTH'> The elements of the imagery system , called `` imagens '' , are connected to the logogens in the verbal systems via referential connections . </S>
+<S ID='S-15' AZ='OTH'> Logogens in a verbal system are also interconnected with associative connections . </S>
+<S ID='S-16' AZ='OTH'> The bilingual dual-coding theory proposes an architecture in which a common imagery system is connected to two verbal systems , and the two verbal systems are interconnected to each other via associative connections [ Figure <CREF/> ] . </S>
+<S ID='S-17' AZ='OTH'> Unlike the within-language associations , which are rich and diverse , these between-language associations involve primarily translation equivalent terms that are experienced together frequently . </S>
+<S ID='S-18' AZ='OTH'> The interconnections among the three systems explain the interdependent functional behavior . </S>
+<S ID='S-19' AZ='OTH'> On the other hand , the different characteristics of within-language and between-language associations account for the independent functional behavior . </S>
+</P>
+<IMAGE ID='I-0'/>
+<P>
+<S ID='S-20' AZ='OTH'> Based on the above structural assumption , dual-coding theory proposes a parallel set of processing assumptions . </S>
+<S ID='S-21' AZ='OTH'> Activation of connections between referentially related imagens and logogens is called referential processing . </S>
+<S ID='S-22' AZ='OTH'> Naming objects and imaging to words are prototypical examples . </S>
+<S ID='S-23' AZ='OTH'> Activation of associative connections between logogens is called associative processing . </S>
+<S ID='S-24' AZ='OTH'> Lexical translation is an example of associative processing between two languages . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-2'> Connectionist Lexical Selection </HEADER>
+<DIV DEPTH='2'>
+<HEADER ID='H-3'> Lexical Selection </HEADER>
+<P>
+<S ID='S-25' AZ='BKG'> Lexical selection is the task of choosing target language words that accurately reflect the meaning of the corresponding source language words . </S>
+<S ID='S-26' AZ='BKG'> It plays an important role in machine translation <REF TYPE='P'>Pustejovsky and Nirenburg 1987</REF> . </S>
+</P>
+<P>
+<S ID='S-27' AZ='BKG'> A common lexical selection practice involves an intermediate representation . </S>
+<S ID='S-28' AZ='BKG'> It disambiguates the source language words to entities in the intermediate representation , then maps from the entities to the target lexical entries . </S>
+<S ID='S-29' AZ='OTH'> This intermediate representation may be Lexical Concept Structure <REF TYPE='P'>Dorr 1989</REF> or interlingua <REF TYPE='P'>Nirenberg et al. 1987</REF> . </S>
+<S ID='S-30' AZ='CTR'> This engineering approach requires great effort in designing the representation and the mapping rules . </S>
+</P>
+<P>
+<S ID='S-31' AZ='OTH'> Currently , there are some efforts in statistical lexical selection . </S>
+<S ID='S-32' AZ='OTH'> A target language word W <EQN/> can be selected with the posterior probability Pr ( W <EQN/> ` | W <EQN/> ) given the source language word W <EQN/> . </S>
+<S ID='S-33' AZ='OTH'> Several target language lexical entries may be selected for a single source language word . </S>
+<S ID='S-34' AZ='OTH'> Then the correct selections can be identified by the language model of the target language <REF TYPE='P'>Brown et al. 1990</REF> . </S>
+<S ID='S-35' AZ='OTH'> This approach is learnable . </S>
+<S ID='S-36' AZ='CTR'> However , the accuracy is low . </S>
+<S ID='S-37' AZ='OTH'> One reason is that it does not use any structural information of a language . </S>
+</P>
+<P>
+<S ID='S-38' AZ='BAS'> In next subsections , we propose information-theoretical networks based on the bilingual dual-coding theory for lexical selection . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-4'> Information-Theoretical Networks </HEADER>
+<P>
+<S ID='S-39' AZ='OTH'> Information-theoretical network is a neural network formalism that is capable of doing associations between two layers of representations . </S>
+<S ID='S-40' AZ='OTH'> The associations can be obtained statistically according to the network 's experiences . </S>
+</P>
+<P>
+<S ID='S-41' AZ='OTH'> An information-theoretical network has two layers . </S>
+<S ID='S-42' AZ='OTH'> Each unit of a layer represents an element in the input or output of a training pattern , which might be a logogen or a word . </S>
+<S ID='S-43' AZ='OTH'> Units in different layers are connected . </S>
+<S ID='S-44' AZ='OTH'> The weight of the connection between unit i in one layer and unit j in the other layer is assigned with the mutual information between the elements represented by the two units  </S>
+</P>
+<IMAGE ID='I-1'/>
+<P>
+<S ID='S-45' AZ='OTH'> Each layer also contains a bias unit , which is always activated . </S>
+<S ID='S-46' AZ='OTH'> The weight of the connection between the bias unit in one layer and unit j in the other layer is </S>
+</P>
+<IMAGE ID='I-2'/>
+<P>
+<S ID='S-47' AZ='OTH'> Both the information-theoretical network and the back-propagation network compute the posterior probabilities for an association task <REF  TYPE='P'>Gorin and Levinson 1989</REF>, <REF  TYPE='P'>Robinson 1992</REF> . </S>
+<S ID='S-48' AZ='OTH'> However , only the information-theoretical network is isomorphic to the directly interconnected verbal systems in the dual-coding theory . </S>
+<S ID='S-49' AZ='OTH'> Besides , an information-theoretical network has the following advantages : </S>
+</P>
+<P>
+<S ID='S-50' AZ='OTH'> it learns fast . </S>
+<S ID='S-51' AZ='OTH'> The network can learn in a single pass without gradient decent . </S>
+</P>
+<P>
+<S ID='S-52' AZ='OTH'> it is adaptive . </S>
+<S ID='S-53' AZ='OTH'> It can incrementally adapt to new experiences simply by adding new data to the training samples and modifying the associations according to the changed statistics . </S>
+</P>
+<P>
+<S ID='S-54' AZ='OTH'> These make the network more psychologically plausible . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-5'> Lexical Selection as an Associative Process </HEADER>
+<P>
+<S ID='S-55' AZ='OWN'> We tried to map source language f-structures to target language f-structure in a connectionist transfer project <REF SELF="YES" TYPE='P'>Wang and Waibel 1994</REF> . </S>
+<S ID='S-56' AZ='OWN' TYPE='ITEM'> Functionally , there were two sub-tasks : </S>
+<S ID='S-57' TYPE='ITEM' AZ='OWN'> finding the target sub-structures , their phrasal categories and their corresponding source structures ; </S>
+<S ID='S-58' TYPE='ITEM' AZ='OWN'> finding the head of a target structure . </S>
+<S ID='S-59' AZ='OWN'> The second sub-task is a problem of lexical selection . </S>
+<S ID='S-60' AZ='OWN'> It was first implemented with a back-propagation network . </S>
+</P>
+<P>
+<S ID='S-61' AZ='OWN'> We replaced the back-propagation networks for lexical selection with information-theoretical networks simulating the associative process in the dual-coding theory . </S>
+<S ID='S-62' AZ='OWN'> The networks have two layers of units . </S>
+<S ID='S-63' AZ='OWN'> Each source ( target ) language lexical item is represented by a unit in the input ( output ) layer . </S>
+<S ID='S-64' AZ='OWN'> One network is constructed for each phrasal category <EQN/> .</S>
+</P>
+<P>
+<S ID='S-65' AZ='OWN'> The networks works in the following way : for a target-language f-structure to be generated , the transfer system knows its phrasal category and its corresponding source-language f-structure from the networks that perform the sub-task <CREF/> . </S>
+<S ID='S-66' AZ='OWN'> It then activates the lexical selection network for that phrasal category with the input units that correspond to the heads of the source language f-structure and its sub-structures . </S>
+<S ID='S-67' AZ='OWN'> Through the connections between the two layers , the output units are activated , and the lexical item that corresponds to the most active output unit is selected as the head of the target f-structure . </S>
+<S ID='S-68' AZ='OWN'> The following example illustrates how the system selects the head anmelden for the German XCOMP sub-structure when it does the transfer from </S>
+<IMAGE ID='I-3'/>
+</P>
+<P>
+<S ID='S-69' AZ='OWN'> to</S>
+<IMAGE ID='I-4'/>
+</P>
+<P>
+<S ID='S-70' AZ='OWN'> Since the structure networks find that there is a VP sub-structure of XCOMP in the target structure whose corresponding input structure is EQN] , it activates the VP lexical selection network 's input units for I , register and conference . </S>
+<S ID='S-71' AZ='OWN'> By propagating the activation via the associative connections , the unit for anmelden is the most active output . </S>
+<S ID='S-72' AZ='OWN'> Therefore , ` anmelden ' is chosen as the head of the xcomp sub-structure . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-6'> Preliminary Result </HEADER>
+<P>
+<S ID='S-73' AZ='OWN'> The domain of our work was the Conference Registration Telephony Conversations . </S>
+<S ID='S-74' AZ='OWN'> The lexicon for the task contained about 500 English and 500 German words . </S>
+<S ID='S-75' AZ='OWN'> There were 300 English / German f-structure pairs available from other research tasks <REF TYPE='P'>Osterholtz et al. 1992</REF> . </S>
+<S ID='S-76' AZ='OWN'> A separate set of 154 sentential f-structures was used to test the generalization performance of the system . </S>
+<S ID='S-77' AZ='OWN'> The testing data was collected for an independent task <REF TYPE='P'>Jain 1991</REF> . </S>
+</P>
+<P>
+<S ID='S-78' AZ='OWN'> From the 300 sentential f-structure pairs , every German VP sub-structure is extracted and labeled with its English counterpart . </S>
+<S ID='S-79' AZ='OWN'> The English counterpart 's head and its immediate sub-structures ' heads serve as the input in a sample of VP association , and the German f-structure 's head become the output of the association . </S>
+<S ID='S-80' AZ='OWN'> For the above example , the association <EQN/> is a sample drawn from the f-structures for the VP network . </S>
+<S ID='S-81' AZ='OWN'> The training samples for all the other networks are created in the same way . </S>
+</P>
+<P>
+<S ID='S-82' AZ='OWN'> The accuracy of our system with information-theoretical network lexical selection is lower than the one with back-propagation networks ( around 84 % versus around 92 % ) for the training data . </S>
+<S ID='S-83' AZ='OWN'> However , the generalization performance on the unseen inputs is better ( around 70 % versus around 62 % ) . </S>
+<S ID='S-84' AZ='OWN'> The information-theoretical networks do not over-learn as the back-propagation networks . </S>
+<S ID='S-85' AZ='OWN'> This is partially due to the reduced number of free parameters in the information-theoretical networks . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-7'> Summary </HEADER>
+<P>
+<S ID='S-86' AZ='OWN'> The lexical selection approach discussed here has two advantages . </S>
+<S ID='S-87' AZ='OWN'> First , it is learnable . </S>
+<S ID='S-88' AZ='OWN'> Little human effort on knowledge engineering is required . </S>
+<S ID='S-89' AZ='OWN'> Secondly , it is psycholinguistically well-founded in that the approach adopts a local activation processing model instead of relies upon symbol passing , as symbolic systems usually do . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+P. F. <SURNAME>Brown</SURNAME> and et al.
+A statistical approach to machine translation.
+Computational Linguistics, 16(2):73-85, <DATE>1990</DATE>.
+</REFERENCE>
+<REFERENCE>
+A. M. de <SURNAME>Groot</SURNAME> and G. L. <SURNAME>Nas</SURNAME>.
+Lexical representation of cognates and noncognates in compound
+  bilinguals.
+Journal of Memory and Language, 30(1), <DATE>1991</DATE>.
+</REFERENCE>
+<REFERENCE>
+B. J. <SURNAME>Dorr</SURNAME>.
+Conceptual basis of the lexicon in machine translation.
+Technical Report A.I. Memo No. <DATE>1166</DATE>, Artificial Intelligence
+  Laboratory, MIT, August, <DATE>1989</DATE>.
+</REFERENCE>
+<REFERENCE>
+A. L. <SURNAME>Gorin</SURNAME> and S. E. <SURNAME>Levinson</SURNAME>.
+Adaptive acquisition of language.
+Technical report, Speech Research Department, ATamp;T Bell
+  Laboratories, Murray Hill, <DATE>1989</DATE>.
+</REFERENCE>
+<REFERENCE>
+A. N. <SURNAME>Jain</SURNAME>.
+Parsec: A connectionist learning architecture for parsing spoken
+  language.
+Technical Report CMU-CS-91-208, Carnegie Mellon University, <DATE>1991</DATE>.
+</REFERENCE>
+<REFERENCE>
+W. E. <SURNAME>Lambert</SURNAME>, J. <SURNAME>Havelka</SURNAME> and C. <SURNAME>Crosby</SURNAME>.
+The influence of language acquisition contexts on bilingualism.
+Journal of Abnormal and Social Psychology, 56, <DATE>1958</DATE>.
+</REFERENCE>
+<REFERENCE>
+S. <SURNAME>Nirenberg</SURNAME>, V. <SURNAME>Raskin</SURNAME> and A. B. <SURNAME>Tucker</SURNAME>.
+The structure of interlingua in translator.
+In S. Nirenburg, editor, Machine Translation: Theoretical
+  and Methodological Issues. Cambridge University Press, Cambridge, England,
+  <DATE>1987</DATE>.
+</REFERENCE>
+<REFERENCE>
+L. <SURNAME>Osterholtz</SURNAME> and et al.
+Janus: a multi-lingual speech to speech translation system.
+In Proceedings of the IEEE International Conference on
+  Acoustics, Speech and Signal Processing, volume 1, pages 209-212. IEEE,
+  <DATE>1992</DATE>.
+</REFERENCE>
+<REFERENCE>
+A. <SURNAME>Paivio</SURNAME>.
+Mental Representations: A Dual Coding Approach.
+Oxford University Press, New York, <DATE>1986</DATE>.
+</REFERENCE>
+<REFERENCE>
+J. <SURNAME>Pustejovsky</SURNAME> and S. <SURNAME>Nirenburg</SURNAME>.
+Lexical selection in the process of language generation.
+In Proceedings of the 25th Annual Conference of the Association
+  for Computational Linguistics, pages 201-206, Standford University,
+  Standford, CA, <DATE>1987</DATE>.
+</REFERENCE>
+<REFERENCE>
+A. <SURNAME>Robinson</SURNAME>.
+Practical network design and implementation.
+In Cambridge Neural Network Summer School, <DATE>1992</DATE>.
+</REFERENCE>
+<REFERENCE>
+Y. <SURNAME>Wang</SURNAME> and A. <SURNAME>Waibel</SURNAME>.
+Connectionist transfer in machine translation.
+In prepare, <DATE>1994</DATE>.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

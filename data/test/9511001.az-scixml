@@ -1,0 +1,321 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9511001</FILENO>
+<APPEARED><CONFERENCE>COLING</CONFERENCE><YEAR>1994</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.Ap.Mt </CLASSIFICATION>
+</METADATA>
+<TITLE> Countability and Number in Japanese-to-English Machine Translation </TITLE>
+<AUTHORLIST>
+<AUTHOR>Francis Bond</AUTHOR>
+<AUTHOR>Kentaro Ogura</AUTHOR>
+<AUTHOR>Satoru Ikehara</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' DOCUMENTC='S-9' AZ='AIM'> This paper presents a heuristic method that uses information in the Japanese text along with knowledge of English countability and number stored in transfer dictionaries to determine the countability and number of English noun phrases . </A-S>
+<A-S ID='A-1' DOCUMENTC='S-135' AZ='OWN'> Incorporating this method into the machine translation system ALT-J / E , helped to raise the percentage of noun phrases generated with correct use of articles and number from 65 % to 73 . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> Correctly determining number is a difficult problem when translating from Japanese to English . </S>
+<S ID='S-1' AZ='BKG'> This is because in Japanese , noun phrases are not normally marked with respect to number . </S>
+<S ID='S-2' AZ='BKG'> Japanese nouns have no equivalent to the English singular and plural forms and verbs do not inflect to agree with the number of the subject <REF TYPE='P'>Kuno 1973</REF> . </S>
+<S ID='S-3' AZ='BKG'> In addition , there is no grammatical marking of countability . </S>
+</P>
+<P>
+<S ID='S-4' AZ='BKG'> In order to generate English correctly , it is necessary to know whether a given noun phrase is countable or uncountable and , if countable , whether it is singular or plural . </S>
+<S ID='S-5' AZ='BKG'> Deciding this is a problem even for humans translating from Japanese to English , but they have their own knowledge of both languages to draw on . </S>
+<S ID='S-6' AZ='BKG'> A machine translation system needs to have this knowledge codified in some way . </S>
+<S ID='S-7' AZ='BKG'> As generating articles and number is only important when the rest of the sentence has been correctly generated , there has not been a lot of research devoted to it . </S>
+<S ID='S-8' AZ='CTR'> Recently , <REF TYPE='A'>Murata and Nagao 1993</REF> have proposed a method of determining the referentiality property and number of nouns in Japanese sentences for machine translation into English , but the research has not yet been extended to include the actual English generation . </S>
+</P>
+<P>
+<S ID='S-9' ABSTRACTC='A-0' AZ='AIM'> This paper describes a method that extracts information relevant to countability and number from the Japanese text and combines it with knowledge about countability and number in English . </S>
+<S ID='S-10' AZ='TXT'> First countability in English is discussed at the noun phrase and then the noun level . </S>
+<S ID='S-11' AZ='AIM'> As a noun phrase 's countability in English is affected by its referential property ( generic , referential or ascriptive ) we present a method of determining the referential use of Japanese noun phrases . </S>
+<S ID='S-12' AZ='TXT'> Next the process of actually determining noun phrase countability and number is described . </S>
+<S ID='S-13' AZ='TXT'> This is followed by some examples of sentences translated by the proposed method and a discussion of the results . </S>
+</P>
+<P>
+<S ID='S-14' AZ='OWN'> The processing described in this paper has been implemented in NTT Communication Science Laboratories ' experimental machine translation system ALT-J / E <REF SELF="YES" TYPE='P'>Ikehara et al. 1991</REF> . </S>
+<S ID='S-15' AZ='OWN'> Along with new processing for the generation of articles , which is not discussed in detail in this paper , it improved the percentage of noun phrases with correctly generated determiners and number from 65 % to 73 % . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Countability </HEADER>
+<DIV DEPTH='2'>
+<HEADER ID='H-2'> Noun Phrase Countability </HEADER>
+<IMAGE ID='I-0'/>
+<P>
+<S ID='S-16' AZ='BAS'> We adopt the definition of countability in English given in <REF TYPE='A'>Allan 1980</REF> . </S>
+<S ID='S-17' AZ='OTH'> A countable noun phrase is defined as follows : </S>
+</P>
+<P>
+<S ID='S-18' TYPE='ITEM' AZ='OTH' > If the head constituent of an NP falls within the scope of a denumerator it is countable . </S>
+<S ID='S-19' TYPE='ITEM' AZ='OTH' > If the head constituent of an NP is plural it is countable . </S>
+</P>
+<P>
+<S ID='S-20' AZ='OTH'> Where `` the phrase ` falls within the scope [ or domain ] of a denumerator ' means ` is denumerated ' by it ; i. e the NP reference is quantified by the denumerator as a number of discrete entities . </S>
+<S ID='S-21' AZ='BKG'> '' . </S>
+</P>
+<P>
+<S ID='S-22' AZ='BKG'> Not all nouns in English can become the head of a countable noun phrase . </S>
+<S ID='S-23' AZ='BKG'> In particular , noun phrases whose heads fall within the scope of a denumerator ( ` denumerated ' noun phrases ) must be headed by a noun that has both singular and plural forms . </S>
+<S ID='S-24' AZ='BKG'> Nouns that do not have both forms , like equipment or scissors , require a classifier to be used . </S>
+<S ID='S-25' AZ='BKG'> The classifier becomes the head of a countable noun phrase with the original noun attached as the complement of a prepositional phrase headed by of : a pair of scissors , a piece of equipment . </S>
+</P>
+<P>
+<S ID='S-26' AZ='BKG'> Whether a noun can be used to head a countable noun phrase or not depends both on how it is interpreted , and on its inherent countability preference . </S>
+<S ID='S-27' AZ='TXT'> Noun countability preferences are discussed in the next section . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-3'> Noun Countability Preferences </HEADER>
+<P>
+<S ID='S-28' AZ='BKG'> A noun 's countability preference determines how it will behave in different environments . </S>
+<S ID='S-29' AZ='BKG'> We classify nouns into seven countability preferences , five major and two minor , as described below . </S>
+</P>
+<P>
+<S ID='S-30' AZ='BKG'> The two most basic types are ` fully countable ' and ` uncountable ' . </S>
+<S ID='S-31' AZ='BKG'> Fully countable nouns , such as knife have both singular and plural forms , and cannot be used with determiners such as much . </S>
+<S ID='S-32' AZ='BKG'> Uncountable nouns , such as furniture , have no plural form , and can be used with much . </S>
+</P>
+<P>
+<S ID='S-33' AZ='BKG'> Between these two extremes there are a vast number of nouns , such as cake , that can be used in both countable and uncountable noun phrases . </S>
+<S ID='S-34' AZ='BKG'> They have both singular and plural forms , and can also be used with much . </S>
+<S ID='S-35' AZ='BKG'> Whether such nouns will be used countably or uncountably depends on whether their referent is being thought of as made up of discrete units or not . </S>
+<S ID='S-36' AZ='BKG'> As it is not always possible to explicitly determine this when translating from Japanese to English , we divide these nouns into two groups : ` strongly countable ' , those that are more often used to refer to discrete entities , such as cake , and ` weakly countable ' , those that are more often used to refer to unbounded referents , such as beer . </S>
+</P>
+<P>
+<S ID='S-37' AZ='BKG'> The last major type of countability preference is ` pluralia tanta ' : nouns that only have a plural form , such as scissors . </S>
+<S ID='S-38' AZ='BKG'> They can neither be denumerated nor modified by much . </S>
+<S ID='S-39' AZ='BKG'> We further subdivide pluralia tanta into two types , those that can use the classifier pair to be denumerated , such as a pair of scissors and those that can't , such as clothes . </S>
+<S ID='S-40' AZ='BKG'> ` pair ' pluralia tanta have a singular form when used as modifiers ( a scissor movement ) . </S>
+<S ID='S-41' AZ='BKG'> Pluralia tanta such as clothes , use the plural form even as modifiers ( a clothes horse ) , and need a countable word of similar meaning to be substituted when they are denumerated : a garment , a suit . </S>
+</P>
+<P>
+<S ID='S-42' AZ='BKG'> The two minor types are subsets of fully countable and uncountable nouns respectively . </S>
+<S ID='S-43' AZ='BKG'> Unless explicitly indicated , they will be treated the same as their supersets . </S>
+<S ID='S-44' AZ='BKG'> ` Collective ' nouns share all the properties of fully countable nouns . </S>
+<S ID='S-45' AZ='BKG'> In addition they can have singular or plural verb agreement with the singular form of the noun : The government has / have decided . </S>
+<S ID='S-46' AZ='BKG'> ` Semi-countable ' nouns share the properties of uncountable nouns , except that they can be modified directly by a / an ; for example a knowledge [ of Japanese ] . </S>
+</P>
+<P>
+<S ID='S-47' AZ='OWN'> Examples of the information about countability and number stored in the Japanese to English noun transfer dictionary are given in table <CREF/> . </S>
+<S ID='S-48' AZ='BKG'> The information about noun countability preferences cannot be found in standard dictionaries and must be entered by an English native speaker . </S>
+<S ID='S-49' AZ='OTH'> Some tests to help determine a given noun 's countability preferences are described in <REF TYPE='A' SELF="YES">Bond and Ogura 1993</REF> , which discusses the use of noun countability preferences in Japanese to English machine translation . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-4'> Determination of Np Referentiality </HEADER>
+<P>
+<S ID='S-50' AZ='OWN'> The first stage in generating the countability and number of a translated English noun phrase is to determine its referentiality . </S>
+<S ID='S-51' AZ='OWN'> We distinguish three kinds of referentiality : ` generic ' , ` referential ' and ` ascriptive ' . </S>
+</P>
+<P>
+<S ID='S-52' AZ='OWN'> We call noun phrases used to make general statements about a class generic ; for example Mammoths are extinct . </S>
+<S ID='S-53' AZ='TXT'> The way generic noun phrases are expressed in English is described in Section <CREF/> . </S>
+<S ID='S-54' AZ='OWN'> Referential noun phrases are ones that refer to some specific referent ; for example ` Two dogs chase a cat ' . </S>
+<S ID='S-55' AZ='OWN'> Their number and countability are ideally determined by the properties of the referent . </S>
+<S ID='S-56' AZ='OWN'> Ascriptive noun phrases are used to ascribe a property to something ; for example ` Hathi is an elephant ' . </S>
+<S ID='S-57' AZ='OWN'> They normally have the same number and countability as the noun phrase whose property they are describing . </S>
+</P>
+<IMAGE ID='I-1'/>
+<P>
+<S ID='S-58' AZ='OWN'> The process of determining the referentiality of a noun phrase is shown in Figure <CREF/> . </S>
+<S ID='S-59' AZ='OWN'> The tests are processed in the order shown . </S>
+<S ID='S-60' AZ='OWN'> As far as possible , simple criteria that can be implemented using the dictionary have been chosen . </S>
+<S ID='S-61' AZ='OWN'> For example , Test <CREF/> `` if a NP is modified by ` aimed at , for ... ' then it is ` generic '' ' is applied as part of translating NP 1-muke into `` for NP 1 '' . </S>
+<S ID='S-62' AZ='OWN'> The transfer dictionary includes the information that in this case , NP 1 should be generic . </S>
+</P>
+<P>
+<S ID='S-63' AZ='OWN'> Tests <CREF/> a <CREF/> show two more heuristic methods for determining whether a noun phrase has generic reference . </S>
+<S ID='S-64' AZ='OWN'> In Test <CREF/> , if the predicate is marked in the dictionary as one that only applies to classes as a whole , such as evolve or be extinct , then the sentence is taken to be generic . </S>
+<S ID='S-65' AZ='OWN'> In Test <CREF/> , ALT-J / E 's semantic hierarchy is used to test whether a sentence is generic or not . </S>
+<S ID='S-66' AZ='OWN'> For example in ` Mammoths are animals ' , ` mammoth ' has the semantic category ANIMAL so the sentence is judged to be stating a fact true of all mammoths and is thus generic . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-5'> Generic noun phrases </HEADER>
+<P>
+<S ID='S-67' AZ='BKG'> A generic noun phrase ( with a countable head noun ) can generally be expressed in three ways <REF TYPE='P'>Huddleston 1984</REF> . </S>
+<S ID='S-68' AZ='OWN'> We call these GEN ` a ' , where the noun phrase is indefinite : A mammoth is a mammal ; GEN ` the ' , where the noun phrase is definite : The mammoth is a mammal ; and GEN <EQN/> , where there is no article : Mammoths are mammals . </S>
+<S ID='S-69' AZ='OWN'> Uncountable nouns and pluralia tanta can only be expressed by GEN <EQN/> ( eg : Furniture is expensive ) . </S>
+<S ID='S-70' AZ='OWN'> They cannot take GEN ` a ' because they cannot be modified by a . </S>
+<S ID='S-71' AZ='OWN'> They do not take GEN ` the ' , because then the noun phrase would normally be interpreted as having definite reference . </S>
+<S ID='S-72' AZ='OWN'> Nouns that can be either countable or uncountable also only take GEN <EQN/> : ` Cake is delicious / Cakes are delicious ' . </S>
+<S ID='S-73' AZ='OWN'> These combinations are shown in Table <CREF/> , noun phrases that can not be used to show generic reference are marked . </S>
+</P>
+<IMAGE ID='I-2'/>
+<P>
+<S ID='S-74' AZ='OWN'> The use all three kinds of generic noun phrases is not acceptable in some contexts , for example * a mammoth evolved . </S>
+<S ID='S-75' AZ='OWN'> Sometimes a noun phrase can be ambiguous , for example ` I like the elephant ' , where the speaker could like a particular elephant , or all elephants . </S>
+</P>
+<P>
+<S ID='S-76' AZ='OWN'> Because the use of GEN <EQN/> is acceptable in all contexts , ALT-J / E generates all generic noun phrases as such , that is as bare noun phrases . </S>
+<S ID='S-77' AZ='OWN'> The number of the noun phrase is then determined by the countability preference of the noun phrase heading it . </S>
+<S ID='S-78' AZ='OWN'> Fully countable nouns and pluralia tanta will be plural , all others are singular . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-6'> Determination of Np Countability and Number </HEADER>
+<P>
+<S ID='S-79' AZ='TXT'> The following discussion deals only with referential and ascriptive noun phrases as generic noun phrases were discussed in Section <CREF/> . </S>
+</P>
+<IMAGE ID='I-3'/>
+<IMAGE ID='I-4'/>
+<P>
+<S ID='S-80' AZ='TXT'> The definitions of noun phrase countability given in Section <CREF/> , while useful for analyzing English , are not sufficient for translating from Japanese to English . </S>
+<S ID='S-81' AZ='OWN'> This is because in many cases it is impossible to tell from the Japanese form or syntactic shape whether a translated noun phrase will fall within the scope of a denumerator or not . </S>
+<S ID='S-82' AZ='OWN'> Japanese has no equivalent to a / an and does not distinguish between countable and uncountable quantifiers such as many / much and little / few . </S>
+<S ID='S-83' AZ='OWN'> Therefore to determine countability and generate number we need to use a combination of information from the Japanese original sentence , and default information from the Japanese to English transfer dictionary . </S>
+<S ID='S-84' AZ='OWN'> As much as possible , detailed information is entered in the transfer dictionaries to allow the translation process itself to be made simple . </S>
+</P>
+<P>
+<S ID='S-85' AZ='OWN'> The process of determining a noun phrase 's countability and number is shown in Figure <CREF/> . </S>
+<S ID='S-86' AZ='OWN'> The process is carried out during the transfer stage so information is available from both the Japanese original and the selected English translation . </S>
+</P>
+<P>
+<S ID='S-87' AZ='OWN'> To make the task of determining countability and number simpler , we define combinations of different countabilities for nouns with different countability preferences that we can use in the dictionaries . </S>
+<S ID='S-88' AZ='OWN'> The effects of the four most common types on the five major noun countability preferences are shown in Table <CREF/> . </S>
+</P>
+<P>
+<S ID='S-89' AZ='OWN'> Noun phrases modified by Japanese / English pairs that are translated as denumerators we call denumerated . </S>
+<S ID='S-90' AZ='OWN'> For example a noun modified by onoono-no `` each '' is denumerated - singular , while one modified by ryouhou-no `` both '' is denumerated - plural . </S>
+<S ID='S-91' AZ='OWN'> Uncountable and pluralia tantum nouns in denumerated environments are translated as the prepositional complement of a classifier . </S>
+<S ID='S-92' AZ='OWN'> A default classifier is stored stored in the dictionary for uncountable nouns and pluralia tanta . </S>
+<S ID='S-93' AZ='OWN'> Ascriptive noun phrases whose subject is countable will also be denumerated . </S>
+</P>
+<P>
+<S ID='S-94' AZ='OWN'> The two ` mass ' environments shown in Table <CREF/> are used to show the countability of nouns that can be either countable or uncountable . </S>
+<S ID='S-95' AZ='OWN'> Weakly countable nouns will only be countable if used with a denumerator . </S>
+<S ID='S-96' AZ='OWN'> Strongly countable nouns will be countable and plural in such mass - countable environments as the object of collect ( vt ) : ` I collect cakes ' , and uncountable and singular in mass - uncountable environments such as ` I ate too much cake ' . </S>
+<S ID='S-97' AZ='OWN'> In fact , both ` I collect cake ' and ` I ate too many cakes ' are possible . </S>
+<S ID='S-98' AZ='OWN'> As Japanese does not distinguish between the two the system must make the best choice it can , in the same way a human translator would have to . </S>
+<S ID='S-99' AZ='OWN'> The rules have been implemented to generate the translation that has the widest application , for example generating ` I ate too much cake ' , which is true whether the speaker only ate part or all of one cake or if they ate many cakes , rather than ` I ate too many cakes ' which is only true if the speaker ate many cakes . </S>
+</P>
+<P>
+<S ID='S-100' AZ='OWN'> Sometimes the choice of the English translation of a modifier will depend on the countability of the noun phrase . </S>
+<S ID='S-101' AZ='OWN'> For example , kazukazu-no and takusan-no can all be translated as `` many '' . </S>
+<S ID='S-102' AZ='OWN'> kazukazu-no implies that it 's modificant is made up of discrete entities , so the noun phrase it modifies should be translated as denumerated - plural . </S>
+<S ID='S-103' AZ='OWN'> takusan-no does not carry this nuance so ALT-J / E will translate a noun phrase modified by it as mass - uncountable , and takusan-no as many if the head is countable and much otherwise . </S>
+</P>
+<P>
+<S ID='S-104' AZ='OWN'> Rules that translate the nouns with different noun countability preferences into other combinations of countable and uncountable are also possible . </S>
+<S ID='S-105' AZ='OWN'> For example , sometimes even fully countable nouns can be used in uncountable noun phrases . </S>
+<S ID='S-106' AZ='OWN'> If an elephant is referred to not as an individual elephant but as a source of meat , then it will be expressed in an uncountable noun phrase : ` I ate a slice of elephant ' . </S>
+<S ID='S-107' AZ='OWN'> To generate this the following rule is used : `` nouns quantified with the classifier kire `` slice '' will be generated as the prepositional complement of slice , they will be singular with no article unless they are pluralia tanta , when they will be plural with no article '' . </S>
+</P>
+<P>
+<S ID='S-108' AZ='OWN'> Note that countable indefinite singular noun phrases without a determiner will have a / an generated . </S>
+<S ID='S-109' AZ='OWN'> Countable indefinite plural noun phrases and uncountable noun phrases may have some generated ; a full discussion of this is outside the scope of this article . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-7'> Experimental Results </HEADER>
+<P>
+<S ID='S-110' AZ='OWN'> This processing described above has been implemented in ALT-J / E. It was tested , together with new processing to generate articles , on a specially constructed set of test sentences , and on a collection of newspaper articles . </S>
+<S ID='S-111' AZ='OWN'> The results are summarized in Table <CREF/> . </S>
+</P>
+<IMAGE ID='I-5'/>
+<P>
+<S ID='S-112' AZ='OWN'> In the newspaper articles tested , there were an average of 7.0 noun phrases in each sentence . </S>
+<S ID='S-113' AZ='OWN'> For a sentence to be judged as correct all the noun phrases must be correct . </S>
+<S ID='S-114' AZ='OWN'> The introduction of the proposed method improved the percentage of correct sentences from 5 % to 12 . </S>
+</P>
+<P>
+<S ID='S-115' AZ='OWN'> Some examples of translations before and after the introduction of the new processing are given below . </S>
+<S ID='S-116' AZ='OWN'> The translations before the proposed processing was implemented are marked OLD , the translations produced by ALT-J / E using the proposed processing are marked NEW . </S>
+</P>
+<IMAGE ID='I-6'/>
+<P>
+<S ID='S-117' AZ='OWN'> In <CREF/> , the noun phrase headed by otona `` adult '' is judged to be prescriptive , as it is the complement of the copular naru `` become '' . </S>
+<S ID='S-118' AZ='OWN'> Therefore the proposed method translates it with the same number as the subject . </S>
+</P>
+<IMAGE ID='I-7'/>
+<P>
+<S ID='S-119' AZ='OWN'> zetumetu `` die out '' , is entered in the lexicon as a verb whose subject must be generic . </S>
+<S ID='S-120' AZ='OWN'> manmosu `` mammoth '' is fully countable so the generic noun phrase is translated as a bare plural . </S>
+</P>
+<IMAGE ID='I-8'/>
+<P>
+<S ID='S-121' AZ='OWN'> The old version recognizes that a denumerated noun phrase headed by an uncountable noun tofu requires a classifier but does not generate the correct structure neither does it generate a classifier for the pluralia tanta scissors . </S>
+<S ID='S-122' AZ='OWN'> The version using the proposed method does . </S>
+</P>
+<IMAGE ID='I-9'/>
+<P>
+<S ID='S-123' AZ='OWN'> As the subject of the copula that is countable it 's complement is judged to be denumerated by the proposed method . </S>
+<S ID='S-124' AZ='OWN'> As the complement is headed by an uncountable noun it must be embedded in the prepositional complement of a classifier . </S>
+</P>
+<P>
+<S ID='S-125' AZ='OWN'> There are three main problems still remaining . </S>
+<S ID='S-126' AZ='OWN'> The first is that currently the rules for determining the noun phrase referentiality are insufficiently fine . </S>
+<S ID='S-127' AZ='OWN'> We estimate that if referentiality could be determined 100 % correctly then the percentage of noun phrases with correctly generated articles and number could be improved to 96 % in the test set we studied . </S>
+<S ID='S-128' AZ='OWN'> The remaining 4 % require knowledge from outside the sentence being translated . </S>
+<S ID='S-129' AZ='OWN'> The biggest problem is noun phrases requiring world knowledge that cannot be expressed as a dictionary default . </S>
+<S ID='S-130' AZ='OWN'> These noun phrases cannot be generated correctly by the purely heuristic methods proposed here . </S>
+<S ID='S-131' AZ='OWN'> The last problem is noun phrases whose countability and number can be deduced from information in other sentences . </S>
+<S ID='S-132' AZ='OWN'> We would like to extend our method to use this information in the future . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-8'> Conclusion </HEADER>
+<P>
+<S ID='S-133' AZ='AIM'> The quality of the English in a Japanese to English Machine Translation system can be improved by the method proposed in this paper . </S>
+<S ID='S-134' AZ='OWN'> This method uses the information available in the original Japanese sentence along with information about English countability at both the noun phrase and noun level that can be stored in Japanese to English transfer dictionaries . </S>
+<S ID='S-135' ABSTRACTC='A-1' AZ='OWN'> Incorporating this method into the machine translation system ALT-J / E helped to improve the percentage of noun phrases with correctly generated articles and number from 65 % to 73 % . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+<SURNAME>Allan</SURNAME>, Keith.
+<DATE>1980</DATE>.
+Nouns and countability.
+Language 56.541-67.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Bond</SURNAME>, Francis, Kentaro <SURNAME>Ogura</SURNAME>.
+<DATE>1993</DATE>.
+Determination of whether an English noun phrase is countable or not
+  using 6 levels of lexical countability.
+In Proceedings of the 46th Annual Convention IPSJ Japan,
+  6:107-108.
+(in Japanese).
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Huddleston</SURNAME>, Rodney.
+<DATE>1984</DATE>.
+Introduction to the Grammar of English.
+Cambridge textbooks in linguistics. Cambridge: Cambridge University
+  Press.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Ikehara</SURNAME>, Satoru, Satoshi <SURNAME>Shirai</SURNAME>, Akio <SURNAME>Yokoo</SURNAME>,  Hiromi <SURNAME>Nakaiwa</SURNAME>.
+<DATE>1991</DATE>.
+Toward an MT system without pre-editing - effects of new methods
+  in ALT-J/E-.
+In Proceedings of MT Summit III, 101-106.
+(cmp-lg/9510008).
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Kuno</SURNAME>, Susumu.
+<DATE>1973</DATE>.
+The Structure of the Japanese Language.
+Cambridge, Massachusetts, and London, England: MIT Press.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Murata</SURNAME>, Masaki,  Makoto <SURNAME>Nagao</SURNAME>.
+<DATE>1993</DATE>.
+Determination of referential property and number of nouns in
+  Japanese sentences for machine translation into English.
+In Proceedings of the Fifth International Conference on
+  Theoretical and Methodological Issues in Machine Translation (TMI-93),
+  218-25.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

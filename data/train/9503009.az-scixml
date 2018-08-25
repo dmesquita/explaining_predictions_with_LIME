@@ -1,0 +1,501 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9503009</FILENO>
+<APPEARED><CONFERENCE>EACL</CONFERENCE><YEAR>1995</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.St  </CLASSIFICATION>
+</METADATA>
+<TITLE> Distributional Part-of-Speech Tagging </TITLE>
+<AUTHORLIST>
+<AUTHOR>Hinrich Schuetze</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' AZ='AIM'> This paper presents an algorithm for tagging words whose part-of-speech properties are unknown . </A-S>
+<A-S ID='A-1' AZ='CTR'> Unlike previous work , the algorithm categorizes word tokens in context instead of word types . </A-S>
+<A-S ID='A-2' DOCUMENTC='S-179' AZ='OWN'> The algorithm is evaluated on the Brown Corpus . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> Since online text becomes available in ever increasing volumes and an ever increasing number of languages , there is a growing need for robust processing techniques that can analyze text without expensive and time-consuming adaptation to new domains and genres . </S>
+<S ID='S-1' AZ='BKG'> This need motivates research on fully automatic text processing that may rely on general principles of linguistics and computation , but does not depend on knowledge about individual words . </S>
+</P>
+<P>
+<S ID='S-2' AZ='AIM'> In this paper , we describe an experiment on fully automatic derivation of the knowledge necessary for part-of-speech tagging . </S>
+<S ID='S-3' AZ='BKG'> Part-of-speech tagging is of interest for a number of applications , for example access to text data bases <REF TYPE='P'>Kupiec 1993</REF> , robust parsing <REF TYPE='P'>Abney 1991</REF> , and general parsing <REF  TYPE='P'>de Marcken 1990</REF>, <REF  TYPE='P'>Charniak et al. 1994</REF> . </S>
+<S ID='S-4' AZ='AIM'> The goal is to find an unsupervised method for tagging that relies on general distributional properties of text , properties that are invariant across languages and sublanguages . </S>
+<S ID='S-5' AZ='OWN'> While the proposed algorithm is not successful for all grammatical categories , it does show that fully automatic tagging is possible when demands on accuracy are modest . </S>
+</P>
+<P>
+<S ID='S-6' AZ='TXT'> The following sections discuss related work , describe the learning procedure and evaluate it on the Brown Corpus <REF TYPE='P'>Francis and Kucera 1982</REF> . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Related Work </HEADER>
+<P>
+<S ID='S-7' AZ='OTH'> The simplest part-of-speech taggers are bigram or trigram models <REF  TYPE='P'>Church 1989</REF>, <REF  TYPE='P'>Charniak et al. 1993</REF> . </S>
+<S ID='S-8' AZ='CTR'> They require a relatively large tagged training text . </S>
+<S ID='S-9' AZ='CTR'> Transformation-based tagging as introduced by <REF TYPE='A'>Brill 1993</REF> also requires a hand-tagged text for training . </S>
+<S ID='S-10' AZ='OTH'> No pretagged text is necessary for Hidden Markov Models <REF TYPE='P'>Jelinek 1985</REF> , <REF  TYPE='P'>Cutting et al. 1991</REF>, <REF  TYPE='P'>Kupiec 1992</REF> . </S>
+<S ID='S-11' AZ='CTR'> Still , a lexicon is needed that specifies the possible parts of speech for every word . </S>
+<S ID='S-12' AZ='OTH'> <REF TYPE='A'>Brill and Marcus 1992a</REF> have shown that the effort necessary to construct the part-of-speech lexicon can be considerably reduced by combining learning procedures and a partial part-of-speech categorization elicited from an informant . </S>
+</P>
+<P>
+<S ID='S-13' AZ='AIM'> The present paper is concerned with tagging languages and sublanguages for which no a priori knowledge about grammatical categories is available , a situation that occurs often in practice <REF TYPE='P'>Brill and Marcus 1992a</REF> . </S>
+</P>
+<P>
+<S ID='S-14' AZ='OTH'> Several researchers have worked on learning grammatical properties of words . </S>
+<S ID='S-15' AZ='OTH'> <REF TYPE='A'>Elman 1990</REF> trains a connectionist net to predict words , a process that generates internal representations that reflect grammatical category . </S>
+<S ID='S-16' AZ='OTH'> <REF TYPE='A'>Brill et al. 1990</REF> try to infer grammatical category from bigram statistics . </S>
+<S ID='S-17' AZ='OTH'> <REF TYPE='A'>Finch and Chater 1992</REF> and <REF TYPE='A'>Finch 1993</REF> use vector models in which words are clustered according to the similarity of their close neighbors in a corpus . </S>
+<S ID='S-18' AZ='OTH'> <REF TYPE='A'>Kneser and Ney 1993</REF> present a probabilistic model for entropy maximization that also relies on the immediate neighbors of words in a corpus . </S>
+<S ID='S-19' AZ='OTH'> <REF TYPE='A'>Biber 1993</REF> applies factor analysis to collocations of two target words ( `` certain '' and `` right '' ) with their immediate neighbors . </S>
+</P>
+<IMAGE ID='I-0'/>
+<P>
+<S ID='S-20' AZ='CTR'> What these approaches have in common is that they classify words instead of individual occurrences . </S>
+<S ID='S-21' AZ='CTR'> Given the widespread part-of-speech ambiguity of words this is problematic . </S>
+<S ID='S-22' AZ='CTR'> How should a word like `` plant '' be categorized if it has uses both as a verb and as a noun ? </S>
+<S ID='S-23' AZ='CTR'> How can a categorization be considered meaningful if the infinitive marker `` to '' is not distinguished from the homophonous preposition ? </S>
+</P>
+<P>
+<S ID='S-24' AZ='OTH'> In a previous paper <REF TYPE='P' SELF="YES">Schuetze 1993</REF> , we trained a neural network to disambiguate part-of-speech using context ; however , no information about the word that is to be categorized was used . </S>
+<S ID='S-25' AZ='CTR'> This scheme fails for cases like `` The soldiers rarely come home '' vs. `` The soldiers will come home '' where the context is identical and information about the lexical item in question ( `` rarely '' vs. `` will '' ) is needed in combination with context for correct classification . </S>
+<S ID='S-26' AZ='AIM'> In this paper , we will compare two tagging algorithms , one based on classifying word types , and one based on classifying words-plus-context . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-2'> Tag Induction </HEADER>
+<P>
+<S ID='S-27' AZ='OWN'> We start by constructing representations of the syntactic behavior of a word with respect to its left and right context . </S>
+<S ID='S-28' AZ='OWN'> Our working hypothesis is that syntactic behavior is reflected in co-occurrence patterns . </S>
+<S ID='S-29' AZ='OWN'> Therefore , we will measure the similarity between two words with respect to their syntactic behavior to , say , their left side by the degree to which they share the same neighbors on the left . </S>
+<S ID='S-30' AZ='OWN'> If the counts of neighbors are assembled into a vector ( with one dimension for each neighbor ) , the cosine can be employed to measure similarity . </S>
+<S ID='S-31' AZ='OWN'> It will assign a value close to 1.0 if two words share many neighbors , and 0.0 if they share none . </S>
+<S ID='S-32' AZ='OWN'> We refer to the vector of left neighbors of a word as its left context vector , and to the vector of right neighbors as its right context vector . </S>
+<S ID='S-33' AZ='OWN'> The unreduced context vectors in the experiment described here have 250 entries , corresponding to the 250 most frequent words in the Brown corpus . </S>
+</P>
+<P>
+<S ID='S-34' AZ='OWN'> This basic idea of measuring distributional similarity in terms of shared neighbors must be modified because of the sparseness of the data . </S>
+<S ID='S-35' AZ='OWN'> Consider two infrequent adjectives that happen to modify different nouns in the corpus . </S>
+<S ID='S-36' AZ='OWN'> Their right similarity according to the cosine measure would be zero . </S>
+<S ID='S-37' AZ='OWN'> This is clearly undesirable . </S>
+<S ID='S-38' AZ='OWN'> But even with high-frequency words , the simple vector model can yield misleading similarity measurements . </S>
+<S ID='S-39' AZ='OWN'> A case in point is `` a '' vs. `` an '' . </S>
+<S ID='S-40' AZ='OWN'> These two articles do not share any right neighbors since the former is only used before consonants and the latter only before vowels . </S>
+<S ID='S-41' AZ='OWN'> Yet intuitively , they are similar with respect to their right syntactic context despite the lack of common right neighbors . </S>
+</P>
+<P>
+<S ID='S-42' AZ='OWN'> Our solution to these problems is the application of a singular value decomposition . </S>
+<S ID='S-43' AZ='OWN'> We can represent the left vectors of all words in the corpus as a matrix C with n rows , one for each word whose left neighbors are to be represented , and k columns , one for each of the possible neighbors . </S>
+<S ID='S-44' AZ='OWN'> SVD can be used to approximate the row and column vectors of C in a low-dimensional space . </S>
+<S ID='S-45' AZ='OWN'> In more detail , SVD decomposes a matrix C , the matrix of left vectors in our case , into three matrices <EQN/> , <EQN/> , and <EQN/> such that : </S>
+</P>
+<IMAGE ID='I-1'/>
+<P>
+<S ID='S-46' AZ='OWN'> <EQN/> is a diagonal k-by-k matrix that contains the singular values of C in descending order . </S>
+<S ID='S-47' AZ='OWN'> The ith singular value can be interpreted as indicating the strength of the ith principal component of C. <EQN/> and <EQN/> are orthonormal matrices that approximate the rows and columns of C , respectively . </S>
+<S ID='S-48' AZ='OWN'> By restricting the matrices <EQN/> , <EQN/> , and <EQN/> to their first m # LT k columns ( = principal components ) one obtains the matrices T , S , and D . </S>
+<S ID='S-49' AZ='OWN'> Their product <EQN/> is the best least square approximation of C by a matrix of rank m : <EQN/> . </S>
+<S ID='S-50' AZ='OWN'> We chose m = 50 ( reduction to a 50-dimensional space ) for the SVD 's described in this paper . </S>
+</P>
+<P>
+<S ID='S-51' AZ='OWN'> SVD addresses the problems of generalization and sparseness because broad and stable generalizations are represented on dimensions with large values which will be retained in the dimensionality reduction . </S>
+<S ID='S-52' AZ='OWN'> In contrast , dimensions corresponding to small singular values represent idiosyncrasies , like the phonological constraint on the usage of `` an '' vs. `` a '' , and will be dropped . </S>
+<S ID='S-53' AZ='OWN'> We also gain efficiency since we can manipulate smaller vectors , reduced to 50 dimensions . </S>
+<S ID='S-54' AZ='OWN'> We used SVDPACK to compute the singular value decompositions described in this paper <REF TYPE='P'>Berry 1992</REF> . </S>
+</P>
+<P>
+<S ID='S-55' AZ='OWN'> Table <CREF/> shows the nearest neighbors of two words ( ordered according to closeness to the head word ) after the dimensionality reduction . </S>
+<S ID='S-56' AZ='OWN'> Neighbors with highest similarity according to both left and right context are listed . </S>
+<S ID='S-57' AZ='OWN'> One can see clear differences between the nearest neighbors in the two spaces . </S>
+<S ID='S-58' AZ='OWN'> The right-context neighbors of `` onto '' contain verbs because both prepositions and verbs govern noun phrases to their right . </S>
+<S ID='S-59' AZ='OWN'> The left-context neighborhood of `` onto '' reflects the fact that prepositional phrases are used in the same position as adverbs like `` away '' and `` together '' , thus making their left context similar . </S>
+<S ID='S-60' AZ='OWN'> For `` seemed '' , left-context neighbors are words that have similar types of noun phrases in subject position ( mainly auxiliaries ) . </S>
+<S ID='S-61' AZ='OWN'> The right-context neighbors all take `` to '' - infinitives as complements . </S>
+<S ID='S-62' AZ='OWN'> An adjective like `` likely '' is very similar to `` seemed '' in this respect although its left context is quite different from that of `` seemed '' . </S>
+<S ID='S-63' AZ='OWN'> Similarly , the generalization that prepositions and transitive verbs are very similar if not identical in the way they govern noun phrases would be lost if `` left '' and `` right '' properties of words were lumped together in one representation . </S>
+<S ID='S-64' AZ='OWN'> These examples demonstrate the importance of representing generalizations about left and right context separately . </S>
+</P>
+<P>
+<S ID='S-65' AZ='OWN' TYPE='ITEM'> The left and right context vectors are the basis for four different tag induction experiments , which are described in detail below : </S>
+</P>
+<P>
+<S ID='S-66' TYPE='ITEM' AZ='OWN' > induction based on word type only </S>
+<S ID='S-67' TYPE='ITEM' AZ='OWN' > induction based on word type and context </S>
+<S ID='S-68' TYPE='ITEM' AZ='OWN' > induction based on word type and context , restricted to `` natural '' contexts </S>
+<S ID='S-69' TYPE='ITEM' AZ='OWN' > induction based on word type and context , using generalized left and right context vectors . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-3'> Induction based on word type only </HEADER>
+<P>
+<S ID='S-70' AZ='OWN'> The two context vectors of a word characterize the distribution of neighboring words to its left and right . </S>
+<S ID='S-71' AZ='OWN'> The concatenation of left and right context vector can therefore serve as a representation of a word 's distributional behavior <REF  TYPE='P'>Finch and Chater 1992</REF>, <REF  SELF="YES" TYPE='P'>Schuetze 1993</REF> . </S>
+<S ID='S-72' AZ='OWN'> We formed such concatenated vectors for all 47,025 words ( surface forms ) in the Brown corpus . </S>
+<S ID='S-73' AZ='OWN'> Here , we use the raw 250-dimensional context vectors and apply the SVD to the 47,025 - by - 500 matrix ( 47,025 words with two 250-dimensional context vectors each ) . </S>
+<S ID='S-74' AZ='OWN'> We obtained 47,025 50-dimensional reduced vectors from the SVD and clustered them into 200 classes using the fast clustering algorithm Buckshot <REF TYPE='P'>Cutting et al. 1992</REF> ( group average agglomeration applied to a sample ) . </S>
+<S ID='S-75' AZ='OWN'> This classification constitutes the baseline performance for distributional part-of-speech tagging . </S>
+<S ID='S-76' AZ='OWN'> All occurrences of a word are assigned to one class . </S>
+<S ID='S-77' AZ='OWN'> As pointed out above , such a procedure is problematic for ambiguous words . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-4'> Induction based on word type and context </HEADER>
+<P>
+<S ID='S-78' AZ='OWN'> In order to exploit contextual information in the classification of a token , we simply use context vectors of the two words occurring next to the token . </S>
+<S ID='S-79' AZ='OWN' TYPE='ITEM'> An occurrence of word w is represented by a concatenation of four context vectors : </S>
+</P>
+<P>
+<S ID='S-80' TYPE='ITEM' AZ='OWN' > The right context vector of the preceding word . </S>
+<S ID='S-81' TYPE='ITEM' AZ='OWN' > The left context vector of w . </S>
+<S ID='S-82' TYPE='ITEM' AZ='OWN' > The right context vector of w . </S>
+<S ID='S-83' TYPE='ITEM' AZ='OWN' > The left context vector of the following word . </S>
+</P>
+<P>
+<S ID='S-84' AZ='OWN'> The motivation is that a word 's syntactic role depends both on the syntactic properties of its neighbors and on its own potential for entering into syntactic relationships with these neighbors . </S>
+<S ID='S-85' AZ='OWN'> The only properties of context that we consider are the right-context vector of the preceding word and the left-context vector of the following word because they seem to represent the contextual information most important for the categorization of w . </S>
+<S ID='S-86' AZ='OWN'> For example , for the disambiguation of `` work '' in `` her work seemed to be important '' , only the fact that `` seemed '' expects noun phrases to its left is important , the right context vector of `` seemed '' does not contribute to disambiguation . </S>
+<S ID='S-87' AZ='OWN'> That only the immediate neighbors are crucial for categorization is clearly a simplification , but as the results presented below show it seems to work surprisingly well . </S>
+</P>
+<IMAGE ID='I-2'/>
+<P>
+<S ID='S-88' AZ='OWN'> Again , an SVD is applied to address the problems of sparseness and generalization . </S>
+<S ID='S-89' AZ='OWN'> We randomly selected 20,000 word triplets from the corpus and formed concatenations of four context vectors as described above . </S>
+<S ID='S-90' AZ='OWN'> The singular value decomposition of the resulting 20,000 - by - 1,000 matrix defines a mapping from the 1,000 - dimensional space of concatenated context vectors to a 50-dimensional reduced space . </S>
+<S ID='S-91' AZ='OWN'> Our tag set was then induced by clustering the reduced vectors of the 20,000 selected occurrences into 200 classes . </S>
+<S ID='S-92' AZ='OWN'> Each of the 200 tags is defined by the centroid of the corresponding class ( the sum of its members ) . </S>
+<S ID='S-93' AZ='OWN'> Distributional tagging of an occurrence of a word w proceeds then by retrieving the four relevant context vectors ( right context vector of previous word , left context vector of following word , both context vectors of w ) concatenating them to one 1000-component vector , mapping this vector to 50 dimensions , computing the correlations with the 200 cluster centroids and , finally , assigning the occurrence to the closest cluster . </S>
+<S ID='S-94' AZ='OWN'> This procedure was applied to all tokens of the Brown corpus . </S>
+</P>
+<P>
+<S ID='S-95' AZ='OWN'> We will see below that this method of distributional tagging , although partially successful , fails for many tokens whose neighbors are punctuation marks . </S>
+<S ID='S-96' AZ='OWN'> The context vectors of punctuation marks contribute little information about syntactic categorization since there are no grammatical dependencies between words and punctuation marks , in contrast to strong dependencies between neighboring words . </S>
+</P>
+<P>
+<S ID='S-97' AZ='OWN'> For this reason , a second induction on the basis of word type and context was performed , but only for those tokens with informative contexts . </S>
+<S ID='S-98' AZ='OWN'> Tokens next to punctuation marks and tokens with rare words as neighbors were not included . </S>
+<S ID='S-99' AZ='OWN'> Contexts with rare words ( less than ten occurrences ) were also excluded for similar reasons : If a word only occurs nine or fewer times its left and right context vectors capture little information for syntactic categorization . </S>
+<S ID='S-100' AZ='OWN'> In the experiment , 20,000 natural contexts were randomly selected , processed by the SVD and clustered into 200 classes . </S>
+<S ID='S-101' AZ='OWN'> The classification was then applied to all natural contexts of the Brown corpus . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-5'> Generalized context vectors </HEADER>
+<P>
+<S ID='S-102' AZ='OWN'> The context vectors used so far only capture information about distributional interactions with the 250 most frequent words . </S>
+<S ID='S-103' AZ='OWN'> Intuitively , it should be possible to gain accuracy in tag induction by using information from more words . </S>
+<S ID='S-104' AZ='OWN'> One way to do this is to let the right context vector record which classes of left context vectors occur to the right of a word . </S>
+<S ID='S-105' AZ='OWN'> The rationale is that words with similar left context characterize words to their right in a similar way . </S>
+<S ID='S-106' AZ='OWN'> For example , `` seemed '' and `` would '' have similar left contexts , and they characterize the right contexts of `` he '' and `` the firefighter '' as potentially containing an inflected verb form . </S>
+<S ID='S-107' AZ='OWN'> Rather than having separate entries in its right context vector for `` seemed '' , `` would '' , and `` likes '' , a word like `` he '' can now be characterized by a generalized entry for `` inflected verb form occurs frequently to my right '' . </S>
+</P>
+<P>
+<S ID='S-108' AZ='OWN'> This proposal was implemented by applying a singular value decomposition to the 47025-by - 250 matrix of left context vectors and clustering the resulting context vectors into 250 classes . </S>
+<S ID='S-109' AZ='OWN'> A generalized right context vector v for word w was then formed by counting how often words from these 250 classes occurred to the right of w. Entry <EQN/> counts the number of times that a word from class i occurs to the right of w in the corpus ( as opposed to the number of times that the word with frequency rank i occurs to the right of w ) . </S>
+<S ID='S-110' AZ='OWN'> Generalized left context vectors were derived by an analogous procedure using word-based right context vectors . </S>
+<S ID='S-111' AZ='OWN'> Note that the information about left and right is kept separate in this computation . </S>
+<S ID='S-112' AZ='CTR'> This differs from previous approaches <REF TYPE='P'>Finch and Chater 1992</REF> , <REF TYPE='P' SELF="YES">Schuetze 1993</REF> in which left and right context vectors of a word are always used in one concatenated vector . </S>
+<S ID='S-113' AZ='OWN'> There are arguably fewer different types of right syntactic contexts than types of syntactic categories . </S>
+<S ID='S-114' AZ='OWN'> For example , transitive verbs and prepositions belong to different syntactic categories , but their right contexts are virtually identical in that they require a noun phrase . </S>
+<S ID='S-115' AZ='OWN'> This generalization could not be exploited if left and right context were not treated separately . </S>
+</P>
+<P>
+<S ID='S-116' AZ='OWN'> Another argument for the two-step derivation is that many words don't have any of the 250 most frequent words as their left or right neighbor . </S>
+<S ID='S-117' AZ='OWN'> Hence , their vector would be zero in the word-based scheme . </S>
+<S ID='S-118' AZ='OWN'> The class-based scheme makes it more likely that meaningful representations are formed for all words in the vocabulary . </S>
+</P>
+<P>
+<S ID='S-119' AZ='OWN'> The generalized context vectors were input to the tag induction procedure described above for word-based context vectors : 20,000 word triplets were selected from the corpus , encoded as 1,000 - dimensional vectors ( consisting of four generalized context vectors ) , decomposed by a singular value decomposition and clustered into 200 classes . </S>
+<S ID='S-120' AZ='OWN'> The resulting classification was applied to all tokens in the Brown corpus . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-6'> Results </HEADER>
+<P>
+<S ID='S-121' AZ='OWN'> The results of the four experiments were evaluated by forming 16 classes of tags from the Penn Treebank as shown in Table <CREF/> . </S>
+<S ID='S-122' AZ='OWN'> Preliminary experiments showed that distributional methods distinguish adnominal and predicative uses of adjectives ( e.g. `` the black cat '' vs. `` the cat is black '' ) . </S>
+<S ID='S-123' AZ='OWN'> Therefore the tag `` ADN '' was introduced for uses of adjectives , nouns , and participles as adnominal modifiers . </S>
+<S ID='S-124' AZ='OWN'> The tag `` PRD '' stands for predicative uses of adjectives . </S>
+<S ID='S-125' AZ='OWN'> The Penn Treebank parses of the Brown corpus were used to determine whether a token functions as an adnominal modifier . </S>
+<S ID='S-126' AZ='OWN'> Punctuation marks , special symbols , interjections , foreign words and tags with fewer than 100 instances were excluded from the evaluation . </S>
+</P>
+<IMAGE ID='I-3'/>
+<P>
+<S ID='S-127' AZ='OWN'> Tables <CREF/> and <CREF/> present results for word type-based induction and induction based on word type and context . </S>
+<S ID='S-128' AZ='OWN'> For each tag t , the table lists the frequency of t in the corpus ( `` frequency '' ) , the number of induced tags <EQN/> , that were assigned to it ( `` # classes '' ) ; the number of times an occurrence of t was correctly labeled as belonging to one of <EQN/> ( `` correct '' ) ; the number of times that a token of a different tag <EQN/> was miscategorized as being an instance of <EQN/> ( `` incorrect '' ) ; and precision and recall of the categorization of t . </S>
+<S ID='S-129' AZ='OWN'> Precision is the number of correct tokens divided by the sum of correct and incorrect tokens . </S>
+<S ID='S-130' AZ='OWN'> Recall is the number of correct tokens divided by the total number of tokens of t ( in the first column ) . </S>
+<S ID='S-131' AZ='OWN'> The last column gives <REFAUTHOR>van Rijsbergen</REFAUTHOR> 's F measure which computes an aggregate score from precision and recall : <EQN/> <REF TYPE='P'>van Rijsbergen 1979</REF> . </S>
+<S ID='S-132' AZ='OWN'> We chose <EQN/> to give equal weight to precision and recall . </S>
+</P>
+<P>
+<S ID='S-133' AZ='OWN'> It is clear from the tables that incorporating context improves performance considerably . </S>
+<S ID='S-134' AZ='OWN'> The F score increases for all tags except CD , with an average improvement of more than 0.20 . </S>
+<S ID='S-135' AZ='OWN'> The tag CD is probably better thought of as describing a word class . </S>
+<S ID='S-136' AZ='OWN'> There is a wide range of heterogeneous syntactic functions of cardinals in particular contexts : quantificational and adnominal uses , bare NP 's ( `` is one of '' ) , dates and ages ( `` Jan 1 '' , `` gave his age as 25 '' ) , and enumerations . </S>
+<S ID='S-137' AZ='OWN'> In this light , it is not surprising that the word-type method does better on cardinals . </S>
+</P>
+<IMAGE ID='I-4'/>
+<P>
+<S ID='S-138' AZ='OWN'> Table <CREF/> shows that performance for generalized context vectors is better than for word-based context vectors ( 0.74 vs. 0.72 ) . </S>
+<S ID='S-139' AZ='OWN'> However , since the number of tags with better and worse performance is about the same ( 7 and 5 ) , one cannot conclude with certainty that generalized context vectors induce tags of higher quality . </S>
+<S ID='S-140' AZ='OWN'> Apparently , the 250 most frequent words capture most of the relevant distributional information so that the additional information from less frequent words available from generalized vectors only has a small effect . </S>
+</P>
+<IMAGE ID='I-5'/>
+<IMAGE ID='I-6'/>
+<P>
+<S ID='S-141' AZ='OWN'> Table <CREF/> looks at results for `` natural '' contexts , i.e. those not containing punctuation marks and rare words . </S>
+<S ID='S-142' AZ='OWN'> Performance is consistently better than for the evaluation on all contexts , indicating that the low quality of the distributional information about punctuation marks and rare words is a difficulty for successful tag induction . </S>
+</P>
+<P>
+<S ID='S-143' AZ='OWN'> Even for `` natural '' contexts , performance varies considerably . </S>
+<S ID='S-144' AZ='OWN'> It is fairly good for prepositions , determiners , pronouns , conjunctions , the infinitive marker , modals , and the possessive marker . </S>
+<S ID='S-145' AZ='OWN'> Tag induction fails for cardinals ( for the reasons mentioned above ) and for `` - ing '' forms . </S>
+<S ID='S-146' AZ='OWN'> Present participles and gerunds are difficult because they exhibit both verbal and nominal properties and occur in a wide variety of different contexts whereas other parts of speech have a few typical and frequent contexts . </S>
+</P>
+<P>
+<S ID='S-147' AZ='OWN'> It may seem worrying that some of the tags are assigned a high number of clusters ( e.g. , 49 for N , 36 for ADN ) . </S>
+<S ID='S-148' AZ='OWN'> A closer look reveals that many clusters embody finer distinctions . </S>
+<S ID='S-149' AZ='OWN'> Some examples : Nouns in cluster 0 are heads of larger noun phrases , whereas the nouns in cluster 1 are full-fledged NPs . </S>
+<S ID='S-150' AZ='OWN'> The members of classes 29 and 111 function as subjects . </S>
+<S ID='S-151' AZ='OWN'> Class 49 consists of proper nouns . </S>
+<S ID='S-152' AZ='OWN'> However , there are many pairs or triples of clusters that should be collapsed into one on linguistic grounds . </S>
+<S ID='S-153' AZ='OWN'> They were separated on distributional criteria that don't have linguistic correlates . </S>
+</P>
+<P>
+<S ID='S-154' AZ='OWN'> An analysis of the divergence between our classification and the manually assigned tags revealed three main sources of errors : rare words and rare syntactic phenomena , indistinguishable distribution , and non-local dependencies . </S>
+</P>
+<P>
+<S ID='S-155' AZ='OWN'> Rare words are difficult because of lack of distributional evidence . </S>
+<S ID='S-156' AZ='OWN'> For example , `` ties '' is used as a verb only 2 times ( out of 15 occurrences in the corpus ) . </S>
+<S ID='S-157' AZ='OWN'> Both occurrences are miscategorized , since its context vectors do not provide enough evidence for the verbal use . </S>
+<S ID='S-158' AZ='OWN'> Rare syntactic constructions pose a related problem : There are not enough instances to justify the creation of a separate cluster . </S>
+<S ID='S-159' AZ='OWN'> For example , verbs taking bare infinitives were classified as adverbs since this is too rare a phenomenon to provide strong distributional evidence ( `` we do not DARE speak of '' , `` legislation could HELP remove '' ) . </S>
+</P>
+<P>
+<S ID='S-160' AZ='OWN'> The case of the tags `` VBN '' and `` PRD '' ( past participles and predicative adjectives ) demonstrates the difficulties of word classes with indistinguishable distributions . </S>
+<S ID='S-161' AZ='OWN'> There are hardly any distributional clues for distinguishing `` VBN '' and `` PRD '' since both are mainly used as complements of `` to be '' . </S>
+<S ID='S-162' AZ='OWN'> A common tag class was created for `` VBN '' and `` PRD '' to show that they are reasonably well distinguished from other parts of speech , even if not from each other . </S>
+<S ID='S-163' AZ='OWN'> Semantic understanding is necessary to distinguish between the states described by phrases of the form `` to be adjective '' and the processes described by phrases of the form `` to be past participle '' . </S>
+</P>
+<P>
+<S ID='S-164' AZ='OWN'> Finally , the method fails if there are no local dependencies that could be used for categorization and only non-local dependencies are informative . </S>
+<S ID='S-165' AZ='OWN'> For example , the adverb in `` Mc * N. Hester , CURRENTLY Dean of ... '' and the conjunction in `` to add that , IF United States policies ... '' have similar immediate neighbors ( comma , NP ) . </S>
+<S ID='S-166' AZ='OWN'> The decision to consider only immediate neighbors is responsible for this type of error since taking a wider context into account would disambiguate the parts of speech in question . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-7'> Future Work </HEADER>
+<P>
+<S ID='S-167' AZ='OWN'> There are three avenues of future research we are interested in pursuing . </S>
+<S ID='S-168' AZ='OWN'> First , we are planning to apply the algorithm to an as yet untagged language . </S>
+<S ID='S-169' AZ='OWN'> Languages with a rich morphology may be more difficult than English since with fewer tokens per type , there is less data on which to base a categorization decision . </S>
+</P>
+<P>
+<S ID='S-170' AZ='OWN'> Secondly , the error analysis suggests that considering non-local dependencies would improve results . </S>
+<S ID='S-171' AZ='OWN'> Categories that can be induced well ( those characterized by local dependencies ) could be input into procedures that learn phrase structure <REF TYPE='P'>Brill and Marcus 1992b</REF> , <REF TYPE='P'>Finch 1993</REF> . </S>
+<S ID='S-172' AZ='OWN'> These phrase constraints could then be incorporated into the distributional tagger to characterize non-local dependencies . </S>
+</P>
+<P>
+<S ID='S-173' AZ='OWN'> Finally , our procedure induces a `` hard '' part-of-speech classification of occurrences in context , i.e. , each occurrence is assigned to only one category . </S>
+<S ID='S-174' AZ='OWN'> It is by no means generally accepted that such a classification is linguistically adequate . </S>
+<S ID='S-175' AZ='OWN'> There is both synchronic <REF TYPE='P'>Ross 1972</REF> and diachronic <REF TYPE='P'>Tabor 1994</REF> evidence suggesting that words and their uses can inherit properties from several prototypical syntactic categories . </S>
+<S ID='S-176' AZ='OWN'> For example , `` fun '' in `` It 's a fun thing to do . '' has properties of both a noun and an adjective ( superlative `` funnest '' possible ) . </S>
+<S ID='S-177' AZ='OWN'> We are planning to explore `` soft '' classification algorithms that can account for these phenomena . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-8'> Conclusion </HEADER>
+<P>
+<S ID='S-178' AZ='AIM'> In this paper , we have attempted to construct an algorithm for fully automatic distributional tagging , using unannotated corpora as the sole source of information . </S>
+<S ID='S-179' ABSTRACTC='A-2' AZ='CTR'> The main innovation is that the algorithm is able to deal with part-of-speech ambiguity , a pervasive phenomenon in natural language that was unaccounted for in previous work on learning categories from corpora . </S>
+<S ID='S-180' AZ='OWN'> The method was systematically evaluated on the Brown corpus . </S>
+<S ID='S-181' AZ='OWN'> Even if no automatic procedure can rival the accuracy of human tagging , we hope that the algorithm will facilitate the initial tagging of texts in new languages and sublanguages . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-9'> Acknowledgments </HEADER>
+<P>
+<S ID='S-182' AZ='OWN'> I am grateful for helpful comments to Steve Finch , Jan Pedersen and two anonymous reviewers ( from ACL and EACL ) . </S>
+<S ID='S-183' AZ='OWN'> I 'm also indebted to Michael Berry for SVDPACK and to the Penn Treebank Project for the parsed Brown corpus . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+Steven <SURNAME>Abney</SURNAME>.
+<DATE>1991</DATE>.
+Parsing by chunks.
+In Berwick, Abney, and Tenny, editors, Principle-Based Parsing.
+  Kluwer Academic Publishers.
+</REFERENCE>
+<REFERENCE>
+Michael W. <SURNAME>Berry</SURNAME>.
+<DATE>1992</DATE>.
+Large-scale sparse singular value computations.
+The International Journal of Supercomputer Applications,
+  6(1):13-49.
+</REFERENCE>
+<REFERENCE>
+Douglas <SURNAME>Biber</SURNAME>.
+<DATE>1993</DATE>.
+Co-occurrence patterns among collocations: A tool for corpus-based
+  lexical knowledge acquisition.
+Computational Linguistics, 19(3):531-538.
+</REFERENCE>
+<REFERENCE>
+Eric <SURNAME>Brill</SURNAME> and Mitch <SURNAME>Marcus</SURNAME>.
+<DATE>1992a</DATE>.
+Tagging an unfamiliar text with minimal human supervision.
+In Robert Goldman, editor, Working Notes of the AAAI Fall
+  Symposium on Probabilistic Approaches to Natural Language. AAAI Press.
+</REFERENCE>
+<REFERENCE>
+Eric <SURNAME>Brill</SURNAME> and Mitchell <SURNAME>Marcus</SURNAME>.
+<DATE>1992b</DATE>.
+Automatically acquiring phrase structure using distributional
+  analysis.
+In Proceedings of the DARPA workshop Speech and Natural
+  Language, pages 155-159.
+</REFERENCE>
+<REFERENCE>
+Eric <SURNAME>Brill</SURNAME>, David <SURNAME>Magerman</SURNAME>, Mitch <SURNAME>Marcus</SURNAME>, and Beatrice <SURNAME>Santorini</SURNAME>.
+<DATE>1990</DATE>.
+Deducing linguistic structure from the statistics of large corpora.
+In Proceedings of the DARPA Speech and Natural Language
+  Workshop, pages 275-282.
+</REFERENCE>
+<REFERENCE>
+Eric <SURNAME>Brill</SURNAME>.
+<DATE>1993</DATE>.
+Automatic grammar induction and parsing free text: A
+  transformation-based approach.
+In Proceedings of ACL 31, Columbus OH.
+</REFERENCE>
+<REFERENCE>
+Eugene <SURNAME>Charniak</SURNAME>, Curtis <SURNAME>Hendrickson</SURNAME>, Neil <SURNAME>Jacobson</SURNAME>, and Mike <SURNAME>Perkowitz</SURNAME>.
+<DATE>1993</DATE>.
+Equations for part-of-speech tagging.
+In Proceedings of the Eleventh National Conference on Artificial
+  Intelligence, pages 784-789.
+</REFERENCE>
+<REFERENCE>
+Eugene <SURNAME>Charniak</SURNAME>, Glenn <SURNAME>Carroll</SURNAME>, John <SURNAME>Adcock</SURNAME>, Anthony <SURNAME>Cassandra</SURNAME>, Yoshihiko
+  <SURNAME>Gotoh</SURNAME>, Jeremy <SURNAME>Katz</SURNAME>, Michael <SURNAME>Littman</SURNAME>, and John <SURNAME>McCann</SURNAME>.
+<DATE>1994</DATE>.
+Taggers for parsers.
+Technical Report CS-94-06, Brown University.
+</REFERENCE>
+<REFERENCE>
+Kenneth W. <SURNAME>Church</SURNAME>.
+<DATE>1989</DATE>.
+A stochastic parts program and noun phrase parser for unrestricted
+  text.
+In Proceedings of ICASSP-89, Glasgow, Scotland.
+</REFERENCE>
+<REFERENCE>
+Doug <SURNAME>Cutting</SURNAME>, Julian <SURNAME>Kupiec</SURNAME>, Jan <SURNAME>Pedersen</SURNAME>, and Penelope <SURNAME>Sibun</SURNAME>.
+<DATE>1991</DATE>.
+A practical part-of-speech tagger.
+In The 3rd Conference on Applied Natural Language Processing,
+  Trento, Italy.
+</REFERENCE>
+<REFERENCE>
+Douglas R. <SURNAME>Cutting</SURNAME>, Jan O. <SURNAME>Pedersen</SURNAME>, David <SURNAME>Karger</SURNAME>, and John W. <SURNAME>Tukey</SURNAME>.
+<DATE>1992</DATE>.
+Scatter/gather: A cluster-based approach to browsing large document
+  collections.
+In Proceedings of SIGIR '92, pages 318-329.
+</REFERENCE>
+<REFERENCE>
+C. G. <SURNAME>deMarcken</SURNAME>.
+<DATE>1990</DATE>.
+Parsing the LOB corpus.
+In Proceedings of the 28th Annual Meeting of the Association for
+  Computational Linguistics, pages 243-259.
+</REFERENCE>
+<REFERENCE>
+Jeffrey L. <SURNAME>Elman</SURNAME>.
+<DATE>1990</DATE>.
+Finding structure in time.
+Cognitive Science, 14:179-211.
+</REFERENCE>
+<REFERENCE>
+Steven <SURNAME>Finch</SURNAME> and Nick <SURNAME>Chater</SURNAME>.
+<DATE>1992</DATE>.
+Bootstrapping syntactic categories using statistical methods.
+In Walter Daelemans and David Powers, editors, Background and
+  Experiments in Machine Learning of Natural Language, pages 229-235, Tilburg
+  University. Institute for Language Technology and AI.
+</REFERENCE>
+<REFERENCE>
+Steven <SURNAME>Paul</SURNAME> Finch.
+<DATE>1993</DATE>.
+Finding Structure in Language.
+Ph.D. thesis, University of Edinburgh.
+</REFERENCE>
+<REFERENCE>
+W.N. <SURNAME>Francis</SURNAME> and F. <SURNAME>Kucera</SURNAME>.
+<DATE>1982</DATE>.
+Frequency Analysis of English Usage.
+Houghton Mifflin, Boston.
+</REFERENCE>
+<REFERENCE>
+F. <SURNAME>Jelinek</SURNAME>.
+<DATE>1985</DATE>.
+Robust part-of-speech tagging using a hidden markov model.
+Technical report, IBM, T.J. Watson Research Center.
+</REFERENCE>
+<REFERENCE>
+Reinhard <SURNAME>Kneser</SURNAME> and Hermann <SURNAME>Ney</SURNAME>.
+<DATE>1993</DATE>.
+Forming word classes by statistical clustering for statistical
+  language modelling.
+In Reinhard Khler and Burghard B. Rieger, editors, 
+  Contributions to Quantitative Linguistics, pages 221-226. Kluwer Academic
+  Publishers, Dordrecht, The Netherlands.
+</REFERENCE>
+<REFERENCE>
+Julian <SURNAME>Kupiec</SURNAME>.
+<DATE>1992</DATE>.
+Robust part-of-speech tagging using a hidden markov model.
+Computer Speech and Language, 6:225-242.
+</REFERENCE>
+<REFERENCE>
+Julian <SURNAME>Kupiec</SURNAME>.
+<DATE>1993</DATE>.
+Murax: A robust linguistic approach for question answering using an
+  on-line encyclopedia.
+In Proceedings of SIGIR '93, pages 181-190.
+</REFERENCE>
+<REFERENCE>
+John R. <SURNAME>Ross</SURNAME>.
+<DATE>1972</DATE>.
+The category squish: Endstation Hauptwort.
+In Papers from the Eighth Regional Meeting. Chicago Linguistic
+  Society.
+</REFERENCE>
+<REFERENCE>
+Hinrich <SURNAME>Schtze</SURNAME>.
+<DATE>1993</DATE>.
+Part-of-speech induction from scratch.
+In Proceedings of ACL 31, pages 251-258, Columbus OH.
+</REFERENCE>
+<REFERENCE>
+Whitney <SURNAME>Tabor</SURNAME>.
+<DATE>1994</DATE>.
+Syntactic Innovation: A Connectionist Model.
+Ph.D. thesis, Stanford University.
+</REFERENCE>
+<REFERENCE>
+C. J. van <SURNAME>Rijsbergen</SURNAME>.
+<DATE>1979</DATE>.
+Information Retrieval.
+Butterworths, London.
+Second Edition.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

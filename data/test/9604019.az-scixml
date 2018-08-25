@@ -1,0 +1,430 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9604019</FILENO>
+<APPEARED><CONFERENCE>ACL</CONFERENCE><YEAR>1996</YEAR></APPEARED>
+<CLASSIFICATION> Lo.Pg </CLASSIFICATION>
+</METADATA>
+<TITLE> Magic for Filter Optimization in Dynamic Bottom-up Processing </TITLE>
+<AUTHORLIST>
+<AUTHOR>Guido Minnen</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' DOCUMENTC='S-7' AZ='OTH'> Off-line compilation of logic grammars using Magic allows an incorporation of filtering into the logic underlying the grammar . </A-S>
+<A-S ID='A-1' DOCUMENTC='S-3' AZ='OTH'> The explicit definite clause characterization of filtering resulting from Magic compilation allows processor independent and logically clean optimizations of dynamic bottom-up processing with respect to goal-directedness . </A-S>
+<A-S ID='A-2' DOCUMENTC='S-79' AZ='AIM'> Two filter optimizations based on the program transformation technique of Unfolding are discussed which are of practical and theoretical interest . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> In natural language processing filtering is used to weed out those search paths that are redundant , i.e. , are not going to be used in the proof tree corresponding to the natural language expression to be generated or parsed . </S>
+<S ID='S-1' AZ='BKG'> Filter optimization often comprises an extension of a specific processing strategy such that it exploits specific knowledge about grammars and / or the computational task ( s ) that one is using them for . </S>
+<S ID='S-2' AZ='CTR'> At the same time it often remains unclear how these optimizations relate to each other and what they actually mean . </S>
+<S ID='S-3' ABSTRACTC='A-1' AZ='AIM'> In this paper I show how starting from a definite clause characterization of filtering derived automatically from a logic grammar using Magic compilation , filter optimizations can be performed in a processor independent and logically clean fashion . </S>
+</P>
+<P>
+<S ID='S-4' AZ='OTH'> Magic ( templates ) is a general compilation technique for efficient bottom-up evaluation of logic programs developed in the deductive database community <REF TYPE='P'>Ramakrishnan et al. 1992</REF> . </S>
+<S ID='S-5' AZ='OTH'> Given a logic program , Magic produces a new program in which the filtering as normally resulting from top-down evaluation is explicitly characterized through , so-called , magic predicates , which produce variable bindings for filtering when evaluated bottom-up . </S>
+<S ID='S-6' AZ='OTH'> The original rules of the program are extended such that these bindings can be made effective . </S>
+</P>
+<P>
+<S ID='S-7' ABSTRACTC='A-0' AZ='OTH'> As a result of the definite clause characterization of filtering , Magic brings filtering into the logic underlying the grammar . </S>
+<S ID='S-8' AZ='AIM'> I discuss two filter optimizations . </S>
+<S ID='S-9' AZ='OWN'> These optimizations are direction independent in the sense that they are useful for both generation and parsing . </S>
+<S ID='S-10' AZ='OWN'> For expository reasons , though , they are presented merely on the basis of examples of generation . </S>
+</P>
+<P>
+<S ID='S-11' AZ='OTH'> Magic compilation does not limit the information that can be used for filtering . </S>
+<S ID='S-12' AZ='CTR'> This can lead to nontermination as the tree fragments enumerated in bottom-up evaluation of magic compiled grammars are connected <REF TYPE='P'>Johnson forthcoming</REF> . </S>
+<S ID='S-13' AZ='CTR'> More specifically , 'magic generation ' falls prey to non-termination in the face of head recursion , i.e. , the generation analog of left recursion in parsing . </S>
+<S ID='S-14' AZ='OTH'> This necessitates a dynamic processing strategy , i.e. , memoization , extended with an abstraction function like , e.g. , restriction <REF TYPE='P'>Shieber 1985</REF> , to weaken filtering and a subsumption check to discard redundant results . </S>
+<S ID='S-15' AZ='OWN'> It is shown that for a large class of grammars the subsumption check which often influences processing efficiency rather dramatically can be eliminated through fine-tuning of the magic predicates derived for a particular grammar after applying an abstraction function in an off-line fashion . </S>
+</P>
+<P>
+<S ID='S-16' AZ='OTH'> Unfolding can be used to eliminate superfluous filtering steps . </S>
+<S ID='S-17' AZ='OTH'> Given an off-line optimization of the order in which the right-hand side categories in the rules of a logic grammar are processed <REF TYPE='P' SELF="YES">Minnen et al. 1996</REF> the resulting processing behavior can be considered a generalization of the head corner generation approach <REF TYPE='P'>Shieber et al. 1990</REF> . </S>
+<S ID='S-18' AZ='OTH'> Without the need to rely on notions such as semantic head and chain rule , a head corner behavior can be mimicked in a strict bottom-up fashion . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Definite Clause Characterization of Filtering </HEADER>
+<P>
+<S ID='S-19' AZ='OTH'> Many approaches focus on exploiting specific knowledge about grammars and / or the computational task ( s ) that one is using them for by making filtering explicit and extending the processing strategy such that this information can be made effective . </S>
+<S ID='S-20' AZ='OTH'> In generation , examples of such extended processing strategies are head corner generation with its semantic linking <REF TYPE='P'>Shieber et al. 1990</REF> or bottom-up ( Earley ) generation with a semantic filter <REF TYPE='P'>Shieber 1988</REF> . </S>
+<S ID='S-21' AZ='CTR'> Even though these approaches often accomplish considerable improvements with respect to efficiency or termination behavior , it remains unclear how these optimizations relate to each other and what comprises the logic behind these specialized forms of filtering . </S>
+<S ID='S-22' AZ='OWN'> By bringing filtering into the logic underlying the grammar it is possible to show in a perspicuous and logically clean way how and why filtering can be optimized in a particular fashion and how various approaches relate to each other . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-2'> Magic Compilation </HEADER>
+<P>
+<S ID='S-23' AZ='OTH'> Magic makes filtering explicit through characterizing it as definite clauses . </S>
+<S ID='S-24' AZ='OTH'> Intuitively understood , filtering is reversed as binding information that normally becomes available as a result of top-down evaluation is derived by bottom-up evaluation of the definite clause characterization of filtering . </S>
+<S ID='S-25' AZ='OTH'> The following is the basic Magic algorithm taken from <REF TYPE='A'>Ramakrishnan et al. 1992</REF> . </S>
+<S ID='S-26' AZ='OTH'> Let P be a program and <EQN/> a query on the program . </S>
+<S ID='S-27' AZ='OTH'> We construct a new program <EQN/> . </S>
+<S ID='S-28' AZ='OTH'> Initially <EQN/> is empty . </S>
+</P>
+<P>
+<S ID='S-29' AZ='OTH'> Create a new predicate magic_p for each predicate p in P . </S>
+<S ID='S-30' AZ='OTH'> The arity is that of p . </S>
+</P>
+<P>
+<S ID='S-31' AZ='OTH'> For each rule in P , add the modified version of the rule to <EQN/> . </S>
+<S ID='S-32' AZ='OTH'> If rule r has head , say , p ( <EQN/> ) , the modified version is obtained by adding the literal <EQN/> to the body . </S>
+</P>
+<P>
+<S ID='S-33' AZ='OTH'> For each rule r in P with head , say , p ( <EQN/> ) , and for each literal <EQN/> in its body , add a magic rule to <EQN/> . </S>
+<S ID='S-34' AZ='OTH'> The head is <EQN/> . </S>
+<S ID='S-35' AZ='OTH'> The body contains the literal magic_p ( <EQN/> ) , and all the literals that precede <EQN/> in the rule . </S>
+</P>
+<P>
+<S ID='S-36' AZ='OTH'> Create a seed fact magic_q ( <EQN/> ) from the query . </S>
+</P>
+<P>
+<S ID='S-37' AZ='OTH'> To illustrate the algorithm I zoom in on the application of the above algorithm to one particular grammar rule . </S>
+<S ID='S-38' AZ='OTH'> Suppose the original grammar rule looks as follows : </S>
+<IMAGE ID='I-0'/>
+</P>
+<P>
+<S ID='S-39' AZ='OTH'> Step <CREF/> of the algorithm results in the following modified version of the original grammar rule : </S>
+<IMAGE ID='I-1'/>
+</P>
+<P>
+<S ID='S-40' AZ='OTH'> A magic literal is added to the right-hand side of the rule which 'guards ' the application of the rule . </S>
+<S ID='S-41' AZ='OTH'> This does not change the semantics of the original grammar as it merely serves as a way to incorporate the relevant bindings derived with the magic predicates to avoid redundant applications of a rule . </S>
+<S ID='S-42' AZ='OTH'> Corresponding to the first right-hand side literal in the original rule step <CREF/> derives the following magic rule : </S>
+<IMAGE ID='I-2'/>
+</P>
+<P>
+<S ID='S-43' AZ='OTH'> It is used to derive from the guard for the original rule a guard for the rules defining the first right-hand side literal . </S>
+<S ID='S-44' AZ='OTH'> The second right-hand side literal in the original rule leads to the following magic rule : </S>
+<IMAGE ID='I-3'/>
+</P>
+<P>
+<S ID='S-45' AZ='OTH'> Finally , step <CREF/> of the algorithm ensures that a seed is created . </S>
+<S ID='S-46' AZ='OTH'> Assuming that the original rule is defining the start category , the query corresponding to the generation of the s `` John buys Mary a book '' leads to the following seed : </S>
+<IMAGE ID='I-4'/>
+</P>
+<P>
+<S ID='S-47' AZ='OTH'> The seed constitutes a representation of the initial bindings provided by the query that is used by the magic predicates to derive guards . </S>
+<S ID='S-48' AZ='OTH'> Note that the creation of the seed can be delayed until run-time , i.e. , the grammar does not need to be recompiled for every possible query . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-3'> Example </HEADER>
+<P>
+<S ID='S-49' AZ='OTH'> Magic compilation is illustrated on the basis of the simple logic grammar extract in figure <CREF/> . </S>
+<S ID='S-50' AZ='BAS'> This grammar has been optimized automatically for generation <REF SELF="YES" TYPE='P'>Minnen et al. 1996</REF> . </S>
+<S ID='S-51' AZ='OTH'> The right-hand sides of the rules are reordered such that a simple left-to-right evaluation order constitutes the optimal evaluation order . </S>
+<IMAGE ID='I-5'/>
+</P>
+<P>
+<S ID='S-52' AZ='OTH'> With this grammar a simple top-down generation strategy does not terminate as a result of the head recursion in rule <CREF/> . </S>
+<S ID='S-53' AZ='OTH'> It is necessary to use memoization extended with an abstraction function and a subsumption check . </S>
+<S ID='S-54' AZ='OTH'> Strict bottom-up generation is not attractive either as it is extremely inefficient : </S>
+<S ID='S-55' AZ='OTH'> One is forced to generate all possible natural language expressions licensed by the grammar and subsequently check them against the start category . </S>
+<S ID='S-56' AZ='OTH'> It is possible to make the process more efficient through excluding specific lexical entries with a semantic filter . </S>
+<S ID='S-57' AZ='OTH'> The use of such a semantic filter in bottom-up evaluation requires the grammar to obey the semantic monotonicity constraint in order to ensure completeness <REF TYPE='P'>Shieber 1988</REF> ( see below ) . </S>
+</P>
+<P>
+<S ID='S-58' AZ='OTH'> The 'magic - compiled grammar ' in figure <CREF/> is the result of applying the algorithm in the previous section to the head-recursive example grammar and subsequently performing two optimizations <REF TYPE='P'>Beeri and Ramakrishnan 1991</REF> . </S>
+<S ID='S-59' AZ='OTH'> All ( calls to ) magic predicates corresponding to lexical entries are removed . </S>
+<S ID='S-60' AZ='OTH'> Furthermore , data-flow analysis is used to fine-tune the magic predicates for the specific processing task at hand , i.e. , generation . </S>
+<IMAGE ID='I-6'/>
+<IMAGE ID='I-7'/>
+</P>
+<P>
+<S ID='S-61' AZ='OTH'> Given a user-specified abstract query , i.e. , a specification of the intended input <REF TYPE='P'>Beeri and Ramakrishnan 1991</REF> those arguments which are not bound and which therefore serve no filtering purpose are removed . </S>
+<S ID='S-62' AZ='OTH'> The modified versions of the original rules in the grammar are adapted accordingly . </S>
+<S ID='S-63' AZ='OTH'> The effect of taking data-flow into account can be observed by comparing the rules for magic_vp and magic_np in the previous section with rule <CREF/> and <CREF/> in figure <CREF/> , respectively . </S>
+</P>
+<P>
+<S ID='S-64' AZ='OTH'> Figure <CREF/> shows the results from generation of the sentence `` John buys Mary a book '' . </S>
+<S ID='S-65' AZ='OTH'> In the case of this example the seed looks as follows : </S>
+<IMAGE ID='I-8'/>
+</P>
+<P>
+<S ID='S-66' AZ='OTH'> The facts , i.e. , passive edges / items , in figure <CREF/> resulted from semi-naive bottom-up evaluation <REF TYPE='P'>Ramakrishnan et al. 1992</REF> which constitutes a dynamic bottom-up evaluation , where repeated derivation of facts from the same earlier derived facts ( as in naive evaluation ; <REF TYPE='P'>Bancilhon 1985</REF> ) is blocked . </S>
+<S ID='S-67' AZ='OTH'> ( Active edges are not memoized . </S>
+<S ID='S-68' AZ='OTH'> ) The figure consist of two tree structures ( connected through dotted lines ) of which the left one corresponds to the filtering part of the derivation . </S>
+<S ID='S-69' AZ='OTH'> The filtering tree is reversed and derives magic facts starting from the seed in a bottom-up fashion . </S>
+<S ID='S-70' AZ='OTH'> The tree on the right is the proof tree for the example sentence which is built up as a result of unifying in the derived magic facts when applying a particular rule . </S>
+<S ID='S-71' AZ='OTH'> E.g. , in order to derive fact <CREF/> , magic fact <CREF/> is unified with the magic literal in the modified version of rule <CREF/> ( in addition to the facts <CREF/> and <CREF/> ) . </S>
+<S ID='S-72' AZ='OTH'> This , however , is not represented in order to keep the figure clear . </S>
+<S ID='S-73' AZ='OTH'> Dotted lines are used to represent when 'normal ' facts are combined with magic facts to derive new magic facts . </S>
+</P>
+<P>
+<S ID='S-74' AZ='OTH'> As can be reconstructed from the numbering of the facts in figure <CREF/> the resulting processing behavior is identical to the behavior that would result from Earley generation as in <REF TYPE='A'>Gerdemann 1991</REF> except that the different filtering steps are performed in a bottom-up fashion . </S>
+<S ID='S-75' AZ='OTH'> In order to obtain a generator similar to the bottom-up generator as described in <REF TYPE='A'>Shieber 1988</REF> the compilation process can be modified such that only lexical entries are extended with magic literals . </S>
+<S ID='S-76' AZ='CTR'> Just like in case of <REFAUTHOR>Shieber</REFAUTHOR> 's bottom-up generator , bottom-up evaluation of magic-compiled grammars produced with this Magic variant is only guaranteed to be complete in case the original grammar obeys the semantic monotonicity constraint . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-4'> Filter Optimization through Program Transformation </HEADER>
+<P>
+<S ID='S-77' AZ='OTH'> As a result of characterizing filtering by a definite clause representation Magic brings filtering inside of the logic underlying the grammar . </S>
+<S ID='S-78' AZ='OWN'> This allows it to be optimized in a processor independent and logically clean fashion . </S>
+<S ID='S-79' ABSTRACTC='A-2' AZ='BAS'> I discuss two possible filter optimizations based on a program transformation technique called unfolding <REF TYPE='P'>Tamaki and Sato 1984</REF> also referred to as partial execution <REF TYPE='P'>Pereira and Shieber 1987</REF> . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-5'> Subsumption Checking </HEADER>
+<P>
+<S ID='S-80' AZ='CTR'> Just like top-down evaluation of the original grammar bottom-up evaluation of its magic compiled version falls prey to non-termination in the face of head recursion . </S>
+<S ID='S-81' AZ='OWN'> It is however possible to eliminate the subsumption check through fine-tuning the magic predicates derived for a particular grammar in an off-line fashion . </S>
+<S ID='S-82' AZ='OWN'> In order to illustrate how the magic predicates can be adapted such that the subsumption check can be eliminated it is necessary to take a closer look at the relation between the magic predicates and the facts they derive . </S>
+<S ID='S-83' AZ='OWN'> In figure <CREF/> the relation between the magic predicates for the example grammar is represented by an unfolding tree <REF TYPE='P'>Pettorossi and Proietti 1994</REF> . </S>
+<S ID='S-84' AZ='OWN'> This , however , is not an ordinary unfolding tree as it is constructed on the basis of an abstract seed , i.e. , a seed adorned with a specification of which arguments are to be considered bound . </S>
+<S ID='S-85' AZ='OWN'> Note that an abstract seed can be derived from the user-specified abstract query . </S>
+<S ID='S-86' AZ='OWN'> Only the magic part of the abstract unfolding tree is represented . </S>
+<IMAGE ID='I-9'/>
+</P>
+<P>
+<S ID='S-87' AZ='OWN'> The abstract unfolding tree in figure <CREF/> clearly shows why there exists the need for subsumption checking : </S>
+<S ID='S-88' AZ='OWN'> Rule <CREF/> in figure <CREF/> produces infinitely many magic_vp facts . </S>
+<S ID='S-89' AZ='OWN'> This 'cyclic ' magic rule is derived from the head-recursive vp rule in the example grammar . </S>
+<S ID='S-90' AZ='OWN'> There is however no reason to keep this rule in the magic-compiled grammar . </S>
+<S ID='S-91' AZ='OWN'> It influences neither the efficiency of processing with the grammar nor the completeness of the evaluation process . </S>
+</P>
+<DIV DEPTH='3'>
+<HEADER ID='H-6'> Off-Line Abstraction </HEADER>
+<P>
+<S ID='S-92' AZ='OWN'> Finding these types of cycles in the magic part of the compiled grammar is in general undecidable . </S>
+<S ID='S-93' AZ='OWN'> It is possible though to ` trim ' the magic predicates by applying an abstraction function . </S>
+<S ID='S-94' AZ='OWN'> As a result of the explicit representation of filtering we do not need to postpone abstraction until run-time , but can trim the magic predicates off-line . </S>
+<S ID='S-95' AZ='OWN'> One can consider this as bringing abstraction into the logic as the definite clause representation of filtering is weakened such that only a mild form of connectedness results which does not affect completeness <REF TYPE='P'>Shieber 1985</REF> . </S>
+<S ID='S-96' AZ='OWN'> Consider the following magic rule : </S>
+<IMAGE ID='I-10'/>
+</P>
+<P>
+<S ID='S-97' AZ='OWN'> This is the rule that is derived from the head-recursive vp rule when the partially specified subcategorization list is considered as filtering information ( cf. , fn. 1 ) . </S>
+<S ID='S-98' AZ='OWN'> The rule builds up infinitely large subcategorization lists of which eventually only one is to be matched against the subcategorization list of , e.g. , the lexical entry for `` buys '' . </S>
+<S ID='S-99' AZ='OWN'> Though this rule is not cyclic , it becomes cyclic upon off-line abstraction : </S>
+<IMAGE ID='I-11'/>
+</P>
+<P>
+<S ID='S-100' AZ='OWN'> Through trimming this magic rule , e.g. , given a bounded term depth <REF TYPE='P'>Sato and Tamaki 1984</REF> or a restrictor <REF TYPE='P'>Shieber 1985</REF> , constructing an abstract unfolding tree reveals the fact that a cycle results from the magic rule . </S>
+<S ID='S-101' AZ='OWN'> This information can then be used to discard the culprit . </S>
+</P>
+</DIV>
+<DIV DEPTH='3'>
+<HEADER ID='H-7'> Indexing </HEADER>
+<P>
+<S ID='S-102' AZ='OWN'> Removing the direct or indirect cycles from the magic part of the compiled grammar does eliminate the necessity of subsumption checking in many cases . </S>
+<S ID='S-103' AZ='OWN'> However , consider the magic rules <CREF/> and <CREF/> in figure <CREF/> . </S>
+<S ID='S-104' AZ='OWN'> Rule <CREF/> is more general than rule <CREF/> . </S>
+<S ID='S-105' AZ='OWN'> Without subsumption checking this leads to spurious ambiguity : </S>
+<S ID='S-106' AZ='OWN'> Both rules produce a magic fact with which a subject np can be built . </S>
+<S ID='S-107' AZ='OWN'> A possible solution to this problem is to couple magic rules with the modified version of the original grammar rule that instigated it . </S>
+<S ID='S-108' AZ='OWN'> To accomplish this I propose a technique that can be considered the off-line variant of an indexing technique described in <REF TYPE='A'>Gerdemann 1991</REF> . </S>
+<S ID='S-109' AZ='OWN'> The indexing technique is illustrated on the basis of the running example : </S>
+<S ID='S-110' AZ='OWN'> Rule <CREF/> in figure <CREF/> is coupled to the modified version of the original s rule that instigated it , i.e. , rule <CREF/> . </S>
+<S ID='S-111' AZ='OWN'> Both rules receive an index : </S>
+<IMAGE ID='I-12'/>
+</P>
+<P>
+<S ID='S-112' AZ='OWN'> The modified versions of the rules defining nps are adapted such that they percolate up the index of the guarding magic fact that licensed its application . </S>
+<S ID='S-113' AZ='OWN'> This is illustrated on the basis of the adapted version of rule <CREF/> : </S>
+<IMAGE ID='I-13'/>
+</P>
+<P>
+<S ID='S-114' AZ='OWN'> As is illustrated in section <CREF/> this allows the avoidance of spurious ambiguities in the absence of subsumption check in case of the example grammar . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-8'> Redundant Filtering Steps </HEADER>
+<P>
+<S ID='S-115' AZ='OWN'> Unfolding can also be used to collapse filtering steps . </S>
+<S ID='S-116' AZ='OWN'> As becomes apparent upon closer investigation of the abstract unfolding tree in figure <CREF/> the magic predicates magic_sentence , magic_s and magic_vp provide virtually identical variable bindings to guard bottom-up application of the modified versions of the original grammar rules . </S>
+<S ID='S-117' AZ='OWN'> Unfolding can be used to reduce the number of magic facts that are produced during processing . </S>
+<S ID='S-118' AZ='OWN'> E.g. , in figure <CREF/> the magic_s rule : </S>
+<IMAGE ID='I-14'/>
+</P>
+<P>
+<S ID='S-119' AZ='OWN'> can be eliminated by unfolding the magic_s literal in the modified s rule : </S>
+<IMAGE ID='I-15'/>
+</P>
+<P>
+<S ID='S-120' AZ='OWN'> This results in the following new rule which uses the seed for filtering directly without the need for an intermediate filtering step : </S>
+<IMAGE ID='I-16'/>
+</P>
+<P>
+<S ID='S-121' AZ='OWN'> Note that the unfolding of the magic_s literal leads to the instantiation of the argument VFORM to finite . </S>
+<S ID='S-122' AZ='OWN'> As a result of the fact that there are no other magic_s literals in the remainder of the magic-compiled grammar the magic_s rule can be discarded . </S>
+</P>
+<P>
+<S ID='S-123' AZ='BAS'> This filter optimization is reminiscent of computing the deterministic closure over the magic part of a compiled grammar <REF TYPE='P'>Doerre 1993</REF> at compile time . </S>
+<S ID='S-124' AZ='OWN'> Performing this optimization throughout the magic part of the grammar in figure <CREF/> not only leads to a more succinct grammar , but brings about a different processing behavior . </S>
+<S ID='S-125' AZ='BAS'> Generation with the resulting grammar can be compared best with head corner generation <REF TYPE='P'>Shieber et al. 1990</REF> ( see next section ) . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-9'> Example </HEADER>
+<IMAGE ID='I-17'/>
+<P>
+<S ID='S-126' AZ='OWN'> After cycle removal , incorporating relevant indexing and the collapsing of redundant magic predicates the magic-compiled grammar from figure <CREF/> looks as displayed in figure <CREF/> . </S>
+<S ID='S-127' AZ='OWN'> Figure <CREF/> shows the chart resulting from generation of the sentence `` John buys Mary a book '' . </S>
+<S ID='S-128' AZ='OWN'> The seed is identical to the one used for the example in the previous section . </S>
+<S ID='S-129' AZ='OWN'> The facts in the chart resulted from not-so-naive bottom-up evaluation : semi-naive evaluation without subsumption checking <REF TYPE='P'>Ramakrishnan et al. 1992</REF> . </S>
+<IMAGE ID='I-18'/>
+</P>
+<P>
+<S ID='S-130' AZ='BAS'> The resulting processing behavior is similar to the behavior that would result from head corner generation except that the different filtering steps are performed in a bottom-up fashion . </S>
+<S ID='S-131' AZ='OTH'> The head corner approach jumps top-down from pivot to pivot in order to satisfy its assumptions concerning the flow of semantic information , i.e. , semantic chaining , and subsequently generates starting from the semantic head in a bottom-up fashion . </S>
+<S ID='S-132' AZ='OWN'> In the example , the seed is used without any delay to apply the base case of the vp-procedure , thereby jumping over all intermediate chain and non-chain rules . </S>
+<S ID='S-133' AZ='OWN'> In this respect the initial reordering of rule <CREF/> which led to rule <CREF/> in the final grammar in figure <CREF/> is crucial ( see section <CREF/> ) . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-10'> Dependency Constraint on Grammar </HEADER>
+<P>
+<S ID='S-134' AZ='OWN'> To which extent it is useful to collapse magic predicates using unfolding depends on whether the grammar has been optimized through reordering the right-hand sides of the rules in the grammar as discussed in section <CREF/> . </S>
+<S ID='S-135' AZ='OWN'> If the s rule in the running example is not optimized , the resulting processing behavior would not have fallen out so nicely : </S>
+<S ID='S-136' AZ='OWN'> In this case it leads either to an intermediate filtering step for the non-chaining sentence rule or to the addition of the literal corresponding to the subject np to all chain and non-chain rules along the path to the semantic head . </S>
+<S ID='S-137' AZ='OWN'> Even when cycles are removed from the magic part of a compiled grammar and indexing is used to avoid spurious ambiguities as discussed in the previous section , subsumption checking can not always be eliminated . </S>
+<S ID='S-138' AZ='OWN'> The grammar must be finitely ambiguous , i.e. , fulfill the off-line parsability constraint <REF TYPE='P'>Shieber 1989</REF> . </S>
+<S ID='S-139' AZ='OWN'> Furthermore , the grammar is required to obey what I refer to as the dependency constraint : </S>
+<S ID='S-140' AZ='OWN'> When a particular right-hand side literal can not be evaluated deterministically , the results of its evaluation must uniquely determine the remainder of the right-hand side of the rule in which it appears . </S>
+<S ID='S-141' AZ='OWN'> Figure <CREF/> gives a schematic example of a grammar that does not obey the dependency constraint . </S>
+<IMAGE ID='I-19'/>
+</P>
+<P>
+<S ID='S-142' AZ='OWN'> Given a derived fact or seed magic_cat_1 ( property_1 ) bottom-up evaluation of the abstract grammar in ifigure <CREF/> leads to spurious ambiguity . </S>
+<S ID='S-143' AZ='OWN'> There are two possible solutions for cat_2 as a result of the fact that the filtering resulting from the magic literal in rule <CREF/> is too unspecific . </S>
+<S ID='S-144' AZ='OWN'> This is not problematic as long as this nondeterminism will eventually disappear , e.g. , by combining these solutions with the solutions to cat_3 . </S>
+<S ID='S-145' AZ='OWN'> The problem arises as a result of the fact that these solutions lead to identical filters for the evaluation of the cat_3 literal , i.e. , the solutions to cat_2 do not uniquely determine cat_3 . </S>
+</P>
+<P>
+<S ID='S-146' AZ='OWN'> Also with respect to the dependency constraint an optimization of the rules in the grammar is important . </S>
+<S ID='S-147' AZ='BAS'> Through reordering the right-hand sides of the rules in the grammar the amount of nondeterminism can be drastically reduced as shown in <REF SELF="YES" TYPE='A'>Minnen et al. 1996</REF> . </S>
+<S ID='S-148' AZ='OWN'> This way of following the intended semantic dependencies the dependency constraint is satisfied automatically for a large class of grammars . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-11'> Concluding Remarks </HEADER>
+<P>
+<S ID='S-149' AZ='OTH'> Magic evaluation constitutes an interesting combination of the advantages of top-down and bottom-up evaluation . </S>
+<S ID='S-150' AZ='OTH'> It allows bottom-up filtering that achieves a goal-directedness which corresponds to dynamic top-down evaluation with abstraction and subsumption checking . </S>
+<S ID='S-151' AZ='AIM'> For a large class of grammars in effect identical operations can be performed off-line thereby allowing for more efficient processing . </S>
+<S ID='S-152' AZ='OWN'> Furthermore , it enables a reduction of the number of edges that need to be stored through unfolding magic predicates . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-12'> Acknowledgments </HEADER>
+<P>
+<S ID='S-153' AZ='OWN'> The presented research was sponsored by Teilprojekt B 4 `` From Constraints to Rules : </S>
+<S ID='S-154' AZ='OWN'> Efficient Compilation of HPSG Grammars '' of the Sonderforschungsbereich 340 of the Deutsche Forschungsgemeinschaft . </S>
+<S ID='S-155' AZ='OWN'> The author wishes to thank Dale Gerdemann , Mark Johnson , Thilo Goetz and the anonymous reviewers for valuable comments and discussion . </S>
+<S ID='S-156' AZ='OWN'> Of course , the author is responsible for all remaining errors . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+Francois <SURNAME>Bancilhon</SURNAME>.
+<DATE>1985</DATE>.
+Naive Evaluation of Recursively Defined Relations.
+In Brodie and Mylopoulos, editors, On Knowledge Base Management
+  Systems - Integrating Database and AI Systems. Springer-Verlag.
+</REFERENCE>
+<REFERENCE>
+Catriel <SURNAME>Beeri</SURNAME> and Raghu <SURNAME>Ramakrishnan</SURNAME>.
+<DATE>1991</DATE>.
+On the Power of Magic.
+Journal of Logic Programming 10.
+</REFERENCE>
+<REFERENCE>
+Jochen <SURNAME>Drre</SURNAME>.
+<DATE>1993</DATE>.
+Generalizing Earley Deduction for Constraint-based
+  Grammars.
+Drre and Dorna, editors, Computational Aspects
+  of Constraint-Based Linguistic Description I, DYANA-2, Deliverable
+  R1.2.A.
+</REFERENCE>
+<REFERENCE>
+Dale <SURNAME>Gerdemann</SURNAME>.
+<DATE>1991</DATE>.
+Parsing and Generation of Unification Grammars.
+Ph.D. thesis, University of Illinois, USA.
+</REFERENCE>
+<REFERENCE>
+Mark <SURNAME>Johnson</SURNAME>.
+<DATE>forthcoming</DATE>.
+Constraint-based Natural Language Parsing.
+Brown University, Richmond, USA.
+Draft of 6 August <DATE>1995</DATE>.
+</REFERENCE>
+<REFERENCE>
+Guido <SURNAME>Minnen</SURNAME>, Dale <SURNAME>Gerdemann</SURNAME>, and Erhard <SURNAME>Hinrichs</SURNAME>.
+<DATE>1996</DATE>.
+Direct Automated Inversion of Logic Grammars.
+New Generation Computing 14.
+</REFERENCE>
+<REFERENCE>
+Fernando <SURNAME>Pereira</SURNAME> and Stuart <SURNAME>Shieber</SURNAME>.
+<DATE>1987</DATE>.
+Prolog and Natural Language Analysis.
+CSLI Lecture Notes, No. 10. Center for the Study of Language
+  and Information, Chicago, USA.
+</REFERENCE>
+<REFERENCE>
+Alberto <SURNAME>Pettorossi</SURNAME> and Maurizio <SURNAME>Proietti</SURNAME>.
+<DATE>1994</DATE>.
+Transformations of Logic Programs: Foundations and
+  Techniques.
+Journal of Logic Programming 19/20.
+</REFERENCE>
+<REFERENCE>
+Raghu <SURNAME>Ramakrishnan</SURNAME>, Divesh <SURNAME>Srivastava</SURNAME>, and S. <SURNAME>Sudarshan</SURNAME>.
+<DATE>1992</DATE>.
+Efficient Bottom-up Evaluation of Logic Programs.
+In Vandewalle, editor, The State of the Art in Computer
+  Systems and Software Engineering. Kluwer Academic Publishers.
+</REFERENCE>
+<REFERENCE>
+Taisuke <SURNAME>Sato</SURNAME> and Hisao <SURNAME>Tamaki</SURNAME>.
+<DATE>1984</DATE>.
+Enumeration of Success Patterns in Logic Programs.
+Theoretical Computer Sience 34.
+</REFERENCE>
+<REFERENCE>
+Stuart <SURNAME>Shieber</SURNAME>, Gertjan van <SURNAME>Noord</SURNAME>, Robert <SURNAME>Moore</SURNAME>, and Fernando <SURNAME>Pereira</SURNAME>.
+<DATE>1990</DATE>.
+Semantic Head-driven Generation.
+Computational Linguistics 16.
+</REFERENCE>
+<REFERENCE>
+Stuart <SURNAME>Shieber</SURNAME>.
+<DATE>1985</DATE>.
+Using Restriction to Extend Parsing Algorithms for
+  Complex Feature-based Formalisms.
+In Proceedings of the 23rd Annual Meeting Association for
+  Computational Linguistics, Chicago, USA.
+</REFERENCE>
+<REFERENCE>
+Stuart <SURNAME>Shieber</SURNAME>.
+<DATE>1988</DATE>.
+A Uniform Architecture for Parsing and Generation.
+In Proceedings of the 12th Conference on Computational
+  Linguistics, Budapest, Hungary.
+</REFERENCE>
+<REFERENCE>
+Stuart <SURNAME>Shieber</SURNAME>.
+<DATE>1989</DATE>.
+Parsing and Type Inference for Natural and Computer Languages.
+Ph.D. thesis, Stanford University, USA.
+</REFERENCE>
+<REFERENCE>
+Hisao <SURNAME>Tamaki</SURNAME> and Taisuke <SURNAME>Sato</SURNAME>.
+<DATE>1984</DATE>.
+Unfold/Fold Transformation of Logic Programs.
+In Proceedings of the 2nd International Conference on Logic
+  Programming, Uppsala, Sweden.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

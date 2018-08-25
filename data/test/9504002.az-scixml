@@ -1,0 +1,280 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9504002</FILENO>
+<APPEARED><CONFERENCE TYPE='Workshop'>EACL</CONFERENCE><YEAR>1995</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.Cl </CLASSIFICATION>
+</METADATA>
+<TITLE> Tagset Design and Inflected Languages </TITLE>
+<AUTHORLIST>
+<AUTHOR>David Elworthy</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' DOCUMENTC='S-22' AZ='AIM'> An experiment designed to explore the relationship between tagging accuracy and the nature of the tagset is described , using corpora in English , French and Swedish . </A-S>
+<A-S ID='A-1' AZ='AIM'> In particular , the question of internal versus external criteria for tagset design is considered , with the general conclusion that external ( linguistic ) criteria should be followed . </A-S>
+<A-S ID='A-2' AZ='OWN'> Some problems associated with tagging unknown words in inflected languages are briefly considered . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Tagset Design </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> Tagging by means of a Hidden Markov Model ( HMM ) is widely recognised as an effective technique for assigning parts of speech to a corpus in a robust and efficient manner . </S>
+<S ID='S-1' AZ='BKG'> An attractive feature of the technique is that the algorithm itself is independent of the ( natural ) language to which it is applied . </S>
+<S ID='S-2' AZ='BKG'> All of the `` knowledge engineering '' is localised in the choice of tagset and the method of training . </S>
+<S ID='S-3' AZ='BKG'> Typically , training makes use of a manually tagged corpus , or an untagged corpus with some initial bootstrapping probabilities . </S>
+<S ID='S-4' AZ='BKG'> Some attention has been given to how to make such techniques effective ; for example <REF TYPE='A'>Cutting et al. 1992</REF> suggest ways of training trigram taggers , and <REF TYPE='A'>Merialdo 1994</REF> and <REF TYPE='A' SELF="YES">Elworthy 1994</REF> consider the amount and quality of the seeding data needed to construct an accurate tagger . </S>
+</P>
+<P>
+<S ID='S-5' AZ='BKG'> In training a tagger for a given language , a major part of the knowledge engineering required can therefore be localised in the choice of the tagset . </S>
+<S ID='S-6' AZ='BKG'> The design of an appropriate tagset is subject to both external and internal criteria . </S>
+<S ID='S-7' AZ='BKG'> The external criterion is that the tagset must be capable of making the linguistic ( for example , syntactic or morphological ) distinctions required in the output corpora . </S>
+<S ID='S-8' AZ='OTH'> Tagsets used in the past have included varying amounts of detail . </S>
+<S ID='S-9' AZ='OTH'> For example , the Penn treebank tagset <REF TYPE='P'>Marcus et al. 1993</REF> omits a number of the distinctions which are made in the LOB and Brown tagsets on which it is based <REF TYPE='P'>Garside et al. 1987</REF> , <REF TYPE='P'>Francis and Kucera 1992</REF> in cases where the surface form of the words allows the distinctions to be recovered if they are needed . </S>
+<S ID='S-10' AZ='OTH'> Thus , the auxiliary verbs be , do and have have the same tags as other verbs in Penn , but are each separated out in the LOB tagset . </S>
+</P>
+<P>
+<S ID='S-11' AZ='BKG'> A second design criterion on tagsets is the internal one of making the tagging as effective as possible . </S>
+<S ID='S-12' AZ='BKG'> As an example , one of the most common errors made by taggers with the LOB and Brown tagsets is mistagging a word as a subordinating conjunction ( CS ) rather than a preposition ( IN ) , or vice-versa <REF TYPE='P'>Macklovitch 1992</REF> . </S>
+<S ID='S-13' AZ='BKG'> A higher level of syntactic analysis indicating the phrasal structure would be required to predict which tag is correct , and this information is not available to fixed-context taggers . </S>
+<S ID='S-14' AZ='BKG'> The Penn treebank therefore uses a single tag for both cases , leaving the resolution - if required - to some other process . </S>
+<S ID='S-15' AZ='BKG'> Similarly , most tagsets do not distinguish transitive and intransitive verbs , since taggers which use a context of only two or three words will generally not be able to make the right predictions . </S>
+<S ID='S-16' AZ='BKG'> Distinctions of this sort are usually found only in corpora such as Susanne which are parsed as well as tagged . </S>
+</P>
+<P>
+<S ID='S-17' AZ='BKG'> The problem of tagset design becomes particularly important for highly inflected languages , such as Greek or Hungarian . </S>
+<S ID='S-18' AZ='BKG'> If all of the syntactic variations which are realised in the inflectional system were represented in the tagset , there would be a huge number of tags , and it would be practically impossible to implement or train a simple tagger . </S>
+<S ID='S-19' AZ='BKG'> Note in passing that this may not as serious a problem as it first appears . </S>
+<S ID='S-20' AZ='BKG'> If the language is very highly inflected , it may be be possible to do all ( or a large part ) of the work of a tagger with a word-by-word morphological analysis instead . </S>
+<S ID='S-21' AZ='BKG'> Nevertheless , there are many languages which have enough ambiguity that tagging is useful , but a rich enough tagset that the criteria on which it is designed must be given careful consideration . </S>
+</P>
+<P>
+<S ID='S-22' ABSTRACTC='A-0' AZ='AIM'> In this paper , I report two experiments which address the internal design criterion , by looking at how tagging accuracy varies as the tagset is modified , in English , French and Swedish . </S>
+<S ID='S-23' AZ='OWN'> Although the choice of language was dictated by the corpora which were available , they represent three different degrees of complexity in their inflectional systems . </S>
+<S ID='S-24' AZ='BKG'> English has a very limited system , marking little more than plurality on nouns and a restricted range of verb properties . </S>
+<S ID='S-25' AZ='BKG'> French has a little more complexity , with gender , number and person marked , while Swedish has more detailed marking for gender , number , definiteness and case . </S>
+<S ID='S-26' AZ='AIM'> As a subsidiary issue , we will also look at how the tagger performs on unknown words , i.e. ones not seen in the training data . </S>
+<S ID='S-27' AZ='OTH'> The usual approach here is to hypothesise all tags in the tagset for an unknown word , other than ones where all the words that may have the tag can be enumerated in advance ( closed class tags ) . </S>
+<S ID='S-28' AZ='CTR'> HMM taggers often perform poorly on unknown words . </S>
+</P>
+<P>
+<S ID='S-29' AZ='OWN'> Alternative tagsets were derived by taking the initial tagset for each corpus ( from manual tagging of the corpus ) and condensing sets of tags which represent a grammatical distinction such as gender into single tags . </S>
+<S ID='S-30' AZ='OWN'> The changes were then applied to the training corpus . </S>
+<S ID='S-31' AZ='OWN'> This allows us to effectively produce a corpus tagged according to a different scheme without having to manually re-tag the corpus . </S>
+<S ID='S-32' AZ='OWN'> The changes in the tagsets were motivated purely by grammatical considerations , and did not take the errors actually observed into account . </S>
+<S ID='S-33' AZ='OWN'> In general what we will look at in the results is how the tagging accuracy changes as the size of the tagset changes . </S>
+<S ID='S-34' AZ='OWN'> This is a deliberately naive approach , and it is adopted with the goal of continuing in the relatively `` knowledge-free '' tradition of work in HMM tagging . </S>
+<S ID='S-35' AZ='AIM'> The aim of the experiment is to determine , crudely , whether a bigger tagset is better than a smaller one , or whether external criteria requiring human intervention should be used to choose the best tagset . </S>
+<S ID='S-36' AZ='OWN'> The results for the three languages turn out to be quite different , and the general conclusion ( which is the overall contribution of the paper ) will be that the external criterion should be the one to dominate tagset design : there is a limit to how knowledge-free we can be . </S>
+</P>
+<P>
+<S ID='S-37' AZ='BKG'> As a preliminary to this work , note that it is hard to reason about the effect of changing the tagset . </S>
+<S ID='S-38' AZ='BKG'> It can be argued that a smaller tagset should improve tagging accuracy , since it puts less of a burden on the tagger to make fine distinctions . </S>
+<S ID='S-39' AZ='BKG'> In information-theoretic terms , the number of decisions required is smaller , and hence the tagger need contribute less information to make the decisions . </S>
+<S ID='S-40' AZ='BKG'> A smaller tagset may also mean that more words have only one possible tag and so can be handled trivially . </S>
+<S ID='S-41' AZ='BKG'> Conversely , more detail in the tagset may help the tagger when the properties of two adjacent words give support to the choice of tag for both of them ; that is , the transitions between tags contribute the information the tagger needs . </S>
+<S ID='S-42' AZ='BKG'> For example , if determiners and nouns are marked for number , then the tagger can effectively model agreement in simple noun phrases , by having a higher probability for a singular determiner followed by a singular noun that it does for a singular determiner followed by a plural noun . </S>
+<S ID='S-43' AZ='BKG'> Theory on its own does not help much in deciding which point of view should dominate . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> The Experiments </HEADER>
+<DIV DEPTH='2'>
+<HEADER ID='H-2'> Design of the experiments </HEADER>
+<P>
+<S ID='S-44' AZ='OWN'> Two experiments were conducted on three corpora : 300 k words of Swedish text from the ECI Multilingual CD-ROM , and 100 k words each of English and French from a corpus of International Telecommunications Union text . </S>
+<S ID='S-45' AZ='OWN'> In the first experiment the whole of each corpus was used to train the model , and a small sample from the same text was used as test data . </S>
+<S ID='S-46' AZ='OWN'> For the second experiment , 95 % of the corpus was used in training and the remainder in testing . </S>
+<S ID='S-47' AZ='OWN'> The importance of the second test is that it includes unknown words , which are difficult to tag . </S>
+<S ID='S-48' AZ='OWN'> The tagsets were progressively modified , by textually substituting simplified tags for the original ones and e e-running the training and test procedures using the modified corpora . </S>
+<S ID='S-49' AZ='OWN'> The changes to the tagset are listed below . </S>
+<S ID='S-50' AZ='OWN'> In the results that follow , we will identify tagset that include a given distinction with an uppercase letter and ones that do not with a lowercase letter ; for example G for a tagset that marks gender , and g for one that does not . </S>
+</P>
+<P>
+<S ID='S-51' AZ='OWN'> Swedish </S>
+<S ID='S-52' AZ='OWN'> The changes made were entirely based on inflections . </S>
+<S ID='S-53' TYPE='ITEM' AZ='OWN' > G Gender : masculine , neuter , common gender ( `` UTR '' in the tagset ) . </S>
+<S ID='S-54' TYPE='ITEM' AZ='OWN' > N Number : singular , plural . </S>
+<S ID='S-55' TYPE='ITEM' AZ='OWN' > D Definiteness : definite , indefinite . </S>
+<S ID='S-56' TYPE='ITEM' AZ='OWN' > C Case : nominative , genitive . </S>
+</P>
+<P>
+<S ID='S-57' AZ='OWN'> French </S>
+<S ID='S-58' AZ='OWN'> The changes other than V were based on inflections . </S>
+<S ID='S-59' TYPE='ITEM' AZ='OWN' > G Gender : masculine , feminine . </S>
+<S ID='S-60' TYPE='ITEM' AZ='OWN' > N Number : singular , plural . </S>
+<S ID='S-61' TYPE='ITEM' AZ='OWN' > P Person : identified as 1 st to 6th in the tagset . </S>
+<S ID='S-62' TYPE='ITEM' AZ='OWN' > V Verbs : treat avoir and etre as being the same as any other verb . </S>
+</P>
+<P>
+<S ID='S-63' AZ='OWN'> English </S>
+<S ID='S-64' AZ='OWN'> The changes here are more varied than for the other languages , and generally consisted of removing some of the finer subdivisions of the major classes . </S>
+<S ID='S-65' AZ='OWN'> The grouping of some of these changes is admittedly a little ad hoc , and was intended to give a good distribution of tagset sizes ; not all combinations were tried . </S>
+<S ID='S-66' TYPE='ITEM' AZ='OWN' > C Reduce specific conjunction classes to a common class , and simplify one adjective class . </S>
+<S ID='S-67' TYPE='ITEM' AZ='OWN' > A Simplify noun and adverb classes . </S>
+<S ID='S-68' TYPE='ITEM' AZ='OWN' > P Simplify pronoun classes . </S>
+<S ID='S-69' TYPE='ITEM' AZ='OWN' > N Number : all singular / plural distinctions removed . </S>
+<S ID='S-70' TYPE='ITEM' AZ='OWN' > V Use the same class for have , do and be as for other verbs . </S>
+</P>
+<P>
+<S ID='S-71' AZ='OWN'> The sizes of the resulting tagsets and the degree of ambiguity in the corpora which resulted appear below . </S>
+<S ID='S-72' AZ='OWN'> Accuracy figures quoted here are for ambiguous and unknown words only , and therefore factor out effects due to the varying degree of ambiguity as the tagset changes . </S>
+<S ID='S-73' AZ='OWN'> In fact , this is a rather approximate way of accounting for ambiguity , since it does not take the length of ambiguous sequences into account , and the accuracy is likely to deteriorate more on long sequences of ambiguous words than on short ones . </S>
+</P>
+<P>
+<S ID='S-74' AZ='OWN'> The tests were run using Good-Turing correction to the probability estimates ; that is , rather than estimating the probability of the transition from a tag i to a tag j as the count of transition from i to j in the training corpus divided by the total frequency of tag i , one was added to the count of all transitions , and the total tag frequencies adjusted correspondingly . </S>
+<S ID='S-75' AZ='OWN'> The purpose in using this correction is to correct for corpora which might not provide enough training data . </S>
+<S ID='S-76' AZ='OWN'> On the largest tagsets , the correction was found to give a very slight reduction in the accuracy for Swedish , and to improve the French and English accuracies by about 1.5 % , suggesting that it is indeed needed . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-3'> Results </HEADER>
+<P>
+<S ID='S-77' AZ='OWN'> The first experiment , with no unknown words , gave accuracies on ambiguous words of 91 - 93 % for Swedish , 94 - 97 % for French and 85 - 90 % for English . </S>
+<S ID='S-78' AZ='OWN'> The results for English are surprisingly low ( for example , on the Penn treebank , the tagger gives an accuracy of 95 - 96 % ) , and may be due to long sequences of ambiguous words . </S>
+<S ID='S-79' AZ='OWN'> The results appear in table <CREF/> . </S>
+<S ID='S-80' AZ='OWN'> The figures include the degree of ambiguity , that is , the number of words in the corpus for which more than one tag was hypothesised . </S>
+<S ID='S-81' AZ='OWN'> The accuracy is plotted against the size of the tagset in figures <CREF/> - <CREF/> , where the numbers on the points correspond to the index of tagsets listed . </S>
+<S ID='S-82' AZ='OWN'> Summarising the patterns : </S>
+</P>
+<P>
+<S ID='S-83' AZ='OWN'> Swedish  </S>
+<S ID='S-84' AZ='OWN'> Larger tagset generally gives higher accuracy . </S>
+<S ID='S-85' AZ='OWN'> The results are quite widely spread . </S>
+</P>
+<P>
+<S ID='S-86' AZ='OWN'> French </S>
+<S ID='S-87' AZ='OWN'> Clustered , with an accuracy on all tagsets which do not mark gender of around 96 % - 96.5 % ; when gender is marked 94 % - 94.5 % . </S>
+</P>
+<P>
+<S ID='S-88' AZ='OWN'> English </S>
+<S ID='S-89' AZ='OWN'> Larger tagset tends to give larger accuracy , though with less of a spread than for Swedish . </S>
+</P>
+<P>
+<S ID='S-90' AZ='OWN'> The sizes of the tagsets ranged from approximately 80 - 200 tags for Swedish , 35 - 90 for French , and 70 - 160 for English . </S>
+<S ID='S-91' AZ='OWN'> As discussed above , it is not clear what would happen with larger tagsets , but some experiments based on the Susanne corpus and using tagsets ranging from 236 to 425 tags suggest that the trend to higher accuracy continues with even bigger tagsets . </S>
+<IMAGE ID='I-0'/>
+<IMAGE ID='I-1'/>
+<IMAGE ID='I-2'/>
+<IMAGE ID='I-3'/>
+</P>
+<P>
+<S ID='S-92' AZ='OWN'> In the second experiment , the test corpora included `` unknown '' words , which had not been seen during training , and for which the tagger hypothesises all open-class tags . </S>
+<S ID='S-93' AZ='OWN'> Two results are interesting to look at here : the accuracy on the unknown words , and the accuracy on words which were ambiguous but were found in the training corpus . </S>
+<S ID='S-94' AZ='OWN'> The results , in outline , are : </S>
+</P>
+<P>
+<S ID='S-95' AZ='OWN'> Swedish </S>
+<S ID='S-96' AZ='OWN'> Similar results on known words to first experiment . </S>
+<S ID='S-97' AZ='OWN'> For unknown words , smaller tagsets give higher accuracy . </S>
+</P>
+<P>
+<S ID='S-98' AZ='OWN'> French </S>
+<S ID='S-99' AZ='OWN'> For ambiguous words , the pattern and accuracy were similar to first experiment . </S>
+<S ID='S-100' AZ='OWN'> For unknown words , the pattern of accuracies was again similar , with tagsets that do not include gender giving accuracies of 51 % - 52 % , and those which do giving 45 % - 46 % . </S>
+</P>
+<P>
+<S ID='S-101' AZ='OWN'> English </S>
+<S ID='S-102' AZ='OWN'> Ambiguous words gave similar results to the first test . </S>
+<S ID='S-103' AZ='OWN'> Unknown words show a weak tendency to give higher accuracy on smaller tagsets . </S>
+</P>
+<P>
+<S ID='S-104' AZ='OWN'> Typical accuracies on ambiguous words were 90 - 92 % , 93 - 97 % and 83 - 88 % for Swedish , French and English respectively , with the corresponding accuracies on unknown words being 25 - 50 % , 45 - 52 % and 44 - 58 % . </S>
+<S ID='S-105' AZ='OWN'> Table <CREF/> lists the results , giving the tagset size , the degree of ambiguity and the accuracies on known ambiguous and unknown words . </S>
+<S ID='S-106' AZ='OWN'> The ambiguous word accuracy is plotted in figures <CREF/> - <CREF/> . </S>
+<IMAGE ID='I-4'/>
+<IMAGE ID='I-5'/>
+<IMAGE ID='I-6'/>
+<IMAGE ID='I-7'/>
+</P>
+<P>
+<S ID='S-107' AZ='OWN'> What seems to come out from these results is that there is not a consistent relationship between the size of the tagsets and the tagging accuracy . </S>
+<S ID='S-108' AZ='OWN'> The most common pattern was for a larger tagset to give higher accuracy , but there were notable exceptions in French ( where gender marking was the key factor ) , in Swedish unknown words ( which show the reverse trend ) and in English unknown words ( which show no very clear trend at all ) . </S>
+<S ID='S-109' AZ='OWN'> This seems to fit quite well with the difficulties that were suggested above in reasoning about the effect of tagset size . </S>
+<S ID='S-110' AZ='OWN'> The main conclusion of this paper is therefore that the knowledge engineering component of setting up a tagger should concentrate on optimising the tagset for external criteria , and that the internal criterion of tagset size does not show sufficient generality to be taken into account without prior knowledge of properties of the language . </S>
+<S ID='S-111' AZ='OWN'> Perhaps this is not too surprising , but it is useful to have an experimental confirmation that the linguistics matters rather than the engineering . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-4'> Unknown Words </HEADER>
+<P>
+<S ID='S-112' AZ='OWN'> One final observation about the experiments : the accuracy on unknown words was very low in all of the tests , and was particularly bad in Swedish . </S>
+<S ID='S-113' AZ='OWN'> The tagger used in the experiments took a very simple-minded approach to unknown words . </S>
+<S ID='S-114' AZ='OWN'> An alternative that is often used is to limit the possible tags using a simple morphological analysis or some other examination of the surface form of the word . </S>
+<S ID='S-115' AZ='OWN'> For example , in a variant of the English tagger which was not used in these experiments , a module which reduces the range of possible tags based on testing for only seven surface characteristics such as capitalisation and word endings improved the unknown word accuracy by 15 - 20 . </S>
+</P>
+<P>
+<S ID='S-116' AZ='OWN'> The results above show that if it were not for unknown words , there might be some argument for favouring larger tagsets , since they have some tendency to give a higher accuracy . </S>
+<S ID='S-117' AZ='OWN'> A tentative experiment on the contribution of using morphological or surface analysis in French and Swedish was therefore carried out . </S>
+<S ID='S-118' AZ='OWN'> Firstly , in both languages , the unknown words from the second experiment were looked up in the lexicon trained from the full corpus to see what tags they might have . </S>
+<S ID='S-119' AZ='OWN'> For Swedish , 96 % of the unknown words came from inflected classes , and had a single tag ; for French the figure was about 60 % . </S>
+<S ID='S-120' AZ='OWN'> In both cases , very few of the unknown words ( less than 1 % ) had more than one tag . </S>
+<S ID='S-121' AZ='OWN'> This provides some hope that an inflectional analysis might should help considerably with unknown words . </S>
+<S ID='S-122' AZ='OWN'> For confirmation , the list of French unknown words was given to a French grammarian , who predicted that it would be possible to make a good guess at the correct tag from the morphology for around 70 % of the words , and could narrow down the possible tags to two or three for about a further 25 % . </S>
+<S ID='S-123' AZ='OWN'> However , further research is needed to determine how realistic these estimates turn out to be . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-5'> Conclusion </HEADER>
+<P>
+<S ID='S-124' AZ='AIM'> We have shown how a simple experiment in changing the tagset shows that the relationship between tagset size and accuracy is a weak one and is not consistent against languages . </S>
+<S ID='S-125' AZ='CTR'> This seems to go against the `` folklore '' of the tagging community , where smaller tagsets are often held to be better for obtaining good accuracy . </S>
+<S ID='S-126' AZ='OWN'> I have suggested that what is important is to choose the tagset required for the application , rather than to optimise it for the tagger . </S>
+<S ID='S-127' AZ='OWN'> A follow-up to this work might be to apply similar tests in other languages to provide a further confirmation of the results , and to see if language families which similar characteristics can be identified . </S>
+<S ID='S-128' AZ='OWN'> A further conclusion might be that when a corpus is being tagged by hand , a large tagset should be used , since it can always be reduced to a smaller one if the application demands it . </S>
+<S ID='S-129' AZ='OWN'> Perhaps the major factor we have to set against this is the danger of introducing more human errors into the manual tagging process , by increasing the cognitive load on the human annotators . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+Doug <SURNAME>Cutting</SURNAME>, Julian <SURNAME>Kupiec</SURNAME>, Jan <SURNAME>Pedersen</SURNAME>, and Penelope <SURNAME>Sibun</SURNAME> (<DATE>1992</DATE>).
+A Practical Part-of-Speech Tagger.
+In Third Conference on Applied Natural Language Processing.
+  Proceedings of the Conference. Trento, Italy, pages 133-140, Association
+  for Computational Linguistics.
+</REFERENCE>
+<REFERENCE>
+David <SURNAME>Elworthy</SURNAME> (<DATE>1994</DATE>).
+Does Baum-Welch Re-estimation Help Taggers?
+In Fourth Conference on Applied Natural Language Processing.
+  Proceedings of the Conference. Stuttgart, Germany, pages 53-58, Association
+  for Computational Linguistics.
+</REFERENCE>
+<REFERENCE>
+W. N. <SURNAME>Francis</SURNAME> and F. <SURNAME>Kucera</SURNAME> (<DATE>1992</DATE>).
+Frequency Analysis of English Usage.
+Houghton Mifflin.
+</REFERENCE>
+<REFERENCE>
+Roger <SURNAME>Garside</SURNAME>, Geoffrey <SURNAME>Leech</SURNAME>, and Geoffrey <SURNAME>Sampson</SURNAME> (<DATE>1987</DATE>).
+The Computational Analysis of English: A Corpus-based
+  Approach.
+Longman, London.
+</REFERENCE>
+<REFERENCE>
+Elliott <SURNAME>Macklovitch</SURNAME> (<DATE>1992</DATE>).
+Where the Tagger Falters.
+In Proceedings of the Fourth Conference on Theoretical and
+  Methodological Issues in Machine Translation, pages 113-126.
+</REFERENCE>
+<REFERENCE>
+Mitchell P. <SURNAME>Marcus</SURNAME>, Beatrice <SURNAME>Santorini</SURNAME>, and Mary <SURNAME>Ann</SURNAME> Marcinkiewicz (<DATE>1993</DATE>).
+Building a Large Annotated Corpus of English: The Penn Treebank.
+Computational Linguistics, 19(2):313-330.
+</REFERENCE>
+<REFERENCE>
+A. M. <SURNAME>McEnery</SURNAME>, M. P. <SURNAME>Oakes</SURNAME>, R. <SURNAME>Garside</SURNAME>, J. <SURNAME>Hutchinson</SURNAME>, and G. N. <SURNAME>Leech</SURNAME> (<DATE>1994</DATE>).
+The Exploitation of Parallel Corpora in Projects ET10/63 and CRATER.
+In International Conference on New Methods in Language
+  Processing. Proceedings of the Conference, pages 108-115, Centre for
+  Computational Linguistics, UMIST.
+</REFERENCE>
+<REFERENCE>
+Bernard <SURNAME>Merialdo</SURNAME> (<DATE>1994</DATE>).
+Tagging English Text with a Probabilistic Model.
+Computational Linguistics, 20(2):155-171.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

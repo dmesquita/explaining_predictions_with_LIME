@@ -1,0 +1,445 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9405028</FILENO>
+<APPEARED><CONFERENCE>COLING</CONFERENCE><YEAR>1994</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Th.Li.Sm </CLASSIFICATION>
+</METADATA>
+<TITLE> Semantics of Complex Sentences in Japanese </TITLE>
+<AUTHORLIST>
+<AUTHOR>Hiroshi Nakagawa</AUTHOR>
+<AUTHOR>Shin'ichiro Nishizawa</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' DOCUMENTC='S-117' AZ='OWN'> The important part of semantics of complex sentence is captured as relations among semantic roles in subordinate and main clause respectively . </A-S>
+<A-S ID='A-1' AZ='BKG'> However if there can be relations between every pair of semantic roles , the amount of computation to identify the relations that hold in the given sentence is extremely large . </A-S>
+<A-S ID='A-2' DOCUMENTC='S-79' AZ='OWN'> In this paper , for semantics of Japanese complex sentence , we introduce new pragmatic roles called observer and motivated respectively to bridge semantic roles of subordinate and those of main clauses . </A-S>
+<A-S ID='A-3' AZ='OWN'> By these new roles constraints on the relations among semantic / pragmatic roles are known to be almost local within subordinate or main clause . </A-S>
+<A-S ID='A-4' AZ='OWN'> In other words , as for the semantics of the whole complex sentence , the only role we should deal with is a motivated . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='AIM'> Our aim is to formalize constraints that are needed to develop a parser based on unification grammar ( called `` UG '' henceforth ) so that our parser can deal with variety of types of sentences in Japanese . </S>
+<S ID='S-1' AZ='OWN'> However just parsing syntactically is not enough for natural language understanding . </S>
+<S ID='S-2' AZ='BKG'> One important and necessary task to be done , when a parser processes a discourse in Japanese , is the so called zero anaphora resolution . </S>
+<S ID='S-3' AZ='BKG'> All of syntactic , semantic , and pragmatic constraints are to be involved to resolve zero anaphora . </S>
+<S ID='S-4' AZ='BKG'> Of course , some of omitted pronouns are syntactically resolved . </S>
+<S ID='S-5' AZ='BKG'> For instance , VP with suffix te is not regarded as a clause but a conjunct VP .</S>
+<S ID='S-6' AZ='BKG'> Therefore the subject of the VP with te , which is possibly omitted from surface , should corefer with the subject of the sentence . </S>
+<S ID='S-7' AZ='BKG'> One example is  </S>
+</P>
+<IMAGE ID='I-0'/>
+<P>
+<S ID='S-8' AZ='BKG'> where both of zero subjects <EQN/> and <EQN/> refer to the sentential topic Hanako . </S>
+<S ID='S-9' AZ='BKG'> In this example , one of the possible accounts for this interpretation is the following . </S>
+<S ID='S-10' AZ='BKG'> Zero subject of - te phrase is [+anaphoric,+pronominal ] or PRO in GB term <REF TYPE='P'>Sells 1985</REF> . </S>
+<S ID='S-11' AZ='BKG'> As the result , <EQN/> is controlled by the subject <EQN/> of the main VP , which is also zero subject . </S>
+<S ID='S-12' AZ='BKG'> <EQN/> is , in GB term , [-anaphoric,+pronominal ] or pro . </S>
+<S ID='S-13' AZ='BKG'> The sentential topic Hanako is the only possible antecedent of this zero subject in this example . </S>
+<S ID='S-14' AZ='BKG'> However , in complex sentences , things are quite different . </S>
+<S ID='S-15' AZ='BKG'> Consider the following sentence . </S>
+</P>
+<IMAGE ID='I-1'/>
+<P>
+<S ID='S-16' AZ='BKG'> If contextually we can take only Hanako and the speaker of this sentence as candidates of antecedent of <EQN/> or <EQN/> , intuitively the following two interpretations are equally likely . </S>
+</P>
+<EXAMPLE ID='E-0'>
+<EX-S> <EQN/> = Hanako , <EQN/> = speaker </EX-S>
+<EX-S> <EQN/> = speaker , <EQN/> = Hanako . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-17' AZ='BKG'> Therefore <EQN/> and <EQN/> are both pro . </S>
+<S ID='S-18' AZ='BKG'> In fact this fact is well known among Japanese linguists , i.e. <REF  TYPE='P'>Sells 1985</REF>, <REF  TYPE='P'>Takubo 1987</REF> . </S>
+<S ID='S-19' AZ='OWN'> As a result , zero anaphora resolution of complex sentence is not only to be done syntactically , but also to be done pragmatically and / or semantically . </S>
+<S ID='S-20' AZ='OTH'> One of the promising candidate for this is the centering theory <REF  TYPE='P'>Brennan et al. 1987</REF>, <REF  TYPE='P'>Walker 1990</REF> . </S>
+<S ID='S-21' AZ='OTH'> To apply the centering theory that is originally for a sequence of sentences , namely discourse , we regard the subordinate clause and the main clause as a segment of discourse respectively . </S>
+<S ID='S-22' AZ='OTH'> Moreover Hanako who is marked by ` wa ' is regarded as the topic for these two clauses . </S>
+<S ID='S-23' AZ='OTH'> Then , the topic Hanako is the strongest candidate for the backward center of the subordinate clause . </S>
+<S ID='S-24' AZ='OTH'> Therefore the backward center of the subordinate clause is Hanako , and consequently zero subject <EQN/> refers to Hanako . </S>
+<S ID='S-25' AZ='OTH'> By the same way as the subordinate clause case is dealt with , the zero subject of the main clause <EQN/> is known to refer to Hanako , too . </S>
+<S ID='S-26' AZ='CTR'> This result is neither interpretation <CREF/> nor <CREF/> shown above . </S>
+<S ID='S-27' AZ='OTH'> Another candidate is the property sharing thoery <REF TYPE='P'>Kameyama 1988</REF> . </S>
+<S ID='S-28' AZ='OTH'> In her theory , since the both of zero subjects share the subjecthood , both of them finally are known to refer to Hanako that is the topic for both of these clauses . </S>
+<S ID='S-29' AZ='CTR'> Therefore the property sharing theory also fails to account for the intuitive interpretations . </S>
+</P>
+<P>
+<S ID='S-30' AZ='OWN'> Then we shift our attention to more microscopic one , in which , roughly speaking , the important part of semantics of complex sentence is formalized as relations among semantic roles that appear in the main clause or the subordinate clause . </S>
+<S ID='S-31' AZ='OWN'> At the first glance , the constraints about these relations are not local in terms of main or subordinate clauses . </S>
+<S ID='S-32' AZ='OWN'> In other words , semantic roles that appear in subordinate clause and semantic roles that appear in the main clause seem to be directly constrained by the constraints of complex sentence . </S>
+<S ID='S-33' AZ='OWN'> However , looking more carefully , we find that the constraints of subordinate clause and the constraints of main clause are represented as local constraints by introducing the new notion of motivated which is characterized as a person who has enough reason to act as the main clause describes . </S>
+<S ID='S-34' AZ='OWN'> More precisely , motivated is one of the pragmatic roles that appear in a subordinate clause , and the constraints in subordinate clause are stated as identity relations between motivated and other semantic / pragmatic roles appearing in subordinate clause . </S>
+<S ID='S-35' AZ='OWN'> Therefore these constraints are local in subordinate clause . </S>
+<S ID='S-36' AZ='OWN'> The constraints in main clause are stated as identity relations between motivated which comes from subordinate clause , and other semantic roles appearing in main clause . </S>
+<S ID='S-37' AZ='OWN'> Therefore in understanding the main clause we don't have to be care about semantic / pragmatic roles in subordinate clause other than a motivated . </S>
+<S ID='S-38' AZ='OWN'> In this sense , the constraints in the main clause can be treated as almost local constraints of the main clause . </S>
+</P>
+<P>
+<S ID='S-39' AZ='OWN'> The next question is how to represent the semantics of complex sentence in feature structure ( called FS henceforth ) . </S>
+<S ID='S-40' AZ='OWN'> For this , we should write down the constraints about these relations among semantic / pragmatic roles in a feature structure formalism . </S>
+<S ID='S-41' AZ='OWN'> Due to the space limitation , in this paper we mainly pursue the constraints about semantic feature structures . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Hierarchical Structure of Complex Sentence </HEADER>
+<P>
+<S ID='S-42' AZ='BKG'> We pay our attention to the general structure of Japanese utterance which is helpful to represent semantics of complex sentence . </S>
+<S ID='S-43' AZ='OTH'> Several Japanese linguists have already proposed the general structure of Japanese utterances <REF TYPE='P'>Mikami 1953</REF> , <REF TYPE='P'>Minami 1974</REF> , <REF  TYPE='P'>Takubo 1987</REF>, <REF  TYPE='P'>Gunji 1989</REF> . </S>
+<S ID='S-44' AZ='OTH'> <REFAUTHOR>Mikami</REFAUTHOR> categorized clauses into three classes , namely ` open ' , ` semi-open ' and ` closed ' . </S>
+<S ID='S-45' AZ='OTH'> This categorization indicates how freely the content of clause interacts with the outside of clause . </S>
+<S ID='S-46' AZ='OTH'> For instance , they are categorized by the degree of possibilities of coreference between zero pronouns inside the subordinate clause and nominal or topic that appear in the main clause . </S>
+<S ID='S-47' AZ='OTH'> Following <REFAUTHOR>Mikami</REFAUTHOR> 's idea , <REFAUTHOR>Minami</REFAUTHOR> proposed four levels , namely level A , B , C and D which correspond roughly to VP , proposition , sentence without communication mood and utterance which takes into account a hearer , respectively . </S>
+<S ID='S-48' AZ='OTH'> <REF TYPE='A'>Takubo 1987</REF> divided level A into two levels . </S>
+<S ID='S-49' AZ='OTH'> One of them corresponds to VP , the other corresponds to VP + a certain kind of subject which is called `` objective subject '' . </S>
+<S ID='S-50' AZ='OTH'> <REFAUTHOR>Gunji</REFAUTHOR> proposed the more detailed structure , in which starting from predicate , say , verb and adjective , objects , voice , subject , aspect , tense , modality , topic and mood are or might be sequentially added to make an informationally more fulfilled sentence component . </S>
+<S ID='S-51' AZ='OTH'> Finally , it ends up with an utterance . </S>
+<S ID='S-52' AZ='OTH'> In <REFAUTHOR>Gunji</REFAUTHOR> 's structure , some node can have more than two daughter nodes to make more complex sentence . </S>
+<S ID='S-53' AZ='OTH'> Following them , the structure of the so called ( cluase level ) complex sentence is the following shown in Fig. <CREF/> . </S>
+</P>
+<P>
+<S ID='S-54' AZ='OTH'> In Fig. <CREF/> , Sub-Clause and Conjunct mean subordinate clause and conjunctive particle respectively . </S>
+<S ID='S-55' AZ='OTH'> Note that Fig. <CREF/> represents not only the hierarchical structure but also the word order of a complex sentence in Japanese . </S>
+<S ID='S-56' AZ='OTH'> The structure is almost the same as <REFAUTHOR>Gunji</REFAUTHOR> 's structure except for explicitly showing complex proposition , subordinate-clause and conjunctive-particle that are newly added to deal with complex sentences . </S>
+<S ID='S-57' AZ='OTH'> Note that ` Comment ' appearing in ` Sub-Clause ' has the same structure as ` Comment ' appearing just below ` Judgement ' . </S>
+<S ID='S-58' AZ='OTH'> That is to say , ` Comment ' is recursively defined . </S>
+<S ID='S-59' AZ='CTR'> However , in practice , the more the level of depth of recursively appearing ` Comment ' is , the less comprehensible the sentence is . </S>
+</P>
+<IMAGE ID='I-2'/>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-2'> Subordinate Clause </HEADER>
+<P>
+<S ID='S-60' AZ='TXT'> In this section , at first we show the predicate categories used in the subordinate clauses that we deal with in this paper , in Table <CREF/> . </S>
+</P>
+<IMAGE ID='I-3'/>
+<P>
+<S ID='S-61' AZ='OWN'> In each category of <CREF/> , <CREF/>, <CREF/>, <CREF/> and <CREF/> , exists there a person who is affected by the situation described by the subordinate clause . </S>
+<S ID='S-62' AZ='OWN'> On the contrary , in category <CREF/> , there is not necessarily an explicit affected person . </S>
+<S ID='S-63' AZ='OWN'> In our theory , this affected person plays a key role for semantics of complex sentence . </S>
+<S ID='S-64' AZ='OWN'> As the result , in general we cannot derive a useful result for category <CREF/> in our theory . </S>
+<S ID='S-65' AZ='OWN'> Therefore we don't deal with category <CREF/> in this paper . </S>
+</P>
+<P>
+<S ID='S-66' AZ='OWN'> At this moment , we should explain the nature of the so called subjective predicate mentioned in Table <CREF/> . </S>
+<S ID='S-67' AZ='OWN'> In short a subjective predicate describes the experiencer 's inner state which can exclusively be known by the experiencer him / herself . </S>
+</P>
+<P>
+<S ID='S-68' AZ='OWN'> Next we focus on verbal suffix garu . </S>
+<S ID='S-69' AZ='OWN'> Firstly we show garu 's syntax . </S>
+<S ID='S-70' AZ='OWN'> Garu is the present form and its root form is gar . </S>
+<S ID='S-71' AZ='OWN'> Therefore inflections are as follows : gar-re , gar-i , etc . </S>
+<S ID='S-72' AZ='OWN'> In addition , garu has an allophonic root form gat and , gat-ta ( past-form ) , gat-teiru ( progressive-form ) and so on are derived from gat . </S>
+<S ID='S-73' AZ='OWN'> Some of these forms will appear in our examples . </S>
+<S ID='S-74' AZ='OWN'> Next we talk about the semantics of garu . </S>
+<S ID='S-75' AZ='OWN'> Garu roughly means `` show a sign of '' or `` behave like .. ing '' <REF TYPE='P'>Ohye 1975</REF> . </S>
+<S ID='S-76' AZ='CTR'> Also in <REF TYPE='A'>Palmer 1986</REF> its semantics is informally explained , however our proposal is to formalize garu 's semantics in UG or more generally in computational linguistics . </S>
+<S ID='S-77' ABSTRACTC='A-2' AZ='OWN'> For this , first of all , we introduce a new pragmatic role called observer . </S>
+</P>
+<IMAGE ID='I-4'/>
+<P>
+<S ID='S-78' AZ='CTR'> Although this notion of observer shares a large part with PIVOT of <REF TYPE='A'>Iida-Sells 1988</REF> , our notion of observer is introduced only by garu . </S>
+<S ID='S-79' AZ='CTR'> Therefore it is much narrower notion . </S>
+<S ID='S-80' AZ='OWN'> As you will see later , this newly introduced role is playing a key role which bridges semantic roles of subordinate clause to semantic roles of main clause . </S>
+</P>
+<P>
+<S ID='S-81' AZ='OWN'> As for an observer introduced by garu , one of the widely known consequence about the nature of subjective predicate is the following . </S>
+<S ID='S-82' AZ='OWN'> In a sentence , if a subjective adjective is used without being followed by a verbal suffix garu , the experiencer of the subjective adjective should be the speaker of the sentence . </S>
+</P>
+<P>
+<S ID='S-83' AZ='OWN'> The next thing we should do about a newly introduced notion of observer is to make clear the way to deal with it in FS . </S>
+<S ID='S-84' AZ='OWN'> First of all , in our FS , a semantic content : SEM is basically a soa ( state of affair ) form of situation semantics . </S>
+<S ID='S-85' AZ='OWN'> However we use semantic role like `` agent '' , `` patient '' , `` experiencer '' , and so on , as argument roles of soa . </S>
+<S ID='S-86' AZ='OWN'> Since an observer observes the situation which is characterized by a soa , if we know that there exists an observer , the observed soa is embedded in observing situation , which , in turn , is embedded in the whole semantic content . </S>
+<S ID='S-87' AZ='OWN'> In this sense , the observed soa 's argument role is observed . </S>
+<S ID='S-88' AZ='OWN'> But as far as we have no confusion , we omit role name ` observed ' henceforth . </S>
+<S ID='S-89' AZ='OWN'> A typical schema of SEM of FS of this type is the following . </S>
+<S ID='S-90' AZ='OWN'> Note that we use garu as a value of the relation feature meant by ` rel ' . </S>
+<S ID='S-91' AZ='OWN'> The English gross of this relation garu is ` observe ' . </S>
+</P>
+<IMAGE ID='I-5'/>
+<P>
+<S ID='S-92' AZ='OWN'> Now we explain the semantics of clause which consists of subjective adjective with garu or ta-garu , that are in categories <CREF/> and <CREF/> . </S>
+<S ID='S-93' AZ='OWN'> These categories ' forms are `` <EQN/> P-garu '' or its past form `` <EQN/> P-gat-ta '' , where P is a subjective adjective ( category 4 in Table <CREF/> ) or is a verb followed by ta-gar ( category 5 in Table <CREF/> ) , and <EQN/> is the experiencer of P which is possibly zero . </S>
+<S ID='S-94' AZ='OWN'> In these categories , there exist observers who are not the experiencer of P , and observe that experience . </S>
+<S ID='S-95' AZ='OWN'> The SEM feature of `` <EQN/> P-garu / gat-ta '' is the following . </S>
+</P>
+<IMAGE ID='I-6'/>
+<P>
+<S ID='S-96' AZ='OWN'> where `` <EQN/> '' means `` not token identical . '' </S>
+</P>
+<P>
+<S ID='S-97' AZ='OWN'> In our FS , constraints for tokens like <EQN/> are written with `` where '' as shown in this FS . </S>
+<S ID='S-98' AZ='OWN'> Since constraint satisfaction method in UG has been and is developed by many researchers recently i.e. <REF TYPE='P'>Tsuda 1991</REF> , our theory will be able to be implemented in systems like theirs . </S>
+</P>
+<P>
+<S ID='S-99' AZ='OWN' TYPE='ITEM'> If the sentence finishes just after `` garu / gat-ta '' , the important points are </S>
+<S ID='S-100' TYPE='ITEM' AZ='OWN' > an introduced observer is the speaker , and consequently </S>
+<S ID='S-101' TYPE='ITEM' AZ='OWN' > the experiencer cannot be the speaker . </S>
+<S ID='S-102' AZ='OWN'> If a clause with `` garu / gat-ta '' is a subordinate clause , the experiencer cannot be identified with a semantic role corresponding to the subject of main clause or higher clause . </S>
+</P>
+<P>
+<S ID='S-103' AZ='OWN'> As for category <CREF/> , subjective verbs like `` kurusimu '' ( feel sick ) and `` kanasimu '' ( feel sadness ) that describe subjective and / or emotional experience in verb form , are used . </S>
+<S ID='S-104' AZ='OWN'> Like the case of garu , an observer who observers the experience can be introduced . </S>
+<S ID='S-105' AZ='OWN'> However this observer is not obligatory . </S>
+<S ID='S-106' AZ='OWN'> Therefore unlike the `` garu / gat-ta '' case , the experiencer also can be an obligatory semantic role of higher clause as well as the speaker . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-3'> Complex Sentence </HEADER>
+<DIV DEPTH='2'>
+<HEADER ID='H-4'> Feature Structure </HEADER>
+<P>
+<S ID='S-107' AZ='OWN'> According to the hierachical structure of Japanese sentence shown in Fig. <CREF/> , the essential part of hierarchical structure of the following sentence <CREF/> is shown in Fig. <CREF/> . </S>
+<S ID='S-108' AZ='OWN'> In this figure , the structure just below each proposition is replaced with the corresponding parts of sentence . </S>
+</P>
+<IMAGE ID='I-7'/>
+<IMAGE ID='I-8'/>
+<P>
+<S ID='S-109' AZ='OWN'> Basically the embedding structure of FS corresponds to the hierarchy shown in the hierarchical structure Fig. <CREF/> . </S>
+<S ID='S-110' AZ='OWN'> To grasp the image of the relation between a hierarchical structure and the corresponding FS , we show an example of FS of the above complex sentence <CREF/> analyzed based on this hierarchical structure in the following . </S>
+<S ID='S-111' AZ='OWN'> This FS is the result of the unification between the FSs of subordinate clause and main clause , where the contents of syntactic feature HEAD , namely <EQN/> is omitted . </S>
+</P>
+<IMAGE ID='I-9'/>
+<P>
+<S ID='S-112' AZ='OWN'> where English grosses of relation name is the following : sime : ` close ' , node : ` because ' , samu-i : ` feel cold ' . </S>
+</P>
+<P>
+<S ID='S-113' AZ='OWN'> The key point of the semantics of complex sentence is the role motivated that appears in <EQN/> which corresponds to the content of the subordinate clause . </S>
+<S ID='S-114' AZ='OWN'> The role motivated is the link between the content of subordinate clause and the main clause . </S>
+<S ID='S-115' ABSTRACTC='A-0' AZ='OWN'> Semantically motivated is characterized as the following . </S>
+</P>
+<IMAGE ID='I-10'/>
+<P>
+<S ID='S-116' AZ='OWN'> The important and indispensable part of semantics of complex sentence is , roughly speaking , the relation between a subordinate clause and the main clause . </S>
+<S ID='S-117' AZ='OWN'> But if you look more closely , this relation is actually the relations among semantic / pragmatic roles appearing in the subordinate clause and those appearing in the main clause . </S>
+<S ID='S-118' AZ='OWN'> The newly introduced role of motivated gives the most important clue for this relation . </S>
+<S ID='S-119' AZ='OWN'> Therefore , in the rest of this paper , our effort will be concentrated into whom a motivated refers to . </S>
+<S ID='S-120' AZ='OWN'> More precisely , in FS , our main concerns are which semantic role in the SEM of subordinate clause the motivated can or cannot be unified with , and which semantic role in the SEM of main clause the motivated can or cannot be unified with . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-5'> Constraints </HEADER>
+<P>
+<S ID='S-121' AZ='TXT'> In this subsection , we propose the constraints on complex sentence . </S>
+<S ID='S-122' AZ='OWN'> For this , at first we categorize the relations between subordinate clause and main clause based on their semantics . </S>
+<S ID='S-123' AZ='OWN'> They are divided up to many types of complex sentence . </S>
+<S ID='S-124' AZ='OWN'> We show the most important and typical types in Table <CREF/> , where SC and MC mean ` subordinate clause ' and ` main clause ' respectively . </S>
+<S ID='S-125' AZ='OWN'> In this table , the first column is for a name of sentence type , the second column indicates a rough meaning of the relation between subordinate clause SC and main clause MC of complex sentence , and the third column shows Japanese conjunctive particles used to represent a type of complex sentence in the same row . </S>
+</P>
+<IMAGE ID='I-11'/>
+<P>
+<S ID='S-126' AZ='OWN'> Three VP adjuncts , te , tutu , and nagara , are usually used to express events ocurring simultaneously . </S>
+<S ID='S-127' AZ='OWN'> However , if they are used with aspectual suffix i which means perfective , for instance i-nagara , they are regarded as clause conjuncts and are to be interpreted as ` although ' <REF TYPE='P'>Minami 1974</REF> . </S>
+<S ID='S-128' AZ='OWN'> We don't deal with type <CREF/> , because a temporal adverbial clause just describes an event that occurs before , simultaneously or after another event which is described by the main clause . </S>
+<S ID='S-129' AZ='OWN'> Therefore generally we don't expect essential information for relations among semantic roles appearing in adverbial or main clause from this type of sentence . </S>
+</P>
+<P>
+<S ID='S-130' AZ='OWN'> Now we focus on type <CREF/> , <CREF/> and <CREF/> , where a motivated plays the key role in the constraints . </S>
+<S ID='S-131' AZ='OWN'> In Table <CREF/> we show the constraints that say which semantic / pragmatic role of subordinate clause can be a motivated . </S>
+<S ID='S-132' AZ='OWN'> Table <CREF/> shows which semantic role of main clause can be unified with the motivated . </S>
+<S ID='S-133' AZ='OWN'> In these tables , the first column of the first row is for constraint names , the second column shows a set of sentence types for which the constraints shown in the second row apply . </S>
+<S ID='S-134' AZ='OWN'> The third column of Table <CREF/> shows predicate patterns of subordinate clause , and the third column of Table <CREF/> shows semantic categories of predicate of main clause . </S>
+<S ID='S-135' AZ='OWN'> For them , constraints written in the second row apply . </S>
+<S ID='S-136' AZ='OWN'> Note that all of these constraints in Table <CREF/> are local in a subordinate clause , because both sides of = of constraints are roles of subordinate clause . </S>
+<S ID='S-137' AZ='OWN'> In case of subjective adjective without garu , the constraint ` motivated = experiencer ' holds also for type 1 except for the case where directionally auxiliary verb `` yaru ( give ) '' , `` kureru ( be given ) '' are used . </S>
+<S ID='S-138' AZ='OWN'> Analysis for these cases is one of our future problem . </S>
+</P>
+<P>
+<S ID='S-139' AZ='OWN'> As for Table <CREF/> , <EQN/> is a state except for the case that there exists a third party who is a motivated puts the experiencer into that state . </S>
+<S ID='S-140' AZ='OWN'> For instance , the experiencer is permitted to do something by the motivated . </S>
+<S ID='S-141' AZ='OWN'> Since in this kind of case things are quite complicated , we omit it here because of the limited space . </S>
+<S ID='S-142' AZ='OWN'> Constraints in Table <CREF/> are also local in a main clause because every semantic role that appeares in the righthand side of the constraints is defined within the main clause . </S>
+<S ID='S-143' AZ='OWN'> Needless to say , the influence from a subordinate clause comes only via role motivated . </S>
+</P>
+<P>
+<S ID='S-144' AZ='OWN'> [TABLE] where ` name ' means a name of each constraint . </S>
+</P>
+<IMAGE ID='I-12'/>
+<P>
+<S ID='S-145' AZ='TXT'> In the rest of this section we show the examples that exemplify these constraints . </S>
+</P>
+<P>
+<S ID='S-146' AZ='OWN'> First , we take <CREF/> of type <CREF/> . </S>
+<S ID='S-147' AZ='OWN'> The constraints to be applied are <CREF/> and <CREF/> as you know from the contents of subordinate and main clause . </S>
+<S ID='S-148' AZ='OWN'> By combination of <CREF/> and <CREF/> , zero agent of main clause : <EQN/> is the observer of the situation described by the subordinate clause , where <EQN/> behaved like feeling cold . </S>
+<S ID='S-149' AZ='OWN'> This interpretation coincides with native 's intuition . </S>
+</P>
+<P>
+<S ID='S-150' AZ='OWN'> Look at the following pair of example . </S>
+</P>
+<IMAGE ID='I-13'/>
+<IMAGE ID='I-14'/>
+<P>
+<S ID='S-151' AZ='OWN'> In both of <CREF/> and <CREF/> , the motivateds of subordinate clause are constrained by <CREF/> , namely motivateds can be either <EQN/> or the observer of subordinate clause . </S>
+<S ID='S-152' AZ='OWN'> Constraint <CREF/> says that in both cases , <EQN/> is unified with the motivated . </S>
+<S ID='S-153' AZ='OWN'> Intuitively in <CREF/> , <EQN/> is <EQN/> . </S>
+<S ID='S-154' AZ='OWN'> On the other hand in <CREF/> , <EQN/> is the observer . </S>
+<S ID='S-155' AZ='OWN'> Both of these interpretations comply with constraints <CREF/> , and <CREF/> . </S>
+</P>
+<IMAGE ID='I-15'/>
+<P>
+<S ID='S-156' AZ='OWN'> Intuitively <EQN/> corefer with <EQN/> . </S>
+<S ID='S-157' AZ='OWN'> This interpretation is expected by constraint <CREF/> and <CREF/> that apply in this case . </S>
+<S ID='S-158' AZ='OWN'> As you know from these examples , our constraints are not strong enough to identify the antecedent of <EQN/> uniquely , but makes safe interpretations . </S>
+<S ID='S-159' AZ='OWN'> Moreover disambiguation done by these constraints is useful for further inference that will be done with commonsense knowledge or with a special vocabulary like ` kekkyoku ( finally ) ' used in <CREF/> . </S>
+</P>
+<P>
+<S ID='S-160' AZ='OWN'> In case of <CREF/> , namely intransitive passive or adversity passive , it is well known , i.e. <REF TYPE='P'>Gunji 1987</REF> that there exists a person who is affected by the situation described by the passive sentence . </S>
+<S ID='S-161' AZ='OWN'> An example sentence is the following . </S>
+</P>
+<IMAGE ID='I-16'/>
+<P>
+<S ID='S-162' AZ='OWN'> The semantic role of this affected person , in <CREF/> zero role : <EQN/> whose wife was dead , is an affected . </S>
+<S ID='S-163' AZ='OWN'> The intuitive interpretation that <EQN/> , is expected by our constraints : <CREF/> of Table <CREF/> and <CREF/> of Table <CREF/> . </S>
+<S ID='S-164' AZ='OWN'> On the contrary , in case of <CREF/> , namely transitive passive , generally we don't have an affected . </S>
+<S ID='S-165' AZ='OWN'> However in some context , a transitive passive form may require the role affected which is inherent to adversity passive . </S>
+<S ID='S-166' AZ='OWN'> For instance , </S>
+</P>
+<IMAGE ID='I-17'/>
+<P>
+<S ID='S-167' AZ='OWN'> In this case , a person whose wallet was stolen is not explicit but regarded as an affected . </S>
+<S ID='S-168' AZ='OWN'> Another case having an affected is that a relational noun is the subject of transitive passive . </S>
+<S ID='S-169' AZ='OWN'> Then a person who is in the relation expressed by the relational noun is thought to be affected by that situation , too . </S>
+<S ID='S-170' AZ='OWN'> Here we take ` mother ' , ` father ' , ` daughter ' , ` son ' , ` supervisor ' , and so forth as a relational noun . </S>
+<S ID='S-171' AZ='OWN'> A couple of example sentences are the following . </S>
+</P>
+<IMAGE ID='I-18'/>
+<IMAGE ID='I-19'/>
+<P>
+<S ID='S-172' AZ='OWN'> <EQN/> who retaliated <CREF/> ( or didn't retaliate <CREF/> ) has a certain relation between the henchman who had been attacked . </S>
+<S ID='S-173' AZ='OWN'> For instance , <EQN/> may be the boss of that henchman . </S>
+<S ID='S-174' AZ='OWN'> In <CREF/> , since constraint <CREF/> of Table <CREF/> and <CREF/> of Table <CREF/> apply , <EQN/> is an affected of attacking event described in the subordinate clause . </S>
+<S ID='S-175' AZ='OWN'> This interpretation coincides with native 's intuition . </S>
+</P>
+<P>
+<S ID='S-176' AZ='OWN'> In sum , with these constraints , a constraint satisfaction process in UG based parsing can be done locally and consequently very efficiently . </S>
+<S ID='S-177' AZ='OWN'> In other words , primarily a constraint satisfaction process of a subordinate clause can be done within the analysis of subordinate clause , and that of the main clause can be done within it except for using motivated whose value has already been constrained in the subordinate clause . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-6'> Related Works and Conclusions </HEADER>
+<P>
+<S ID='S-178' AZ='OTH'> One of the relevant researches to ours is JPSG that has been developed by <REF TYPE='A'>Gunji 1987</REF> , <REF TYPE='A'>Gunji 1989</REF> and is further studied by the ICOT working group . </S>
+<S ID='S-179' AZ='CTR'> Our focus is a more pragmatics oriented one than JPSG is . </S>
+<S ID='S-180' AZ='OTH'> Many Japanese linguists have already done the enormous amount of basic observations and proposed linguistic theories about the phenomena we deal with in this paper <REF TYPE='P'>Mikami 1953</REF> , <REF TYPE='P'>Kuno 1973</REF> , <REF TYPE='P'>Kuno 1978</REF> , <REF TYPE='P'>Ohye 1975</REF> , <REF TYPE='P'>Minami 1974</REF> , <REF TYPE='P'>Takubo 1987</REF> , <REF TYPE='P'>Teramura 1984</REF> , <REF  TYPE='P'>Teramura 1990</REF>, <REF  TYPE='P'>Saito 1992</REF> . </S>
+<S ID='S-181' AZ='BAS'> Of course our research is based on their works and observations . </S>
+<S ID='S-182' AZ='OTH'> In <REF TYPE='A'>Ohye 1975</REF> , it is said that if garu is used in a subordinate clause , the subject of the main clause is not the experiencer of the subordinate clause . </S>
+<S ID='S-183' AZ='OTH' TYPE='ITEM'> In <REF TYPE='A'>Saito 1992</REF> , she says that </S>
+<S ID='S-184' TYPE='ITEM' AZ='OTH' > a cognizer that corresponds to our observer is introduced if garu is used , and </S>
+<S ID='S-185' TYPE='ITEM' AZ='OTH' > if an observer is introduced in the subordinate clause , the mentally responsible person appearing in the main clause is identical with the observer . </S>
+<S ID='S-186' AZ='OTH'> In linguistic phenomena , these observations are similar to the constraint we propose here . </S>
+<S ID='S-187' AZ='CTR'> So what is new ? </S>
+<S ID='S-188' AZ='CTR'> The answer is that : </S>
+</P>
+<P>
+<S ID='S-189' AZ='OWN'> We explicitly state the semantics of complex sentence as the relations among semantic roles . </S>
+<S ID='S-190' AZ='OWN'> Namely , since we use semantic / pragmatic roles instead of grammatical roles in constraints , our constraints can account for zero anaphora in a sentence where the main clause is passive where an agent or an experiencer is not necessarily the subject , like the following example . </S>
+<IMAGE ID='I-20'/>
+</P>
+<P>
+<S ID='S-191' AZ='OWN'> where the intuitive reading is the following : <EQN/> , that is zero subject , refers to Taro , and <EQN/> , that is not the zero subject , refers to Taro 's parents who are the observer and motivated of the subordinate clause . </S>
+</P>
+<P>
+<S ID='S-192' AZ='CTR'> We formalize this theory in UG formalism , even though the details are omitted due to the space limitation . </S>
+</P>
+<P>
+<S ID='S-193' AZ='CTR'> We find that the constraints of complex sentences are actually local ones . </S>
+<S ID='S-194' AZ='OWN'> This localization of constraint was found by introducing new pragmatic roles observer and motivated , and is extremely important for efficiency of UG based parsing . </S>
+<S ID='S-195' AZ='OWN'> This localization also makes the proposed constraints be compositional ones , because in the case of deeply embedded complex sentence to identify the referent of each motivated that bridges between a subordinate clause and its main clause , the constraints we proposed are resolved with computation confined within each clause . </S>
+</P>
+<P>
+<S ID='S-196' AZ='OWN'> Analysis of case in which a directional auxiliary verb i.e. ` yaru ' , ` kureru ' is used is left as the future problem . </S>
+<S ID='S-197' AZ='OWN'> Finally , we implemented a Japanese language understanding system based on the theory we state in this paper , but due to the space limitation we will report the detail of implementation in other place in the near future . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+  <SURNAME>Brennan</SURNAME>, S., M. Walker <SURNAME>Friedman</SURNAME> and
+C.<SURNAME>Pollard</SURNAME> (<DATE>1987</DATE>). A Centering Approach to Pronouns. 25th Annual Meeting of ACL,
+pp.155-162
+</REFERENCE>
+<REFERENCE>
+  <SURNAME>Gunji</SURNAME>, T.(<DATE>1987</DATE>). Japanese Phrase Structure Grammar.
+Reidel, Dordrecht
+</REFERENCE>
+<REFERENCE>
+  <SURNAME>Gunji</SURNAME>,T. (<DATE>1989</DATE>). Relevance of the Formalization of
+Phrase Structure Grammar to Mechanical Language Processing. Report of
+Tokutei-Kenkyu, Ministry of Education and Academy
+</REFERENCE>
+<REFERENCE>
+  <SURNAME>Iida</SURNAME>,M. and P.<SURNAME>Sells</SURNAME>(<DATE>1988</DATE>). Discourse Factors in
+the Binding of zibun.
+in Japanese Syntax (ed. W.Poser) CSLI, Stanford
+</REFERENCE>
+<REFERENCE>
+  <SURNAME>Kameyama</SURNAME>, M. (<DATE>1988</DATE>). Japanese Zero Pronominal
+Binding: Where Syntax and Discourse Meet. in Japanese Syntax (ed. W.Poser)
+CSLI, Stanford
+</REFERENCE>
+<REFERENCE>
+  <SURNAME>Katagiri</SURNAME>,Y. (<DATE>1991</DATE>). Perspectivity and
+Japanese Reflexive `zibun'. in CSLI Lecture Notes No.26, Situation Theory
+and its Applications Vol.2, J.Barwise et al eds. pp.425-447
+</REFERENCE>
+<REFERENCE>
+  <SURNAME>Kuno</SURNAME>, S. (<DATE>1973</DATE>).  The structure of the Japanese
+Language.
+Cambridge, MIT Press
+</REFERENCE>
+<REFERENCE>
+  <SURNAME>Kuno</SURNAME>,S.(<DATE>1978</DATE>). Danwa no Bunpou. Taishukan, Tokyo
+</REFERENCE>
+<REFERENCE>
+  <SURNAME>Ohye</SURNAME>,S.(<DATE>1975</DATE>). Nitieigo no Hikakukenkyu. Taishukan,
+Tokyo
+</REFERENCE>
+<REFERENCE>
+  <SURNAME>Saito</SURNAME>,R.(<DATE>1992</DATE>). Shinjou Jutugo no Goyouronteki
+Bunseki (Pragmatic Analysis about Psychological Predicates). Nihongogaku,
+Vol.11, No.6, pp.110-116
+</REFERENCE>
+<REFERENCE>
+  <SURNAME>Mikami</SURNAME>,A.(<DATE>1953</DATE>). Gendai Gohou Josetu.
+Kuroshio-Shuppan, Tokyo
+</REFERENCE>
+<REFERENCE>
+  <SURNAME>Minami</SURNAME>,F.(<DATE>1974</DATE>). Gendai Nihongo no Kouzou.
+Taishukan, Tokyo
+</REFERENCE>
+<REFERENCE>
+  <SURNAME>Palmer</SURNAME>, F.R.,(<DATE>1986</DATE>). Mood and Modality.
+Cambridge University Press,Cambridge
+</REFERENCE>
+<REFERENCE>
+  <SURNAME>Sells</SURNAME>, P. (<DATE>1985</DATE>). Lectures on Contemporary
+Syntactic Theories. CSLI Stanford
+</REFERENCE>
+<REFERENCE>
+  <SURNAME>Takubo</SURNAME>,Y. (<DATE>1987</DATE>). Tougokouzou to Bunmyakujouhou
+(Syntactic Structure and Contextual Information. Nihongogaku
+<DATE>1987</DATE>-5,Meiji-shoin,Tokyo
+</REFERENCE>
+<REFERENCE>
+  <SURNAME>Teramura</SURNAME>,H.(<DATE>1984</DATE>). Nihongo no sintakusu to
+imi II `Japanese Syntax and Semantics II'. Kuroshio-Shuppan,Tokyo
+</REFERENCE>
+<REFERENCE>
+  <SURNAME>Teramura</SURNAME>,H.(<DATE>1990</DATE>). Nihongo no sintakusu to
+imi III `Japanese Syntax and Semantics III'. Kuroshio-Shuppan,Tokyo
+</REFERENCE>
+<REFERENCE>
+  <SURNAME>Tsuda</SURNAME>,H.,<SURNAME>Hasida</SURNAME>,K.,<SURNAME>Sirai</SURNAME>,H. (<DATE>1989</DATE>). JPSG Parser on
+Constraint Logic Programming. 4th ACL European Chapter
+</REFERENCE>
+<REFERENCE>
+  <SURNAME>Walker</SURNAME>,M.,M. <SURNAME>Iida</SURNAME> and S. <SURNAME>Cote</SURNAME>(<DATE>1990</DATE>). Centering
+in Japanese Discourse.
+COLING'90
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

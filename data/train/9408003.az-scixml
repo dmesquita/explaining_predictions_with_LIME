@@ -1,0 +1,347 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9408003</FILENO>
+<APPEARED><CONFERENCE TYPE='Reserve'>COLING</CONFERENCE><YEAR>1994</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.Gr.Fm </CLASSIFICATION>
+</METADATA>
+<TITLE> Typed Feature Structures as Descriptions </TITLE>
+<AUTHORLIST>
+<AUTHOR>Paul John King</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' DOCUMENTC='S-1' AZ='BKG'> A description is an entity that can be interpreted as true or false of an object , and using feature structures as descriptions accrues several computational benefits . </A-S>
+<A-S ID='A-1' AZ='AIM'> In this paper , I create an explicit interpretation of a typed feature structure used as a description , define the notion of a satisfiable feature structure , and create a simple and effective algorithm to decide if a feature structure is satisfiable . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> Describing objects is one of several purposes for which linguists use feature structures . </S>
+<S ID='S-1' ABSTRACTC='A-0' AZ='BKG'> A description is an entity that can be interpreted as true or false of an object . </S>
+<S ID='S-2' AZ='BKG'> For example , the conventional interpretation of the description ` it is black ' is true of a soot particle , but false of a snowflake . </S>
+<S ID='S-3' AZ='BKG'> Therefore , any use of a feature structure to describe an object demands that the feature structure can be interpreted as true or false of the object . </S>
+<S ID='S-4' AZ='AIM'> In this paper , I tailor the semantics of <REF TYPE='A' SELF="YES">King 1989</REF> to suit the typed feature structures of <REF TYPE='A'>Carpenter 1992</REF> , and so create an explicit interpretation of a typed feature structure used as a description . </S>
+<S ID='S-5' AZ='OWN'> I then use this interpretation to define the notion of a satisfiable feature structure . </S>
+</P>
+<P>
+<S ID='S-6' AZ='OWN'> Though no feature structure algebra provides descriptions as expressive as those provided by a feature logic , using feature structures to describe objects profits from a large stock of available computational techniques to represent , test and process feature structures . </S>
+<S ID='S-7' AZ='AIM'> In this paper , I demonstrate the computational benefits of marrying a tractable syntax and an explicit semantics by creating a simple and effective algorithm to decide the satisfiability of a feature structure . </S>
+<S ID='S-8' AZ='BAS'> <REFAUTHOR>Gerdemann and Goetz</REFAUTHOR> 's Troll type resolution system implements both the semantics and an efficient refinement of the satisfiability algorithm I present here <REF TYPE='P'>Goetz 1993</REF> , <REF  TYPE='P' SELF="YES">Gerdemann and King 1994</REF> , <REF TYPE='P'>Gerdemann forthcoming</REF> . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> A Feature Structure Semantics </HEADER>
+<P>
+<S ID='S-9' AZ='OWN'> A signature provides the symbols from which to construct typed feature structures , and an interpretation gives those symbols meaning . </S>
+</P>
+<P>
+<S ID='S-10' AZ='OWN'> Definition 1 .</S>
+<S ID='S-11' AZ='OWN'> <EQN/> is a signature iff [ <EQN/> is a sextuple <EQN/> , </S>
+<S ID='S-12' AZ='OWN'> <EQN/> is a set , </S>
+<S ID='S-13' AZ='OWN'> <EQN/> is a partial order , </S>
+<S ID='S-14' AZ='OWN'> <EQN/> T <EQN/> then = <EQN/> , </S>
+<S ID='S-15' AZ='OWN'> <EQN/> is a set , </S>
+<S ID='S-16' AZ='OWN'> <EQN/> is a partial function from the Cartesian product of <EQN/> and <EQN/> to <EQN/> , and  </S>
+<S ID='S-17' AZ='OWN'> for each <EQN/> , each <EQN/> and each <EQN/> , if <EQN/> is defined and <EQN/> then <EQN/> is defined , and <EQN/>  </S>
+</P>
+<P>
+<S ID='S-18' AZ='OWN'> Henceforth , I tacitly work with a signature <EQN/> . </S>
+<S ID='S-19' AZ='OWN'> I call members of <EQN/> states , members of <EQN/> types , <EQN/> subsumption , members of <EQN/> species , members of <EQN/> attributes , and <EQN/> appropriateness . </S>
+</P>
+<P>
+<S ID='S-20' AZ='OWN'> Definition 2 .</S>
+<S ID='S-21' AZ='OWN'> I is an interpretation iff [ I is a triple <EQN/> ,  </S>
+<S ID='S-22' AZ='OWN'> U is a set , </S>
+<S ID='S-23' AZ='OWN'> S is a total function from U to <EQN/>  </S>
+<S ID='S-24' AZ='OWN'> A is a total function from <EQN/> to the set of partial functions from U to U , </S>
+<S ID='S-25' AZ='OWN'> for each <EQN/> and each <EQN/> , if <EQN/> is defined then <EQN/> is defined , and <EQN/> , and </S>
+<S ID='S-26' AZ='OWN'> for each <EQN/> and each <EQN/> , if <EQN/> is defined then <EQN/> is defined . </S>
+</P>
+<P>
+<S ID='S-27' AZ='OWN'> Suppose that I is an interpretation <EQN/> . </S>
+<S ID='S-28' AZ='OWN'> I call each member of U an object in I . </S>
+</P>
+<P>
+<S ID='S-29' AZ='OWN'> Each type denotes a set of objects in I . </S>
+<S ID='S-30' AZ='OWN'> The denotations of the species partition U , and S assigns each object in I the unique species whose denotation contains the object : object u is in the denotation of species <EQN/> iff <EQN/> . </S>
+<S ID='S-31' AZ='OWN'> Subsumption encodes a relationship between the denotations of species and types : object u is in the denotation of type <EQN/> iff <EQN/> . </S>
+<S ID='S-32' AZ='OWN'> So , if <EQN/> then the denotation of type <EQN/> contains the denotation of type <EQN/> . </S>
+</P>
+<P>
+<S ID='S-33' AZ='OWN'> Each attribute denotes a partial function from the objects in I to the objects in I , and A assigns each attribute the partial function it denotes . </S>
+<S ID='S-34' AZ='OWN'> Appropriateness encodes a relationship between the denotations of species and attributes : if <EQN/> is defined then the denotation of attribute <EQN/> acts upon each object in the denotation of species <EQN/> to yield an object in the denotation of type <EQN/> , but if <EQN/> is undefined then the denotation of attribute <EQN/> acts upon no object in the denotation of species <EQN/> . </S>
+<S ID='S-35' AZ='OWN'> So , if <EQN/> is defined then the denotation of attribute <EQN/> acts upon each object in the denotation of type <EQN/> to yield an object in the denotation of type <EQN/> . </S>
+</P>
+<P>
+<S ID='S-36' AZ='OWN'> I call a finite sequence of attributes a path , and write <EQN/> for the set of paths . </S>
+</P>
+<P>
+<S ID='S-37' AZ='OWN'> Definition 3 .</S>
+<S ID='S-38' AZ='OWN'> P is the path interpretation function under I iff [ I is an interpretation <EQN/> ,  </S>
+<S ID='S-39' AZ='OWN'> P is a total function from <EQN/> to the set of partial functions from U to U , and  </S>
+<S ID='S-40' AZ='OWN'> for each <EQN/> , [ <EQN/> is the functional composition of <EQN/>  </S>
+</P>
+<P>
+<S ID='S-41' AZ='OWN'> I write <EQN/> for the path interpretation function under I .</S>
+</P>
+<P>
+<S ID='S-42' AZ='OWN'>  Definition 4 . </S>
+<S ID='S-43' AZ='OWN'> F is a feature structure iff [ F is a quadruple <EQN/> , </S>
+<S ID='S-44' AZ='OWN'> Q is a finite subset of <EQN/> ,  </S>
+<S ID='S-45' AZ='OWN'> <EQN/> ,  </S>
+<S ID='S-46' AZ='OWN'> <EQN/> is a finite partial function from the Cartesian product of Q and <EQN/> to Q ,  </S>
+<S ID='S-47' AZ='OWN'> <EQN/> is a total function from Q to <EQN/> , and  </S>
+<S ID='S-48' AZ='OWN'> for each <EQN/> , [ for some <EQN/> , <EQN/> runs to q ' in F , ] ] where <EQN/> runs to q ' in F iff [ <EQN/> ,  </S>
+<S ID='S-49' AZ='OWN'> <EQN/> , and  </S>
+<S ID='S-50' AZ='OWN'> for some <EQN/> , [ <EQN/> ,  </S>
+<S ID='S-51' AZ='OWN'> for each i  &#60;  n , [ <EQN/> is defined , and <EQN/> , and  </S>
+<S ID='S-52' AZ='OWN'> <EQN/></S>
+</P>
+<P>
+<S ID='S-53' AZ='OWN'> Each feature structure is a connected <REFAUTHOR>Moore</REFAUTHOR> machine <REF TYPE='P'>Moore 1965</REF> with finitely many states , input alphabet <EQN/> , and output alphabet <EQN/> . </S>
+</P>
+<P>
+<S ID='S-54' AZ='OWN'> Definition 5 . </S>
+<S ID='S-55' AZ='OWN'> F is true of u under I iff [ F is a feature structure <EQN/> ,  </S>
+<S ID='S-56' AZ='OWN'> I is an interpretation <EQN/> ,  </S>
+<S ID='S-57' AZ='OWN'> u is an object in I , and  </S>
+<S ID='S-58' AZ='OWN'> for each <EQN/> , each <EQN/> and each <EQN/> , [ [ if <EQN/> runs to q ' in F , and <EQN/> runs to q ' in F then <EQN/> is defined , <EQN/> is defined , <EQN/> , and <EQN/> </S>
+</P>
+<P>
+<S ID='S-59' AZ='OWN'> Definition 6 . </S>
+<S ID='S-60' AZ='OWN'> F is a satisfiable feature structure iff [ F is a feature structure , and </S>
+<S ID='S-61' AZ='OWN'> for some interpretation I and some object u in I , F is true of u under I . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-2'> Morphs </HEADER>
+<P>
+<S ID='S-62' AZ='OWN'> The abundance of interpretations seems to preclude an effective algorithm to decide if a feature structure is satisfiable . </S>
+<S ID='S-63' AZ='OWN'> However , I insert morphs between feature structures and objects to yield an interpretation free characterisation of a satisfiable feature structure . </S>
+</P>
+<P>
+<S ID='S-64' AZ='OWN'> Definition 7 . </S>
+<S ID='S-65' AZ='OWN'> M is a semi-morph iff [ M is a triple <EQN/> ,  </S>
+<S ID='S-66' AZ='OWN'> <EQN/> is a nonempty subset of <EQN/> , </S>
+<S ID='S-67' AZ='OWN'> <EQN/> is an equivalence relation over <EQN/> , </S>
+<S ID='S-68' AZ='OWN'> for each <EQN/> , each <EQN/> and each <EQN/> , if <EQN/> and <EQN/> then <EQN/> , </S>
+<S ID='S-69' AZ='OWN'> <EQN/> is a total function from <EQN/> to <EQN/> ,  </S>
+<S ID='S-70' AZ='OWN'> for each <EQN/> and each <EQN/> , if <EQN/> then <EQN/> , and  </S>
+<S ID='S-71' AZ='OWN'> for each <EQN/> and each <EQN/> , if <EQN/> then <EQN/> , <EQN/> is defined , and <EQN/> </S>
+</P>
+<P>
+<S ID='S-72' AZ='OWN'> Definition 8 . </S>
+<S ID='S-73' AZ='OWN'> M is a morph iff [ M is a semi-morph <EQN/> , and  </S>
+<S ID='S-74' AZ='OWN'> for each <EQN/> and each <EQN/> , [ [ if <EQN/> and <EQN/> is defined then <EQN/>  </S>
+</P>
+<P>
+<S ID='S-75' AZ='OWN'> Each morph is the <REFAUTHOR>Moshier</REFAUTHOR> abstraction  <REF TYPE='P'>Moshier 1988</REF> of a connected and totally well-typed <REF TYPE='P'>Carpenter 1992</REF>  <REFAUTHOR>Moore</REFAUTHOR> machine with possibly infinitely many states , input alphabet <EQN/> , and output alphabet <EQN/> . </S>
+</P>
+<P>
+<S ID='S-76' AZ='OWN'> Definition 9 . </S>
+<S ID='S-77' AZ='OWN'> M abstracts u under I iff [ M is a morph <EQN/> ,  </S>
+<S ID='S-78' AZ='OWN'> I is an interpretation <EQN/> ,  </S>
+<S ID='S-79' AZ='OWN'> u is an object in I ,  </S>
+<S ID='S-80' AZ='OWN'> for each <EQN/> and each <EQN/> , <EQN/> iff <EQN/> is defined , <EQN/> is defined , and <EQN/> , and  </S>
+<S ID='S-81' AZ='OWN'> for each <EQN/> and each <EQN/> , <EQN/> iff <EQN/> is defined , and <EQN/> . </S>
+</P>
+<P>
+<S ID='S-82' AZ='OWN'> Proposition 10 . </S>
+<S ID='S-83' AZ='OWN'> For each interpretation I and each object u in I , [ some unique morph abstracts u under I. ] ] I thus write of the abstraction of u under I . </S>
+</P>
+<P>
+<S ID='S-84' AZ='OWN'> Definition 11 . </S>
+<S ID='S-85' AZ='OWN'> u is a standard object iff [ u is a quadruple <EQN/> ,  </S>
+<S ID='S-86' AZ='OWN'> <EQN/> is a morph , and  </S>
+<S ID='S-87' AZ='OWN'> <EQN/> is an equivalence class under <EQN/> .</S>
+</P>
+<P>
+<S ID='S-88' AZ='OWN'> I write <EQN/> for the set of standard objects , write <EQN/> for the total function from <EQN/> to <EQN/> , where [ for each <EQN/> and each <EQN/> , <EQN/> iff for some <EQN/> , <EQN/> , and write <EQN/> for the total function from <EQN/> to the set of partial functions from <EQN/> to <EQN/> , where [ for each <EQN/> , each <EQN/> and each <EQN/> , <EQN/> is defined , and <EQN/> iff <EQN/> , and for some <EQN/> , <EQN/> . </S>
+</P>
+<P>
+<S ID='S-89' AZ='OWN'> Lemma 12 . </S>
+<S ID='S-90' AZ='OWN'> <EQN/> is an interpretation . </S>
+<S ID='S-91' AZ='OWN'> I write <EQN/> for <EQN/> . </S>
+</P>
+<P>
+<S ID='S-92' AZ='OWN'> Lemma 13 . </S>
+<S ID='S-93' AZ='OWN'> For each <EQN/> , each <EQN/> and each <EQN/> , <EQN/> is defined , and <EQN/> iff <EQN/> , and for some <EQN/> , <EQN/> . </S>
+</P>
+<P>
+<S ID='S-94' AZ='OWN'> Proof .</S>
+<S ID='S-95' AZ='OWN'> By induction on the length of <EQN/> . </S>
+</P>
+<P>
+<S ID='S-96' AZ='OWN'> Lemma 14 . </S>
+<S ID='S-97' AZ='OWN'> For each <EQN/> , if <EQN/> is the equivalence class of the empty path under <EQN/> then the abstraction of <EQN/> under <EQN/> is <EQN/> </S>
+</P>
+<P>
+<S ID='S-98' AZ='OWN'> Proposition 15 . </S>
+<S ID='S-99' AZ='OWN'> For each morph M , [ for some interpretation I and some object u in I , [ M is the abstraction of u under I .  </S>
+</P>
+<P>
+<S ID='S-100' AZ='OWN'> Definition 16 . </S>
+<S ID='S-101' AZ='OWN'> F approximates M iff F is a feature structure <EQN/> ,  </S>
+<S ID='S-102' AZ='OWN'> M is a morph <EQN/> , and  </S>
+<S ID='S-103' AZ='OWN'> for each <EQN/> , each <EQN/> and each <EQN/> , if <EQN/> runs to q ' in F , and <EQN/> runs to q ' in F then <EQN/> , and <EQN/>  </S>
+</P>
+<P>
+<S ID='S-104' AZ='OWN'> A feature structure approximates a morph iff the Moshier abstraction of the feature structure abstractly subsumes <REF TYPE='P'>Carpenter 1992</REF>  the morph .</S>
+</P>
+<P>
+<S ID='S-105' AZ='OWN'> Proposition 17</S>
+<S ID='S-106' AZ='OWN'> For each interpretation I , each object u in I and each feature structure F , F is true of u under I iff F approximates the abstraction of u under I . </S>
+</P>
+<P>
+<S ID='S-107' AZ='OWN'> Theorem 18 . </S>
+<S ID='S-108' AZ='OWN'> For each feature structure F , [ F is satisfiable iff F approximates some morph . </S>
+</P>
+<P>
+<S ID='S-109' AZ='OWN'> Proof .</S>
+<S ID='S-110' AZ='OWN'> From propositions <CREF/> and <CREF/> . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-3'> Resolved Feature Structures </HEADER>
+<P>
+<S ID='S-111' AZ='OWN'> Though theorem <CREF/> gives an interpretation free characterisation of a satisfiable feature structure , the characterisation still seems to admit of no effective algorithm to decide if a feature structure is satisfiable . </S>
+<S ID='S-112' AZ='OWN'> However , I use theorem <CREF/> and resolved feature structures to yield a less general interpretation free characterisation of a satisfiable feature structure that admits of such an algorithm . </S>
+</P>
+<P>
+<S ID='S-113' AZ='OWN'> Definition 19 . </S>
+<S ID='S-114' AZ='OWN'> R is a resolved feature structure iff [ R is a feature structure <EQN/> ,  </S>
+<S ID='S-115' AZ='OWN'> <EQN/> is a total function from Q to <EQN/> , and  </S>
+<S ID='S-116' AZ='OWN'> for each <EQN/> and each <EQN/> , [ if <EQN/> is defined then <EQN/> is defined , and <EQN/>  </S>
+</P>
+<P>
+<S ID='S-117' AZ='OWN'> Each resolved feature structure is a well-typed <REF TYPE='P'>Carpenter 1992</REF> feature structure with output alphabet <EQN/> . </S>
+</P>
+<P>
+<S ID='S-118' AZ='OWN'> Definition 20 . </S>
+<S ID='S-119' AZ='OWN'> R is a resolvant of F iff [ R is a resolved feature structure <EQN/> ,  </S>
+<S ID='S-120' AZ='OWN'> F is a feature structure <EQN/> , and </S>
+<S ID='S-121' AZ='OWN'> for each <EQN/> , <EQN/> </S>
+</P>
+<P>
+<S ID='S-122' AZ='OWN'> Proposition 21 . </S>
+<S ID='S-123' AZ='OWN'> For each interpretation I , each object u in I and each feature structure F , [ F is true of u under I iff some resolvant of F is true of u under I . </S>
+</P>
+<P>
+<S ID='S-124' AZ='OWN'> Definition 22 . </S>
+<S ID='S-125' AZ='OWN'> <EQN/> is rational iff for each <EQN/> and each <EQN/> , [ [ if <EQN/> is defined then for some <EQN/> , <EQN/> . </S>
+</P>
+<P>
+<S ID='S-126' AZ='OWN'> Proposition 23 . </S>
+<S ID='S-127' AZ='OWN'> If <EQN/> is rational then for each resolved feature structure R , R is satisfiable . </S>
+</P>
+<P>
+<S ID='S-128' AZ='OWN'> PROOF .</S>
+<S ID='S-129' AZ='OWN'>  Suppose that <EQN/> and <EQN/> is a bijection from ordinal <EQN/> to <EQN/> . </S>
+<S ID='S-130' AZ='OWN'> Let  </S>
+<IMAGE ID='I-0'/>
+</P>
+<P>
+<S ID='S-131' AZ='OWN'> For each <EQN/> , <EQN/> is a semi-morph . </S>
+<S ID='S-132' AZ='OWN'> Let <EQN/> ,  </S>
+<S ID='S-133' AZ='OWN'> <EQN/> , and  </S>
+<IMAGE ID='I-1'/>
+</P>
+<P>
+<S ID='S-134' AZ='OWN'> <EQN/> is a morph that R approximates . </S>
+<S ID='S-135' AZ='OWN'> By theorem <CREF/> , R is satisfiable . </S>
+</P>
+<P>
+<S ID='S-136' AZ='OWN'> Theorem 24 . </S>
+<S ID='S-137' AZ='OWN'> If <EQN/> is rational then for each feature structure F , F is satisfiable iff F has a resolvant . </S>
+</P>
+<P>
+<S ID='S-138' AZ='OWN'> Proof .</S>
+<S ID='S-139' AZ='OWN'>  From propositions <CREF/> and <CREF/> </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-4'> A Satisfiability Algorithm </HEADER>
+<P>
+<S ID='S-140' AZ='TXT'> In this section , I use theorem <CREF/> to show how - given a rational signature that meets reasonable computational conditions - to construct an effective algorithm to decide if a feature structure is satisfiable . </S>
+</P>
+<P>
+<S ID='S-141' AZ='OWN'> Definition 25 . </S>
+<S ID='S-142' AZ='OWN'> <EQN/> is computable iff [ <EQN/> , <EQN/> and <EQN/> are countable ,  </S>
+<S ID='S-143' AZ='OWN'> <EQN/> is finite ,  </S>
+<S ID='S-144' AZ='OWN'> for some effective function <EQN/> , [ for each <EQN/> and each <EQN/> , [ if <EQN/> then <EQN/> ` true ' otherwise <EQN/> ` false ' , and </S>
+<S ID='S-145' AZ='OWN'> for some effective function <EQN/> , [ for each <EQN/> and each <EQN/> , [ if <EQN/> is defined then <EQN/> otherwise <EQN/> ` undefined '  </S>
+</P>
+<P>
+<S ID='S-146' AZ='OWN'> Proposition 26 . </S>
+<S ID='S-147' AZ='OWN'> If <EQN/> is computable then for some effective function <EQN/> , for each feature structure F , [ <EQN/> a list of the resolvants of F . </S>
+</P>
+<P>
+<S ID='S-148' AZ='OWN'> Proof .</S>
+<S ID='S-149' AZ='OWN'> Since <EQN/> is computable , for some effective function <EQN/> , for each finite <EQN/> , <EQN/> a list of the total functions from Q to <EQN/> , for some effective function <EQN/> , for each finite set Q , each finite partial function <EQN/> from the Cartesian product of Q and <EQN/> to Q , and each total function <EQN/> from Q to <EQN/> , if for each <EQN/> in the domain of <EQN/> , <EQN/> is defined , and <EQN/> then <EQN/> ` true ' otherwise <EQN/> ` false ' , and for some effective function <EQN/> , for each finite set Q , each total function <EQN/> from Q to <EQN/> and each total function <EQN/> from Q to <EQN/> , if for each <EQN/> , <EQN/> then <EQN/> ` true ' otherwise <EQN/> ` false ' . </S>
+<S ID='S-150' AZ='OWN'> Construct <EQN/> as follows : </S>
+<S ID='S-151' AZ='OWN'>  for each feature structure <EQN/> , set <EQN/> and <EQN/> . </S>
+<S ID='S-152' AZ='OWN'> while <EQN/> is not empty . </S>
+<S ID='S-153' AZ='OWN'>  do = set <EQN/> . </S>
+<S ID='S-154' AZ='OWN'>  if <EQN/> ` true ' , <EQN/> ` true ' , and <EQN/> then set <EQN/> . </S>
+<S ID='S-155' AZ='OWN'>  if <EQN/> then output <EQN/> . </S>
+<S ID='S-156' AZ='OWN'>  <EQN/> is an effective algorithm , and for each feature structure F , <EQN/> a list of the resolvants of F . </S>
+</P>
+<P>
+<S ID='S-157' AZ='OWN'> Theorem 27 .</S>
+<S ID='S-158' AZ='OWN'> If <EQN/> is rational and computable then for some effective function <EQN/> , for each feature structure F , if F is satisfiable then <EQN/> ` true otherwise <EQN/> ` false ' . </S>
+</P>
+<P>
+<S ID='S-159' AZ='OWN'> Proof .  </S>
+<S ID='S-160' AZ='OWN'> From theorem <CREF/> and proposition <CREF/> . </S>
+</P>
+<P>
+<S ID='S-161' AZ='OTH'> <REFAUTHOR>Gerdemann and Goetz</REFAUTHOR> 's Troll system <REF TYPE='P'>Goetz 1993</REF> , <REF TYPE='P' SELF="YES">Gerdemann and King 1994</REF> , <REF TYPE='P'>Gerdemann forthcoming</REF>  employs an efficient refinement of <EQN/> to test the satisfiability of feature structures . </S>
+<S ID='S-162' AZ='OTH'> In fact , Troll represents each feature structure as a disjunction of the resolvants of the feature structure . </S>
+<S ID='S-163' AZ='OTH'> Loosely speaking , the resolvants of a feature structure have the same underlying finite state automaton as the feature structure , and differ only in their output function . </S>
+<S ID='S-164' AZ='OTH'> Troll exploits this property to represent each feature structure as a finite state automaton and a set of output functions . </S>
+<S ID='S-165' AZ='OTH'> The Troll unifier is closed on these representations . </S>
+<S ID='S-166' AZ='OTH'> Thus , though <EQN/> is computationally expensive , Troll uses <EQN/> only during compilation , never during run time . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+Robert <SURNAME>Carpenter</SURNAME>.
+ The logic of typed feature structures.
+Cambridge tracts in theoretical computer science 32.  Cambridge
+University Press, Cambridge, England.  <DATE>1992</DATE>.
+</REFERENCE>
+<REFERENCE>
+Dale <SURNAME>Gerdemann</SURNAME>.  Troll: type resolution system, user's guide.
+Sonderforschungsbereich 340 technical report.
+Eberhard-Karls-Universitt, Tbingen, Germany.  <DATE>Forthcoming</DATE>.
+</REFERENCE>
+<REFERENCE>
+Dale <SURNAME>Gerdemann</SURNAME> and Paul <SURNAME>John</SURNAME> King.  The correct and efficient
+implementation of appropriateness specifications for typed feature
+structures.  In these proceedings.
+</REFERENCE>
+<REFERENCE>
+Thilo <SURNAME>Gtz</SURNAME>.  A normal form for typed feature structures.
+Master's thesis.  Eberhard-Karls-Universitt, Tbingen, Germany.
+<DATE>1993</DATE>.
+</REFERENCE>
+<REFERENCE>
+Paul <SURNAME>John</SURNAME> King.  A logical formalism for head-driven phrase
+structure grammar.  Doctoral thesis.  The University of Manchester,
+Manchester, England.  <DATE>1989</DATE>.
+</REFERENCE>
+<REFERENCE>
+E. F. <SURNAME>Moore</SURNAME>.  `Gedanken experiments on sequential machines'.  In 
+Automata Studies.  Princeton University Press, Princeton, New Jersey,
+USA.  <DATE>1956</DATE>.
+</REFERENCE>
+<REFERENCE>
+Michael <SURNAME>Andrew</SURNAME> Moshier.  Extensions to unification grammar for
+the description of programming languages.  Doctoral thesis.  The
+University of Michigan, Ann Arbor, Michigan, USA.  <DATE>1988</DATE>.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

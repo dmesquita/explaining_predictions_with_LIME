@@ -1,0 +1,266 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9411021</FILENO>
+<APPEARED><CONFERENCE>COLING</CONFERENCE><YEAR>1994</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.Gr.Gn </CLASSIFICATION>
+</METADATA>
+<TITLE> Free-ordered CUG on Chemical Abstract Machine </TITLE>
+<AUTHORLIST>
+<AUTHOR>Satoshi Tojo</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' AZ='AIM'> We propose a paradigm for concurrent natural language generation . </A-S>
+<A-S ID='A-1' DOCUMENTC='S-4' AZ='BAS'> In order to represent grammar rules distributively , we adopt categorial unification grammar ( CUG ) where each category owns its functional type . </A-S>
+<A-S ID='A-2' AZ='AIM'> We augment typed lambda calculus with several new combinators , to make the order of <EQN/> - conversions free for partial / local processing . </A-S>
+<A-S ID='A-3' DOCUMENTC='S-82' AZ='BAS'> The concurrent calculus is modeled with Chemical Abstract Machine . </A-S>
+<A-S ID='A-4' DOCUMENTC='S-8' AZ='OWN'> We show an example of a Japanese causative auxiliary verb that requires a drastic rearrangement of case domination . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> Parallel and distributed computation is expected to be the main stream of information processing . </S>
+<S ID='S-1' AZ='BKG'> In the conventional generation , the rules for composition are given from the outside and those rules control all the behavior of the symbols or the objects , for assembling a hierarchical tree structure . </S>
+<S ID='S-2' AZ='BKG'> For example , all the linguistic objects , such as words and phrases must be applied to so-called grammar rules to form grammatical structures or rational semantic representations , under a strict controller process . </S>
+<S ID='S-3' AZ='BKG'> However , this kind of formalization obviously contradicts the partial / distributed processing that would be required in parallel architecture in future . </S>
+</P>
+<P>
+<S ID='S-4' ABSTRACTC='A-1' AZ='BAS'> In order to represent grammar rules distributively , we adopt categorial grammar , where we can an attach local grammar rule to each word and phrase . </S>
+<S ID='S-5' AZ='AIM'> What we aim in this paper is to propose a paradigm that enables partial / local generation through decompositions and reorganizations of tentative local structures . </S>
+</P>
+<P>
+<S ID='S-6' AZ='TXT'> In the following section , we introduce the extended <EQN/> - calculus . </S>
+<S ID='S-7' AZ='TXT'> Thereafter we introduce the ChAM model and we reinterpret the model in terms of natural language processings . </S>
+<S ID='S-8' ABSTRACTC='A-4' AZ='TXT'> Then we show the model of membrane interaction model with the example of Japanese causative sentence that requires drastic change of domination of cases . </S>
+<S ID='S-9' AZ='TXT'> Finally we will discuss the future of the model . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Extended typed <EQN/> - calculus </HEADER>
+<P>
+<S ID='S-10' AZ='BAS'> CUG ( Categorial Unification Grammar ) <REF TYPE='P'>Uszkoreit 1986</REF> is advantageous , compared to other phrase structure grammars , for parallel architecture , because we can regard categories as functional types and we can represent grammar rules locally . </S>
+<S ID='S-11' AZ='OWN'> This means that we do not need externally-given grammar rules but those rules reside within each word or each phrase . </S>
+<S ID='S-12' AZ='OWN'> In this section , we regard categories as polymorphic types and consider the type calculus . </S>
+<S ID='S-13' AZ='OWN'> In later sections we denote categories by DAG ( directed acyclic graph ) of PATR grammar <REF TYPE='P'>Shieber 1986</REF> . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-2'> <EQN/> - calculus of polymorphic type </HEADER>
+<P>
+<S ID='S-14' AZ='OWN'> We use greek letters , for type schemas . </S>
+<S ID='S-15' AZ='OWN'> For type constants we use <EQN/> while for type variables we use <EQN/> . </S>
+<S ID='S-16' AZ='OWN'> <EQN/> represents that the object a is of type <EQN/> . </S>
+<S ID='S-17' AZ='OWN'> If <EQN/> and <EQN/> are types , then <EQN/> is a type . </S>
+</P>
+<P>
+<S ID='S-18' AZ='OWN'> The purpose of type inference is to infer the type of an object from a set of objects whose types are known . </S>
+<S ID='S-19' AZ='OWN'> We presuppose that two type variables <EQN/> and <EQN/> are unified with a unifier <EQN/> . </S>
+<S ID='S-20' AZ='OWN'> We use <EQN/> for this set of type-known objects . </S>
+<S ID='S-21' AZ='OWN'> The most important two rules are as follows : </S>
+</P>
+<IMAGE ID='I-0'/>
+<P>
+<S ID='S-22' AZ='OWN'> The rule <CREF/> corresponds to <EQN/> - conversion of the ordinary <EQN/> - calculus <REF TYPE='P'>Hindley and Seldin 1986</REF> . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-3'> Extended Combinators </HEADER>
+<P>
+<S ID='S-23' AZ='BAS'> In this subsection , we introduce two combinators that enable us to change the order of <EQN/> - conversion , proposed by <REF TYPE='A'>Steedman 1988</REF> , as a kind of type change <REF TYPE='P'>Dowty 1988</REF> . </S>
+<S ID='S-24' AZ='OTH'> The ordinary <EQN/> - calculus requires a strict order of conversion . </S>
+<S ID='S-25' AZ='CTR'> However , in a concurrent model , this kind of strict order is a hindrance and contingent conversions are required . </S>
+</P>
+<P>
+<S ID='S-26' AZ='OWN'> C-combinator changes the order of <EQN/> - variables as follows : </S>
+</P>
+<IMAGE ID='I-1'/>
+<P>
+<S ID='S-27' AZ='OWN'> Another requirement for exchanges of the order of <EQN/> - conversion is the following case . </S>
+<S ID='S-28' AZ='OWN'> Suppose that we are required to compose all the following typed objects : </S>
+</P>
+<IMAGE ID='I-2'/>
+<P>
+<S ID='S-29' AZ='OWN'> In such a case , we need to concatenate g and a first , and then g(a) becomes applicable to f . </S>
+<S ID='S-30' AZ='OWN'> However , with the help of the following B-combinator : </S>
+</P>
+<IMAGE ID='I-3'/>
+<P>
+<S ID='S-31' AZ='OWN'> The <EQN/> - variable in g can be shifted beyond the scope of f so that we can concatenate f and g first , and , thus , have a become applicable as in Fig. <CREF/> . </S>
+</P>
+<IMAGE ID='I-4'/>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-4'> Cost of unification </HEADER>
+<P>
+<S ID='S-32' AZ='OWN'> The repeated use of C - and B-combinators is still problematic if we consider implementing it as an actual system because the termination of processing is not guaranteed . </S>
+<S ID='S-33' AZ='OWN'> We have modeled the process of a partial decomposition as an abstraction of an argument of the first-order term . </S>
+<S ID='S-34' AZ='OWN'> If this abstraction occurs randomly , the process easily falls into a loop . </S>
+<S ID='S-35' AZ='OWN'> In order to avoid this , we assume the unification cost . </S>
+<S ID='S-36' AZ='OWN'> If a compound term ( a subtree ) were to be decomposed once , the element with the longer distance should be abstracted first . </S>
+<S ID='S-37' AZ='OWN'> We can regard the whole sentence structure as more grammatical if the sum of these unification costs is smaller . </S>
+<S ID='S-38' AZ='OWN'> We introduce the heuristic costs <REF TYPE='P' SELF="YES">Tojo 1991</REF> , considering the parallelism between syntactic cases and semantic roles , as follows : </S>
+</P>
+<IMAGE ID='I-5'/>
+<P>
+<S ID='S-39' AZ='OWN'> where <EQN/> represents a unifier of two DAG 's : one 's syntactic case is x and the other 's semantic role is y . </S>
+<S ID='S-40' AZ='OWN'> k is some constant larger than 1 ( k  >  1 ) . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-5'> Chemical Abstract Machine </HEADER>
+<P>
+<S ID='S-41' AZ='OTH'> Chemical Abstract Machine ( ChAM , for short ) <REF TYPE='P'>Berry and Boudol 1990</REF> is a paradigm of concurrent <EQN/> - calculus . </S>
+<S ID='S-42' AZ='BAS'> In this paper , we will mention our principles on natural language processing with regard to the ChAM model . </S>
+</P>
+<P>
+<S ID='S-43' AZ='OWN'> We assume the process of natural language recognition as follows . </S>
+<S ID='S-44' AZ='OWN'> Whenever a linguistic object is recognized , it is thrown into the solution of ChAM , and acts as a molecule . </S>
+<S ID='S-45' AZ='OWN'> Verbs and some other auxiliary verbs introduces membranes . </S>
+<S ID='S-46' AZ='OWN'> These membranes becomes their scopes for case ( or role ) domination ; namely , each verb searches for molecules ( noun phrases ) that are necessary to satisfy each verb 's case ( role ) frame , within its membrane . </S>
+<S ID='S-47' AZ='OWN'> In some occasions , if multiple verbs exist in one sentence , they may conflict as to which verb dominates which noun phrase . </S>
+<S ID='S-48' AZ='OWN'> In such a case , two membranes can interact and can exchange some molecules . </S>
+</P>
+<P>
+<S ID='S-49' AZ='OWN'> We use <EQN/> for membranes . </S>
+<S ID='S-50' AZ='OWN'> When a membrane <EQN/> contains a molecule <EQN/> , we denote as <EQN/> The supporting relation ( <EQN/> ) can be interpreted as an inclusion relation ( <EQN/> ) in this case . </S>
+<S ID='S-51' AZ='OWN'> Two membranes can interact when they contact with the notation ` <EQN/> ' , as <EQN/> . </S>
+<S ID='S-52' AZ='OWN'> If there is a floating molecule ( that which is not yet concatenated with other molecules ) on one side , it can move through the porous membranes . </S>
+<S ID='S-53' AZ='OWN'> Valences for concatenation of each molecule are represented by typed lambda-variables . </S>
+<S ID='S-54' AZ='OWN'> If one membrane contains only one composite structure , and it still has surplus valences , we can regard that whole the membrane has those surplus valences as follows . </S>
+</P>
+<IMAGE ID='I-6'/>
+<P>
+<S ID='S-55' AZ='OWN'> Now , we will apply our notions above to the actual problem of sentence generation . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-6'> Example : Japanese causative sentence </HEADER>
+<P>
+<S ID='S-56' AZ='BKG'> In the Japanese language , the causative and the change of voice are realized by agglutinations of those auxiliary verbs at the tail of current verbs . </S>
+<S ID='S-57' AZ='BKG'> These auxiliary verbs as well as ordinary verbs can dominate some cases so that these agglutinations may change the whole syntax <REF TYPE='P'>Gunji 1987</REF> . </S>
+<S ID='S-58' AZ='BKG'> Namely the scope of the operation of these auxiliary verbs is not the operated verb but the whole sentence . </S>
+<S ID='S-59' AZ='BKG'> In order to illustrate these role changes , we show the alternation of the agent of the main verb in Table <CREF/> with a short tip to Japanese lexicon . </S>
+</P>
+<IMAGE ID='I-7'/>
+<IMAGE ID='I-8'/>
+<P>
+<S ID='S-60' AZ='BKG'> As an example , we will take the sentence : </S>
+</P>
+<EXAMPLE ID='E-0'>
+<EX-S> Ken-wa Naomi-ni hon-wo yom-aseru . </EX-S>
+<EX-S> ( Ken makes Naomi read the book . )</EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-61' AZ='OWN'> First , we give DAG 's for each lexical items in Fig <CREF/> . </S>
+</P>
+<IMAGE ID='I-9'/>
+<P>
+<S ID='S-62' AZ='OWN'> The last DAG in Fig. <CREF/> represents that the verb ` yomu ( read ) ' requires two roles ` the reader ' and ` the object to be read ' , and one optional role ` the counter-agent ' who hears what the reader reads . </S>
+<S ID='S-63' AZ='OWN'> In that figure , ` <EQN/> ' means that each word is recognized in the general world however a verb ` yomu ' introduced a special membrane <EQN/> as a subworld of W. Each DAG means a polymorphic type of the lexical item . </S>
+</P>
+<P>
+<S ID='S-64' AZ='OWN'> Assume that there is a parser that constructs partial tree structures , as recognizing each word from the head sequentially . </S>
+<S ID='S-65' AZ='OWN'> Then , when the first four words are recognized , they can form a complete sentence of <CREF/> . </S>
+</P>
+<IMAGE ID='I-10'/>
+<P>
+<S ID='S-66' AZ='OWN'> Because all the three nouns are adequately concatenated by ` read ' , a sentential representation is made in the subworld of <EQN/> . </S>
+<S ID='S-67' AZ='OWN'> In <CREF/> , <EQN/> 's are the records of unification , that contain the costs and the original types ; they become necessary when they are backtracked , and in that meaning , those bindings are transitive . </S>
+</P>
+<P>
+<S ID='S-68' AZ='OWN'> Now , let us recapitulate what has occurred in the membrane <EQN/> . </S>
+<S ID='S-69' AZ='OWN'> There were four lexical items in the set , and they are duly organized to a sentence and <EQN/> becomes a singleton . </S>
+</P>
+<IMAGE ID='I-11'/>
+<P>
+<S ID='S-70' AZ='OWN'> Then , the problematic final word ` - aseru ( causative ) ' arrives ; its DAG representation is as in Fig. <CREF/> . </S>
+</P>
+<IMAGE ID='I-12'/>
+<P>
+<S ID='S-71' AZ='OWN'> The DAG in Fig. <CREF/> requires a sentential form ( category S ) as an argument , and in addition , it subcategorizes an item of category N as an agent of the subsentence . </S>
+</P>
+<P>
+<S ID='S-72' AZ='OWN'> Now , the process becomes as in Fig. <CREF/> . </S>
+</P>
+<IMAGE ID='I-13'/>
+<P>
+<S ID='S-73' AZ='OWN'> All through the process in Fig. <CREF/> , C - and B-combinators are used repeatedly as well as ordinary type inference <CREF/> and <CREF/>  . </S>
+<S ID='S-74' AZ='OWN'> The second membrane <EQN/> requires an agent role ( the variable x ' of make ) . </S>
+<S ID='S-75' AZ='OWN'> There is a record in <EQN/> that it bit agent , so that the comparison should be made between <EQN/> and <EQN/> . </S>
+<S ID='S-76' AZ='OWN'> However , because both of <EQN/> and <EQN/> unifies nominative case and agent role , the costs are equivalent . </S>
+<S ID='S-77' AZ='OWN'> In such a case , linguistic heuristics will solve the problem . </S>
+<S ID='S-78' AZ='OWN'> In this case , the agent of make should be the nominative of the whole sentence , and the co-agent of make is the dative of the whole sentence , so that K and N are bit by newly arrived make . </S>
+<S ID='S-79' AZ='OWN'> B remains bound to read , because there is no <EQN/> - variable of that type in make . </S>
+<S ID='S-80' AZ='OWN'> The process is depicted in fig. <CREF/> . </S>
+</P>
+<IMAGE ID='I-14'/>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-7'> Conclusion </HEADER>
+<P>
+<S ID='S-81' AZ='AIM'> Introducing free-ordered typed <EQN/> - calculus , together with the notion of unification costs in types , we have shown the structuring of natural language syntax , by distributively represented types in random orders . </S>
+<S ID='S-82' ABSTRACTC='A-3' AZ='BAS'> We adopted a model of Chemical Abstract Machine for the partial / concurrent computation model . </S>
+</P>
+<P>
+<S ID='S-83' AZ='OWN'> Although we introduced the concept of costs and termination was assured , the efficiency of constructing a parsing tree would be far slower than sequential processing . </S>
+<S ID='S-84' AZ='AIM'> However our objective is not to propose a faster algorithm , but is to show the possibility of distributed processing of natural languages . </S>
+<S ID='S-85' AZ='OWN'> We could show that natural language syntax is self-organizable , in that each linguistic objects do not need to be poured into ` molds ' , viz. , externally given grammar . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+G. <SURNAME>Berry</SURNAME> and G. <SURNAME>Boudol</SURNAME>.
+The chemical abstract machine.
+In 17th Annual ACM Symposium on Principles of Programming
+  Languages, pages 81-93, <DATE>1990</DATE>.
+</REFERENCE>
+<REFERENCE>
+H. B. <SURNAME>Curry</SURNAME> and R. <SURNAME>Feys</SURNAME>.
+Combinatory Logic, volume 1.
+North Holland, Amsterdam, Netherlands, <DATE>1968</DATE>.
+</REFERENCE>
+<REFERENCE>
+D. <SURNAME>Dowty</SURNAME>.
+Type Raising, Functional Composition, and Non-constituent
+  Conjunction - in Categorial Grammars and Natural Language Structures, pages
+  153-197.
+D. Reidel, <DATE>1988</DATE>.
+</REFERENCE>
+<REFERENCE>
+J. R. <SURNAME>Hindley</SURNAME> and J. P. <SURNAME>Seldin</SURNAME>. 
+Introduction to Combination and 
+<EQN/> -Calculus.
+Cambridge University Press, <DATE>1986</DATE>.
+</REFERENCE>
+<REFERENCE>
+S. M. <SURNAME>Shieber</SURNAME>.
+An Introduction to Unification-Based Approaches to Grammar.
+CSLI, Stanford University, <DATE>1986</DATE>.
+</REFERENCE>
+<REFERENCE>
+M. <SURNAME>Steedman</SURNAME>.
+Combinators and grammars - in Categorial Grammars and
+  Natural Language Structures, pages 417-442.
+D. Reidel, <DATE>1988</DATE>.
+</REFERENCE>
+<REFERENCE>
+S. <SURNAME>Tojo</SURNAME>.
+Categorial analysis of sentence generation.
+In The Logic Programming Conference (LPC '91), pages 229-238.
+  Institute of New Generation Computer (ICOT), <DATE>1991</DATE>.
+</REFERENCE>
+<REFERENCE>
+H. <SURNAME>Uszkoreit</SURNAME>.
+Categorial unification grammars.
+In Proc. of COLING '86, pages 187-194, <DATE>1986</DATE>.
+</REFERENCE>
+<REFERENCE>
+T. <SURNAME>Gunji</SURNAME>.
+Japanese Phrase Structure Grammar.
+D. Reidel, <DATE>1987</DATE>.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

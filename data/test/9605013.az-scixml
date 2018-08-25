@@ -1,0 +1,499 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9605013</FILENO>
+<REFLABEL>Li and Abe 1996a</REFLABEL>
+<APPEARED><CONFERENCE>COLING</CONFERENCE><YEAR>1996</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.St </CLASSIFICATION>
+</METADATA>
+<TITLE> Learning Dependencies between Case Frame Slots </TITLE>
+<AUTHORLIST>
+<AUTHOR>Hang Li</AUTHOR>
+<AUTHOR>Naoki Abe</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' DOCUMENTC='S-0' AZ='AIM'> We address the problem of automatically acquiring case frame patterns ( selectional patterns ) from large corpus data . </A-S>
+<A-S ID='A-1' DOCUMENTC='S-5' AZ='AIM'> In particular , we propose a method of learning dependencies between case frame slots . </A-S>
+<A-S ID='A-2' DOCUMENTC='S-15' AZ='OWN'> We view the problem of learning case frame patterns as that of learning a multi-dimensional discrete joint distribution , where random variables represent case slots . </A-S>
+<A-S ID='A-3' DOCUMENTC='S-16' AZ='OWN'> We then formalize the dependencies between case slots as the probabilistic dependencies between these random variables . </A-S>
+<A-S ID='A-4' DOCUMENTC='S-17' AZ='OWN'> Since the number of parameters in a multi-dimensional joint distribution is exponential in general , it is infeasible to accurately estimate them in practice . </A-S>
+<A-S ID='A-5' AZ='OWN'> To overcome this difficulty , we settle with approximating the target joint distribution by the product of low order component distributions , based on corpus data . </A-S>
+<A-S ID='A-6' AZ='BAS'> In particular we propose to employ an efficient learning algorithm based on the MDL principle to realize this task . </A-S>
+<A-S ID='A-7' DOCUMENTC='S-25' AZ='OWN'> Our experimental results indicate that for certain classes of verbs , the accuracy achieved in a disambiguation experiment is improved by using the acquired knowledge of dependencies . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' ABSTRACTC='A-0' AZ='AIM'> We address the problem of automatically acquiring case frame patterns ( selectional patterns ) from large corpus data . </S>
+<S ID='S-1' AZ='BKG' TYPE='ITEM'> The acquisition of case frame patterns normally involves the following three subproblems : </S>
+<S ID='S-2' TYPE='ITEM' AZ='BKG' > Extracting case frames from corpus data , </S>
+<S ID='S-3' TYPE='ITEM' AZ='BKG' > Generalizing case frame slots within these case frames , </S>
+<S ID='S-4' TYPE='ITEM' AZ='BKG' > Learning dependencies that exist between these generalized case frame slots . </S>
+</P>
+<P>
+<S ID='S-5' ABSTRACTC='A-1' AZ='AIM'> In this paper , we propose a method of learning dependencies between case frame slots . </S>
+<S ID='S-6' AZ='BKG'> By ` dependency ' is meant the relation that exists between case slots which constrains the possible values assumed by each of those case slots . </S>
+<S ID='S-7' AZ='BKG'> As illustrative examples , consider the following sentences . </S>
+</P>
+<IMAGE ID='I-0'/>
+<P>
+<S ID='S-8' AZ='BKG'> We see that an ` airline company ' can be the subject of verb ` fly ' ( the value of slot ` arg 1 ' ) , when the direct object ( the value of slot ` arg 2 ' ) is an ` airplane ' but not when it is an ` airline company ' . </S>
+<S ID='S-9' AZ='BKG'> These examples indicate that the possible values of case slots depend in general on those of the other case slots : that is , there exist ` dependencies ' between different case slots . </S>
+</P>
+<P>
+<S ID='S-10' AZ='OWN'> The knowledge of such dependencies is useful in various tasks in natural language processing , especially in analysis of sentences involving multiple prepositional phrases , such as </S>
+</P>
+<IMAGE ID='I-1'/>
+<P>
+<S ID='S-11' AZ='BKG'> Note in the above example that the slot of ` from ' and that of ` to ' should be considered dependent and the attachment site of one of the prepositional phrases ( case slots ) can be determined by that of the other with high accuracy and confidence . </S>
+</P>
+<P>
+<S ID='S-12' AZ='CTR'> There has been no method proposed to date , however , that learns dependencies between case slots in the natural language processing literature . </S>
+<S ID='S-13' AZ='OTH'> In the past research , the distributional pattern of each case slot is learned independently , and methods of resolving ambiguity are also based on the assumption that case slots are independent <REF TYPE='P'>Hindle and Rooth 1991</REF> , <REF TYPE='P'>Chang et al. 1992</REF> , <REF TYPE='P'>Sekine et al. 1992</REF> , <REF TYPE='P'>Resnik 1992</REF> , <REF TYPE='P'>Grishman and Sterling 1994</REF> , <REF TYPE='P'>Alshawi and Carter 1995</REF> , <REF TYPE='P' SELF="YES">Li and Abe 1995</REF> , or dependencies between at most two case slots are considered <REF TYPE='P'>Brill and Resnik 1994</REF> , <REF  TYPE='P'>Ratnaparkhi et al. 1994</REF>, <REF  TYPE='P'>Collins and Brooks 1995</REF> . </S>
+<S ID='S-14' AZ='AIM'> Thus , provision of an effective method of learning dependencies between case slots , as well as investigation of the usefulness of the acquired dependencies in disambiguation and other natural language processing tasks would be an important contribution to the field . </S>
+</P>
+<P>
+<S ID='S-15' ABSTRACTC='A-2' AZ='OWN'> In this paper , we view the problem of learning case frame patterns as that of learning a multi-dimensional discrete joint distribution , where random variables represent case slots . </S>
+<S ID='S-16' ABSTRACTC='A-3' AZ='OWN'> We then formalize the dependencies between case slots as the probabilistic dependencies between these random variables . </S>
+<S ID='S-17' ABSTRACTC='A-4' AZ='OWN'> Since the number of parameters that exist in a multi-dimensional joint distribution is exponential if we allow n-ary dependencies in general , it is infeasible to estimate them with high accuracy with a data size available in practice . </S>
+<S ID='S-18' AZ='OWN'> It is also clear that relatively few of these random variables ( case slots ) are actually dependent on each other with any significance . </S>
+<S ID='S-19' AZ='OWN'> Thus it is likely that the target joint distribution can be approximated reasonably well by the product of component distributions of low order , drastically reducing the number of parameters that need to be considered . </S>
+<S ID='S-20' AZ='OWN'> This is indeed the approach we take in this paper . </S>
+</P>
+<P>
+<S ID='S-21' AZ='OWN'> Now the problem is how to approximate a joint distribution by the product of lower order component distributions . </S>
+<S ID='S-22' AZ='OTH'> Recently , <REFAUTHOR>Suzuki</REFAUTHOR> proposed an algorithm to approximately learn a multi-dimensional joint distribution expressible as a ` dendroid distribution , ' which is both efficient and theoretically sound <REF TYPE='P'>Suzuki 1993</REF> . </S>
+<S ID='S-23' AZ='BAS'> We employ <REFAUTHOR>Suzuki</REFAUTHOR> 's algorithm to learn case frame patterns as dendroid distributions . </S>
+<S ID='S-24' AZ='OWN'> We conducted some experiments to automatically acquire case frame patterns from the Penn Tree Bank bracketed corpus . </S>
+<S ID='S-25' ABSTRACTC='A-7' AZ='OWN'> Our experimental results indicate that for some classes of verbs the accuracy achieved in a disambiguation experiment can be improved by using the acquired knowledge of dependencies between case slots . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Probabilistic Models for Case Frame Patterns </HEADER>
+<IMAGE ID='I-2'/>
+<P>
+<S ID='S-26' AZ='OWN'> Suppose that we have data of the type shown in Figure <CREF/> , given by instances of the case frame of verb ` fly ' automatically extracted from a corpus , using conventional techniques . </S>
+<S ID='S-27' AZ='OWN'> As explained in Introduction , the problem of learning case frame patterns can be viewed as that of estimating the underlying multi-dimensional joint distribution which gives rise to such data . </S>
+<S ID='S-28' AZ='OWN'> In this research , we assume that case frame instances with the same head are generated by a joint distribution of type ,  </S>
+</P>
+<IMAGE ID='I-3'/>
+<P>
+<S ID='S-29' AZ='OWN'> where index Y stands for the head , and each of the random variables <EQN/> represents a case slot . </S>
+<S ID='S-30' AZ='OWN'> In this paper , we use ` case slots ' to mean surface case slots , and we uniformly treat obligatory cases and optional cases . </S>
+<S ID='S-31' AZ='OWN'> Thus the number n of the random variables is roughly equal to the number of prepositions in English ( and less than 100 ) . </S>
+</P>
+<IMAGE ID='I-4'/>
+<P>
+<S ID='S-32' AZ='OWN'> These models can be further classified into three types of probabilistic models according to the type of values each random variable <EQN/> assumes . </S>
+<S ID='S-33' AZ='OWN'> When <EQN/> assumes a word or a special symbol ` 0 ' as its value , we refer to the corresponding model <EQN/> as a ` word-based model ' . </S>
+<S ID='S-34' AZ='OWN'> Here ` 0 ' indicates the absence of the case slot in question . </S>
+<S ID='S-35' AZ='OWN'> When <EQN/> assumes a word-class or ` 0 ' as its value , the corresponding model is called a ` class-based model '. </S>
+<S ID='S-36' AZ='OWN'> When <EQN/> takes on 1 or 0 as its value , we call the model a ` slot-based model '. </S>
+<S ID='S-37' AZ='OWN'> Here the value of ` 1 ' indicates the presence of the case slot in question , and ` 0 ' absence . </S>
+<S ID='S-38' AZ='OWN'> For example , the data in Figure <CREF/> can be generated by a word-based model , and the data in Figure <CREF/> by a class-based model . </S>
+<S ID='S-39' AZ='OWN'> Suppose for simplicity that there are only 4 possible case slots corresponding respectively to the subject , direct object , ` from ' phrase , and ` to ' phrase . </S>
+<S ID='S-40' AZ='OWN'> Then ,  </S>
+</P>
+<IMAGE ID='I-5'/>
+<P>
+<S ID='S-41' AZ='OWN'> is given a specific probability value by a word-based model . </S>
+<S ID='S-42' AZ='OWN'> In contrast ,  </S>
+</P>
+<IMAGE ID='I-6'/>
+<P>
+<S ID='S-43' AZ='OWN'> is given a specific probability by a class-based model , where <EQN/> and <EQN/> denote word classes . </S>
+<S ID='S-44' AZ='OWN'> Finally ,  </S>
+</P>
+<IMAGE ID='I-7'/>
+<P>
+<S ID='S-45' AZ='OWN'> is assigned a specific probability by a slot-based model . </S>
+</P>
+<P>
+<S ID='S-46' AZ='OWN'> We then formulate the dependencies between case slots as the probabilistic dependencies between the random variables in each of these three models . </S>
+<S ID='S-47' AZ='OWN'> In the absence of any constraints , however , the number of parameters in each of the above three models is exponential ( even the slot-based model has <EQN/> parameters ) , and thus it is infeasible to estimate them in practice . </S>
+<S ID='S-48' AZ='OWN'> A simplifying assumption that is often made to deal with this difficulty is that random variables ( case slots ) are mutually independent . </S>
+</P>
+<P>
+<S ID='S-49' AZ='OWN'> Suppose for example that in the analysis of the sentence </S>
+</P>
+<IMAGE ID='I-8'/>
+<P>
+<S ID='S-50' AZ='OWN'> the following alternative interpretations are given . </S>
+</P>
+<IMAGE ID='I-9'/>
+<P>
+<S ID='S-51' AZ='OWN'> We wish to select the more appropriate of the two interpretations . </S>
+<S ID='S-52' AZ='OWN'> A heuristic word-based method for disambiguation , in which the random variables ( case slots ) are assumed to be dependent , is to calculate the following values of word-based likelihood and to select the interpretation corresponding to the higher likelihood value . </S>
+</P>
+<IMAGE ID='I-10'/>
+<P>
+<S ID='S-53' AZ='OTH'> If on the other hand we assume that the random variables are independent , we only need to calculate and compare <REF TYPE='P' SELF="YES">Li and Abe 1995</REF> . </S>
+</P>
+<IMAGE ID='I-11'/>
+<P>
+<S ID='S-54' AZ='OTH'> and </S>
+</P>
+<IMAGE ID='I-12'/>
+<P>
+<S ID='S-55' AZ='OTH'> The independence assumption can also be made in the case of a class-based model or a slot-based model . </S>
+<S ID='S-56' AZ='OTH'> For slot-based models , with the independence assumption , the following probabilities . </S>
+</P>
+<IMAGE ID='I-13'/>
+<P>
+<S ID='S-57' AZ='OTH'> are to be compared <REF TYPE='P'>Hindle and Rooth 1991</REF> . </S>
+</P>
+<P>
+<S ID='S-58' AZ='OTH'> Assuming that random variables ( case slots ) are mutually independent would drastically reduce the number of parameters . </S>
+<S ID='S-59' AZ='OTH'> ( Note that under the independence assumption the number of parameters in a slot-based model becomes O(n) . ) </S>
+<S ID='S-60' AZ='CTR'> As illustrated in Section <CREF/> , this assumption is not necessarily valid in practice . </S>
+<S ID='S-61' AZ='OWN'> What seems to be true in practice is that some case slots are in fact dependent but overwhelming majority of them are independent , due partly to the fact that usually only a few case slots are obligatory and most others are optional . </S>
+<S ID='S-62' AZ='OWN'> Thus the target joint distribution is likely to be approximable by the product of several component distributions of low order , and thus have in fact a reasonably small number of parameters . </S>
+<S ID='S-63' AZ='OWN'> We are thus lead to the approach of approximating the target joint distribution by such a simplified model , based on corpus data . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-2'> Approximation by Dendroid Distribution </HEADER>
+<P>
+<S ID='S-64' AZ='BKG'> Without loss of generality , any n-dimensional joint distribution can be written as  </S>
+</P>
+<IMAGE ID='I-14'/>
+<P>
+<S ID='S-65' AZ='BKG'> for some permutation ( <EQN/> ) of 1,2 , .. , n , where we let <EQN/> denote <EQN/> . </S>
+</P>
+<P>
+<S ID='S-66' AZ='BKG'> A plausible assumption on the dependencies between random variables is intuitively that each variable directly depends on at most one other variable . </S>
+<S ID='S-67' AZ='BKG'> ( Note that this assumption is the simplest among those that relax the independence assumption . )</S>
+<S ID='S-68' AZ='BKG'> For example , if a joint distribution <EQN/> over 3 random variables <EQN/> can be written ( approximated ) as follows , it ( approximately ) satisfies such an assumption . </S>
+</P>
+<IMAGE ID='I-15'/>
+<P>
+<S ID='S-69' AZ='BKG'> Such distributions are referred to as ` dendroid distributions ' in the literature . </S>
+<S ID='S-70' AZ='BKG'> A dendroid distribution can be represented by a dependency forest ( i.e. a set of dependency trees ) , whose nodes represent the random variables , and whose directed arcs represent the dependencies that exist between these random variables , each labeled with a number of parameters specifying the probabilistic dependency . </S>
+<S ID='S-71' AZ='BKG'> ( A dendroid distribution can also be considered as a restricted form of the Bayesian network <REF TYPE='P'>Pearl 1988</REF> . ) </S>
+<S ID='S-72' AZ='BKG'> It is not difficult to see that there are 7 and only 7 such representations for the joint distribution <EQN/> ( See Figure <CREF/> ) , disregarding the actual numerical values of the probabilistic parameters . </S>
+<S ID='S-73' AZ='OWN'> Now we turn to the problem of how to select the best dendroid distribution from among all possible ones to approximate a target joint distribution based on input data ` generated ' by it . </S>
+<S ID='S-74' AZ='OTH'> This problem has been investigated in the area of machine learning and related fields . </S>
+<S ID='S-75' AZ='OTH'> A classical method is <REFAUTHOR>Chow and Liu</REFAUTHOR> 's algorithm for estimating a multi-dimensional joint distribution as a dependency tree , in a way which is both efficient and theoretically sound <REF TYPE='P'>Chow and Liu 1968</REF> . </S>
+<S ID='S-76' AZ='OTH'> More recently <REFAUTHOR>Suzuki</REFAUTHOR> extended their algorithm so that it estimates the target joint distribution as a dendroid distribution or dependency forest <REF TYPE='P'>Suzuki 1993</REF> , allowing for the possibility of learning one group of random variables to be completely independent of another . </S>
+<S ID='S-77' AZ='BAS'> Since many of the random variables ( case slots ) in case frame patterns are essentially independent , this feature is crucial in our context , and we thus employ <REFAUTHOR>Suzuki</REFAUTHOR> 's algorithm for learning our case frame patterns . </S>
+</P>
+<IMAGE ID='I-16'/>
+<P>
+<S ID='S-78' AZ='OTH'> <REFAUTHOR>Suzuki</REFAUTHOR> 's algorithm first calculates the mutual information between all two nodes ( random variables ) , and it sorts the node pairs in descending order with respect to the mutual information . </S>
+<S ID='S-79' AZ='OTH'> It then puts a link between a node pair with the largest mutual information value I , provided that I exceeds a certain threshold which depends on the node pair and adding that link will not create a loop in the current dependency graph . </S>
+<S ID='S-80' AZ='OTH'> It repeats this process until no node pair is left unprocessed . </S>
+<S ID='S-81' AZ='OTH'> Figure <CREF/> shows the detail of this algorithm , where <EQN/> denotes the number of possible values assumed by <EQN/> , N the input data size , and <EQN/> denotes the logarithm to the base 2 . </S>
+</P>
+<IMAGE ID='I-17'/>
+<P>
+<S ID='S-82' AZ='OTH'> It is easy to see that the number of parameters in a dendroid distribution is of the order <EQN/> , where k is the maximum of all <EQN/> , and n is the number of random variables , and the time complexity of the algorithm is of the order <EQN/> . </S>
+</P>
+<P>
+<S ID='S-83' AZ='TXT'> We will now show how the algorithm works by an illustrative example . </S>
+<S ID='S-84' AZ='OTH'> Suppose that the data is given as in Figure <CREF/> and there are 4 nodes ( random variables ) <EQN/> . </S>
+<S ID='S-85' AZ='OTH'> The values of mutual information and thresholds for all node pairs are shown in Table <CREF/> . </S>
+<S ID='S-86' AZ='OTH'> Based on this calculation the algorithm constructs the dependency forest shown in Figure <CREF/> , because the mutual information between <EQN/> and <EQN/> , <EQN/> and <EQN/> are large enough , but not the others . </S>
+<S ID='S-87' AZ='OTH'> The result indicates that slot ` arg 2 ' and ` from ' should be considered dependent on ` to ' . </S>
+<S ID='S-88' AZ='OTH'> Note that ` arg 2 ' and ` from ' should also be considered dependent via ` to ' but to a somewhat weaker degree . </S>
+</P>
+<IMAGE ID='I-18'/>
+<IMAGE ID='I-19'/>
+<P>
+<S ID='S-89' AZ='BAS'> <REFAUTHOR>Suzuki</REFAUTHOR> 's algorithm is derived from the Minimum Description Length ( MDL ) principle <REF TYPE='P'>Rissanen 1978</REF> , <REF TYPE='P'>Rissanen 1983</REF> , <REF TYPE='P'>Rissanen 1984</REF> , <REF TYPE='P'>Rissanen 1986</REF> , <REF TYPE='P'>Rissanen 1989</REF> which is a principle for statistical estimation in information theory . </S>
+<S ID='S-90' AZ='OTH'> It is known that as a strategy of estimation , MDL is guaranteed to be near optimal . </S>
+<S ID='S-91' AZ='BAS'> In applying MDL , we usually assume that the given data are generated by a probabilistic model that belongs to a certain class of models and selects a model within the class which best explains the data . </S>
+<S ID='S-92' AZ='BKG'> It tends to be the case usually that a simpler model has a poorer fit to the data , and a more complex model has a better fit to the data . </S>
+<S ID='S-93' AZ='BKG'> Thus there is a trade-off between the simplicity of a model and the goodness of fit to data . </S>
+<S ID='S-94' AZ='OTH'> MDL resolves this trade-off in a disciplined way : It selects a model which is reasonably simple and fits the data satisfactorily as well . </S>
+<S ID='S-95' AZ='OWN'> In our current problem , a simple model means a model with less dependencies , and thus MDL provides a theoretically sound way to learn only those dependencies that are statistically significant in the given data . </S>
+<S ID='S-96' AZ='OWN'> An especially interesting feature of MDL is that it incorporates the input data size in its model selection criterion . </S>
+<S ID='S-97' AZ='OWN'> This is reflected , in our case , in the derivation of the threshold <EQN/> . </S>
+<S ID='S-98' AZ='OWN'> Note that when we do not have enough data ( i.e. for small N ) , the thresholds will be large and few nodes tend to be linked , resulting in a simple model in which most of the case slots are judged independent . </S>
+<S ID='S-99' AZ='OWN'> This is reasonable since with a small data size most case slots cannot be determined to be dependent with any significance . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-3'> Experimental Results </HEADER>
+<P>
+<S ID='S-100' AZ='OWN'> We conducted some experiments to test the performance of the proposed method as a method of acquiring case frame patterns . </S>
+<S ID='S-101' AZ='OWN'> In particular , we tested to see how effective the patterns acquired by our method are in a structural disambiguation experiment . </S>
+<S ID='S-102' AZ='TXT'> We will describe the results of this experimentation in this section . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-4'> Experiment 1 : Slot-based Model </HEADER>
+<P>
+<S ID='S-103' AZ='OWN'> In our first experiment , we tried to acquire slot-based case frame patterns . </S>
+<S ID='S-104' AZ='OWN'> First , we extracted 181,250 case frames from the Wall Street Journal ( WSJ ) bracketed corpus of the Penn Tree Bank <REF TYPE='P'>Marcus et al. 1993</REF> as training data . </S>
+<S ID='S-105' AZ='OWN'> There were 357 verbs for which more than 50 case frame examples appeared in the training data . </S>
+<S ID='S-106' AZ='OWN'> Table <CREF/> shows the verbs that appeared in the data most frequently and the number of their occurrences . </S>
+</P>
+<IMAGE ID='I-20'/>
+<P>
+<S ID='S-107' AZ='OWN'> First we acquired the slot-based case frame patterns for all of the 357 verbs . </S>
+<S ID='S-108' AZ='OWN'> We then conducted a ten-fold cross validation to evaluate the ` test data perplexity ' of the acquired case frame patterns , that is , we used nine tenth of the case frames for each verb as training data ( saving what remains as test data ) , to acquire case frame patterns , and then calculated perplexity using the test data . </S>
+<S ID='S-109' AZ='OWN'> We repeated this process ten times and calculated the average perplexity . </S>
+<S ID='S-110' AZ='OWN'> Table <CREF/> shows the average perplexity obtained for some randomly selected verbs . </S>
+<S ID='S-111' AZ='OWN'> We also calculated the average perplexity of the ` independent slot models ' acquired based on the assumption that each case slot is independent . </S>
+<S ID='S-112' AZ='OWN'> Our experimental results shown in Table <CREF/> indicate that the use of the dendroid models can achieve up to <EQN/> perplexity reduction as compared to the independent slot models . </S>
+<S ID='S-113' AZ='OWN'> It seems safe to say therefore that the dendroid model is more suitable for representing the true model of case frames than the independent slot model . </S>
+</P>
+<IMAGE ID='I-21'/>
+<P>
+<S ID='S-114' AZ='OWN'> We also used the acquired dependency knowledge in a pp-attachment disambiguation experiment . </S>
+<S ID='S-115' AZ='OWN'> We used the case frames of all 357 verbs as our training data . </S>
+<S ID='S-116' AZ='OWN'> We used the entire bracketed corpus as training data because we wanted to utilize as many training data as possible . </S>
+<S ID='S-117' AZ='BAS'> We extracted <EQN/> or <EQN/> patterns from the WSJ tagged corpus as test data , using pattern matching techniques such as that described in <REF TYPE='A'>Smadja 1993</REF> . </S>
+<S ID='S-118' AZ='OWN'> We took care to ensure that only the part of the tagged ( non-bracketed ) corpus which does not overlap with the bracketed corpus is used as test data . </S>
+<S ID='S-119' AZ='OWN'> ( The bracketed corpus does overlap with part of the tagged corpus . ) </S>
+</P>
+<P>
+<S ID='S-120' AZ='OWN'> We acquired case frame patterns using the training data . </S>
+<S ID='S-121' AZ='OWN'> Figure <CREF/> shows an example of the results , which is part of the case frame pattern ( dendroid distribution ) for the verb ` buy . </S>
+<S ID='S-122' AZ='OWN'> ' Note in the model that the slots ` for , ' 'on , ' etc , are dependent on ` arg 2 , ' while ` arg 1 ' and ` from ' are independent . </S>
+</P>
+<IMAGE ID='I-22'/>
+<P>
+<S ID='S-123' AZ='OWN'> We found that there were 266 verbs , whose ` arg 2 ' slot is dependent on some of the other preposition slots . </S>
+<S ID='S-124' AZ='OWN'> Table <CREF/> shows 37 of the verbs whose dependencies between arg 2 and other case slots are positive and exceed a certain threshold , i.e. P ( arg 2 = 1 , prep = 1 ) # GT 0.25 . </S>
+<S ID='S-125' AZ='OWN'> The dependencies found by our method seem to agree with human intuition in most cases . </S>
+</P>
+<IMAGE ID='I-23'/>
+<P>
+<S ID='S-126' AZ='OWN'> There were 93 examples in the test data ( <EQN/> pattern ) in which the two slots ` arg 2 ' and prep of verb are determined to be positively dependent and their dependencies are stronger than the threshold of 0.25 . </S>
+<S ID='S-127' AZ='OWN'> We forcibly attached <EQN/> to verb for these 93 examples . </S>
+<S ID='S-128' AZ='BAS'> For comparison , we also tested the disambiguation method based on the independence assumption proposed by <REF TYPE='A' SELF="YES">Li and Abe 1995</REF> on these examples . </S>
+<S ID='S-129' AZ='OWN'> Table <CREF/> shows the results of these experiments , where ` Dendroid ' stands for the former method and ` Independent ' the latter . </S>
+<S ID='S-130' AZ='CTR'> We see that using the information on dependency we can significantly improve the disambiguation accuracy on this part of the data . </S>
+<S ID='S-131' AZ='OWN'> Since we can use existing methods to perform disambiguation for the rest of the data , we can improve the disambiguation accuracy for the entire test data using this knowledge . </S>
+</P>
+<IMAGE ID='I-24'/>
+<P>
+<S ID='S-132' AZ='OWN'> Furthermore , we found that there were 140 verbs having inter-dependent preposition slots . </S>
+<S ID='S-133' AZ='OWN'> Table <CREF/> shows 22 out of these 140 verbs such that their case slots have positive dependency that exceeds a certain threshold , i.e. <EQN/> . </S>
+<S ID='S-134' AZ='OWN'> Again the dependencies found by our method seem to agree with human intuition . </S>
+</P>
+<IMAGE ID='I-25'/>
+<P>
+<S ID='S-135' AZ='OWN'> In the test data ( which are of <EQN/> pattern ) , there were 21 examples that involves one of the above 22 verbs whose preposition slots show dependency exceeding 0.25 . </S>
+<S ID='S-136' AZ='OWN'> We forcibly attached both <EQN/> and <EQN/> to verb on these 21 examples , since the two slots <EQN/> and <EQN/> are judged dependent . </S>
+<S ID='S-137' AZ='OWN'> Table <CREF/> shows the results of this experimentation , where ` Dendroid ' and ` Independent ' respectively represent the method of using and not using the dependencies . </S>
+<S ID='S-138' AZ='OWN'> Again , we find that for the part of the test data in which dependency is present , the use of the dependency knowledge can be used to improve the accuracy of a disambiguation method , although our experimental results are inconclusive at this stage . </S>
+</P>
+<IMAGE ID='I-26'/>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-5'> Experiment 2 : Class-based Model </HEADER>
+<P>
+<S ID='S-139' AZ='OWN'> We also used the 357 verbs and their case frames used in Experiment 1 to acquire class-based case frame patterns using the proposed method . </S>
+<S ID='S-140' AZ='OWN'> We randomly selected 100 verbs among these 357 verbs and attempted to acquire their case frame patterns . </S>
+<S ID='S-141' AZ='OWN'> We generalized the case slots within each of these case frames using the method proposed by <REF TYPE='A' SELF="YES">Li and Abe 1995</REF> to obtain class-based case slots , and then replaced the word-based case slots in the data with the obtained class-based case slots . </S>
+<S ID='S-142' AZ='OWN'> What resulted are class-based case frame examples like those shown in Figure <CREF/> . </S>
+<S ID='S-143' AZ='OWN'> We used these data as input to the learning algorithm and acquired case frame patterns for each of the 100 verbs . </S>
+<S ID='S-144' AZ='OWN'> We found that no two case slots are determined as dependent in any of the case frame patterns . </S>
+<S ID='S-145' AZ='OWN'> This is because the number of parameters in a class based model is very large compared to the size of the data we had available . </S>
+</P>
+<P>
+<S ID='S-146' AZ='OWN'> Our experimental result verifies the validity in practice of the assumption widely made in statistical natural language processing that class-based case slots ( and also word-based case slots ) are mutually independent , at least when the data size available is that provided by the current version of the Penn Tree Bank . </S>
+<S ID='S-147' AZ='OWN'> This is an empirical finding that is worth noting , since up to now the independence assumption was based solely on human intuition , to the best of our knowledge . </S>
+</P>
+<IMAGE ID='I-27'/>
+<P>
+<S ID='S-148' AZ='OWN'> To test how large a data size is required to estimate a class-based model , we conducted the following experiment . </S>
+<S ID='S-149' AZ='OWN'> We defined an artificial class-based model and generated some data according to its distribution . </S>
+<S ID='S-150' AZ='OWN'> We then used the data to estimate a class-based model ( dendroid distribution ) , and evaluated the estimated model by measuring the number of dependencies ( dependency arcs ) it has and the KL distance between the estimated model and the true model . </S>
+<S ID='S-151' AZ='OWN'> We repeatedly generated data and observed the ` learning curve , ' namely the relationship between the number of dependencies in the estimated model and the data size used in estimation , and the relationship between the KL distance between the estimated and true model and the data size . </S>
+<S ID='S-152' AZ='OWN'> We defined two other models and conducted the same experiments . </S>
+<S ID='S-153' AZ='OWN'> Figure <CREF/> shows the results of these experiments for these three artificial models averaged over 10 trials . </S>
+<S ID='S-154' AZ='OWN'> ( The number of parameters in Model 1 , Model 2 , and Model 3 are 18 , 30 , and 44 respectively , while the number of dependencies are 1 , 3 , and 5 respectively . )</S>
+<S ID='S-155' AZ='OWN'> We see that to accurately estimate a model the data size required is as large as 100 times the number of parameters . </S>
+<S ID='S-156' AZ='OWN'> Since a class-based model tends to have more than 100 parameters usually , the current data size available in the Penn Tree Bank ( See Table <CREF/> ) is not enough for accurate estimation of the dependencies within case frames of most verbs . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-6'> Conclusions </HEADER>
+<P>
+<S ID='S-157' AZ='TXT'> We conclude this paper with the following remarks . </S>
+<S ID='S-158' AZ='AIM'> The primary contribution of research reported in this paper is that we have proposed a method of learning dependencies between case frame slots , which is theoretically sound and efficient , thus providing an effective tool for acquiring case dependency information . </S>
+<S ID='S-159' AZ='OWN'> For the slot-based model , sometimes case slots are found to be dependent . </S>
+<S ID='S-160' AZ='OWN'> Experimental results demonstrate that using the dependency information , when dependency does exist , structural disambiguation results can be improved . </S>
+<S ID='S-161' AZ='OWN'> For the word-based or class-based models , case slots are judged independent , with the data size currently available in the Penn Tree Bank . </S>
+<S ID='S-162' AZ='OWN'> This empirical finding verifies the independence assumption widely made in practice in statistical natural language processing . </S>
+</P>
+<P>
+<S ID='S-163' AZ='OWN'> We proposed to use dependency forests to represent case frame patterns . </S>
+<S ID='S-164' AZ='OWN'> It is possible that more complicated probabilistic dependency graphs like Bayesian networks would be more appropriate for representing case frame patterns . </S>
+<S ID='S-165' AZ='OWN'> This would require even more data and thus the problem of how to collect sufficient data would be a crucial issue , in addition to the methodology of learning case frame patterns as probabilistic dependency graphs . </S>
+<S ID='S-166' AZ='OWN'> Finally the problem of how to determine obligatory / optional cases based on dependencies acquired from data should also be addressed . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-7'> Acknowledgement </HEADER>
+<P>
+<S ID='S-167' AZ='OWN'> We thank Mr. K. Nakamura , Mr. T. Fujita , and Dr. K. Kobayashi of NEC C &amp; C Res. Labs. for their constant encouragement . </S>
+<S ID='S-168' AZ='OWN'> We thank Mr. R. Isotani of NEC Information Technology Res. Labs. for his comments . </S>
+<S ID='S-169' AZ='OWN'> We thank Ms. Y. Yamaguchi of NIS for her programming effort . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+Hiyan <SURNAME>Alshawi</SURNAME> and David <SURNAME>Carter</SURNAME>.
+<DATE>1995</DATE>.
+Training and scaling preference functions for disambiguation.
+Computational Linguistics, 20(4):635-648.
+</REFERENCE>
+<REFERENCE>
+Lalit R. <SURNAME>Bahl</SURNAME>, Frederick <SURNAME>Jelinek</SURNAME>, and Robert <SURNAME>Mercer</SURNAME>.
+<DATE>1983</DATE>.
+A maximum likelihood approach to continuous speech recognition.
+IEEE Transaction on Pattern Analysis and Machine Intelligence,
+  5(2):179-190.
+</REFERENCE>
+<REFERENCE>
+Eric <SURNAME>Brill</SURNAME> and Philip <SURNAME>Resnik</SURNAME>.
+<DATE>1994</DATE>.
+A rule-based approach to prepositional phrase attachment
+  disambiguation.
+Proceedings of the 15th COLING, pages <DATE>1198</DATE>-<DATE>1204</DATE>.
+</REFERENCE>
+<REFERENCE>
+Jingshin <SURNAME>Chang</SURNAME>, Yih-Fen Luo, and Keh-Yih Su.
+<DATE>1992</DATE>.
+GPSM: A generalized probabilistic semantic model for ambiguity
+  resolution.
+Proceedings of the 30th ACL, pages 177-184.
+</REFERENCE>
+<REFERENCE>
+C.K. <SURNAME>Chow</SURNAME> and C.N. <SURNAME>Liu</SURNAME>.
+<DATE>1968</DATE>.
+Approximating discrete probability distributions with dependence
+  trees.
+IEEE Transactions on Information Theory, 14(3):462-467.
+</REFERENCE>
+<REFERENCE>
+Michael <SURNAME>Collins</SURNAME> and James <SURNAME>Brooks</SURNAME>.
+<DATE>1995</DATE>.
+Prepositional phrase attachment through a backed-off model.
+Proceedings of the 3rd Workshop on Very Large Corpora.
+</REFERENCE>
+<REFERENCE>
+Thomas M. <SURNAME>Cover</SURNAME> and Joy A. <SURNAME>Thomas</SURNAME>.
+<DATE>1991</DATE>.
+Elements of Information Theory.
+John Wiley amp; Sons Inc.
+</REFERENCE>
+<REFERENCE>
+Williams A. <SURNAME>Gale</SURNAME> and Kenth W. <SURNAME>Church</SURNAME>.
+<DATE>1990</DATE>.
+Poor estimates of context are worse than none.
+Proceedings of the DARPA Speech and Natural Language Workshop,
+  pages 283-287.
+</REFERENCE>
+<REFERENCE>
+Ralph <SURNAME>Grishman</SURNAME> and John <SURNAME>Sterling</SURNAME>.
+<DATE>1994</DATE>.
+Generalizing automatically generated selectional patterns.
+Proceedings of the 15th COLING, pages 742-747.
+</REFERENCE>
+<REFERENCE>
+Donald <SURNAME>Hindle</SURNAME> and Mats <SURNAME>Rooth</SURNAME>.
+<DATE>1991</DATE>.
+Structural ambiguity and lexical relations.
+Proceedings of the 29th ACL, pages 229-236.
+</REFERENCE>
+<REFERENCE>
+Hang <SURNAME>Li</SURNAME> and Naoki <SURNAME>Abe</SURNAME>.
+<DATE>1995</DATE>.
+Generalizing case frames using a thesaurus and the MDL principle.
+Proceedings of Recent Advances in Natural Language Processing,
+  pages 239-248.
+</REFERENCE>
+<REFERENCE>
+Mitchell P. <SURNAME>Marcus</SURNAME>, Beatrice <SURNAME>Santorini</SURNAME>, and Mary <SURNAME>Ann</SURNAME> Marcinkiewicz.
+<DATE>1993</DATE>.
+Building a large annotated corpus of English: The penn treebank.
+Computational Linguistics, 19(1):313-330.
+</REFERENCE>
+<REFERENCE>
+Judea <SURNAME>Pearl</SURNAME>.
+<DATE>1988</DATE>.
+Probabilistic Reasoning in Intelligent Systems: Networks of
+  Plausible Inference.
+Morgan Kaufmann Publishers Inc.
+</REFERENCE>
+<REFERENCE>
+J. Ross <SURNAME>Quinlan</SURNAME> and Ronald L. <SURNAME>Rivest</SURNAME>.
+<DATE>1989</DATE>.
+Inferring decision trees using the minimum description length
+  principle.
+Information and Computation, 80:227-248.
+</REFERENCE>
+<REFERENCE>
+Adwait <SURNAME>Ratnaparkhi</SURNAME>, Jeff <SURNAME>Reynar</SURNAME>, and Salim <SURNAME>Roukos</SURNAME>.
+<DATE>1994</DATE>.
+A maximum entropy model for prepositional phrase attachment.
+Proceedings of ARPA Workshop on Human Language Technology,
+  pages 250-255.
+</REFERENCE>
+<REFERENCE>
+Philip <SURNAME>Resnik</SURNAME>.
+<DATE>1992</DATE>.
+Semantic classes and syntactic ambiguity.
+Proceedings of ARPA Workshop on Human Language Technology.
+</REFERENCE>
+<REFERENCE>
+Jorma <SURNAME>Rissanen</SURNAME>.
+<DATE>1978</DATE>.
+Modeling by shortest data description.
+Automatic, 14:37-38.
+</REFERENCE>
+<REFERENCE>
+Jorma <SURNAME>Rissanen</SURNAME>.
+<DATE>1983</DATE>.
+A universal prior for integers and estimation by minimum description
+  length.
+The Annals of Statistics, 11(2):416-431.
+</REFERENCE>
+<REFERENCE>
+Jorma <SURNAME>Rissanen</SURNAME>.
+<DATE>1984</DATE>.
+Universal coding, information, predication and estimation.
+IEEE Transaction on Information Theory, 30(4):629-636.
+</REFERENCE>
+<REFERENCE>
+Jorma <SURNAME>Rissanen</SURNAME>.
+<DATE>1986</DATE>.
+Stochastic complexity and modeling.
+The Annals of Statistics, 14(3):<DATE>1080</DATE>-<DATE>1100</DATE>.
+</REFERENCE>
+<REFERENCE>
+Jorma <SURNAME>Rissanen</SURNAME>.
+<DATE>1989</DATE>.
+Stochastic Complexity in Statistical Inquiry.
+World Scientific Publishing Co.
+</REFERENCE>
+<REFERENCE>
+Satoshi <SURNAME>Sekine</SURNAME>, Jeremy J. <SURNAME>Carroll</SURNAME>, Sofia <SURNAME>Ananiadou</SURNAME>, and Jun'ichi Tsujii.
+<DATE>1992</DATE>.
+Automatic learning for semantic collocation.
+Proceedings of the 3rd Conference on Applied Natural Language
+  Processing, pages 104-110.
+</REFERENCE>
+<REFERENCE>
+Frank <SURNAME>Smadja</SURNAME>.
+<DATE>1993</DATE>.
+Retrieving collocations from text: Xtract.
+Computational Linguistics, 19(1):143-177.
+</REFERENCE>
+<REFERENCE>
+Joe <SURNAME>Suzuki</SURNAME>.
+<DATE>1993</DATE>.
+A construction of bayesian networks from databases based on an MDL
+  principle.
+Proceedings of Uncertainty in AI '93.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

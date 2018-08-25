@@ -1,0 +1,90 @@
+<!ELEMENT STRUCT-PAPER   (TITLE,AUTHORS,FILENO,APPEARED,CLASSIFICATION,ABSTRACT,BODY)>
+
+<!ELEMENT TITLE  (#PCDATA)>
+<!ATTLIST TITLE ID ID #REQUIRED>
+
+<!ELEMENT AUTHORS (AUTHOR+)>
+<!ATTLIST AUTHORS ID ID #REQUIRED>
+
+<!ELEMENT AUTHOR (#PCDATA)>
+
+<!ELEMENT FILENO (#PCDATA)>
+<!ATTLIST FILENO ID ID #REQUIRED>
+
+<!ELEMENT APPEARED (#PCDATA)>
+<!ATTLIST APPEARED ID ID #REQUIRED>
+
+<!ELEMENT CLASSIFICATION (#PCDATA)>
+<!ATTLIST CLASSIFICATION ID ID #REQUIRED>
+
+<!ELEMENT BODY (DIV)+>
+
+<!ELEMENT ABSTRACT  (A-S)*>
+
+<!ELEMENT A-S (#PCDATA)>
+<!ATTLIST A-S
+             ID           ID         #REQUIRED
+             TYPE         (ITEM|TXT) "TXT"
+             DOCUMENTC    CDATA   #IMPLIED
+             CONTRAST     (Y|N)  "N"
+             STAR         (Y|N)  "N"
+             TEXTUAL      (Y|N)  "N"
+             AIM          (Y|N)  "N"
+             HGOAL        (Y|N)  "N"
+             HPROB        (Y|N)  "N"
+             CLAIM        (Y|N)  "N"
+             SOLU         (Y|N)  "N"
+             SOLU_PART    (Y|N)  "N"
+             OTHER        (Y|N)  "N"
+             O-SUPPORT    (Y|N)  "N"
+             O-CONTRAST   (Y|N)  "N"
+             EVAL         (Y|N)  "N"
+             RESULT       (Y|N)  "N"
+             LIMIT        (Y|N)  "N"
+             FUTURE       (Y|N)  "N">
+
+<!ELEMENT DIV   (HEADER?, (DIV|P|IMAGE|EXAMPLE)*)>
+<!ATTLIST DIV   DEPTH  CDATA  #REQUIRED >
+
+<!ELEMENT HEADER (#PCDATA)>
+<!ATTLIST HEADER   ID  ID  #REQUIRED >
+
+<!ELEMENT P (S|IMAGE|EXAMPLE)*>
+<!ATTLIST P TYPE (ITEM|TXT) "TXT">
+
+<!ELEMENT IMAGE EMPTY>
+<!ATTLIST IMAGE ID ID #REQUIRED>
+
+<!ELEMENT EXAMPLE (EX-S)+>
+<!ATTLIST EXAMPLE ID ID #REQUIRED>
+
+<!ELEMENT EX-S (#PCDATA)>
+
+<!ELEMENT S  (#PCDATA)>
+<!ATTLIST S  
+             ID           ID     #REQUIRED
+             TYPE         (ITEM|TXT) "TXT"
+             CONTRAST     (Y|N)  "N"
+             STAR         (Y|N)  "N"
+             TEXTUAL      (Y|N)  "N"
+             AIM          (Y|N)  "N"
+             HGOAL        (Y|N)  "N"
+             HPROB        (Y|N)  "N"
+             CLAIM        (Y|N)  "N"
+             SOLU         (Y|N)  "N"
+             SOLU_PART    (Y|N)  "N"
+             OTHER        (Y|N)  "N"
+             O-SUPPORT    (Y|N)  "N"
+             O-CONTRAST   (Y|N)  "N"
+             EVAL         (Y|N)  "N"
+             RESULT       (Y|N)  "N"
+             LIMIT        (Y|N)  "N"
+             FUTURE       (Y|N)  "N"
+             MOVES        CDATA  #IMPLIED
+             ABSTRACTC    CDATA  #IMPLIED
+             OLDROLE      CDATA  #IMPLIED>
+
+
+
+
+

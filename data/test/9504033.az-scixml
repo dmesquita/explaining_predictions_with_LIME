@@ -1,0 +1,569 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9504033</FILENO>
+<APPEARED><CONFERENCE>ACL</CONFERENCE><YEAR>1995</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.St </CLASSIFICATION>
+</METADATA>
+<TITLE> Corpus Statistics Meet the Noun Compound : Some Empirical Results </TITLE>
+<AUTHORLIST>
+<AUTHOR>Mark Lauer</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' AZ='AIM'> A variety of statistical methods for noun compound analysis are implemented and compared . </A-S>
+<A-S ID='A-1' AZ='OWN'> The results support two main conclusions . </A-S>
+<A-S ID='A-2' AZ='OWN'> First , the use of conceptual association not only enables a broad coverage , but also improves the accuracy . </A-S>
+<A-S ID='A-3' DOCUMENTC='S-186' AZ='CTR'> Second , an analysis model based on dependency grammar is substantially more accurate than one based on deepest constituents , even though the latter is more prevalent in the literature . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Background </HEADER>
+<DIV DEPTH='2'>
+<HEADER ID='H-1'> Compound Nouns </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> If parsing is taken to be the first step in taming the natural language understanding task , then broad coverage NLP remains a jungle inhabited by wild beasts . </S>
+<S ID='S-1' AZ='BKG'> For instance , parsing noun compounds appears to require detailed world knowledge that is unavailable outside a limited domain <REF TYPE='P'>Sparck Jones 1983</REF> . </S>
+<S ID='S-2' AZ='BKG'> Yet , far from being an obscure , endangered species , the noun compound is flourishing in modern language . </S>
+<S ID='S-3' AZ='BKG'> It has already made five appearances in this paragraph and at least one diachronic study shows a veritable population explosion <REF TYPE='P'>Leonard 1984</REF> . </S>
+<S ID='S-4' AZ='CTR'> While substantial work on noun compounds exists in both linguistics <REF TYPE='P'>Levi 1978</REF> , <REF TYPE='P'>Ryder 1994</REF> and computational linguistics <REF TYPE='P'>Finin 1980</REF> , <REF TYPE='P'>McDonald 1982</REF> , <REF TYPE='P'>Isabelle 1984</REF> , techniques suitable for broad coverage parsing remain unavailable . </S>
+<S ID='S-5' AZ='AIM'> This paper explores the application of corpus statistics <REF TYPE='P'>Charniak 1993</REF> to noun compound parsing ( other computational problems are addressed in <REF TYPE='A'>Arens et al. 1987</REF> , <REF TYPE='A'>Vanderwende 1993</REF> and <REF TYPE='A'>Sproat 1994</REF> ) . </S>
+</P>
+<P>
+<S ID='S-6' AZ='BKG'> The task is illustrated in example <CREF/> : </S>
+</P>
+<IMAGE ID='I-0'/>
+<P>
+<S ID='S-7' AZ='BKG'> The parses assigned to these two compounds differ , even though the sequence of parts of speech are identical . </S>
+<S ID='S-8' AZ='OTH'> The problem is analogous to the prepositional phrase attachment task explored in <REF TYPE='A'>Hindle and Rooth 1993</REF> . </S>
+<S ID='S-9' AZ='OTH'> The approach they propose involves computing lexical associations from a corpus and using these to select the correct parse . </S>
+<S ID='S-10' AZ='BAS'> A similar architecture may be applied to noun compounds . </S>
+</P>
+<P>
+<S ID='S-11' AZ='OWN'> In the experiments below the accuracy of such a system is measured . </S>
+<S ID='S-12' AZ='OWN'> Comparisons are made across five dimensions : </S>
+</P>
+<P>
+<S ID='S-13' TYPE='ITEM' AZ='OWN' > Each of two analysis models are applied : adjacency and dependency . </S>
+<S ID='S-14' TYPE='ITEM' AZ='OWN' > Each of a range of training schemes are employed . </S>
+<S ID='S-15' TYPE='ITEM' AZ='OWN' > Results are computed with and without tuning factors suggested in the literature . </S>
+<S ID='S-16' TYPE='ITEM' AZ='OWN' > Each of two parameterisations are used : associations between words and associations between concepts . </S>
+<S ID='S-17' TYPE='ITEM' AZ='OWN' > Results are collected with and without machine tagging of the corpus . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-2'> Training Schemes </HEADER>
+<P>
+<S ID='S-18' AZ='CTR'> While <REF TYPE='A'>Hindle and Rooth 1993</REF> use a partial parser to acquire training data , such machinery appears unnecessary for noun compounds . </S>
+<S ID='S-19' AZ='OTH'> <REF TYPE='A'>Brent 1993</REF> has proposed the use of simple word patterns for the acquisition of verb subcategorisation information . </S>
+<S ID='S-20' AZ='BAS'> An analogous approach to compounds is used in <REF TYPE='A' SELF="YES">Lauer 1994</REF> and constitutes one scheme evaluated below . </S>
+<S ID='S-21' AZ='OTH'> While such patterns produce false training examples , the resulting noise often only introduces minor distortions . </S>
+</P>
+<P>
+<S ID='S-22' AZ='OTH'> A more liberal alternative is the use of a co-occurrence window . </S>
+<S ID='S-23' AZ='OTH'> <REF TYPE='A'>Yarowsky 1992</REF> uses a fixed 100 word window to collect information used for sense disambiguation . </S>
+<S ID='S-24' AZ='OTH'> Similarly , <REF TYPE='A'>Smadja 1993</REF> uses a six content word window to extract significant collocations . </S>
+<S ID='S-25' AZ='BAS'> A range of windowed training schemes are employed below . </S>
+<S ID='S-26' AZ='OTH'> Importantly , the use of a window provides a natural means of trading off the amount of data against its quality . </S>
+<S ID='S-27' AZ='OTH'> When data sparseness undermines the system accuracy , a wider window may admit a sufficient volume of extra accurate data to outweigh the additional noise . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-3'> Noun Compound Analysis </HEADER>
+<P>
+<S ID='S-28' AZ='OTH'> There are at least four existing corpus-based algorithms proposed for syntactically analysing noun compounds . </S>
+<S ID='S-29' AZ='CTR'> Only two of these have been subjected to evaluation , and in each case , no comparison to any of the other three was performed . </S>
+<S ID='S-30' AZ='CTR'> In fact all authors appear unaware of the other three proposals . </S>
+<S ID='S-31' AZ='TXT'> I will therefore briefly describe these algorithms . </S>
+</P>
+<P>
+<S ID='S-32' AZ='OTH'> Three of the algorithms use what I will call the ADJACENCY MODEL , an analysis procedure that goes back to <REF TYPE='A'>Marcus 1980</REF> . </S>
+<S ID='S-33' AZ='OTH'> Therein , the procedure is stated in terms of calls to an oracle which can determine if a noun compound is acceptable . </S>
+<S ID='S-34' AZ='TXT'> It is reproduced here for reference : </S>
+</P>
+<P>
+<S ID='S-35' AZ='OTH'> Given three nouns <EQN/> , <EQN/> and <EQN/> : </S>
+</P>
+<P>
+<S ID='S-36' TYPE='ITEM' AZ='OTH' > If either [ <EQN/> <EQN/> ] or [ <EQN/> <EQN/> ] is not semantically acceptable then build the alternative structure ; </S>
+<S ID='S-37' TYPE='ITEM' AZ='OTH' > otherwise , if [ <EQN/> <EQN/> ] is semantically preferable to [ <EQN/> <EQN/> ] then build [ <EQN/> <EQN/> ] ; </S>
+<S ID='S-38' TYPE='ITEM' AZ='OTH' > otherwise , build [ <EQN/> <EQN/> ] . </S>
+</P>
+<P>
+<S ID='S-39' AZ='OTH'> Only more recently has it been suggested that corpus statistics might provide the oracle , and this idea is the basis of the three algorithms which use the adjacency model . </S>
+<S ID='S-40' AZ='OTH'> The simplest of these is reported in <REF TYPE='A'>Pustejovsky et al. 1993</REF> . </S>
+<S ID='S-41' AZ='OTH'> Given a three word compound , a search is conducted elsewhere in the corpus for each of the two possible subcomponents . </S>
+<S ID='S-42' AZ='OTH'> Whichever is found is then chosen as the more closely bracketed pair . </S>
+<S ID='S-43' AZ='OTH'> For example , when backup compiler disk is encountered , the analysis will be : </S>
+</P>
+<IMAGE ID='I-1'/>
+<P>
+<S ID='S-44' AZ='CTR'> Since this is proposed merely as a rough heuristic , it is not stated what the outcome is to be if neither or both subcomponents appear . </S>
+<S ID='S-45' AZ='CTR'> Nor is there any evaluation of the algorithm . </S>
+</P>
+<P>
+<S ID='S-46' AZ='OTH'> The proposal of <REF TYPE='A'>Liberman and Sproat 1992</REF> is more sophisticated and allows for the frequency of the words in the compound . </S>
+<S ID='S-47' AZ='OTH'> Their proposal involves comparing the mutual information between the two pairs of adjacent words and bracketing together whichever pair exhibits the highest . </S>
+<S ID='S-48' AZ='CTR'> Again , there is no evaluation of the method other than a demonstration that four examples work correctly . </S>
+</P>
+<P>
+<S ID='S-49' AZ='OTH'> The third proposal based on the adjacency model appears in <REF TYPE='A'>Resnik 1993</REF> and is rather more complex again . </S>
+<S ID='S-50' AZ='OTH'> The SELECTIONAL ASSOCIATION between a predicate and a word is defined based on the contribution of the word to the conditional entropy of the predicate . </S>
+<S ID='S-51' AZ='OTH'> The association between each pair of words in the compound is then computed by taking the maximum selectional association from all possible ways of regarding the pair as predicate and argument . </S>
+<S ID='S-52' AZ='OTH'> Whilst this association metric is complicated , the decision procedure still follows the outline devised by <REF TYPE='A'>Marcus 1980</REF> above . </S>
+<S ID='S-53' AZ='OTH'> <REF TYPE='A'>Resnik 1993</REF> used unambiguous noun compounds from the parsed Wall Street Journal ( WSJ ) corpus to estimate the association values and analysed a test set of around 160 compounds . </S>
+<S ID='S-54' AZ='OTH'> After some tuning , the accuracy was about 73 % , as compared with a baseline of 64 % achieved by always bracketing the first two nouns together . </S>
+</P>
+<IMAGE ID='I-2'/>
+<P>
+<S ID='S-55' AZ='OTH'> The fourth algorithm , first described in <REF TYPE='A' SELF="YES">Lauer 1994</REF> , differs in one striking manner from the other three . </S>
+<S ID='S-56' AZ='OTH'> It uses what I will call the DEPENDENCY MODEL . </S>
+<S ID='S-57' AZ='OTH'> This model utilises the following procedure when given three nouns <EQN/> , <EQN/> and <EQN/> : </S>
+</P>
+<P>
+<S ID='S-58' TYPE='ITEM' AZ='OTH' > Determine how acceptable the structures [ <EQN/> <EQN/> ] and [ <EQN/> <EQN/> ] are ; </S>
+<S ID='S-59' TYPE='ITEM' AZ='OTH' > if the latter is more acceptable , build [ <EQN/> <EQN/> ] first ; </S>
+<S ID='S-60' TYPE='ITEM' AZ='OTH' > otherwise , build [ <EQN/> <EQN/> ] first . </S>
+</P>
+<P>
+<S ID='S-61' AZ='OTH'> Figure <CREF/> shows a graphical comparison of the two analysis models . </S>
+</P>
+<P>
+<S ID='S-62' AZ='OTH'> In <REF TYPE='A' SELF="YES">Lauer 1994</REF> , the degree of acceptability is again provided by statistical measures over a corpus . </S>
+<S ID='S-63' AZ='OTH'> The metric used is a mutual information-like measure based on probabilities of modification relationships . </S>
+<S ID='S-64' AZ='OTH'> This is derived from the idea that parse trees capture the structure of semantic relationships within a noun compound . </S>
+</P>
+<P>
+<S ID='S-65' AZ='OTH'> The dependency model attempts to choose a parse which makes the resulting relationships as acceptable as possible . </S>
+<S ID='S-66' AZ='OTH'> For example , when backup compiler disk is encountered , the analysis will be : </S>
+</P>
+<IMAGE ID='I-3'/>
+<P>
+<S ID='S-67' AZ='BAS'> I claim that the dependency model makes more intuitive sense for the following reason . </S>
+<S ID='S-68' AZ='OWN'> Consider the compound calcium ion exchange , which is typically left-branching ( that is , the first two words are bracketed together ) . </S>
+<S ID='S-69' AZ='OWN'> There does not seem to be any reason why calcium ion should be any more frequent than ion exchange . </S>
+<S ID='S-70' AZ='OWN'> Both are plausible compounds and regardless of the bracketing , ions are the object of an exchange . </S>
+<S ID='S-71' AZ='OWN'> Instead , the correct parse depends on whether calcium characterises the ions or mediates the exchange . </S>
+</P>
+<P>
+<S ID='S-72' AZ='OWN'> Another significant difference between the models is the predictions they make about the proportion of left and right-branching compounds . </S>
+<S ID='S-73' AZ='OWN'> <REF TYPE='A' SELF="YES">Lauer and Dras 1994</REF> show that under a dependency model , left-branching compounds should occur twice as often as right-branching compounds ( that is two-thirds of the time ) . </S>
+<S ID='S-74' AZ='OWN'> In the test set used here and in that of <REF TYPE='A'>Resnik 1993</REF> , the proportion of left-branching compounds is 67 % and 64 % respectively . </S>
+<S ID='S-75' AZ='CTR'> In contrast , the adjacency model appears to predict a proportion of 50 . </S>
+</P>
+<P>
+<S ID='S-76' AZ='OTH'> The dependency model has also been proposed by <REF TYPE='A'>Kobayasi et al. 1994</REF> for analysing Japanese noun compounds , apparently independently . </S>
+<S ID='S-77' AZ='OTH'> Using a corpus to acquire associations , they bracket sequences of Kanji with lengths four to six ( roughly equivalent to two or three words ) . </S>
+<S ID='S-78' AZ='CTR'> A simple calculation shows that using their own preprocessing hueristics to guess a bracketing provides a higher accuracy on their test set than their statistical model does . </S>
+<S ID='S-79' AZ='CTR'> This renders their experiment inconclusive . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-4'> Method </HEADER>
+<DIV DEPTH='2'>
+<HEADER ID='H-5'> Extracting a Test Set </HEADER>
+<P>
+<S ID='S-80' AZ='OWN'> A test set of syntactically ambiguous noun compounds was extracted from our 8 million word Grolier 's encyclopedia corpus in the following way . </S>
+<S ID='S-81' AZ='OWN'> Because the corpus is not tagged or parsed , a somewhat conservative strategy of looking for unambiguous sequences of nouns was used . </S>
+<S ID='S-82' AZ='OWN'> To distinguish nouns from other words , the University of Pennsylvania morphological analyser ( described in <REF TYPE='A'>Karp et al. 1992</REF> ) was used to generate the set of words that can only be used as nouns ( I shall henceforth call this set <EQN/> ) . </S>
+<S ID='S-83' AZ='OWN'> All consecutive sequences of these words were extracted , and the three word sequences used to form the test set . </S>
+<S ID='S-84' AZ='OWN'> For reasons made clear below , only sequences consisting entirely of words from Roget 's thesaurus were retained , giving a total of 308 test triples . </S>
+</P>
+<P>
+<S ID='S-85' AZ='OWN'> These triples were manually analysed using as context the entire article in which they appeared . </S>
+<S ID='S-86' AZ='OWN'> In some cases , the sequence was not a noun compound ( nouns can appear adjacent to one another across various constituent boundaries ) and was marked as an error . </S>
+<S ID='S-87' AZ='OWN'> Other compounds exhibited what <REF TYPE='A'>Hindle and Rooth 1993</REF> have termed SEMANTIC INDETERMINACY where the two possible bracketings cannot be distinguished in the context . </S>
+<S ID='S-88' AZ='OWN'> The remaining compounds were assigned either a left-branching or right-branching analysis . </S>
+<S ID='S-89' AZ='OWN'> Table <CREF/> shows the number of each kind and an example of each . </S>
+</P>
+<IMAGE ID='I-4'/>
+<P>
+<S ID='S-90' AZ='OWN'> Accuracy figures in all the results reported below were computed using only those 244 compounds which received a parse . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-6'> Conceptual Association </HEADER>
+<P>
+<S ID='S-91' AZ='OWN'> One problem with applying lexical association to noun compounds is the enormous number of parameters required , one for every possible pair of nouns . </S>
+<S ID='S-92' AZ='OWN'> Not only does this require a vast amount of memory space , it creates a severe data sparseness problem since we require at least some data about each parameter . </S>
+<S ID='S-93' AZ='OWN'> <REF TYPE='A'>Resnik and Hearst 1993</REF> coined the term CONCEPTUAL ASSOCIATION to refer to association values computed between groups of words . </S>
+<S ID='S-94' AZ='OWN'> By assuming that all words within a group behave similarly , the parameter space can be built in terms of the groups rather than in terms of the words . </S>
+</P>
+<P>
+<S ID='S-95' AZ='OWN'> In this study , conceptual association is used with groups consisting of all categories from the 1911 version of Roget 's thesaurus . </S>
+<S ID='S-96' AZ='OWN'> Given two thesaurus categories <EQN/> and <EQN/> , there is a parameter which represents the degree of acceptability of the structure <EQN/> where <EQN/> is a noun appearing in <EQN/> and <EQN/> appears in <EQN/> . </S>
+<S ID='S-97' AZ='OWN'> By the assumption that words within a group behave similarly , this is constant given the two categories . </S>
+<S ID='S-98' AZ='BAS'> Following <REF TYPE='A' SELF="YES">Lauer and Dras 1994</REF> we can formally write this parameter as <EQN/> where the event <EQN/> denotes the modification of a noun in <EQN/> by a noun in <EQN/> . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-7'> Training </HEADER>
+<P>
+<S ID='S-99' AZ='OWN'> To ensure that the test set is disjoint from the training data , all occurrences of the test noun compounds have been removed from the training corpus . </S>
+<S ID='S-100' AZ='OWN'> Two types of training scheme are explored in this study , both unsupervised . </S>
+<S ID='S-101' AZ='BAS'> The first employs a pattern that follows <REF TYPE='A'>Pustejovsky 1993</REF> in counting the occurrences of subcomponents . </S>
+<S ID='S-102' AZ='OWN'> A training instance is any sequence of four words <EQN/> where <EQN/> and <EQN/> . </S>
+<S ID='S-103' AZ='OWN'> Let <EQN/> be the number of times a sequence <EQN/> occurs in the training corpus with <EQN/> . </S>
+</P>
+<P>
+<S ID='S-104' AZ='BAS'> The second type uses a window to collect training instances by observing how often a pair of nouns co-occur within some fixed number of words . </S>
+<S ID='S-105' AZ='OWN'> In this study , a variety of window sizes are used . </S>
+<S ID='S-106' AZ='OWN'> For <EQN/> , let <EQN/> be the number of times a sequence <EQN/> occurs in the training corpus where <EQN/> . </S>
+<S ID='S-107' AZ='OWN'> Note that windowed counts are asymmetric . </S>
+<S ID='S-108' AZ='OWN'> In the case of a window two words wide , this yields the mutual information metric proposed by <REF TYPE='A'>Liberman and Sproat 1992</REF> . </S>
+</P>
+<P>
+<S ID='S-109' AZ='OWN'> Using each of these different training schemes to arrive at appropriate counts it is then possible to estimate the parameters . </S>
+<S ID='S-110' AZ='OWN'> Since these are expressed in terms of categories rather than words , it is necessary to combine the counts of words to arrive at estimates . </S>
+<S ID='S-111' AZ='OWN'> In all cases the estimates used are : </S>
+</P>
+<IMAGE ID='I-5'/>
+<P>
+<S ID='S-112' AZ='OWN'> where <EQN/> </S>
+</P>
+<P>
+<S ID='S-113' AZ='OWN'> Here <EQN/> is the number of categories in which w appears . </S>
+<S ID='S-114' AZ='OWN'> It has the effect of dividing the evidence from a training instance across all possible categories for the words . </S>
+<S ID='S-115' AZ='OWN'> The normaliser ensures that all parameters for a head noun sum to unity . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-8'> Analysing the Test Set </HEADER>
+<P>
+<S ID='S-116' AZ='OWN'> Given the high level descriptions in section <CREF/> it remains only to formalise the decision process used to analyse a noun compound . </S>
+<S ID='S-117' AZ='OWN'> Each test compound presents a set of possible analyses and the goal is to choose which analysis is most likely . </S>
+<S ID='S-118' AZ='OWN'> For three word compounds it suffices to compute the ratio of two probabilities , that of a left-branching analysis and that of a right-branching one . </S>
+<S ID='S-119' AZ='OWN'> If this ratio is greater than unity , then the left-branching analysis is chosen . </S>
+<S ID='S-120' AZ='OWN'> When it is less than unity , a right-branching analysis is chosen . </S>
+<S ID='S-121' AZ='OWN'> If the ratio is exactly unity , the analyser guesses left-branching , although this is fairly rare for conceptual association as shown by the experimental results below . </S>
+</P>
+<P>
+<S ID='S-122' AZ='OWN'> For the adjacency model , when the given compound is <EQN/> , we can estimate this ratio as : </S>
+</P>
+<IMAGE ID='I-6'/>
+<P>
+<S ID='S-123' AZ='OWN'> For the dependency model , the ratio is : </S>
+</P>
+<IMAGE ID='I-7'/>
+<P>
+<S ID='S-124' AZ='OWN'> In both cases , we sum over all possible categories for the words in the compound . </S>
+<S ID='S-125' AZ='OWN'> Because the dependency model equations have two factors , they are affected more severely by data sparseness . </S>
+<S ID='S-126' AZ='OWN'> If the probability estimate for <EQN/> is zero for all possible categories <EQN/> and <EQN/> then both the numerator and the denominator will be zero . </S>
+<S ID='S-127' AZ='OWN'> This will conceal any preference given by the parameters involving <EQN/> . </S>
+<S ID='S-128' AZ='OWN'> In such cases , we observe that the test instance itself provides the information that the event <EQN/> can occur and we recalculate the ratio using <EQN/> for all possible categories <EQN/> where k is any non-zero constant . </S>
+<S ID='S-129' AZ='OWN'> However , no correction is made to the probability estimates for <EQN/> and <EQN/> for unseen cases , thus putting the dependency model on an equal footing with the adjacency model above . </S>
+</P>
+<P>
+<S ID='S-130' AZ='CTR'> The equations presented above for the dependency model differ from those developed in <REF TYPE='A' SELF="YES">Lauer and Dras 1994</REF> in one way . </S>
+<S ID='S-131' AZ='CTR'> There , an additional weighting factor ( of 2.0 ) is used to favour a left-branching analysis . </S>
+<S ID='S-132' AZ='CTR'> This arises because their construction is based on the dependency model which predicts that left-branching analyses should occur twice as often . </S>
+<S ID='S-133' AZ='CTR'> Also , the work reported in <REF TYPE='A' SELF="YES">Lauer and Dras 1994</REF> uses simplistic estimates of the probability of a word given its thesaurus category . </S>
+<S ID='S-134' AZ='CTR'> The equations above assume these probabilities are uniformly constant . </S>
+<S ID='S-135' AZ='TXT'> Section <CREF/> below shows the result of making these two additions to the method . </S>
+</P>
+<IMAGE ID='I-8'/>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-9'> Results </HEADER>
+<DIV DEPTH='2'>
+<HEADER ID='H-10'> Dependency meets Adjacency </HEADER>
+<P>
+<S ID='S-136' AZ='OWN'> Eight different training schemes have been used to estimate the parameters and each set of estimates used to analyse the test set under both the adjacency and the dependency model . </S>
+<S ID='S-137' AZ='OWN' TYPE='ITEM'> The schemes used are : </S>
+</P>
+<P>
+<S ID='S-138' TYPE='ITEM' AZ='OWN' > the pattern given in section <CREF/> ; </S>
+<S ID='S-139' TYPE='ITEM' AZ='OWN' > and windowed training schemes with window widths of 2 , 3 , 4 , 5 , 10 , 50 and 100 words . </S>
+</P>
+<P>
+<S ID='S-140' AZ='OWN'> The accuracy on the test set for all these experiments is shown in figure <CREF/> . </S>
+<S ID='S-141' AZ='CTR'> As can be seen , the dependency model is more accurate than the adjacency model . </S>
+<S ID='S-142' AZ='OWN'> This is true across the whole spectrum of training schemes . </S>
+<S ID='S-143' AZ='OWN'> The proportion of cases in which the procedure was forced to guess , either because no data supported either analysis or because both were equally supported , is quite low . </S>
+<S ID='S-144' AZ='OWN'> For the pattern and two-word window training schemes , the guess rate is less than 4 % for both models . </S>
+<S ID='S-145' AZ='OWN'> In the three-word window training scheme , the guess rates are less than 1 % . </S>
+<S ID='S-146' AZ='OWN'> For all larger windows , neither model is ever forced to guess . </S>
+</P>
+<P>
+<S ID='S-147' AZ='CTR'> In the case of the pattern training scheme , the difference between 68.9 % for adjacency and 77.5 % for dependency is statistically significant at the 5 % level ( p = 0.0316 ) , demonstrating the superiority of the dependency model , at least for the compounds within Grolier 's encyclopedia . </S>
+</P>
+<P>
+<S ID='S-148' AZ='OWN'> In no case do any of the windowed training schemes outperform the pattern scheme . </S>
+<S ID='S-149' AZ='OWN'> It seems that additional instances admitted by the windowed schemes are too noisy to make an improvement . </S>
+</P>
+<P>
+<S ID='S-150' AZ='OWN'> Initial results from applying these methods to the EMA corpus have been obtained by <REF TYPE='A'>Wilco ter Stal 1995</REF> , and support the conclusion that the dependency model is superior to the adjacency model . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-11'> Tuning </HEADER>
+<P>
+<S ID='S-151' AZ='OTH'> <REF TYPE='A' SELF="YES">Lauer and Dras 1994</REF> suggest two improvements to the method used above . </S>
+<S ID='S-152' AZ='OTH' TYPE='ITEM'> These are : </S>
+</P>
+<P>
+<S ID='S-153' TYPE='ITEM' AZ='OTH' > a factor favouring left-branching which arises from the formal dependency construction ; and </S>
+<S ID='S-154' TYPE='ITEM' AZ='OTH' > factors allowing for naive estimates of the variation in the probability of categories . </S>
+</P>
+<P>
+<S ID='S-155' AZ='OWN'> While these changes are motivated by the dependency model , I have also applied them to the adjacency model for comparison . </S>
+<S ID='S-156' AZ='OWN'> To implement them , equations <CREF/> and <CREF/> must be modified to incorporate a factor of <EQN/> in each term of the sum and the entire ratio must be multiplied by two . </S>
+<S ID='S-157' AZ='OWN'> Five training schemes have been applied with these extensions . </S>
+<S ID='S-158' AZ='OWN'> The accuracy results are shown in figure <CREF/> . </S>
+<S ID='S-159' AZ='OWN'> For comparison , the untuned accuracy figures are shown with dotted lines . </S>
+<S ID='S-160' AZ='OWN'> A marked improvement is observed for the adjacency model , while the dependency model is only slightly improved . </S>
+</P>
+<IMAGE ID='I-9'/>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-12'> Lexical Association </HEADER>
+<P>
+<S ID='S-161' AZ='OWN'> To determine the difference made by conceptual association , the pattern training scheme has been retrained using lexical counts for both the dependency and adjacency model , but only for the words in the test set . </S>
+<S ID='S-162' AZ='OWN'> If the same system were to be applied across all of <EQN/> ( a total of 90,000 nouns ) , then around 8.1 billion parameters would be required . </S>
+<S ID='S-163' AZ='OWN'> Left-branching is favoured by a factor of two as described in the previous section , but no estimates for the category probabilities are used ( these being meaningless for the lexical association method ) . </S>
+</P>
+<P>
+<S ID='S-164' AZ='OWN'> Accuracy and guess rates are shown in figure <CREF/> . </S>
+<S ID='S-165' AZ='OWN'> Conceptual association outperforms lexical association , presumably because of its ability to generalise . </S>
+</P>
+<IMAGE ID='I-10'/>
+<IMAGE ID='I-11'/>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-13'> Using a Tagger </HEADER>
+<P>
+<S ID='S-166' AZ='OWN'> One problem with the training methods given in section <CREF/> is the restriction of training data to nouns in <EQN/> . </S>
+<S ID='S-167' AZ='OWN'> Many nouns , especially common ones , have verbal or adjectival usages that preclude them from being in <EQN/> . </S>
+<S ID='S-168' AZ='OWN'> Yet when they occur as nouns , they still provide useful training information that the current system ignores . </S>
+<S ID='S-169' AZ='BAS'> To test whether using tagged data would make a difference , the freely available <REFAUTHOR>Brill</REFAUTHOR> tagger <REF TYPE='P'>Brill 1993</REF> was applied to the corpus . </S>
+<S ID='S-170' AZ='OWN'> Since no manually tagged training data is available for our corpus , the tagger 's default rules were used ( these rules were produced by <REFAUTHOR>Brill</REFAUTHOR> by training on the Brown corpus ) . </S>
+<S ID='S-171' AZ='OWN'> This results in rather poor tagging accuracy , so it is quite possible that a manually tagged corpus would produce better results . </S>
+</P>
+<P>
+<S ID='S-172' AZ='OWN'> Three training schemes have been used and the tuned analysis procedures applied to the test set . </S>
+<S ID='S-173' AZ='OWN'> Figure <CREF/> shows the resulting accuracy , with accuracy values from figure <CREF/> displayed with dotted lines . </S>
+<S ID='S-174' AZ='OWN'> If anything , admitting additional training data based on the tagger introduces more noise , reducing the accuracy . </S>
+<S ID='S-175' AZ='OWN'> However , for the pattern training scheme an improvement was made to the dependency model , producing the highest overall accuracy of 81 % . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-14'> Conclusion </HEADER>
+<P>
+<S ID='S-176' AZ='OWN'> The experiments above demonstrate a number of important points . </S>
+<S ID='S-177' AZ='OWN'> The most general of these is that even quite crude corpus statistics can provide information about the syntax of compound nouns . </S>
+<S ID='S-178' AZ='OWN'> At the very least , this information can be applied in broad coverage parsing to assist in the control of search . </S>
+<S ID='S-179' AZ='AIM'> I have also shown that with a corpus of moderate size it is possible to get reasonable results without using a tagger or parser by employing a customised training pattern . </S>
+<S ID='S-180' AZ='OWN'> While using windowed co-occurrence did not help here , it is possible that under more data sparse conditions better performance could be achieved by this method . </S>
+</P>
+<P>
+<S ID='S-181' AZ='OWN'> The significance of the use of conceptual association deserves some mention . </S>
+<S ID='S-182' AZ='OWN'> I have argued that without it a broad coverage system would be impossible . </S>
+<S ID='S-183' AZ='CTR'> This is in contrast to previous work on conceptual association where it resulted in little improvement on a task which could already be performed . </S>
+<S ID='S-184' AZ='CTR'> In this study , not only has the technique proved its worth by supporting generality , but through generalisation of training information it outperforms the equivalent lexical association approach given the same information . </S>
+</P>
+<P>
+<S ID='S-185' AZ='OWN'> Amongst all the comparisons performed in these experiments one stands out as exhibiting the greatest contrast . </S>
+<S ID='S-186' ABSTRACTC='A-3' AZ='CTR'> In all experiments the dependency model provides a substantial advantage over the adjacency model , even though the latter is more prevalent in proposals within the literature . </S>
+<S ID='S-187' AZ='OWN'> This result is in accordance with the informal reasoning given in section <CREF/> . </S>
+<S ID='S-188' AZ='OWN'> The model also has the further commendation that it predicts correctly the observed proportion of left-branching compounds found in two independently extracted test sets . </S>
+</P>
+<P>
+<S ID='S-189' AZ='OWN'> In all , the most accurate technique achieved an accuracy of 81 % as compared to the 67 % achieved by guessing left-branching . </S>
+<S ID='S-190' AZ='OWN'> Given the high frequency of occurrence of noun compounds in many texts , this suggests that the use of these techniques in probabilistic parsers will result in higher performance in broad coverage natural language processing . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+ <SURNAME>Arens</SURNAME>, Y., <SURNAME>Granacki</SURNAME>, J. and <SURNAME>Parker</SURNAME>, A. 
+<DATE>1987</DATE>.
+Phrasal Analysis of Long Noun Sequences.
+In Proceedings of the 25th Annual Meeting of the 
+Association for Computational Linguistics, 
+Stanford, CA. pp59-64.
+</REFERENCE>
+<REFERENCE>
+ <SURNAME>Brent</SURNAME>, Michael. 
+<DATE>1993</DATE>. 
+From Grammar to Lexicon: Unsupervised Learning of Lexical Syntax. 
+In Computational Linguistics, Vol 19(2), 
+Special Issue on Using Large Corpora II, pp243-62.
+</REFERENCE>
+<REFERENCE>
+ <SURNAME>Brill</SURNAME>, Eric. 
+<DATE>1993</DATE>. 
+A Corpus-based Approach to Language Learning. 
+PhD Thesis, University of Pennsylvania, Philadelphia, PA..
+</REFERENCE>
+<REFERENCE>
+ <SURNAME>Charniak</SURNAME>, Eugene. 
+<DATE>1993</DATE>. 
+Statistical Language Learning. 
+MIT Press, Cambridge, MA.
+</REFERENCE>
+<REFERENCE>
+ <SURNAME>Finin</SURNAME>, Tim. 
+<DATE>1980</DATE>. 
+The Semantic Interpretation of Compound Nominals. 
+PhD Thesis, Co-ordinated Science Laboratory, 
+University of Illinois, Urbana, IL.
+</REFERENCE>
+<REFERENCE>
+ <SURNAME>Hindle</SURNAME>, D. and <SURNAME>Rooth</SURNAME>, M. 
+<DATE>1993</DATE>. 
+Structural Ambiguity and Lexical Relations. 
+In Computational Linguistics Vol. 19(1), 
+Special Issue on Using Large Corpora I, pp103-20.
+</REFERENCE>
+<REFERENCE>
+ <SURNAME>Isabelle</SURNAME>, Pierre. 
+<DATE>1984</DATE>. 
+Another Look At Nominal Compounds. 
+In Proceedings of COLING-84, 
+Stanford, CA. pp509-16.
+</REFERENCE>
+<REFERENCE>
+ <SURNAME>Karp</SURNAME>, D., <SURNAME>Schabes</SURNAME>, Y., <SURNAME>Zaidel</SURNAME>, M. and <SURNAME>Egedi</SURNAME>, D.      
+<DATE>1992</DATE>.
+A Freely Available Wide Coverage Morphological 
+Analyzer for English.
+In Proceedings of COLING-92,
+Nantes, France, pp950-4.
+</REFERENCE>
+<REFERENCE>
+ <SURNAME>Kobayasi</SURNAME>, Y., <SURNAME>Tokunaga</SURNAME>, T. and <SURNAME>Tanaka</SURNAME>, H.
+<DATE>1994</DATE>.
+Analysis of Japanese Compound Nouns 
+using Collocational Information.
+In Proceedings of COLING-94,
+Kyoto, Japan, pp865-9.
+</REFERENCE>
+<REFERENCE>
+ <SURNAME>Lauer</SURNAME>, Mark. 
+<DATE>1994</DATE>. 
+Conceptual Association for Compound Noun Analysis. 
+In Proceedings of the 32nd Annual Meeting 
+of the Association for Computational Linguistics, 
+Student Session, Las Cruces, NM. pp337-9.
+</REFERENCE>
+<REFERENCE>
+ <SURNAME>Lauer</SURNAME>, M. and <SURNAME>Dras</SURNAME>, M. 
+<DATE>1994</DATE>. 
+A Probabilistic Model of Compound Nouns. 
+In Proceedings of the 7th Australian Joint 
+Conference on Artificial Intelligence, Armidale, NSW, Australia.
+World Scientific Press, pp474-81.
+</REFERENCE>
+<REFERENCE>
+ <SURNAME>Leonard</SURNAME>, Rosemary. 
+<DATE>1984</DATE>. 
+The Interpretation of English Noun Sequences 
+on the Computer. 
+North-Holland, Amsterdam.
+</REFERENCE>
+<REFERENCE>
+ <SURNAME>Levi</SURNAME>, Judith. 
+<DATE>1978</DATE>. 
+The Syntax and Semantics of Complex Nominals. 
+Academic Press, New York.
+</REFERENCE>
+<REFERENCE>
+ <SURNAME>Liberman</SURNAME>, M. and <SURNAME>Sproat</SURNAME>, R. 
+<DATE>1992</DATE>. 
+The Stress and Structure of Modified Noun Phrases in English. 
+In Sag, I. and Szabolcsi, A., editors, Lexical Matters 
+CSLI Lecture Notes No. 24. 
+University of Chicago Press, pp131-81.
+</REFERENCE>
+<REFERENCE>
+ <SURNAME>Marcus</SURNAME>, Mitchell. 
+<DATE>1980</DATE>. 
+A Theory of Syntactic Recognition for Natural Language. 
+MIT Press, Cambridge, MA.
+</REFERENCE>
+<REFERENCE>
+ <SURNAME>McDonald</SURNAME>, David B. 
+<DATE>1982</DATE>. 
+Understanding Noun Compounds. 
+PhD Thesis, Carnegie-Mellon University, Pittsburgh, PA.
+</REFERENCE>
+<REFERENCE>
+ <SURNAME>Pustejovsky</SURNAME>, J., <SURNAME>Bergler</SURNAME>, S. and <SURNAME>Anick</SURNAME>, P.
+<DATE>1993</DATE>.
+Lexical Semantic Techniques for Corpus Analysis. 
+In Computational Linguistics Vol 19(2), 
+Special Issue on Using Large Corpora II, pp331-58.
+</REFERENCE>
+<REFERENCE>
+ <SURNAME>Resnik</SURNAME>, Philip. 
+<DATE>1993</DATE>. 
+Selection and Information: A Class-Based 
+Approach to Lexical Relationships. 
+PhD dissertation, University of 
+Pennsylvania, Philadelphia, PA.
+</REFERENCE>
+<REFERENCE>
+ <SURNAME>Resnik</SURNAME>, P. and <SURNAME>Hearst</SURNAME>, M. 
+<DATE>1993</DATE>. 
+Structural Ambiguity and Conceptual Relations. 
+In Proceedings of the Workshop on Very Large Corpora: 
+Academic and Industrial Perspectives, June 22, Ohio 
+State University, pp58-64.
+</REFERENCE>
+<REFERENCE>
+ <SURNAME>Ryder</SURNAME>, Mary Ellen. 
+<DATE>1994</DATE>. 
+Ordered Chaos: The Interpretation of 
+English Noun-Noun Compounds. 
+University of California Press Publications 
+in Linguistics, Vol 123.
+</REFERENCE>
+<REFERENCE>
+ <SURNAME>Smadja</SURNAME>, Frank. 
+<DATE>1993</DATE>. 
+Retrieving Collocations from Text: Xtract. 
+In Computational Linguistics, Vol 19(1), 
+Special Issue on Using Large Corpora I, pp143-177.
+</REFERENCE>
+<REFERENCE>
+ Sparck <SURNAME>Jones</SURNAME>, Karen. 
+<DATE>1983</DATE>. 
+Compound Noun Interpretation Problems. 
+In Fallside, F. and Woods, W.A., editors,
+Computer Speech Processing. 
+Prentice-Hall, NJ. pp363-81.
+</REFERENCE>
+<REFERENCE>
+ <SURNAME>Sproat</SURNAME>, Richard. 
+<DATE>1994</DATE>. 
+English noun-phrase accent prediction for text-to-speech. 
+In Computer Speech and Language, Vol 8, pp79-94.
+</REFERENCE>
+<REFERENCE>
+ <SURNAME>Vanderwende</SURNAME>, Lucy. 
+<DATE>1993</DATE>. 
+SENS: The System for Evaluating Noun Sequences. 
+In Jensen, K., Heidorn, G. and Richardson, S., editors, 
+Natural Language Processing: The PLNLP Approach. 
+Kluwer Academic, pp161-73.
+</REFERENCE>
+<REFERENCE>
+ ter Stal, Wilco.
+<DATE>1995</DATE>.
+Syntactic Disambiguation of Nominal Compounds 
+Using Lexical and Conceptual Association.
+Memorandum UT-KBS-95-002, University of Twente,
+Enschede, Netherlands.
+</REFERENCE>
+<REFERENCE>
+ <SURNAME>Yarowsky</SURNAME>, David. 
+<DATE>1992</DATE>. 
+Word-Sense Disambiguation Using Statistical Models of 
+Roget's Categories Trained on Large Corpora. 
+In Proceedings of COLING-92, Nantes, France, pp454-60.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

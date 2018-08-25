@@ -1,0 +1,167 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9502033</FILENO>
+<APPEARED><CONFERENCE TYPE='Student'>EACL</CONFERENCE><YEAR>1995</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.Sm </CLASSIFICATION>
+</METADATA>
+<TITLE> An Algorithm to Co-Ordinate Anaphora Resolution and PPS Disambiguation Process </TITLE>
+<AUTHORLIST>
+<AUTHOR>Saliha Azzam</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' AZ='BKG'> Both anaphora resolution and prepositional phrase ( PP ) attachment are the most frequent ambiguities in natural language processing . </A-S>
+<A-S ID='A-1' DOCUMENTC='S-1' AZ='CTR'> Several methods have been proposed to deal with each phenomenon separately , however none of proposed systems has considered the way of dealing both phenomena . </A-S>
+<A-S ID='A-2' AZ='AIM'> We tackle this issue here , proposing an algorithm to co-ordinate the treatment of these two problems efficiently , i.e. , the aim is also to exploit at each step all the results that each component can provide . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='OTH'> Several methods have been proposed to deal with anaphora resolution and prepositional phrase ( PP ) attachment phenomenon and separately , so that the literature is very abundant : for PPs see e.g. , <REF TYPE='P'>Frazier and Fodor 1979</REF> , <REF TYPE='P'>Hobbs 1990</REF> , <REF TYPE='P'>Wilks and Huang 1985</REF> ) , and for anaphora see e.g. , <REF TYPE='P'>Carter 1986</REF> , <REF TYPE='P'>Reinhart 1983</REF> , <REF TYPE='P'>Sidner 1983</REF> . </S>
+<S ID='S-1' ABSTRACTC='A-1' AZ='CTR'> However none of these methods has considered the way of dealing both phenomena in the same concrete system . </S>
+</P>
+<P>
+<S ID='S-2' AZ='AIM'> We propose in this paper an algorithm that deals with both phenomena , in the same analyser . </S>
+<S ID='S-3' AZ='BAS'> The anaphora module pertains to the recent methods , uses a set of resolution rules based on the focusing approach <REF TYPE='P'>Sidner 1983</REF> . </S>
+<S ID='S-4' AZ='OWN'> These rules are applied to the conceptual representation and their output is a set of candidate antecedents . </S>
+<S ID='S-5' AZ='BAS'> Concerning the PPs , unattached prepositions involve empty or unfilled roles in the Conceptual Structures ( CSs ) , expressed in a frame-based language <REF TYPE='P'>Zarri 1992</REF> . </S>
+<S ID='S-6' AZ='OWN'> The disambiguation procedure aims at filling the empty roles using attachment rules . </S>
+</P>
+<P>
+<S ID='S-7' AZ='OWN'> This work was accomplished in the context of COBALT project ( LRE 61 - 011 ) , dealing with financial news . </S>
+<S ID='S-8' AZ='BAS'> A detailed discussion about both procedures of anaphora resolution and PP attachment is largely developed in <REF SELF="YES" TYPE='A'>Azzam 1994</REF> . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> The Algorithm </HEADER>
+<P>
+<S ID='S-9' AZ='OWN'> Two of the main principles of the algorithm are : </S>
+</P>
+<P>
+<S ID='S-10' TYPE='ITEM' AZ='OWN' > The algorithm is applied on the text sentence by sentence , i.e. the ambiguities of the previous sentences have already been considered ( resolved or not ) . </S>
+<S ID='S-11' TYPE='ITEM' AZ='OWN' > The anaphora procedure skips the resolution of a given anaphor when this anaphor is preceded by an unattached preposition . </S>
+</P>
+<P>
+<S ID='S-12' AZ='OWN'> This is because the resolution rules may have an empty role as a parameter , due to this unattached preposition . </S>
+<S ID='S-13' AZ='OWN'> The resolution of the anaphor is then postponed to the second phase of anaphora resolution . </S>
+</P>
+<P>
+<S ID='S-14' AZ='OWN'> The proposed procedure is based on successive calls to the anaphora module and to the PP attachment module . </S>
+<S ID='S-15' AZ='OWN'> The output of each call is a set of CSs that represent the intermediate results exchanged between each call and on which both modules operate in turn . </S>
+<S ID='S-16' AZ='OWN'> The aim is to fill the unfilled roles in the CSs , due to anaphora or unattached PPs. To summarize the algorithm is : </S>
+</P>
+<P>
+<S ID='S-17' TYPE='ITEM' AZ='OWN' > Apply the anaphora module first . </S>
+<S ID='S-18' TYPE='ITEM' AZ='OWN' > Apply the PP attachment procedure . </S>
+<S ID='S-19' TYPE='ITEM' AZ='OWN' > If some anaphora are left unresolved , apply the anaphora module again . </S>
+<S ID='S-20' TYPE='ITEM' AZ='OWN' > If there are still unattached PPs , apply the attachment procedure again . </S>
+<S ID='S-21' TYPE='ITEM' AZ='OWN' > Repeat <CREF/> and <CREF/> , until all PPs and anaphors are treated . </S>
+</P>
+<P>
+<S ID='S-22' AZ='OWN'> The order in which the two modules are called is based on efficiency deduced from statistical data performed on COBALT corpuses . </S>
+</P>
+<P>
+<S ID='S-23' AZ='OWN'> Three main cases are faced by the algorithm : </S>
+</P>
+<P>
+<S ID='S-24' AZ='OWN'> When the anaphor occurs before a given preposition in the sentence , its resolution does not depend on where the preposition is to be attached ( except for cataphors that are quite rare ) . </S>
+<S ID='S-25' AZ='OWN'> In this case the anaphora module can be applied before the attachment procedure . </S>
+<S ID='S-26' AZ='OWN'> The example <CREF/> below shows that the resolution of the anaphoric pronoun that must be performed first and that the PP starting with of be attached later . </S>
+<EXAMPLE ID='E-0'>
+<EX-S> The sale of Credito was first proposed last August and that of BCI late last year . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-27' AZ='OWN'> When the anaphor occurs after one or several unattached prepositions , it could be an intra-sentential anaphor ( i.e. referring to an entity in the same sentence ) , then its resolution may depend on one of the previous prepositional phrases . </S>
+<S ID='S-28' AZ='OWN'> In this case , the resolution of the anaphora is postponed to a next call of the anaphora module according to principle <CREF/> stated above . </S>
+</P>
+<P>
+<S ID='S-29' AZ='OWN'> When the anaphor is included in a PP ( particular case of <CREF/> ) , PP attachment rules need semantic information about the `` object '' of the PP ; when it is a pronoun , no semantic information is available , so that the attachment rules can not be applied . </S>
+<S ID='S-30' AZ='OWN'> The anaphoric pronouns have to be resolved first , so as to determine what semantic class they refer to ; the PP attachment procedure can then be applied . </S>
+<S ID='S-31' AZ='OWN'> When a sequence contains more than two such PPs , i.e. , with anaphors as objects , the length of a cycle is more than 4 . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-2'> An Example </HEADER>
+<EXAMPLE ID='E-1'>
+<EX-S> UPHB shares have been suspended since October 29 at the firm 's request following a surge in its share price on a takeover rumour . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-32' AZ='OWN'> The pronoun its can not be resolved by the anaphora resolution module because it is preceded by unattached PPs ; its resolution is skipped . </S>
+</P>
+<P>
+<S ID='S-33' AZ='OWN'> The PP attachment procedure is then called to determine the attachment of since and at while the object of the in PP comprises an anaphoric pronoun its ( case <CREF/> ) and the on PP is preceded by its . </S>
+<S ID='S-34' AZ='OWN'> The attachment of both PPs is then skipped . </S>
+</P>
+<P>
+<S ID='S-35' AZ='OWN'> The anaphora module is called again to resolve the anaphoric pronoun its , which is possible , in this example , since the previous PPs have been attached and there is no anaphors before . </S>
+</P>
+<P>
+<S ID='S-36' AZ='OWN'> Finally , the PP attachment procedure has to be called again for the in and on PPs . </S>
+</P>
+<P>
+<S ID='S-37' AZ='OWN'> Notice that even if each module is called several times , there is no redundancy in the processing . </S>
+<S ID='S-38' AZ='OWN'> The algorithm should be considered as the splitting of both anaphora resolution and PP attachment procedures into several phases and not as the repetition of each procedure . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-3'> Conclusion </HEADER>
+<P>
+<S ID='S-39' AZ='AIM'> The objective was to emphasise more than it has been done until now , the fact that PP attachment and anaphora resolution could interact in the same system in order to produce a complete conceptual analysis , instead of slowing down each other . </S>
+<S ID='S-40' AZ='OWN'> The algorithm we proposed in this paper , is independent of the used approaches in both anaphora and attachment modules . </S>
+<S ID='S-41' AZ='OWN'> It concerns rather the way of managing the interaction between the two modules . </S>
+</P>
+<P>
+<S ID='S-42' AZ='OWN'> Our actual work addresses more the problems inside each module . </S>
+<S ID='S-43' AZ='OWN'> The attachment module has been implemented at 99 % . </S>
+<S ID='S-44' AZ='OWN'> Presently we are working on the extension of the anaphora module particularly to deal also with the anaphoric definite noun phrases . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+<SURNAME>Azzam</SURNAME>, S. <DATE>1994</DATE>. CLAM COBALT conceptual analyser (COBALT Tech. Report
+Del6.2). CRIL Ing	nierie.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Carter</SURNAME>, D. <DATE>1987</DATE>.  Interpreting Anaphors in natural language Texts. Chic
+hester:
+Ellis Horwood.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Frazier</SURNAME>, L. and <SURNAME>Fodor</SURNAME>, J. <DATE>1979</DATE>.  The sausage machine
+: A New Two-Stage
+Parsing Model, Cognition, 6.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Hobbs</SURNAME>, J.R., and <SURNAME>Bear</SURNAME>, J. <DATE>1990</DATE>. Two Principles of Pa
+rse Reference in
+Proceedings of the 13th International
+Conference on Computational Linguistics - COLING/90, vol. 3, Karlgren,
+H., ed.  Helsinki:  University  Press.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Reinhart</SURNAME>, T. <DATE>1983</DATE>. Anaphora and Semantic Interpretation. London : Croom
+ Helm.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Sidner</SURNAME>, C.L. <DATE>1983</DATE>. Focusing for Interpretation of pronouns. American Jo
+urnal
+of Computational Linguistics, 7,  217-231.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Wilks</SURNAME>, Y., <SURNAME>Huang</SURNAME>, X., and <SURNAME>Fass</SURNAME>, D. <DATE>1985</DATE>.  Syntax, Preference and Right
+Attachment,  IJCAI.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Zarri</SURNAME>, G.P. <DATE>1992</DATE>. The descriptive component of hybrid knowledge
+representation language, In: Semantic networks in Artificial
+Intelligence, Lehmann, F., ed. Oxford: Pergamon Press.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>
+
+
+

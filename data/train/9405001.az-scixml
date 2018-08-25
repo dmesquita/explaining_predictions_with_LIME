@@ -1,0 +1,447 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9405001</FILENO>
+<APPEARED><CONFERENCE>ACL</CONFERENCE><YEAR>1994</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.St </CLASSIFICATION>
+</METADATA>
+<TITLE> Similarity-Based Estimation of Word Cooccurrence Probabilities </TITLE>
+<AUTHORLIST>
+<AUTHOR>Ido Dagan</AUTHOR>
+<AUTHOR>Fernando Pereira</AUTHOR>
+<AUTHOR>Lillian Lee</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' AZ='BKG'> In many applications of natural language processing it is necessary to determine the likelihood of a given word combination . </A-S>
+<A-S ID='A-1' AZ='BKG'> For example , a speech recognizer may need to determine which of the two word combinations `` eat a peach '' and `` eat a beach '' is more likely . </A-S>
+<A-S ID='A-2' AZ='OTH'> Statistical NLP methods determine the likelihood of a word combination according to its frequency in a training corpus . </A-S>
+<A-S ID='A-3' AZ='CTR'> However , the nature of language is such that many word combinations are infrequent and do not occur in a given corpus . </A-S>
+<A-S ID='A-4' DOCUMENTC='S-150' AZ='AIM'> In this work we propose a method for estimating the probability of such previously unseen word combinations using available information on `` most similar '' words . </A-S>
+<A-S ID='A-5' DOCUMENTC='S-151' AZ='AIM'> We describe a probabilistic word association model based on distributional word similarity , and apply it to improving probability estimates for unseen word bigrams in a variant of <REFAUTHOR>Katz</REFAUTHOR> 's back-off model . </A-S>
+<A-S ID='A-6' DOCUMENTC='S-154' AZ='OWN'> The similarity-based method yields a 20 % perplexity improvement in the prediction of unseen bigrams and statistically significant reductions in speech-recognition error . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> Data sparseness is an inherent problem in statistical methods for natural language processing . </S>
+<S ID='S-1' AZ='BKG'> Such methods use statistics on the relative frequencies of configurations of elements in a training corpus to evaluate alternative analyses or interpretations of new samples of text or speech . </S>
+<S ID='S-2' AZ='BKG'> The most likely analysis will be taken to be the one that contains the most frequent configurations . </S>
+<S ID='S-3' AZ='BKG'> The problem of data sparseness arises when analyses contain configurations that never occurred in the training corpus . </S>
+<S ID='S-4' AZ='BKG'> Then it is not possible to estimate probabilities from observed frequencies , and some other estimation scheme has to be used . </S>
+</P>
+<P>
+<S ID='S-5' AZ='BKG'> We focus here on a particular kind of configuration , word cooccurrence . </S>
+<S ID='S-6' AZ='BKG'> Examples of such cooccurrences include relationships between head words in syntactic constructions ( verb-object or adjective-noun , for example ) and word sequences ( n-grams ) . </S>
+<S ID='S-7' AZ='OTH'> In commonly used models , the probability estimate for a previously unseen cooccurrence is a function of the probability estimates for the words in the cooccurrence . </S>
+<S ID='S-8' AZ='OTH'> For example , in the bigram models that we study here , the probability <EQN/> of a conditioned word <EQN/> that has never occurred in training following the conditioning word <EQN/> is calculated from the probability of <EQN/> , as estimated by <EQN/> 's frequency in the corpus <REF  TYPE='P'>Jelinek et al. 1992</REF>, <REF  TYPE='P'>Katz 1987</REF> . </S>
+<S ID='S-9' AZ='OTH'> This method depends on an independence assumption on the cooccurrence of <EQN/> and <EQN/> : the more frequent <EQN/> is , the higher will be the estimate of <EQN/> , regardless of <EQN/> . </S>
+</P>
+<P>
+<S ID='S-10' AZ='OTH'> Class-based and similarity-based models provide an alternative to the independence assumption . </S>
+<S ID='S-11' AZ='OTH'> In those models , the relationship between given words is modeled by analogy with other words that are in some sense similar to the given ones . </S>
+</P>
+<P>
+<S ID='S-12' AZ='OTH'> <REF TYPE='A' >Brown et al. 1992</REF> suggest a class-based n-gram model in which words with similar cooccurrence distributions are clustered in word classes . </S>
+<S ID='S-13' AZ='OTH'> The cooccurrence probability of a given pair of words then is estimated according to an averaged cooccurrence probability of the two corresponding classes . </S>
+<S ID='S-14' AZ='OTH'> <REF TYPE='A'  SELF="YES">Pereira et al. 1993</REF> propose a `` soft '' clustering scheme for certain grammatical cooccurrences in which membership of a word in a class is probabilistic . </S>
+<S ID='S-15' AZ='OTH'> Cooccurrence probabilities of words are then modeled by averaged cooccurrence probabilities of word clusters . </S>
+</P>
+<P>
+<S ID='S-16' AZ='OTH'> <REF TYPE='A'  SELF="YES">Dagan et al. 1993</REF> argue that reduction to a relatively small number of predetermined word classes or clusters may cause a substantial loss of information . </S>
+<S ID='S-17' AZ='OTH'> Their similarity-based model avoids clustering altogether . </S>
+<S ID='S-18' AZ='OTH'> Instead , each word is modeled by its own specific class , a set of words which are most similar to it ( as in k-nearest neighbor approaches in pattern recognition ) . </S>
+<S ID='S-19' AZ='OTH'> Using this scheme , they predict which unobserved cooccurrences are more likely than others . </S>
+<S ID='S-20' AZ='CTR'> Their model , however , is not probabilistic , that is , it does not provide a probability estimate for unobserved cooccurrences . </S>
+<S ID='S-21' AZ='CTR'> It cannot therefore be used in a complete probabilistic framework , such as n-gram language models or probabilistic lexicalized grammars <REF  TYPE='P'>Schabes 1992</REF>, <REF  TYPE='P'>Lafferty et al. 1992</REF> . </S>
+</P>
+<P>
+<S ID='S-22' AZ='AIM'> We now give a similarity-based method for estimating the probabilities of cooccurrences unseen in training . </S>
+<S ID='S-23' AZ='OTH'> Similarity-based estimation was first used for language modeling in the cooccurrence smoothing method of <REF TYPE='A'>Essen and Steinbiss 1992</REF> , derived from work on acoustic model smoothing by <REF TYPE='P'>Sugawara et al. 1985</REF> . </S>
+<S ID='S-24' AZ='BAS'> We present a different method that takes as starting point the back-off scheme of <REF TYPE='A'>Katz 1987</REF> . </S>
+<S ID='S-25' AZ='OWN'> We first allocate an appropriate probability mass for unseen cooccurrences following the back-off method . </S>
+<S ID='S-26' AZ='OWN'> Then we redistribute that mass to unseen cooccurrences according to an averaged cooccurrence distribution of a set of most similar conditioning words , using relative entropy as our similarity measure . </S>
+<S ID='S-27' AZ='OWN'> This second step replaces the use of the independence assumption in the original back-off model . </S>
+</P>
+<P>
+<S ID='S-28' AZ='OWN'> We applied our method to estimate unseen bigram probabilities for Wall Street Journal text and compared it to the standard back-off model . </S>
+<S ID='S-29' AZ='OWN'> Testing on a held-out sample , the similarity model achieved a 20 % reduction in perplexity for unseen bigrams . </S>
+<S ID='S-30' AZ='OWN'> These constituted just 10.6 % of the test sample , leading to an overall reduction in test-set perplexity of 2.4 % . </S>
+<S ID='S-31' AZ='OWN'> We also experimented with an application to language modeling for speech recognition , which yielded a statistically significant reduction in recognition error . </S>
+</P>
+<P>
+<S ID='S-32' AZ='OWN'> The remainder of the discussion is presented in terms of bigrams , but it is valid for other types of word cooccurrence as well . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Discounting and Redistribution </HEADER>
+<P>
+<S ID='S-33' AZ='BKG'> Many low-probability bigrams will be missing from any finite sample . </S>
+<S ID='S-34' AZ='BKG'> Yet , the aggregate probability of all these unseen bigrams is fairly high ; any new sample is very likely to contain some . </S>
+</P>
+<P>
+<S ID='S-35' AZ='CTR'> Because of data sparseness , we cannot reliably use a maximum likelihood estimator ( MLE ) for bigram probabilities . </S>
+<S ID='S-36' AZ='OTH'> The MLE for the probability of a bigram <EQN/> is simply : </S>
+</P>
+<IMAGE ID='I-0'/>
+<P>
+<S ID='S-37' AZ='OTH'> where <EQN/> is the frequency of <EQN/> in the training corpus and N is the total number of bigrams . </S>
+<S ID='S-38' AZ='CTR'> However , this estimates the probability of any unseen bigram to be zero , which is clearly undesirable . </S>
+</P>
+<P>
+<S ID='S-39' AZ='OTH'> Previous proposals to circumvent the above problem <REF TYPE='P'>Good 1953</REF> , <REF TYPE='P'>Jelinek et al. 1992</REF> , <REF TYPE='P'>Katz 1987</REF> , <REF TYPE='P'>Church and Gale 1991</REF> take the MLE as an initial estimate and adjust it so that the total probability of seen bigrams is less than one , leaving some probability mass for unseen bigrams . </S>
+<S ID='S-40' AZ='OTH'> Typically , the adjustment involves either interpolation , in which the new estimator is a weighted combination of the MLE and an estimator that is guaranteed to be nonzero for unseen bigrams , or discounting , in which the MLE is decreased according to a model of the unreliability of small frequency counts , leaving some probability mass for unseen bigrams . </S>
+</P>
+<P>
+<S ID='S-41' AZ='OTH'> The back-off model of <REF TYPE='A'>Katz 1987</REF> provides a clear separation between frequent events , for which observed frequencies are reliable probability estimators , and low-frequency events , whose prediction must involve additional information sources . </S>
+<S ID='S-42' AZ='OTH'> In addition , the back-off model does not require complex estimations for interpolation parameters . </S>
+</P>
+<P>
+<S ID='S-43' AZ='OTH' TYPE='ITEM'> A back-off model requires methods for </S>
+<S ID='S-44' TYPE='ITEM' AZ='OTH'> discounting the estimates of previously observed events to leave out some positive probability mass for unseen events , and </S>
+<S ID='S-45' TYPE='ITEM' AZ='OTH'> redistributing among the unseen events the probability mass freed by discounting . </S>
+<S ID='S-46' AZ='OTH'> For bigrams the resulting estimator has the general form  </S>
+</P>
+<IMAGE ID='I-1'/>
+<P>
+<S ID='S-47' AZ='OTH'> where <EQN/> represents the discounted estimate for seen bigrams , <EQN/> the model for probability redistribution among the unseen bigrams , and <EQN/> is a normalization factor . </S>
+<S ID='S-48' AZ='OTH'> Since the overall mass left for unseen bigrams starting with <EQN/> is given by  </S>
+</P>
+<IMAGE ID='I-2'/>
+<P>
+<S ID='S-49' AZ='OTH'> the normalization factor required to ensure <EQN/> is </S>
+</P>
+<IMAGE ID='I-3'/>
+<P>
+<S ID='S-50' AZ='OTH'> The second formulation of the normalization is computationally preferable because the total number of possible bigram types far exceeds the number of observed types . </S>
+<S ID='S-51' AZ='OTH'> Equation <CREF/> modifies slightly <REFAUTHOR>Katz</REFAUTHOR> 's presentation to include the placeholder <EQN/> for alternative models of the distribution of unseen bigrams . </S>
+</P>
+<P>
+<S ID='S-52' AZ='OTH'> <REFAUTHOR>Katz</REFAUTHOR> uses the <REFAUTHOR>Good</REFAUTHOR>-Turing formula to replace the actual frequency <EQN/> of a bigram ( or an event , in general ) with a discounted frequency , <EQN/> , defined by </S>
+</P>
+<IMAGE ID='I-4'/>
+<P>
+<S ID='S-53' AZ='OTH'> where <EQN/> is the number of different bigrams in the corpus that have frequency c . </S>
+<S ID='S-54' AZ='OTH'> He then uses the discounted frequency in the conditional probability calculation for a bigram : </S>
+</P>
+<IMAGE ID='I-5'/>
+<P>
+<S ID='S-55' AZ='OTH'> In the original <REFAUTHOR>Good</REFAUTHOR>-Turing method <REF TYPE='P'>Good 1953</REF> the free probability mass is redistributed uniformly among all unseen events . </S>
+<S ID='S-56' AZ='OTH'> Instead , <REFAUTHOR>Katz</REFAUTHOR> 's back-off scheme redistributes the free probability mass non-uniformly in proportion to the frequency of <EQN/> , by setting </S>
+</P>
+<IMAGE ID='I-6'/>
+<P>
+<S ID='S-57' AZ='OTH'> <REFAUTHOR>Katz</REFAUTHOR> thus assumes that for a given conditioning word <EQN/> the probability of an unseen following word <EQN/> is proportional to its unconditional probability . </S>
+<S ID='S-58' AZ='OWN'> However , the overall form of the model <CREF/> does not depend on this assumption , and we will next investigate an estimate for <EQN/> derived by averaging estimates for the conditional probabilities that <EQN/> follows words that are distributionally similar to <EQN/> . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-2'> The Similarity Model </HEADER>
+<P>
+<S ID='S-59' AZ='OWN'> Our scheme is based on the assumption that words that are `` similar '' to <EQN/> can provide good predictions for the distribution of <EQN/> in unseen bigrams . </S>
+<S ID='S-60' AZ='OWN'> Let <EQN/> denote a set of words which are most similar to <EQN/> , as determined by some similarity metric . </S>
+<S ID='S-61' AZ='OWN'> We define <EQN/> , the similarity-based model for the conditional distribution of <EQN/> , as a weighted average of the conditional distributions of the words in <EQN/> : </S>
+</P>
+<IMAGE ID='I-7'/>
+<P>
+<S ID='S-62' AZ='OWN'> where <EQN/> is the ( unnormalized ) weight given to <EQN/> , determined by its degree of similarity to <EQN/> . </S>
+<S ID='S-63' AZ='OWN'> According to this scheme , <EQN/> is more likely to follow <EQN/> if it tends to follow words that are most similar to <EQN/> . </S>
+<S ID='S-64' AZ='OWN'> To complete the scheme , it is necessary to define the similarity metric and , accordingly , <EQN/> and <EQN/> . </S>
+</P>
+<P>
+<S ID='S-65' AZ='BAS'> Following <REF TYPE='A' SELF="YES">Pereira et al. 1993</REF> , we measure word similarity by the relative entropy , or Kullback-Leibler ( KL ) distance , between the corresponding conditional distributions . </S>
+</P>
+<IMAGE ID='I-8'/>
+<P>
+<S ID='S-66' AZ='OWN'> The KL distance is 0 when <EQN/> , and it increases as the two distribution are less similar . </S>
+</P>
+<P>
+<S ID='S-67' AZ='OWN'> To compute <CREF/> and <CREF/> we must have nonzero estimates of <EQN/> whenever necessary for <CREF/> to be defined . </S>
+<S ID='S-68' AZ='OWN'> We use the estimates given by the standard back-off model , which satisfy that requirement . </S>
+<S ID='S-69' AZ='OWN'> Thus our application of the similarity model averages together standard back-off estimates for a set of similar conditioning words . </S>
+</P>
+<P>
+<S ID='S-70' AZ='OWN'> We define <EQN/> as the set of at most k nearest words to <EQN/> ( excluding <EQN/> itself ) , that also satisfy <EQN/> . </S>
+<S ID='S-71' AZ='OWN'> k and t are parameters that control the contents of <EQN/> and are tuned experimentally , as we will see below . </S>
+</P>
+<P>
+<S ID='S-72' AZ='OWN'> <EQN/> is defined as </S>
+</P>
+<IMAGE ID='I-9'/>
+<P>
+<S ID='S-73' AZ='OWN'> The weight is larger for words that are more similar ( closer ) to <EQN/> . </S>
+<S ID='S-74' AZ='OWN'> The parameter <EQN/> controls the relative contribution of words in different distances from <EQN/> : as the value of <EQN/> increases , the nearest words to <EQN/> get relatively more weight . </S>
+<S ID='S-75' AZ='OWN'> As <EQN/> decreases , remote words get a larger effect . </S>
+<S ID='S-76' AZ='OWN'> Like k and t , <EQN/> is tuned experimentally . </S>
+</P>
+<P>
+<S ID='S-77' AZ='OWN'> Having a definition for <EQN/> , we could use it directly as <EQN/> in the back-off scheme <CREF/> . </S>
+<S ID='S-78' AZ='OWN'> We found that it is better to smooth <EQN/> by interpolating it with the unigram probability <EQN/> ( recall that <REFAUTHOR>Katz</REFAUTHOR> used <EQN/> as <EQN/> ) . </S>
+<S ID='S-79' AZ='OWN'> Using linear interpolation we get  </S>
+</P>
+<IMAGE ID='I-10'/>
+<P>
+<S ID='S-80' AZ='OWN'> where <EQN/> is an experimentally-determined interpolation parameter . </S>
+<S ID='S-81' AZ='OWN'> This smoothing appears to compensate for inaccuracies in <EQN/> , mainly for infrequent conditioning words . </S>
+<S ID='S-82' AZ='OWN'> However , as the evaluation below shows , good values for <EQN/> are small , that is , the similarity-based model plays a stronger role than the independence assumption . </S>
+</P>
+<P>
+<S ID='S-83' AZ='OWN'> To summarize , we construct a similarity-based model for <EQN/> and then interpolate it with <EQN/> . </S>
+<S ID='S-84' AZ='OWN'> The interpolated model <CREF/> is used in the back-off scheme as <EQN/> , to obtain better estimates for unseen bigrams . </S>
+<S ID='S-85' AZ='OWN'> Four parameters , to be tuned experimentally , are relevant for this process : k and t , which determine the set of similar words to be considered , <EQN/> , which determines the relative effect of these words , and <EQN/> , which determines the overall importance of the similarity-based model . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-3'> Evaluation </HEADER>
+<P>
+<S ID='S-86' AZ='OWN'> We evaluated our method by comparing its perplexity and effect on speech-recognition accuracy with the baseline bigram back-off model developed by MIT Lincoln Laboratories for the Wall Street Journal ( WSJ ) text and dictation corpora provided by ARPA 's HLT program <REF TYPE='P'>Paul 1991</REF> . </S>
+<S ID='S-87' AZ='OWN'> The baseline back-off model follows closely the <REFAUTHOR>Katz</REFAUTHOR> design , except that for compactness all frequency one bigrams are ignored . </S>
+<S ID='S-88' AZ='OWN'> The counts used in this model and in ours were obtained from 40.5 million words of WSJ text from the years 1987 - 89 . </S>
+</P>
+<P>
+<S ID='S-89' AZ='OWN'> For perplexity evaluation , we tuned the similarity model parameters by minimizing perplexity on an additional sample of 57.5 thousand words of WSJ text , drawn from the ARPA HLT development test set . </S>
+<S ID='S-90' AZ='OWN'> The best parameter values found were k = 60 , t = 2.5 , <EQN/> and <EQN/> . </S>
+<S ID='S-91' AZ='OWN'> For these values , the improvement in perplexity for unseen bigrams in a held-out 18 thousand word sample , in which 10.6 % of the bigrams are unseen , is just over 20 % . </S>
+<S ID='S-92' AZ='OWN'> This improvement on unseen bigrams corresponds to an overall test set perplexity improvement of 2.4 % ( from 237.4 to 231.7 ) . </S>
+</P>
+<IMAGE ID='I-11'/>
+<P>
+<S ID='S-93' AZ='OWN'> Table <CREF/> shows reductions in training and test perplexity , sorted by training reduction , for different choices in the number k of closest neighbors used . </S>
+<S ID='S-94' AZ='OWN'> The values of <EQN/> , <EQN/> and t are the best ones found for each k . </S>
+</P>
+<P>
+<S ID='S-95' AZ='OWN'> From equation <CREF/> , it is clear that the computational cost of applying the similarity model to an unseen bigram is O(k) . </S>
+<S ID='S-96' AZ='OWN'> Therefore , lower values for k ( and also for t ) are computationally preferable . </S>
+</P>
+<P>
+<S ID='S-97' AZ='OWN'> From the table , we can see that reducing k to 30 incurs a penalty of less than 1 % in the perplexity improvement , so relatively low values of k appear to be sufficient to achieve most of the benefit of the similarity model . </S>
+<S ID='S-98' AZ='OWN'> As the table also shows , the best value of <EQN/> increases as k decreases , that is , for lower k a greater weight is given to the conditioned word 's frequency . </S>
+<S ID='S-99' AZ='OWN'> This suggests that the predictive power of neighbors beyond the closest 30 or so can be modeled fairly well by the overall frequency of the conditioned word . </S>
+</P>
+<P>
+<S ID='S-100' AZ='OWN'> The bigram similarity model was also tested as a language model in speech recognition . </S>
+<S ID='S-101' AZ='OWN'> The test data for this experiment were pruned word lattices for 403 WSJ closed-vocabulary test sentences . </S>
+<S ID='S-102' AZ='OWN'> Arc scores in those lattices are sums of an acoustic score ( negative log likelihood ) and a language-model score , in this case the negative log probability provided by the baseline bigram model . </S>
+</P>
+<P>
+<S ID='S-103' AZ='OWN'> From the given lattices , we constructed new lattices in which the arc scores were modified to use the similarity model instead of the baseline model . </S>
+<S ID='S-104' AZ='OWN'> We compared the best sentence hypothesis in each original lattice and in the modified one , and counted the word disagreements in which one of the hypotheses is correct . </S>
+<S ID='S-105' AZ='OWN'> There were a total of 96 such disagreements . </S>
+<S ID='S-106' AZ='OWN'> The similarity model was correct in 64 cases , and the back-off model in 32 . </S>
+<S ID='S-107' AZ='OWN'> This advantage for the similarity model is statistically significant at the 0.01 level . </S>
+<S ID='S-108' AZ='OWN'> The overall reduction in error rate is small , from 21.4 % to 20.9 % , because the number of disagreements is small compared with the overall number of errors in our current recognition setup . </S>
+</P>
+<P>
+<S ID='S-109' AZ='OWN'> Table <CREF/> shows some examples of speech recognition disagreements between the two models . </S>
+<S ID='S-110' AZ='OWN'> The hypotheses are labeled ` B ' for back-off and ` S ' for similarity , and the bold-face words are errors . </S>
+<S ID='S-111' AZ='OWN'> The similarity model seems to be able to model better regularities such as semantic parallelism in lists and avoiding a past tense form after `` to '' . </S>
+<S ID='S-112' AZ='OWN'> On the other hand , the similarity model makes several mistakes in which a function word is inserted in a place where punctuation would be found in written text . </S>
+</P>
+<IMAGE ID='I-12'/>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-4'> Related Work </HEADER>
+<P>
+<S ID='S-113' AZ='OTH'> The cooccurrence smoothing technique <REF TYPE='P'>Essen and Steinbiss 1992</REF> , based on earlier stochastic speech modeling work by <REF TYPE='A'>Sugawara et al. 1985</REF> , is the main previous attempt to use similarity to estimate the probability of unseen events in language modeling . </S>
+<S ID='S-114' AZ='OTH'> In addition to its original use in language modeling for speech recognition , <REF TYPE='A'>Grishman and Sterling 1993</REF> applied the cooccurrence smoothing technique to estimate the likelihood of selectional patterns . </S>
+<S ID='S-115' AZ='CTR'> We will outline here the main parallels and differences between our method and cooccurrence smoothing . </S>
+<S ID='S-116' AZ='OWN'> A more detailed analysis would require an empirical comparison of the two methods on the same corpus and task . </S>
+</P>
+<P>
+<S ID='S-117' AZ='OTH'> In cooccurrence smoothing , as in our method , a baseline model is combined with a similarity-based model that refines some of its probability estimates . </S>
+<S ID='S-118' AZ='OTH'> The similarity model in cooccurrence smoothing is based on the intuition that the similarity between two words w and w ' can be measured by the confusion probability <EQN/> that w ' can be substituted for w in an arbitrary context in the training corpus . </S>
+<S ID='S-119' AZ='OTH'> Given a baseline probability model P , which is taken to be the MLE , the confusion probability <EQN/> between conditioning words <EQN/> and <EQN/> is defined as  </S>
+</P>
+<IMAGE ID='I-13'/>
+<P>
+<S ID='S-120' AZ='OTH'> the probability that <EQN/> is followed by the same context words as <EQN/> . </S>
+<S ID='S-121' AZ='OTH'> Then the bigram estimate derived by cooccurrence smoothing is given by </S>
+</P>
+<IMAGE ID='I-14'/>
+<P>
+<S ID='S-122' AZ='CTR'> Notice that this formula has the same form as our similarity model <CREF/> , except that it uses confusion probabilities where we use normalized weights . </S>
+<S ID='S-123' AZ='CTR'> In addition , we restrict the summation to sufficiently similar words , whereas the cooccurrence smoothing method sums over all words in the lexicon . </S>
+</P>
+<P>
+<S ID='S-124' AZ='OTH'> The similarity measure <CREF/> is symmetric in the sense that <EQN/> and <EQN/> are identical up to frequency normalization , that is <EQN/> . </S>
+<S ID='S-125' AZ='OWN'> In contrast , <EQN/> <CREF/> is asymmetric in that it weighs each context in proportion to its probability of occurrence with w , but not with w ' . </S>
+<S ID='S-126' AZ='OWN'> In this way , if w and w ' have comparable frequencies but w ' has a sharper context distribution than w , then <EQN/> is greater than <EQN/> . </S>
+<S ID='S-127' AZ='CTR'> Therefore , in our similarity model w ' will play a stronger role in estimating w than vice versa . </S>
+<S ID='S-128' AZ='OWN'> These properties motivated our choice of relative entropy for similarity measure , because of the intuition that words with sharper distributions are more informative about other words than words with flat distributions . </S>
+</P>
+<P>
+<S ID='S-129' AZ='CTR'> Finally , while we have used our similarity model only for missing bigrams in a back-off scheme , <REF TYPE='A'>Essen and Steinbiss 1992</REF> used linear interpolation for all bigrams to combine the cooccurrence smoothing model with MLE models of bigrams and unigrams . </S>
+<S ID='S-130' AZ='OTH'> Notice , however , that the choice of back-off or interpolation is independent from the similarity model used . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-5'> Further Research </HEADER>
+<P>
+<S ID='S-131' AZ='OWN'> Our model provides a basic scheme for probabilistic similarity-based estimation that can be developed in several directions . </S>
+<S ID='S-132' AZ='OWN'> First , variations of <CREF/> may be tried , such as different similarity metrics and different weighting schemes . </S>
+<S ID='S-133' AZ='OWN'> Also , some simplification of the current model parameters may be possible , especially with respect to the parameters t and k used to select the nearest neighbors of a word . </S>
+<S ID='S-134' AZ='OWN'> A more substantial variation would be to base the model on similarity between conditioned words rather than on similarity between conditioning words . </S>
+</P>
+<P>
+<S ID='S-135' AZ='OWN'> Other evidence may be combined with the similarity-based estimate . </S>
+<S ID='S-136' AZ='OWN'> For instance , it may be advantageous to weigh those estimates by some measure of the reliability of the similarity metric and of the neighbor distributions . </S>
+<S ID='S-137' AZ='OWN'> A second possibility is to take into account negative evidence : if <EQN/> is frequent , but <EQN/> never followed it , there may be enough statistical evidence to put an upper bound on the estimate of <EQN/> . </S>
+<S ID='S-138' AZ='OWN'> This may require an adjustment of the similarity based estimate , possibly along the lines of <REF TYPE='A'>Rosenfeld and Huang 1992</REF> . </S>
+<S ID='S-139' AZ='OWN'> Third , the similarity-based estimate can be used to smooth the maximum likelihood estimate for small nonzero frequencies . </S>
+<S ID='S-140' AZ='OWN'> If the similarity-based estimate is relatively high , a bigram would receive a higher estimate than predicted by the uniform discounting method . </S>
+</P>
+<P>
+<S ID='S-141' AZ='OWN'> Finally , the similarity-based model may be applied to configurations other than bigrams . </S>
+<S ID='S-142' AZ='OWN'> For trigrams , it is necessary to measure similarity between different conditioning bigrams . </S>
+<S ID='S-143' AZ='OWN'> This can be done directly , by measuring the distance between distributions of the form <EQN/> , corresponding to different bigrams <EQN/> . </S>
+<S ID='S-144' AZ='OWN'> Alternatively , and more practically , it would be possible to define a similarity measure between bigrams as a function of similarities between corresponding words in them . </S>
+<S ID='S-145' AZ='OTH'> Other types of conditional cooccurrence probabilities have been used in probabilistic parsing <REF TYPE='P'>Black et al. 1993</REF> . </S>
+<S ID='S-146' AZ='OWN'> If the configuration in question includes only two words , such as P(object|verb) , then it is possible to use the model we have used for bigrams . </S>
+<S ID='S-147' AZ='OWN'> If the configuration includes more elements , it is necessary to adjust the method , along the lines discussed above for trigrams . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-6'> Conclusions </HEADER>
+<P>
+<S ID='S-148' AZ='BAS'> Similarity-based models suggest an appealing approach for dealing with data sparseness . </S>
+<S ID='S-149' AZ='OTH'> Based on corpus statistics , they provide analogies between words that often agree with our linguistic and domain intuitions . </S>
+<S ID='S-150' ABSTRACTC='A-4' AZ='AIM'> In this paper we presented a new model that implements the similarity-based approach to provide estimates for the conditional probabilities of unseen word cooccurrences . </S>
+</P>
+<P>
+<S ID='S-151' ABSTRACTC='A-5' AZ='BAS'> Our method combines similarity-based estimates with <REFAUTHOR>Katz</REFAUTHOR> 's back-off scheme , which is widely used for language modeling in speech recognition . </S>
+<S ID='S-152' AZ='OWN'> Although the scheme was originally proposed as a preferred way of implementing the independence assumption , we suggest that it is also appropriate for implementing similarity-based models , as well as class-based models . </S>
+<S ID='S-153' AZ='OWN'> It enables us to rely on direct maximum likelihood estimates when reliable statistics are available , and only otherwise resort to the estimates of an `` indirect '' model . </S>
+</P>
+<P>
+<S ID='S-154' ABSTRACTC='A-6' AZ='OWN'> The improvement we achieved for a bigram model is statistically significant , though modest in its overall effect because of the small proportion of unseen events . </S>
+<S ID='S-155' AZ='OWN'> While we have used bigrams as an easily-accessible platform to develop and test the model , more substantial improvements might be obtainable for more informative configurations . </S>
+<S ID='S-156' AZ='OWN'> An obvious case is that of trigrams , for which the sparse data problem is much more severe . </S>
+<S ID='S-157' AZ='OWN'> Our longer-term goal , however , is to apply similarity techniques to linguistically motivated word cooccurrence configurations , as suggested by lexicalized approaches to parsing <REF  TYPE='P'>Schabes 1992</REF>, <REF  TYPE='P'>Lafferty et al. 1992</REF> . </S>
+<S ID='S-158' AZ='OWN'> In configurations like verb-object and adjective-noun , there is some evidence <REF TYPE='P' SELF="YES">Pereira et al. 1993</REF> that sharper word cooccurrence distributions are obtainable , leading to improved predictions by similarity techniques . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-7'> Acknowledgments </HEADER>
+<P>
+<S ID='S-159' AZ='OWN'> We thank Slava Katz for discussions on the topic of this paper , Doug McIlroy for detailed comments , Doug Paul for help with his baseline back-off model , and Andre Ljolje and Michael Riley for providing the word lattices for our experiments . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+<SURNAME>Black</SURNAME>, Ezra, Fred <SURNAME>Jelinek</SURNAME>, John <SURNAME>Lafferty</SURNAME>, David M. <SURNAME>Magerman</SURNAME>, David <SURNAME>Mercer</SURNAME>, and
+  Salim <SURNAME>Roukos</SURNAME>.
+<DATE>1993</DATE>.
+Towards history-based grammars: Using richer models for probabilistic
+  parsing.
+In 30th Annual Meeting of the Association for Computational
+  Linguistics, pages 31-37, Columbus, Ohio. Ohio State University,
+  Association for Computational Linguistics, Morristown, New Jersey.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Brown</SURNAME>, Peter F., Vincent J. <SURNAME>Della</SURNAME> <SURNAME>Pietra</SURNAME>, Peter V. <SURNAME>deSouza</SURNAME>, Jenifer C. <SURNAME>Lai</SURNAME>, and
+  Robert L. Mercer.
+<DATE>1992</DATE>.
+Class-based n-gram models of natural language.
+Computational Linguistics, 18(4):467-479.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Church</SURNAME>, Kenneth W. and William A. <SURNAME>Gale</SURNAME>.
+<DATE>1991</DATE>.
+A comparison of the enhanced Good-Turing and deleted estimation
+  methods for estimating probabilities of English bigrams.
+Computer Speech and Language, 5:19-54.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Dagan</SURNAME>, Ido, Shaul <SURNAME>Markus</SURNAME>, and Shaul <SURNAME>Markovitch</SURNAME>.
+<DATE>1993</DATE>.
+Contextual word similarity and estimation from sparse data.
+In 30th Annual Meeting of the Association for Computational
+  Linguistics, pages 164-171, Columbus, Ohio. Ohio State University,
+  Association for Computational Linguistics, Morristown, New Jersey.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Essen</SURNAME>, Ute and Volker <SURNAME>Steinbiss</SURNAME>.
+<DATE>1992</DATE>.
+Coocurrence smoothing for stochastic language modeling.
+In Proceedings of ICASSP, volume I, pages 161-164. IEEE.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Good</SURNAME>, I. J.
+<DATE>1953</DATE>.
+The population frequencies of species and the estimation of
+  population parameters.
+Biometrika, 40(3):237-264.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Grishman</SURNAME>, Ralph and John <SURNAME>Sterling</SURNAME>.
+<DATE>1993</DATE>.
+Smoothing of automatically generated selectional constraints.
+In Human Language Technology, pages 254-259, San Francisco,
+  California. Advanced Research Projects Agency, Software and Intelligent
+  Systems Technology Office, Morgan Kaufmann.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Jelinek</SURNAME>, Frederick, Robert L. <SURNAME>Mercer</SURNAME>, and Salim <SURNAME>Roukos</SURNAME>.
+<DATE>1992</DATE>.
+Principles of lexical language modeling for speech recognition.
+In Sadaoki Furui and M. Mohan Sondhi, editors, Advances in
+  Speech Signal Processing. Mercer Dekker, Inc., pages 651-699.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Katz</SURNAME>, Slava M.
+<DATE>1987</DATE>.
+Estimation of probabilities from sparse data for the language model
+  component of a speech recognizer.
+IEEE Transactions on Acoustics, Speeech and Signal
+  Processing, 35(3):400-401.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Lafferty</SURNAME>, John, Daniel <SURNAME>Sleator</SURNAME>, and Davey <SURNAME>Temperley</SURNAME>.
+<DATE>1992</DATE>.
+Grammatical trigrams: aa probabilistic model of link grammar.
+In Robert Goldman, editor, AAAI Fall Symposium on
+  Probabilistic Approaches to Natural Language Processing, Cambridge,
+  Massachusetts. American Association for Artificial Intelligence.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Paul</SURNAME>, Douglas B.
+<DATE>1991</DATE>.
+Experience with a stack decoder-based HMM CSR and back-off n-gram
+  language models.
+In Proceedings of the Speech and Natural Language Workshop,
+  pages 284-288, Palo Alto, California, February. Defense Advanced Research
+  Projects Agency, Information Science and Technology Office, Morgan Kaufmann.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Pereira</SURNAME>, Fernando C., Naftali Z. <SURNAME>Tishby</SURNAME>, and Lillian <SURNAME>Lee</SURNAME>.
+<DATE>1993</DATE>.
+Distributional clustering of English words.
+In 30th Annual Meeting of the Association for Computational
+  Linguistics, pages 183-190, Columbus, Ohio. Ohio State University,
+  Association for Computational Linguistics, Morristown, New Jersey.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Rosenfeld</SURNAME>, Ronald and Xuedong <SURNAME>Huang</SURNAME>.
+<DATE>1992</DATE>.
+Improvements in stochastic language modeling.
+In DARPA Speech and Natural Language Workshop, pages
+  107-111, Harriman, New York, February. Morgan Kaufmann, San Mateo,
+  California.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Schabes</SURNAME>, Yves.
+<DATE>1992</DATE>.
+Stochastic lexicalized tree-adjoining grammars.
+In Proceeedings of the 14th International Conference on
+  Computational Linguistics, Nantes, France.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Sugawara</SURNAME>, K., M. <SURNAME>Nishimura</SURNAME>, K. <SURNAME>Toshioka</SURNAME>, M. <SURNAME>Okochi</SURNAME>, and T. <SURNAME>Kaneko</SURNAME>.
+<DATE>1985</DATE>.
+Isolated word recognition using hidden Markov models.
+In Proceedings of ICASSP, pages 1-4, Tampa, Florida. IEEE.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

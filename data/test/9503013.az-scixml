@@ -1,0 +1,581 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9503013</FILENO>
+<APPEARED><CONFERENCE>COLING</CONFERENCE><YEAR>1995</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.Sm </CLASSIFICATION>
+</METADATA>
+<TITLE> Incremental Interpretation : Applications , Theory , and Relationship to Dynamic Semantics </TITLE>
+<AUTHORLIST>
+<AUTHOR>David Milward</AUTHOR>
+<AUTHOR>Robin Cooper</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' DOCUMENTC='S-1' AZ='AIM'> Why should computers interpret language incrementally ? </A-S>
+<A-S ID='A-1' AZ='BKG'> In recent years psycholinguistic evidence for incremental interpretation has become more and more compelling , suggesting that humans perform semantic interpretation before constituent boundaries , possibly word by word . </A-S>
+<A-S ID='A-2' AZ='CTR'> However , possible computational applications have received less attention . </A-S>
+<A-S ID='A-3' DOCUMENTC='S-19' AZ='AIM'> In this paper we consider various potential applications , in particular graphical interaction and dialogue . </A-S>
+<A-S ID='A-4' AZ='OWN'> We then review the theoretical and computational tools available for mapping from fragments of sentences to fully scoped semantic representations . </A-S>
+<A-S ID='A-5' AZ='OWN'> Finally , we tease apart the relationship between dynamic semantics and incremental interpretation . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Applications </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> Following the work of , for example , <REF TYPE='A'>Marslen-Wilson 1973</REF> , <REF TYPE='A'>Just and Carpenter 1980</REF> and <REF TYPE='A'>Altmann and Steedman 1988</REF> , it has become widely accepted that semantic interpretation in human sentence processing can occur before sentence boundaries and even before clausal boundaries . </S>
+<S ID='S-1' ABSTRACTC='A-0' AZ='BKG'> It is less widely accepted that there is a need for incremental interpretation in computational applications . </S>
+</P>
+<P>
+<S ID='S-2' AZ='OTH'> In the 1970 s and early 1980 s several computational implementations motivated the use of incremental interpretation as a way of dealing with structural and lexical ambiguity ( a survey is given in <REF TYPE='A'>Haddock 1989</REF> ) . </S>
+<S ID='S-3' AZ='OTH'> A sentence such as the following has 4862 different syntactic parses due solely to attachment ambiguity <REF TYPE='P'>Stabler 1991</REF> . </S>
+</P>
+<EXAMPLE ID='E-0'>
+<EX-S> I put the bouquet of flowers that you gave me for Mothers ' Day in the vase that you gave me for my birthday on the chest of drawers that you gave me for Armistice Day . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-4' AZ='OTH'> Although some of the parses can be ruled out using structural preferences during parsing ( such as Late Closure or Minimal Attachment <REF TYPE='P'>Frazier 1979</REF> ) , extraction of the correct set of plausible readings requires use of real world knowledge . </S>
+<S ID='S-5' AZ='OTH'> Incremental interpretation allows on-line semantic filtering , i.e. parses of initial fragments which have an implausible or anomalous interpretation are rejected , thereby preventing ambiguities from multiplying as the parse proceeds . </S>
+</P>
+<P>
+<S ID='S-6' AZ='CTR'> However , on-line semantic filtering for sentence processing does have drawbacks . </S>
+<S ID='S-7' AZ='CTR'> Firstly , for sentence processing using a serial architecture ( rather than one in which syntactic and semantic processing is performed in parallel ) , the savings in computation obtained from on-line filtering have to be balanced against the additional costs of performing semantic computations for parses of fragments which would eventually be ruled out anyway from purely syntactic considerations . </S>
+<S ID='S-8' AZ='OTH'> Moreover , there are now relatively sophisticated ways of packing ambiguities during parsing ( e.g. by the use of graph-structured stacks and packed parse forests <REF TYPE='P'>Tomita 1985</REF> ) . </S>
+<S ID='S-9' AZ='CTR'> Secondly , the task of judging plausibility or anomaly according to context and real world knowledge is a difficult problem , except in some very limited domains . </S>
+<S ID='S-10' AZ='OTH'> In contrast , statistical techniques using lexeme co-occurrence provide a relatively simple mechanism which can imitate semantic filtering in many cases . </S>
+<S ID='S-11' AZ='OTH'> For example , instead of judging bank as a financial institution as more plausible than bank as a riverbank in the noun phrase the rich bank , we can compare the number of co-occurrences of the lexemes rich and bank <EQN/> ( = riverbank ) versus rich and bank <EQN/> ( = financial institution ) in a semantically analysed corpus . </S>
+<S ID='S-12' AZ='CTR'> Cases where statistical techniques seem less appropriate are where plausibility is affected by local context . </S>
+<S ID='S-13' AZ='CTR'> For example , consider the ambiguous sentence , </S>
+</P>
+<EXAMPLE ID='E-1'>
+<EX-S> The decorators painted a wall with cracks </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-14' AZ='CTR'> in the two contexts </S>
+</P>
+<EXAMPLE ID='E-2'>
+<EX-S> The room was supposed to look run-down vs . </EX-S>
+<EX-S> The clients couldn't afford wallpaper . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-15' AZ='CTR'> Such cases involve reasoning with an interpretation in its immediate context , as opposed to purely judging the likelihood of a particular linguistic expression in a given application domain ( see e.g. <REF TYPE='A' SELF="YES">Cooper 1993</REF> for discussion ) . </S>
+</P>
+<P>
+<S ID='S-16' AZ='BKG'> Although the usefulness of on-line semantic filtering during the processing of complete sentences is debatable , filtering has a more plausible role to play in interactive , real-time environments , such as interactive spell checkers ( see e.g. <REF TYPE='A'>Wirn 1990</REF> for arguments for incremental parsing in such environments ) . </S>
+<S ID='S-17' AZ='BKG'> Here the choice is between whether or not to have semantic filtering at all , rather than whether to do it on-line , or at the end of the sentence . </S>
+</P>
+<P>
+<S ID='S-18' AZ='BKG'> The concentration in early literature on using incremental interpretation for semantic filtering has perhaps distracted from some other applications which provide less controversial applications . </S>
+<S ID='S-19' ABSTRACTC='A-3' AZ='AIM'> We will consider two in detail here : graphical interfaces , and dialogue . </S>
+</P>
+<P>
+<S ID='S-20' AZ='OTH'> The Foundations for Intelligent Graphics Project ( FIG ) considered various ways in which natural language input could be used within computer aided design systems ( the particular application studied was computer aided kitchen design , where users would not necessarily be professional designers ) . </S>
+<S ID='S-21' AZ='OTH'> Incremental interpretation was considered to be useful in enabling immediate visual feedback . </S>
+<S ID='S-22' AZ='OTH'> Visual feedback could be used to provide confirmation ( for example , by highlighting an object referred to by a successful definite description ) , or it could be used to give the user an improved chance of achieving successful reference . </S>
+<S ID='S-23' AZ='OTH'> For example , if sets of possible referents for a definite noun phrase are highlighted during word by word processing then the user knows how much or how little information is required for successful reference . </S>
+</P>
+<P>
+<S ID='S-24' AZ='OTH'> Human dialogue , in particular , task oriented dialogue is characterised by a large numbers of self-repairs  <REF TYPE='P'>Levelt 1983</REF> , <REF TYPE='P'>Carletta et al. 1993</REF>  , such as hesitations , insertions , and replacements . </S>
+<S ID='S-25' AZ='OTH'> It is also common to find interruptions requesting extra clarification , or disagreements before the end of a sentence . </S>
+<S ID='S-26' AZ='OTH'> It is even possible for sentences started by one dialogue participant to be finished by another . </S>
+<S ID='S-27' AZ='OTH'> Applications involving the understanding of dialogues include information extraction from conversational databases , or computer monitoring of conversations . </S>
+<S ID='S-28' AZ='OTH'> It also may be useful to include some features of human dialogue in man-machine dialogue . </S>
+<S ID='S-29' AZ='OTH'> For example , interruptions can be used for early signalling of errors and ambiguities . </S>
+</P>
+<P>
+<S ID='S-30' AZ='BKG'> Let us first consider some examples of self-repair . </S>
+<S ID='S-31' AZ='BKG'> Insertions add extra information , usually modifiers e.g. </S>
+</P>
+<EXAMPLE ID='E-3'>
+<EX-S> We start in the middle with ... , in the middle of the paper with a blue disc <REF TYPE='P'>Levelt 1983</REF> </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-32' AZ='BKG'> Replacements correct pieces of information e.g. </S>
+</P>
+<EXAMPLE ID='E-4'>
+<EX-S> from left again to uh ... , from pink again to blue <REF TYPE='P'>Levelt 1983</REF> </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-33' AZ='BKG'> In some cases information from the corrected material is incorporated into the final message . </S>
+<S ID='S-34' AZ='BKG'> For example , consider : </S>
+</P>
+<EXAMPLE ID='E-5'>
+<EX-S> The three main sources of data come , uh ... , they can be found in the references . </EX-S>
+<EX-S> John noticed that the old man and his wife , uh ... , that the man got into the car and the wife was with him when they left the house . </EX-S>
+<EX-S> Every boy took , uh ... , he should have taken a water bottle with him . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-35' AZ='BKG'> In <CREF/> , the corrected material the three main sources of data come provides the antecedent for the pronoun they . </S>
+<S ID='S-36' AZ='BKG'> In <CREF/> the corrected material tells us that the man is both old and has a wife . </S>
+<S ID='S-37' AZ='BKG'> In <CREF/> , the pronoun he is bound by the quantifier every boy . </S>
+</P>
+<P>
+<S ID='S-38' AZ='OTH'> For a system to understand dialogues involving self-repairs such as those in <EQN/> would seem to require either an ability to interpret incrementally , or the use of a grammar which includes self repair as a syntactic construction akin to non-constituent coordination ( the relationship between coordination and self-correction is noted by <REF TYPE='A'>Levelt 1983</REF> ) . </S>
+<S ID='S-39' AZ='OTH'> For a system to generate self repairs might also require incremental interpretation , assuming a process where the system performs on-line monitoring of its output ( akin to <REFAUTHOR>Levelt</REFAUTHOR> 's model of the human self-repair mechanism ) . </S>
+<S ID='S-40' AZ='OTH'> It has been suggested that generation of self repairs is useful in cases where there are severe time constraints , or where there is rapidly changing background information <REF TYPE='P'>Carletta p.c.</REF> . </S>
+</P>
+<P>
+<S ID='S-41' AZ='OWN'> A more compelling argument for incremental interpretation is provided by considering dialogues involving interruptions . </S>
+<S ID='S-42' AZ='BKG'> Consider the following dialogue from the TRAINS corpus <REF TYPE='P'>Gross et al. 1993</REF> . </S>
+</P>
+<EXAMPLE ID='E-6'>
+<EX-S> A : so we should move the engine at Avon , engine E , to .. . </EX-S>
+<EX-S> B : engine E 1 </EX-S>
+<EX-S> A : E 1 </EX-S>
+<EX-S> B : okay </EX-S>
+<EX-S> A : engine E 1 , to Bath .. . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-43' AZ='OWN'> This requires interpretation by speaker B before the end of A 's sentence to allow objection to the apposition , the engine at Avon , engine E . </S>
+<S ID='S-44' AZ='BKG'> An example of the potential use of interruptions in human computer interaction is the following : </S>
+</P>
+<EXAMPLE ID='E-7'>
+<EX-S> User : Put the punch onto .. . </EX-S>
+<EX-S> Computer : The punch can't be moved . </EX-S>
+<EX-S> It 's bolted to the floor . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-45' AZ='BKG'> In this example , interpretation must not only be before the end of the sentence , but before a constituent boundary ( the verb phrase in the user 's command has not yet been completed ) . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Current Tools </HEADER>
+<DIV DEPTH='2'>
+<HEADER ID='H-2'> Syntax to Semantic Representation </HEADER>
+<P>
+<S ID='S-46' AZ='TXT'> In this section we shall briefly review work on providing semantic representations ( e.g. lambda expressions ) word by word . </S>
+<S ID='S-47' AZ='OTH'> Traditional layered models of sentence processing first build a full syntax tree for a sentence , and then extract a semantic representation from this . </S>
+<S ID='S-48' AZ='OWN'> To adapt this to an incremental perspective , we need to be able to provide syntactic structures ( of some sort ) for fragments of sentences , and be able to extract semantic representations from these . </S>
+</P>
+<P>
+<S ID='S-49' AZ='OTH'> One possibility , which has been explored mainly within the Categorial Grammar tradition <REF TYPE='P'>Steedman 1988</REF> is to provide a grammar which can treat most if not all initial fragments as constituents . </S>
+<S ID='S-50' AZ='OTH'> They then have full syntax trees from which the semantics can be calculated . </S>
+</P>
+<P>
+<S ID='S-51' AZ='OTH'> However , an alternative possibility is to directly link the partial syntax trees which can be formed for non-constituents with functional semantic representations . </S>
+<S ID='S-52' AZ='OTH'> For example , a fragment missing a noun phrase such as John likes can be associated with a semantics which is a function from entities to truth values . </S>
+<S ID='S-53' AZ='OTH'> Hence , the partial syntax tree given in Fig. <CREF/> , </S>
+</P>
+<IMAGE ID='I-0'/>
+<P>
+<S ID='S-54' AZ='OTH'> <EQN/> can be associated with a semantic representation , <EQN/> x. likes ( john , x ) . </S>
+</P>
+<P>
+<S ID='S-55' AZ='CTR'> Both Categorial approaches to incremental interpretation and approaches which use partial syntax trees get into difficulty in cases of left recursion . </S>
+<S ID='S-56' AZ='CTR'> Consider the sentence fragment , Mary thinks John . </S>
+<S ID='S-57' AZ='CTR'> A possible partial syntax tree is provided by Fig. <CREF/> . </S>
+</P>
+<IMAGE ID='I-1'/>
+<P>
+<S ID='S-58' AZ='CTR'> However , this is not the only possible partial tree . </S>
+<S ID='S-59' AZ='CTR'> In fact there are infinitely many different trees possible . </S>
+<S ID='S-60' AZ='CTR'> The completed sentence may have an arbitrarily large number of intermediate nodes between the lower s node and the lower np . </S>
+<S ID='S-61' AZ='CTR'> For example , John could be embedded within a gerund e.g. Mary thinks John leaving here was a mistake , and this in turn could be embedded e.g. Mary thinks John leaving here being a mistake is surprising . </S>
+<S ID='S-62' AZ='CTR'> John could also be embedded within a sentence which has a sentence modifier requiring its own s node e.g. Mary thinks John will go home probably , and this can be further embedded e.g. Mary thinks John will go home probably because he is tired . </S>
+</P>
+<P>
+<S ID='S-63' AZ='CTR'> The problem of there being an arbitrary number of different partial trees for a particular fragment is reflected in most current approaches to incremental interpretation being either incomplete , or not fully word by word . </S>
+<S ID='S-64' AZ='OTH'> For example , incomplete parsers have been proposed by <REF TYPE='A'>Stabler 1991</REF> and <REF TYPE='A'>Moortgat 1988</REF> . </S>
+<S ID='S-65' AZ='OTH'> <REFAUTHOR>Stabler</REFAUTHOR> 's system is a simple top-down parser which does not deal with left recursive grammars . </S>
+<S ID='S-66' AZ='OTH'> <REFAUTHOR>Moortgat</REFAUTHOR> 's M-System is based on the Lambek Calculus : the problem of an infinite number of possible tree fragments is replaced by a corresponding problem of initial fragments having an infinite number of possible types . </S>
+<S ID='S-67' AZ='OTH'> A complete incremental parser , which is not fully word by word , was proposed by <REF TYPE='A'>Pulman 1986</REF> . </S>
+<S ID='S-68' AZ='OTH'> This is based on arc-eager left-corner parsing <REF TYPE='P'>Resnik 1992</REF> . </S>
+</P>
+<P>
+<S ID='S-69' AZ='OWN'> To enable complete , fully word by word parsing requires a way of encoding an infinite number of partial trees . </S>
+<S ID='S-70' AZ='OWN'> There are several possibilities . </S>
+<S ID='S-71' AZ='OWN'> The first is to use a language describing trees where we can express the fact that John is dominated by the s node , but do not have to specify what it is immediately dominated by ( e.g. D-Theory ) <REF TYPE='P'>Marcus et al. 1983</REF> . </S>
+<S ID='S-72' AZ='OWN'> Semantic representations could be formed word by word by extracting ` default ' syntax trees ( by strengthening dominance links into immediated dominance links wherever possible ) . </S>
+</P>
+<P>
+<S ID='S-73' AZ='OWN'> A second possibility is to factor out recursive structures from a grammar . </S>
+<S ID='S-74' AZ='OTH'> <REF TYPE='A'>Thompson et al. 1991</REF> show how this can be done for a phrase structure grammar ( creating an equivalent Tree Adjoining Grammar <REF TYPE='P'>Joshi 1987</REF> ) . </S>
+<S ID='S-75' AZ='OTH'> The parser for the resulting grammar allows linear parsing for an ( infinitely ) parallel system , with the absorption of each word performed in constant time . </S>
+<S ID='S-76' AZ='OTH'> At each choice point , there are only a finite number of possible new partial TAG trees ( the TAG trees represents the possibly infinite number of trees which can be formed using adjunction ) . </S>
+<S ID='S-77' AZ='OTH'> It should again be possible to extract ` default ' semantic values , by taking the semantics from the TAG tree ( i.e. by assuming that there are to be no adjunctions ) . </S>
+<S ID='S-78' AZ='OTH'> A somewhat similar system has recently been proposed by <REF TYPE='A'>Shieber and Johnson 1993</REF> . </S>
+</P>
+<P>
+<S ID='S-79' AZ='OTH'> The third possibility is suggested by considering the semantic representations which are appropriate during a word by word parse . </S>
+<S ID='S-80' AZ='OTH'> Although there are any number of different partial trees for the fragment Mary thinks John , the semantics of the fragment can be represented using just two lambda expressions : </S>
+</P>
+<IMAGE ID='I-2'/>
+<IMAGE ID='I-3'/>
+<P>
+<S ID='S-81' AZ='OTH'> Consider the first . </S>
+<S ID='S-82' AZ='OTH'> The lambda abstraction ( over a functional item of type e <EQN/> t ) can be thought of as a way of encoding an infinite set of partial semantic ( tree ) structures . </S>
+<S ID='S-83' AZ='OTH'> For example , the eventual semantic structure may embed john at any depth e.g. </S>
+</P>
+<IMAGE ID='I-4'/>
+<IMAGE ID='I-5'/>
+<P>
+<S ID='S-84' AZ='OTH'> The second expression ( a functional item over type e <EQN/> t and t <EQN/> t ) , allows for eventual structures where the main sentence is embedded e.g. </S>
+</P>
+<IMAGE ID='I-6'/>
+<P>
+<S ID='S-85' AZ='OTH'> This third possibility is therefore to provide a syntactic correlate of lambda expressions . </S>
+<S ID='S-86' AZ='OTH'> In practice , however , provided we are only interested in mapping from a string of words to a semantic representation , and don't need explicit syntax trees to be constructed , we can merely use the types of the ` syntactic lambda expressions ' , rather than the expressions themselves . </S>
+<S ID='S-87' AZ='OTH'> This is essentially the approach taken in <REF TYPE='A' SELF="YES">Milward 1992</REF> in order to provide complete , word by word , incremental interpretation using simple lexicalised grammars , such as a lexicalised version of formal dependency grammar and simple categorial grammar . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-3'> Logical Forms to Semantic Filtering </HEADER>
+<P>
+<S ID='S-88' AZ='OTH'> In processing the sentence Mary introduced John to Susan , a word-by-word approach such as <REF TYPE='A' SELF="YES">Milward 1992</REF> provides the following logical forms after the corresponding sentence fragments are absorbed : </S>
+</P>
+<IMAGE ID='I-7'/>
+<P>
+<S ID='S-89' AZ='OTH'> Each input level representation is appropriate for the meaning of an incomplete sentence , being either a proposition or a function into a proposition . </S>
+</P>
+<P>
+<S ID='S-90' AZ='OTH'> In <REF TYPE='A' SELF="YES">Chater et al. 1994</REF> it is argued that the incrementally derived meanings are not judged for plausibility directly , but instead are first turned into existentially quantified propositions . </S>
+<S ID='S-91' AZ='OTH'> For example , instead of judging the plausibility of <EQN/> , we judge the plausibility of <EQN/> . </S>
+<S ID='S-92' AZ='OTH'> This is just the proposition Mary introduced something to something using a generalized quantifier notation of the form Quantifier ( Variable , Restrictor , Body ) . </S>
+</P>
+<P>
+<S ID='S-93' AZ='OTH'> Although the lambda expressions are built up monotonically , word by word , the propositions formed from them may need to be retracted , along with all the resulting inferences . </S>
+<S ID='S-94' AZ='OTH'> For example , Mary introduced something to something is inappropriate if the final sentence is Mary introduced noone to anybody . </S>
+<S ID='S-95' AZ='OTH'> A rough algorithm is as follows : </S>
+</P>
+<P>
+<S ID='S-96' TYPE='ITEM' AZ='OTH' > Parse a new word , Word <EQN/>  </S>
+<S ID='S-97' TYPE='ITEM' AZ='OTH' > Form a new lambda expression by combining the lambda expression formed after parsing Word <EQN/> with the lexical semantics for Word <EQN/>  </S>
+<S ID='S-98' TYPE='ITEM' AZ='OTH' > Form a proposition , P <EQN/> , by existentially quantifying over the lambda abstracted variables . </S>
+<S ID='S-99' TYPE='ITEM' AZ='OTH' > Assert P <EQN/> . </S>
+<S ID='S-100' AZ='OTH'> If P <EQN/> does not entail P <EQN/> retract P <EQN/> and all conclusions made from it . </S>
+<S ID='S-101' TYPE='ITEM' AZ='OTH' > Judge the plausibility of P <EQN/> . </S>
+</P>
+<P>
+<S ID='S-102' AZ='OTH'> If implausible block this derivation . </S>
+<S ID='S-103' AZ='OTH'> It is worth noting that the need for retraction is not due to a failure to extract the correct ` least commitment ' proposition from the semantic content of the fragment Mary introduced . </S>
+<S ID='S-104' AZ='OTH'> This is due to the fact that it is possible to find pairs of possible continuations which are the negation of each other ( e.g. Mary introduced noone to anybody and Mary introduced someone to somebody ) . </S>
+<S ID='S-105' AZ='OTH'> The only proposition compatible with both a proposition , p , and its negation , <EQN/> p is the trivial proposition , T ( see <REFAUTHOR SELF="YES">Chater et al.</REFAUTHOR> for further discussion ) . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-4'> Incremental Quantifier Scoping </HEADER>
+<P>
+<S ID='S-106' AZ='OWN'> So far we have only considered semantic representations which do not involve quantifiers ( except for the existential quantifier introduced by the mechanism above ) . </S>
+</P>
+<P>
+<S ID='S-107' AZ='BKG'> In sentences with two or more quantifiers , there is generally an ambiguity concerning which quantifier has wider scope . </S>
+<S ID='S-108' AZ='BKG'> For example , in sentence <CREF/> below the preferred reading is for the same kid to have climbed every tree ( i.e. the universal quantifier is within the scope of the existential ) whereas in sentence <CREF/> the preferred reading is where the universal quantifier has scope over the existential . </S>
+</P>
+<EXAMPLE ID='E-8'>
+<EX-S> A tireless kid climbed every tree . </EX-S>
+<EX-S> There was a fish on every plate . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-109' AZ='BKG'> Scope preferences sometimes seem to be established before the end of a sentence . </S>
+<S ID='S-110' AZ='BKG'> For example , in sentence <CREF/> below , there seems a preference for an outer scope reading for the first quantifier as soon as we interpret child . </S>
+<S ID='S-111' AZ='BKG'> In <CREF/> the preference , by the time we get to e.g. grammar , is for an inner scope reading for the first quantifier . </S>
+</P>
+<EXAMPLE ID='E-9'>
+<EX-S> A teacher gave every child a great deal of homework on grammar . </EX-S>
+<EX-S> Every girl in the class showed a rather strict new teacher the results of her attempt to get the grammar exercises correct . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-112' AZ='BKG'> This intuitive evidence can be backed up by considering garden path effects with quantifier scope ambiguities ( called jungle paths by <REF TYPE='A'>Barwise 1987</REF> ) . </S>
+<S ID='S-113' AZ='BKG'> The original examples , such as the following ,</S>
+</P>
+<EXAMPLE ID='E-10'>
+<EX-S> Statistics show that every 11 seconds a man is mugged here in New York city . </EX-S>
+<EX-S> We are here today to interview him </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-114' AZ='BKG'> showed that preferences for a particular scope are established and are overturned . </S>
+<S ID='S-115' AZ='BKG'> To show that preferences are sometimes established before the end of a sentence , and before a potential sentence end , we need to show garden path effects in examples such as the following : </S>
+</P>
+<EXAMPLE ID='E-11'>
+<EX-S> Mary put the information that statistics show that every 11 seconds a man is mugged here in New York city and that she was to interview him in her diary </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-116' AZ='CTR'> Most psycholinguistic experimentation has been concerned with which scope preferences are made , rather than the point at which the preferences are established <REF TYPE='P'>Kurtzman and MacDonald 1993</REF> . </S>
+<S ID='S-117' AZ='OWN'> Given the intuitive evidence , our hypothesis is that scope preferences can sometimes be established early , before the end of a sentence . </S>
+<S ID='S-118' AZ='OWN'> This leaves open the possibility that in other cases , where the scoping information is not particularly of interest to the hearer , preferences are determined late , if at all . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-5'> Incremental Quantifier Scoping : Implementation </HEADER>
+<P>
+<S ID='S-119' AZ='BKG'> Dealing with quantifiers incrementally is a rather similar problem to dealing with fragments of trees incrementally . </S>
+<S ID='S-120' AZ='BKG'> Just as it is impossible to predict the level of embedding of a noun phrase such as John from the fragment Mary thinks John , it is also impossible to predict the scope of a quantifier in a fragment with respect to the arbitrarily large number of quantifiers which might appear later in the sentence . </S>
+<S ID='S-121' AZ='OTH'> Again the problem can be avoided by a form of packing . </S>
+<S ID='S-122' AZ='OTH'> A particularly simple way of doing this is to use unscoped logical forms where quantifiers are left in situ ( similar to the representations used by <REF TYPE='A'>Hobbs and Shieber 1987</REF> , or to Quasi Logical Form <REF TYPE='A'>Alshawi 1990</REF> ) . </S>
+<S ID='S-123' AZ='OTH'> For example , the fragment Every man gives a book can be given the following representation : </S>
+</P>
+<IMAGE ID='I-8'/>
+<P>
+<S ID='S-124' AZ='OTH'> Each quantified term consists of a quantifier , a variable and a restrictor , but no body . </S>
+<S ID='S-125' AZ='OTH'> To convert lambda expressions to unscoped propositions , we replace an occurrence of each argument with an empty existential quantifier term . </S>
+<S ID='S-126' AZ='OTH'> In this case we obtain : </S>
+</P>
+<IMAGE ID='I-9'/>
+<P>
+<S ID='S-127' AZ='OTH'> Scoped propositions can then be obtained by using an outside-in quantifier scoping algorithm <REF TYPE='P'>Lewin 1990</REF> , or an inside-out algorithm with a free variable constraint <REF TYPE='P'>Hobbs and Shieber 1987</REF> . </S>
+<S ID='S-128' AZ='OTH'> The propositions formed can then be judged for plausibility . </S>
+</P>
+<P>
+<S ID='S-129' AZ='OWN'> To imitate jungle path phenomena , these plausibility judgements need to feed back into the scoping procedure for the next fragment . </S>
+<S ID='S-130' AZ='OWN'> For example , if every man is taken to be scoped outside a book after processing the fragment Every man gave a book , then this preference should be preserved when determining the scope for the full sentence Every man gave a book to a child . </S>
+<S ID='S-131' AZ='OWN'> Thus instead of doing all quantifier scoping at the end of the sentence , each new quantifier is scoped relative to the existing quantifiers ( and operators such as negation , intensional verbs etc ) . </S>
+<S ID='S-132' AZ='OWN'> A preliminary implementation achieves this by annotating the semantic representations with node names , and recording which quantifiers are ` discharged ' at which nodes , and in which order . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-6'> Dynamic Semantics </HEADER>
+<P>
+<S ID='S-133' AZ='OTH'> Dynamic semantics adopts the view that `` the meaning of a sentence does not lie in its truth conditions , but rather in the way in which it changes ( the representation of ) the information of the interpreter '' <REF TYPE='P'>Groenendijk and Stokhof 1991</REF> . </S>
+<S ID='S-134' AZ='OTH'> At first glance such a view seems ideally suited to incremental interpretation . </S>
+<S ID='S-135' AZ='OTH'> Indeed , <REFAUTHOR>Groenendijk and Stokhof</REFAUTHOR> claim that the compositional nature of Dynamic Predicate Logic enables one to `` interpret a text in an on-line manner , i.e. , incrementally , processing and interpreting each basic unit as it comes along , in the context created by the interpretation of the text so far '' . </S>
+</P>
+<P>
+<S ID='S-136' AZ='OTH'> Putting these two quotes together is , however , misleading , since it suggests a more direct mapping between incremental semantics and dynamic semantics than is actually possible . </S>
+<S ID='S-137' AZ='OTH'> In an incremental semantics , we would expect the information state of an interpreter to be updated word by word . </S>
+<S ID='S-138' AZ='OTH'> In contrast , in dynamic semantics , the order in which states are updated is determined by semantic structure , not by left-to-right order ( see e.g. <REF TYPE='A'>Lewin 1992</REF> for discussion ) . </S>
+<S ID='S-139' AZ='OTH'> For example , in Dynamic Predicate Logic <REF TYPE='P'>Groenendijk and Stokhof 1991</REF> , states are threaded from the antecedent of a conditional into the consequent , and from a restrictor of a quantifier into the body . </S>
+<S ID='S-140' AZ='OTH'> Thus , in interpreting , </S>
+</P>
+<EXAMPLE ID='E-12'>
+<EX-S> John will buy it right away , if a car impresses him . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-141' AZ='OTH'> the input state for evaluation of John will buy it right away is the output state from the antecedent a car impresses him . </S>
+<S ID='S-142' AZ='OTH'> In this case the threading through semantic structure is in the opposite order to the order in which the two clauses appear in the sentence . </S>
+</P>
+<P>
+<S ID='S-143' AZ='OTH'> Some intuitive justification for the direction of threading in dynamic semantics is provided by considering appropriate orders for evaluation of propositions against a database : the natural order in which to evaluate a conditional is first to add the antecedent , and then see if the consequent can be proven . </S>
+<S ID='S-144' AZ='OTH'> It is only at the sentence level in simple narrative texts that the presentation order and the natural order of evaluation necessarily coincide . </S>
+</P>
+<P>
+<S ID='S-145' AZ='OTH'> The ordering of anaphors and their antecedents is often used informally to justify left-to-right threading or threading through semantic structure . </S>
+<S ID='S-146' AZ='OTH'> However , threading from left-to-right disallows examples of optional cataphora , as in example <EQN/> , and examples of compulsory cataphora as in : </S>
+</P>
+<EXAMPLE ID='E-13'>
+<EX-S> Besides her , every girl could see a large crack </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-147' AZ='OTH'> Similarly , threading from the antecedents of conditionals into the consequent fails for examples such as : </S>
+</P>
+<EXAMPLE ID='E-14'>
+<EX-S> Every boy will be able to see out of a window if he wants to </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-148' AZ='OTH'> It is also possible to get sentences with ` donkey ' readings , but where the indefinite is in the consequent : </S>
+</P>
+<EXAMPLE ID='E-15'>
+<EX-S> A student will attend the conference if we can get together enough money for her air fare . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-149' AZ='OTH'> This sentence seems to get a reading where we are not talking about a particular student ( an outer existential ) , or about a typical student ( a generic reading ) . </S>
+<S ID='S-150' AZ='OTH'> Moreover , as noted by <REF TYPE='A'>Zeevat 1990</REF> , the use of any kind of ordered threading will tend to fail for Bach-Peters sentences , such as : </S>
+</P>
+<EXAMPLE ID='E-16'>
+<EX-S> Every man who loves her appreciates a woman who lives with him . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-151' AZ='OTH'> For this kind of example , it is still possible to use a standard dynamic semantics , but only if there is some prior level of reference resolution which reorders the antecedents and anaphors appropriately . </S>
+<S ID='S-152' AZ='OTH'> For example , if <EQN/> is converted into the ` donkey ' sentence : </S>
+</P>
+<EXAMPLE ID='E-17'>
+<EX-S> Every man who loves a woman who lives with him appreciates her . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-153' AZ='OTH'> When we consider threading of possible worlds , as in Update Semantics <REF TYPE='P'>Veltman 1990</REF> , the need to distinguish between the order of evaluation and the order of presentation becomes more clear cut . </S>
+<S ID='S-154' AZ='OTH'> Consider trying to perform threading in left-to-right order during interpretation of the sentence , John left if Mary left . </S>
+<S ID='S-155' AZ='OTH'> After processing the proposition John left the set of worlds is refined down to those worlds in which John left . </S>
+<S ID='S-156' AZ='OTH'> Now consider processing if Mary left . </S>
+<S ID='S-157' AZ='OTH'> Here we want to reintroduce some worlds , those in which neither Mary or John left . </S>
+<S ID='S-158' AZ='OTH'> However , this is not allowed by Update Semantics which is eliminative : each new piece of information can only further refine the set of worlds . </S>
+</P>
+<P>
+<S ID='S-159' AZ='OTH'> It is worth noting that the difficulties in trying to combine eliminative semantics with left-to-right threading apply to constraint-based semantics as well as to Update Semantics . </S>
+<S ID='S-160' AZ='OTH'> <REF TYPE='A'>Haddock 1987</REF> uses incremental refinement of sets of possible referents . </S>
+<S ID='S-161' AZ='OTH'> For example , the effect of processing the rabbit in the noun phrase the rabbit in the hat is to provide a set of all rabbits . </S>
+<S ID='S-162' AZ='OTH'> The processing of in refines this set to rabbits which are in something . </S>
+<S ID='S-163' AZ='OTH'> Finally , processing of the hat refines the set to rabbits which are in a hat . </S>
+<S ID='S-164' AZ='OTH'> However , now consider processing the rabbit in none of the boxes . </S>
+<S ID='S-165' AZ='OTH'> By the time the rabbit in has been processed , the only rabbits remaining in consideration are rabbits which are in something . </S>
+<S ID='S-166' AZ='CTR'> This incorrectly rules out the possibility of the noun phrase referring to a rabbit which is in nothing at all . </S>
+<S ID='S-167' AZ='OTH'> The case is actually a parallel to the earlier example of Mary introduced someone to something being inappropriate if the final sentence is Mary introduced noone to anybody . </S>
+</P>
+<P>
+<S ID='S-168' AZ='OWN'> Although this discussion has argued that it is not possible to thread the states which are used by a dynamic or eliminative semantics from left to right , word by word , this should not be taken as an argument against the use of such a semantics in incremental interpretation . </S>
+<S ID='S-169' AZ='OWN'> What is required is a slightly more indirect approach . </S>
+<S ID='S-170' AZ='OWN'> In the present implementation , semantic structures ( akin to logical forms ) are built word by word , and each structure is then evaluated independently using a dynamic semantics ( with threading performed according to the structure of the logical form ) . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-7'> Implementation </HEADER>
+<P>
+<S ID='S-171' AZ='OWN'> At present there is a limited implementation , which performs a mapping from sentence fragments to fully scoped logical representations . </S>
+<S ID='S-172' AZ='OWN'> To illustrate its operation , consider the following discourse : </S>
+</P>
+<EXAMPLE ID='E-18'>
+<EX-S> London has a tower .</EX-S>
+<EX-S> Every parent shows it ...</EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-173' AZ='OWN'> We assume that the first sentence has been processed , and concentrate on processing the fragment . </S>
+<S ID='S-174' AZ='OWN'> The implementation consists of five modules : </S>
+</P>
+<P>
+<S ID='S-175' AZ='BAS'> A word-by-word incremental parser for a lexicalised version of dependency grammar <REF SELF="YES" TYPE='P'>Milward 1992</REF> . </S>
+<S ID='S-176' AZ='OTH'> This takes fragments of sentences and maps them to unscoped logical forms . </S>
+<IMAGE ID='I-10'/>
+</P>
+<P>
+<S ID='S-177' AZ='OWN'> A module which replaces lambda abstracted variables with existential quantifiers in situ . </S>
+<IMAGE ID='I-11'/>
+</P>
+<P>
+<S ID='S-178' AZ='OWN'> A pronoun coindexing procedure which replaces pronoun variables with a variable from the same sentence , or from the preceding context . </S>
+<IMAGE ID='I-12'/>
+</P>
+<P>
+<S ID='S-179' AZ='OWN'> An outside-in quantifier scoping algorithm based on <REF TYPE='A'>Lewin 1990</REF> . </S>
+<IMAGE ID='I-13'/>
+</P>
+<P>
+<S ID='S-180' AZ='OWN'> An ` evaluation ' procedure based on <REF TYPE='A'>Lewin 1992</REF> , which takes a logical form containing free variables ( such as the w in the LF above ) , and evaluates it using a dynamic semantics in the context given by the preceding sentences . </S>
+<S ID='S-181' AZ='OWN'> The output is a new logical form representing the context as a whole , with all variables correctly bound . </S>
+<IMAGE ID='I-14'/>
+</P>
+<P>
+<S ID='S-182' AZ='OWN'> At present , the coverage of module <CREF/> is limited , and module <CREF/> is a naive coindexing procedure which allows a pronoun to be coindexed with any quantified variable or proper noun in the context or the current sentence . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-8'> Conclusions </HEADER>
+<P>
+<S ID='S-183' AZ='AIM'> The paper described some potential applications of incremental interpretation . </S>
+<S ID='S-184' AZ='OWN'> It then described the series of steps required in mapping from initial fragments of sentences to propositions which can be judged for plausibility . </S>
+<S ID='S-185' AZ='OWN'> Finally , it argued that the apparently close relationship between the states used in incremental semantics and dynamic semantics fails to hold below the sentence level , and briefly presented a more indirect way of using dynamic semantics in incremental interpretation . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+<SURNAME>Alshawi</SURNAME>, H. (<DATE>1990</DATE>). Resolving Quasi Logical Forms. Computational
+Linguistics, 16, p.133-144.</REFERENCE>
+<REFERENCE>
+<SURNAME>Altmann</SURNAME>, G.T.M. and M.J. <SURNAME>Steedman</SURNAME> (<DATE>1988</DATE>). Interaction with Context during
+Human Speech Comprehension. Cognition, 30, p.191-238.</REFERENCE>
+<REFERENCE>
+<SURNAME>Barwise</SURNAME>, J. (<DATE>1987</DATE>). Noun Phrases, Generalized Quantifiers and Anaphors.
+In P. Gardenfors, Ed., Generalized Quantifiers, p.1-29,
+Dordrecht: Reidel.</REFERENCE>
+<REFERENCE>
+<SURNAME>Carletta</SURNAME>, J., R. <SURNAME>Caley</SURNAME> and S. <SURNAME>Isard</SURNAME> (<DATE>1993</DATE>). A Collection of Self-repairs
+from the Map Task Corpus. Research Report, HCRC/TR-47, University of Edinburgh.</REFERENCE>
+<REFERENCE>
+<SURNAME>Chater</SURNAME>, N., M.J. <SURNAME>Pickering</SURNAME> and D.R. <SURNAME>Milward</SURNAME> (<DATE>1994</DATE>). What is Incremental
+Interpretation? ms. <DATE>To appear</DATE> in Edinburgh Working Papers in Cognitive
+Science.</REFERENCE>
+<REFERENCE>
+<SURNAME>Cooper</SURNAME>, R. (<DATE>1993</DATE>). A Note on the Relationship between Linguistic
+Theory and Linguistic Engineering. Research Report, HCRC/RP-42,
+University of Edinburgh.</REFERENCE>
+<REFERENCE>
+<SURNAME>Frazier</SURNAME>, L. (<DATE>1979</DATE>).  On Comprehending Sentences: Syntactic
+Parsing Strategies. Ph.D. Thesis, University of Connecticut.
+Published by Indiana University
+Linguistics Club.</REFERENCE>
+<REFERENCE>
+<SURNAME>Groenendijk</SURNAME>, J. and M. <SURNAME>Stokhof</SURNAME> (<DATE>1991</DATE>). Dynamic Predicate Logic.
+Linguistics and Philosophy, 14, p.39-100.</REFERENCE>
+<REFERENCE>
+<SURNAME>Gross</SURNAME>, D., J. <SURNAME>Allen</SURNAME> and D. <SURNAME>Traum</SURNAME> (<DATE>1993</DATE>). The TRAINS 91 Dialogues.
+TRAINS Technical Note 92-1, Computer Science Dept., University of Rochester.</REFERENCE>
+<REFERENCE>
+<SURNAME>Haddock</SURNAME>, N.J. (<DATE>1987</DATE>). Incremental semantic interpretation and
+incremental syntactic analysis.  Ph.D. Thesis, University of Edinburgh.</REFERENCE>
+<REFERENCE>
+<SURNAME>Haddock</SURNAME>, N.J. (<DATE>1989</DATE>). Computational Models of Incremental Semantic
+Interpretation. Language and Cognitive Processes, 4, (3/4),
+Special Issue, p.337-368.</REFERENCE>
+<REFERENCE>
+<SURNAME>Hobbs</SURNAME>, J.R. and S.M. <SURNAME>Shieber</SURNAME> (<DATE>1987</DATE>). An Algorithm for Generating
+Quantifier Scoping. Computational Linguistics, 3, p47-63.</REFERENCE>
+<REFERENCE>
+<SURNAME>Joshi</SURNAME>, A.K. (<DATE>1987</DATE>). An Introduction to Tree Adjoining Grammars. In
+Manaster-Ramer, Ed., Mathematics of Language, Amsterdam:
+John Benjamins.</REFERENCE>
+<REFERENCE>
+<SURNAME>Just</SURNAME>, M. and P. <SURNAME>Carpenter</SURNAME> (<DATE>1980</DATE>). A Theory of Reading from Eye Fixations
+to Comprehension. Psychological Review, 87, p.329-354.</REFERENCE>
+<REFERENCE>
+<SURNAME>Kurtzman</SURNAME>, H.S. and M.C. <SURNAME>MacDonald</SURNAME> (<DATE>1993</DATE>). Resolution of Quantifier Scope
+Ambiguities. Cognition, 48(3), p.243-279.</REFERENCE>
+<REFERENCE>
+<SURNAME>Lewin</SURNAME>, I. (<DATE>1990</DATE>). A Quantifier Scoping Algorithm without a Free Variable
+Constraint.
+In Proceedings of COLING 90, Helsinki, vol 3, p.190-194.</REFERENCE>
+<REFERENCE>
+<SURNAME>Lewin</SURNAME>, I. (<DATE>1992</DATE>). Dynamic Quantification in Logic and Computational Semantics.
+Research report, Centre for Cognitive Science, University of Edinburgh.</REFERENCE>
+<REFERENCE>
+<SURNAME>Levelt</SURNAME>, W.J.M. (<DATE>1983</DATE>). Modelling and Self-Repair in Speech.
+Cognition, 14, p.41-104.</REFERENCE>
+<REFERENCE>
+<SURNAME>Marcus</SURNAME>, M., D. <SURNAME>Hindle</SURNAME>, and M. <SURNAME>Fleck</SURNAME> (<DATE>1983</DATE>). D-Theory: Talking about
+Talking about Trees. In Proceedings of the 21st ACL, Cambridge, Mass.
+p.129-136.</REFERENCE>
+<REFERENCE>
+<SURNAME>Marslen-Wilson</SURNAME>, W. (<DATE>1973</DATE>). Linguistic Structure and Speech Shadowing at
+Very Short Latencies. Nature, 244, p.522-523.</REFERENCE>
+<REFERENCE>
+<SURNAME>Mellish</SURNAME>, C.S. (<DATE>1985</DATE>). Computer Interpretation of Natural Language
+Descriptions. Chichester: Ellis Horwood.</REFERENCE>
+<REFERENCE>
+<SURNAME>Milward</SURNAME>, D.R. (<DATE>1991</DATE>). Axiomatic Grammar, 
+Non-Constituent
+Coordination, and
+Incremental Interpretation. Ph.D. Thesis, University of Cambridge.</REFERENCE>
+<REFERENCE>
+<SURNAME>Milward</SURNAME>, D.R. (<DATE>1992</DATE>). Dynamics, Dependency Grammar and Incremental
+Interpretation.
+In Proceedings of COLING 92, Nantes, vol 4, p.<DATE>1095</DATE>-<DATE>1099</DATE>.</REFERENCE>
+<REFERENCE>
+<SURNAME>Moortgat</SURNAME>, M. (<DATE>1988</DATE>). Categorial Investigations: Logical and Linguistic
+Aspects of the Lambek Calculus, Dordrecht: Foris.</REFERENCE>
+<REFERENCE>
+<SURNAME>Pulman</SURNAME>, S.G. (<DATE>1986</DATE>). Grammars, Parsers, and Memory Limitations. 
+Language
+and Cognitive Processes, 1(3), p.197-225.</REFERENCE>
+<REFERENCE>
+<SURNAME>Resnik</SURNAME>, P. (<DATE>1992</DATE>). Left-corner Parsing and Psychological Plausibility.
+In Proceedings of COLING 92, Nantes, vol 1, p.191-197.</REFERENCE>
+<REFERENCE>
+<SURNAME>Shieber</SURNAME>, S.M. and M. <SURNAME>Johnson</SURNAME> (<DATE>1993</DATE>). Variations on Incremental Interpretation.
+Journal of Psycholinguistic Research, 22(2), p.287-318.</REFERENCE>
+<REFERENCE>
+<SURNAME>Shieber</SURNAME>, S.M. and Y. <SURNAME>Schabes</SURNAME> (<DATE>1990</DATE>). Synchronous Tree-Adjoining Grammars.
+In Proceedings of COLING 90, Helsinki, vol 3, p.253-258.</REFERENCE>
+<REFERENCE>
+<SURNAME>Stabler</SURNAME>, E.P. (<DATE>1991</DATE>).  Avoid the pedestrian's paradox.  In R. Berwick,
+S. Abney, and C. Tenny, Eds., Principle-Based Parsing:
+Computation and Psycholinguistics. Kluwer.</REFERENCE>
+<REFERENCE>
+<SURNAME>Steedman</SURNAME>, M. (<DATE>1988</DATE>). Combinators and Grammars. In R. Oehrle et al., Eds.,
+Categorial Grammars and Natural Language Structures, p.417-442.</REFERENCE>
+<REFERENCE>
+<SURNAME>Thompson</SURNAME>, H., M. <SURNAME>Dixon</SURNAME>, and J. <SURNAME>Lamping</SURNAME> (<DATE>1991</DATE>). Compose-Reduce Parsing.
+In Proceedings of the 29th ACL, p.87-97.</REFERENCE>
+<REFERENCE>
+<SURNAME>Tomita</SURNAME>, M. (<DATE>1985</DATE>). Efficient Parsing for Natural Language. Kluwer.</REFERENCE>
+<REFERENCE>
+<SURNAME>Veltman</SURNAME>, F. (<DATE>1990</DATE>). Defaults in Update Semantics. In H. Kamp, Ed.,
+Conditionals, Defaults and Belief Revision, DYANA Report 2.5.A,
+Centre for Cognitive Science, University of Edinburgh.</REFERENCE>
+<REFERENCE>
+<SURNAME>Wirn</SURNAME>, M. (<DATE>1990</DATE>). Incremental Parsing and Reason Maintenance. In
+Proceedings of COLING 90, Helsinki, vol 3, p.287-292.</REFERENCE>
+<REFERENCE>
+<SURNAME>Zeevat</SURNAME>, H. (<DATE>1990</DATE>). Static Semantics. In J. van Benthem, Ed.,
+Partial and Dynamic Semantics I, DYANA Report 2.1.A,
+Centre for Cognitive Science, University of Edinburgh.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

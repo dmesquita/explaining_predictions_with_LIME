@@ -1,0 +1,391 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9502035</FILENO>
+<APPEARED><CONFERENCE TYPE='Student'>EACL</CONFERENCE><YEAR>1995</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Th.Ps.Hu Lg.Pr.Gr.Ps </CLASSIFICATION>
+</METADATA>
+<TITLE> Incorporating `` Unconscious Reanalysis '' into an Incremental , Monotonic Parser </TITLE>
+<AUTHORLIST>
+<AUTHOR>Patrick Sturt</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' DOCUMENTC='S-6' AZ='AIM'> This paper describes the author 's implementation of a parser aimed at reproducing , in a computationally explicit system , the constraints of a particular psycholinguistic model <REF TYPE='P'>Gorrell in press</REF> . </A-S>
+<A-S ID='A-1' DOCUMENTC='S-23' AZ='CTR'> In <REFAUTHOR>Gorrell</REFAUTHOR> 's model , `` unconscious '' garden paths may be processed via the addition of structural relations to a monotone increasing set at the point of disambiguation , but there is no discussion as to how the parser decides which relations to add . </A-S>
+<A-S ID='A-2' AZ='OWN'> We model this decision as a search for a node in the tree at which an explicitly defined parsing operation , tree-lowering may be applied . </A-S>
+<A-S ID='A-3' AZ='OWN'> With reference to English and Japanese processing data , we show the importance of this search for empirical adequacy of the psycholinguistic model . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Conscious and Unconscious Garden Paths </HEADER>
+<P>
+<S ID='S-0' AZ='OTH'> Certain researchers in the psycholinguistic community <REF TYPE='P'>Pritchett 1992</REF> , <REF TYPE='P'>Gorrell in press</REF> , have argued for a binary distinction between two distinct types of garden path sentences . </S>
+<S ID='S-1' AZ='OTH'> Conscious garden paths , such as <CREF/> below , are locally ambiguous sentences which give rise to reanalysis that is both experimentally detectable and causes a conscious sensation of difficulty or `` surprise effect '' . </S>
+<S ID='S-2' AZ='OTH'> Unconscious garden paths , on the other hand , such as <CREF/> , cause reanalysis which is experimentally detectable , but which is generally not `` noticed '' by the speaker or hearer . </S>
+</P>
+<EXAMPLE ID='E-0'>
+<EX-S> While John was eating the ice cream melted . </EX-S>
+<EX-S> John knows the truth hurts . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-3' AZ='OTH'> This binary distinction has often been used to motivate a two-level architecture in the human syntactic processing system , where what we will call the `` core parser '' performs standard attachment , as well as being able to reanalyse in the easy cases ( such as on reaching hurts in <CREF/> ) , but where the assistance of a higher level resolver ( to use <REFAUTHOR>Abney</REFAUTHOR> 's terminology <REF TYPE='P'>Abney 1987</REF> , <REF TYPE='P'>Abney 1989</REF> ) , is required to solve the difficult cases , ( such as on reaching melted in <CREF/> ) . </S>
+<S ID='S-4' AZ='OTH'> This `` core parser '' has been the subject of a number of computational implementations , including <REF TYPE='A'>Marcus 1980</REF> 's deterministic parser , Description theory ( henceforth , D-theory ) <REF TYPE='P'>Marcus et al. 1983</REF> , and <REFAUTHOR>Abney</REFAUTHOR> 's licensing based model <REF  TYPE='P'>Abney 1987</REF>, <REF  TYPE='P'>Abney 1989</REF> . </S>
+<S ID='S-5' AZ='OTH'> It has also been the subject of a number of psycholinguistic studies on a more theoretical level <REF  TYPE='P'>Pritchett 1992</REF>, <REF  TYPE='P'>Gorrell in press</REF> . </S>
+</P>
+<P>
+<S ID='S-6' ABSTRACTC='A-0' AZ='BAS'> The implementation described in this paper is based on the most recent model , that of <REF TYPE='A'>Gorrell in press</REF> . </S>
+<S ID='S-7' AZ='OTH'> This model is interesting in that it does not allow the parser to employ delay tactics , such as using a lookahead buffer <REF TYPE='P'>Marcus 1980</REF> , <REF TYPE='P'>Marcus et al. 1983</REF> , or waiting for the head of a phrase to appear in the input before constructing that phrase <REF TYPE='P'>Abney 1987</REF> , <REF  TYPE='P'>Abney 1989</REF>, <REF  TYPE='P'>Pritchett 1992</REF> . </S>
+<S ID='S-8' AZ='OTH'> Instead , processing is guided by the principle of Incremental Licensing , which states that `` the parser attempts incrementally to satisfy the principles of grammar '' . </S>
+<S ID='S-9' AZ='OTH'> For the purposes of this implementation , I have interpreted this to mean that each word must be attached into a fully-connected phrase marker as it is found in the input . </S>
+<S ID='S-10' AZ='OTH'> The psychological desirability of such a Full Attachment model has been argued for , especially with regard to the processing of head-final languages , where evidence has been found of pre-head structuring <REF  TYPE='P'>Inoue and Fodor 1991</REF>, <REF  TYPE='P'>Frazier 1987</REF> . </S>
+<S ID='S-11' AZ='OTH'> Such models have also been explored computationally <REF  TYPE='P'>Milward 1995</REF>, <REF  TYPE='P'>Crocker 1991</REF> . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> D-theory and <REFAUTHOR>Gorrell</REFAUTHOR> 's Model </HEADER><P>
+<S ID='S-12' AZ='OTH'> <REFAUTHOR>Gorrell</REFAUTHOR> employs the D-theoretic device of building up a set of dominance and precedence relations between nodes , where the set is intended to be constrained by informational monotonicity , in that once asserted to the set , no relation may be deleted or overridden . </S>
+<S ID='S-13' AZ='OTH'> <REFAUTHOR>Gorrell</REFAUTHOR> restricts this constraint to Primary structural relations ( i.e. dominance and precedence ) , while secondary relations ( e.g. thematic and case dependencies ) are not so constrained . </S>
+<S ID='S-14' AZ='OTH'> Recall <CREF/> , repeated below : </S>
+</P>
+<EXAMPLE ID='E-1'>
+<EX-S> John knows the truth hurts . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-15' AZ='OTH'> At the point where John knows the truth has been processed , a complete clause will have been built : </S>
+</P>
+<EXAMPLE ID='E-2'>
+<EX-S> [ <EQN/> [ <EQN/> John ] [ <EQN/> [ <EQN/> knows ] [ <EQN/> the truth ] ] . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-16' AZ='OTH'> The description will include the information that the verb knows precedes NP <EQN/> , and that the VP dominates NP <EQN/> . </S>
+</P>
+<IMAGE ID='I-0'/>
+<P>
+<S ID='S-17' AZ='OTH'> However , on the subsequent input of hurts , the structure can be reanalysed by asserting an extra clausal node ( call it S <EQN/> ) dominating NP <EQN/> ( which will then become the embedded subject ) , but which is in turn dominated by the matrix VP . </S>
+<S ID='S-18' AZ='OTH'> This can be achieved by adding the following structural relations to the tree description <EQN/>  </S>
+</P>
+<IMAGE ID='I-1'/>
+<P>
+<S ID='S-19' AZ='OTH'> Since the description before the processing of the disambiguating word hurts is a subset of the final tree description , the monotonicity requirement is satisfied . </S>
+<S ID='S-20' AZ='OTH'> Note in particular , that , because dominance is a transitive relation , and because of the inheritance condition on trees ( a node inherits the precedence relations of its ancestors ) , the two statements dom ( VP , NP <EQN/> ) and prec ( V , NP <EQN/> ) remain true after reanalysis . </S>
+</P>
+<P>
+<S ID='S-21' AZ='OTH'> Note also that the model will correctly fail to reanalyse for sentence <CREF/> above , since the reanalysis will require the retraction of the domination relation between the VP of the adverbial clause and the NP the ice cream . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-2'> Implementation </HEADER>
+<P>
+<S ID='S-22' AZ='CTR'> Although <REFAUTHOR>Gorrell</REFAUTHOR> proposes a general principle to guide initial attachment decisions ( Simplicity : No vacuous structure building ) , and specifies the conditions under which `` unconscious reanalysis '' may occur , the model leaves unspecified the problem of how the system may be implemented . </S>
+<S ID='S-23' ABSTRACTC='A-1' AZ='OWN'> Of particular interest is the problem of how the parser decides which relations to add to the set at each point in time , especially at disambiguating points . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-3'> Lexical Representation </HEADER>
+<P>
+<S ID='S-24' AZ='BAS'> The basic framework on which the implementation is built is similar to Tree Adjoining Grammar <REF TYPE='P'>Joshi et al. 1975</REF> . </S>
+<S ID='S-25' AZ='OWN'> Each lexical category is associated with a set of structural relations , which determine its lexical subtree . </S>
+<S ID='S-26' AZ='OWN'> We call this set the subtree projection of that lexical category . </S>
+<S ID='S-27' AZ='OWN'> For example , the subtree projection for verbs in the English grammar is as follows , where Lex is a variable which will be instantiated to the actual verb found in the input . </S>
+</P>
+<IMAGE ID='I-2'/>
+<P>
+<S ID='S-28' AZ='OWN'> Lexical categories are also associated with lists of left and right attachment sites . </S>
+<S ID='S-29' AZ='OWN'> In the above case , NP , ( which will correspond to the subject of the verb ) , will be unified with the left attachment site . </S>
+<S ID='S-30' AZ='OWN'> If a transitive verb is found in the input , then the parser consults the verb 's argument structure and creates a new right attachment site for an NP , asserting also that this new NP is dominated by VP and preceded by V . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-4'> Attachment </HEADER>
+<P>
+<S ID='S-31' AZ='OWN'> Simple attachment can be performed in two ways , which are defined below , where the term current tree description is intended to denote the the set of structural relations built up to that point in processing : </S>
+</P>
+<P>
+<S ID='S-32' AZ='OWN'> Intuitively , left attachment may be thought of in terms of attaching the current tree description to the left corner of the projection of the new word , while right attachment corresponds to attaching the projection of the new word to the right corner of the current tree description . </S>
+<S ID='S-33' AZ='OWN'> They are equivalent to <REFAUTHOR>Abney</REFAUTHOR> 's Attach-L and Attach respectively . </S>
+</P>
+<P>
+<S ID='S-34' AZ='OWN'> DEFINITION Left Attachment : </S>
+<S ID='S-35' AZ='OWN'> Let D be the current tree description , with root node R . </S>
+<S ID='S-36' AZ='OWN'> Let S be the subtree projection of the new word , whose left-most attachment site , A is of identical syntactic category as R . </S>
+<S ID='S-37' AZ='OWN'> The updated tree description is <EQN/> , where A is unified with R . </S>
+</P>
+<P>
+<S ID='S-38' AZ='OWN'> DEFINITION Right Attachment : </S>
+<S ID='S-39' AZ='OWN'> Let D be the current tree description , with the first right attachment site A . </S>
+<S ID='S-40' AZ='OWN'> Let S be the subtree projection of the new word , whose root R is of identical syntactic category as A . </S>
+<S ID='S-41' AZ='OWN'> The updated tree description is <EQN/> , where A is unified with R . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-5'> Tree Lowering </HEADER>
+<P>
+<S ID='S-42' AZ='OWN'> It should be clear that , while simple left and right attachment will suffice for attaching arguments without reanalysis , it will not allow us to derive the reanalysis required in example <CREF/> . </S>
+<S ID='S-43' AZ='OWN'> For this , we intuitively require some means of inserting one tree description inside another . </S>
+<S ID='S-44' AZ='OWN'> Schematically , what we require is illustrated below , where [1] is intended to represent the current tree description built up after John knows the truth has been parsed , and [2] is intended to represent the subtree description of the new word hurts . </S>
+<IMAGE ID='I-3'/>
+</P>
+<P>
+<S ID='S-45' AZ='OWN'> We will call this operation `` tree-lowering '' . </S>
+<S ID='S-46' AZ='OWN'> Intuitively , the operation finds a node on the current tree description which matches the left attachment site of the projection of the new word , and attaches it , while inserting the root of the new projection in its place . </S>
+<S ID='S-47' AZ='OWN'> The result is that the node chosen is `` lowered '' or `` subordinated '' . </S>
+</P>
+<P>
+<S ID='S-48' AZ='OWN'> In order to maintain structural coherence , the new word attached via tree-lowering must be preceded by all other words previously attached into the description . </S>
+<S ID='S-49' AZ='OWN'> We can guarantee this by requiring the lowered node to dominate the last word to be attached . </S>
+<S ID='S-50' AZ='OWN'> We also need to ensure that , to avoid crossing branches , the lowered node does not dominate any unsaturated attachment sites ( or `` dangling nodes '' ) We therefore define accessibility for tree-lowering as follows : </S>
+</P>
+<P>
+<S ID='S-51' AZ='OWN'> DEFINITION Accessibility : </S>
+<S ID='S-52' AZ='OWN'> Let N be a node in the current tree description . </S>
+<S ID='S-53' AZ='OWN'> Let W be the last word to be attached into the tree . </S>
+<S ID='S-54' AZ='OWN'> N is accessible iff N dominates W , and N does not dominate any unsaturated attachment sites . </S>
+</P>
+<P>
+<S ID='S-55' AZ='OWN'> DEFINITION Tree-lowering : </S>
+<S ID='S-56' AZ='OWN'> Let D be the current tree description . </S>
+<S ID='S-57' AZ='OWN'> Let S be the subtree projection of the new word . </S>
+<S ID='S-58' AZ='OWN'> The left attachment site A of S must match a node N accessible in D . </S>
+<S ID='S-59' AZ='OWN'> The root node R of S must be licensed by the grammar in the position occupied by N . </S>
+<S ID='S-60' AZ='OWN'> Let L be the set of local relations in which N participates . </S>
+<S ID='S-61' AZ='OWN'> Let M be the result of substituting all instances of N in L with R . </S>
+<S ID='S-62' AZ='OWN'> The attachment node A is unified with N . </S>
+<S ID='S-63' AZ='OWN'> The updated tree-description is <EQN/> . </S>
+</P>
+<P>
+<S ID='S-64' AZ='OWN'> It will be noticed that tree-lowering is similar in spirit to the adjunction operation of Tree Adjoining Grammars <REF TYPE='P'>Joshi et al. 1975</REF> . </S>
+<S ID='S-65' AZ='OWN'> The difference is that the foot and root nodes of an auxiliary tree in TAG , ( corresponding to the `` lowered '' node and the node that replaces it respectively ) must be of the same syntactic category , whereas , as we have seen in this example , in the model proposed here , the two nodes may be of different categories , so long as the resulting structure is licensed by the grammar . </S>
+</P>
+<P>
+<S ID='S-66' AZ='OWN'> In the case of example <CREF/> , at the point where the truth has been processed , the parser must find an accessible node which matches the category of the left attachment site of hurts ( i.e. an NP ) . </S>
+<S ID='S-67' AZ='OWN'> The only choice is NP <EQN/> : </S>
+<IMAGE ID='I-4'/>
+</P>
+<P>
+<S ID='S-68' AZ='OWN'> Now , all the local relations in which NP <EQN/> participates are found : </S>
+<IMAGE ID='I-5'/>
+</P>
+<P>
+<S ID='S-69' AZ='OWN'> and NP <EQN/> is substituted with the root of the new projection , S <EQN/> to derive two new relations : </S>
+<IMAGE ID='I-6'/>
+</P>
+<P>
+<S ID='S-70' AZ='OWN'> These relations are found to be licensed , because the verb which V dominates ( `` knows '' ) may subcategorise for a clause , so these new relations are added to the set . </S>
+<S ID='S-71' AZ='OWN'> Now , adding the subtree projection of hurts to the set , and unifying its left attachment site with NP <EQN/> results in the derived structure with NP <EQN/> `` subordinated '' into the lower clause . </S>
+<IMAGE ID='I-7'/>
+</P>
+<P>
+<S ID='S-72' AZ='OWN'> With the tree-lowering operation so defined , the problem of finding which relations to add to the set at a disambiguating point reduces to a search for an accessible node at which to apply this operation . </S>
+<S ID='S-73' AZ='OWN'> However , this implies that , if more than one such node exists , the parser must be given a preference for making the requisite decision . </S>
+<S ID='S-74' AZ='OWN'> Consider the following sentence fragment , for example : </S>
+<EXAMPLE ID='E-3'>
+<EX-S> I know [ <EQN/> the man who believes [ <EQN/> the countess ] ] . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-75' AZ='OWN'> If the input subsequently continues with a verb , then we have a choice of two nodes for lowering , i.e. NP <EQN/> and NP <EQN/> . </S>
+<S ID='S-76' AZ='OWN'> Though no experimental work has been done on this type of sentence , there seems to be an intuitive preference for the lower attachment site , NP <EQN/> . </S>
+<S ID='S-77' AZ='OWN'> In <CREF/> , binding constraints force lowering to be applied at NP <EQN/> , while in <CREF/> , it must be applied at NP <EQN/> . </S>
+<S ID='S-78' AZ='OWN'> Of the two , most native English speakers report <CREF/> to be easier . </S>
+<EXAMPLE ID='E-4'>
+<EX-S> I know the man who believes the countess killed herself . </EX-S>
+<EX-S> I know the man who believes the countess killed himself . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-79' AZ='OWN'> Note also , that , on standard X-bar assumptions , the attachment of post-modifiers may be derived via lowering at an X ' node . </S>
+<S ID='S-80' AZ='OWN'> In this case , the lowered node and its replacement will be of the same syntactic category ( like the root and foot node of a TAG auxiliary tree ) . </S>
+<S ID='S-81' AZ='OWN'> Researchers have noted a general preference for low attachment of post-modifiers ( this is accounted for by the principle of late closure <REF TYPE='P'>Frazier and Rayner 1982</REF> ) . </S>
+<S ID='S-82' AZ='OWN'> This would suggest that a reasonable search strategy for English would be to search the set of accessible node in a bottom-up direction for English . </S>
+</P>
+<P>
+<S ID='S-83' AZ='OWN'> The algorithm is constructed in such a way that lowering is only attempted in cases where simple attachment fails . </S>
+<S ID='S-84' AZ='OWN'> This means that arguments ( which are incorporated via simple attachment ) will be attached preferentially to adjuncts ( which are incorporated via lowering ) . </S>
+<S ID='S-85' AZ='OWN'> This captures the general preference for argument over adjunct attachment , which is accounted for by the principle of Minimal attachment in <REF TYPE='A'>Frazier and Rayner 1982</REF> , and by the principle of simplicity in <REF TYPE='A'>Gorrell in press</REF> . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-6'> Processing Japanese </HEADER>
+<DIV DEPTH='2'>
+<HEADER ID='H-7'> Main / subordinate clause ambiguity </HEADER>
+<P>
+<S ID='S-86' AZ='BKG'> Japanese presents a challenge for any incremental parsing model because , typically , it is not possible to determine where an embedded clause begins . </S>
+<S ID='S-87' AZ='BKG'> Consider the following example : </S>
+<EXAMPLE ID='E-5'>
+<EX-S> John ga [ <EQN/> ronbun wo kaita ] seito <EQN/> wo hometa . </EX-S>
+<EX-S> John NOM essay ACC wrote student ACC praised </EX-S>
+<EX-S> `` John praised the student who wrote the essay '' . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-88' AZ='BKG'> Up to the first verb kaita ( `` wrote '' ) , the string is interpretable as a full clause ( without a gap ) , meaning `` John wrote an essay '' , and the incremental parser builds the requisite structure . </S>
+<S ID='S-89' AZ='BKG'> However , the appearance of the head noun seito ( student ) means that at least part of the preceding clause must be reinterpreted as a relative clause including a gap ( note that there is no overt relative pronoun in Japanese ) . </S>
+<S ID='S-90' AZ='OTH'> One way of looking at what is happening here is to see the subject NP John ga as being dissociated from the clause in which it is originally attached , and reattached into the main clause . </S>
+<S ID='S-91' AZ='OTH'> But looking at it from a different perspective , as <REFAUTHOR>Gorrell</REFAUTHOR> has noted , one can see the subject NP as remaining in the main clause , and the constituent bracketed in <CREF/> , ( ronbun wo kaita ( `` wrote an essay '' ) ) as being lowered into the relative clause . </S>
+<S ID='S-92' AZ='OTH'> If this is possible , then we would expect examples like <CREF/> to be unconscious garden paths , and this does indeed seem to be reflected in the intuitive data <REF TYPE='P'>Mazuka and Itoh in press</REF> . </S>
+<S ID='S-93' AZ='OWN'> However , if we are to allow our parser to handle such examples , we must expand the definition of tree-lowering , since , in order to build a relative clause , we have to assert extra material ( including the empty subject and the new S node ) , which is not justified solely by the lexical requirements of the disambiguating word , the head noun seito . </S>
+<S ID='S-94' AZ='OWN'> This involves reconstructing all the clausal structure dominating the lowering site ( including asserting empty argument positions ) , with reference to the verb 's case frame , and attempting to attach the result as a relative clause to the head noun . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-8'> Minimal Expulsion </HEADER>
+<P>
+<S ID='S-95' AZ='OTH'> <REF TYPE='A'>Inoue 1991</REF> describes a `` minimal expulsion strategy '' , which predicts a preference , on reanalysis , towards expelling the minimum amount of material from the clause . </S>
+<S ID='S-96' AZ='OWN'> In our terms , this means that ( assuming a binary right-branching clause structure , with the verb in its right corner ) the node selected for lowering must be as high as possible . </S>
+<S ID='S-97' AZ='OWN'> This means that the bottom-up search which we use for English will wrongly predict a Maximal expulsion strategy . </S>
+<S ID='S-98' AZ='OWN'> In cases such as <CREF/> , assuming the bottom-up search , when a post-clausal noun has been reached in the input , the parser starts its search from the node immediately dominating the last word to be incorporated , ( i.e. the verb of what will become the relative clause ) . </S>
+<S ID='S-99' AZ='OWN'> This means that , in cases such as <CREF/> , the first preference will be to lower the verb ( and therefore `` expel '' both subject and object ) , whereas the human preference , ( to lower the object and verb , and therefore expel only the subject ) is the parser 's second choice on the bottom-up search strategy . </S>
+</P>
+<P>
+<S ID='S-100' AZ='OTH'> <REF TYPE='A'>Mazuka and Itoh in press</REF> note that examples where both subject and object must be expelled from the relative clause , as would be the first choice in a bottom-up search , often cause a conscious garden path effect . </S>
+<S ID='S-101' AZ='OTH'> An example , adapted from <REFAUTHOR>Mazuka and Itoh</REFAUTHOR> is the following : </S>
+<EXAMPLE ID='E-6'>
+<EX-S> Yamasita ga yuuzin wo [ <EQN/> houmonsita ] kaisya <EQN/> de mikaketa . </EX-S>
+<EX-S> Yamasita NOM friend ACC visited company LOC saw . </EX-S>
+<EX-S> `` Yamasita saw his friend at the company he visited . '' </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-102' AZ='OWN'> In order to capture the minimal expulsion strategy in this class of Japanese examples , therefore , search for the lowering node should be conducted top-down . </S>
+<S ID='S-103' AZ='OWN'> We are currently investigating the consequences of changing the search strategy in this way . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-9'> The Problem of Retrospective Reanalysis </HEADER>
+<P>
+<S ID='S-104' AZ='OWN'> Having formulated the constraints of <REFAUTHOR>Gorrell</REFAUTHOR> 's model in terms of the accessibility of a node for tree-lowering , we can see that the model can be falsified if we can find a case where the relevant disambiguating information comes at a point in processing where the node which is required to be lowered is no longer accessible . </S>
+<S ID='S-105' AZ='OWN'> Consider the following pair of sentences : </S>
+<EXAMPLE ID='E-7'>
+<EX-S> I saw the man with the moustache . </EX-S>
+<EX-S> I saw the man with the telescope . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-106' AZ='OWN'> It is familiar from the psycholinguistic literature that there is a preference for attaching the with phrase as an instrumental argument of the verb ( as in <CREF/> ) , on the reading where the telescope is the instrument of seeing ) . </S>
+<S ID='S-107' AZ='OWN'> On the assumption that saw selects for a PP instrumental argument , we can derive this preference in the present model via the preference to attach as an argument as opposed to an adjunct . </S>
+<S ID='S-108' AZ='OWN'> However , since we are constrained by incrementality , we will have to make an attachment decision for the PP as soon as the preposition with is encountered , and it will be attached in the preferred reading as a sister of the verb . </S>
+<S ID='S-109' AZ='OWN'> This means that , in cases such as <CREF/> , where , on the globally acceptable reading , the PP is an adjunct of the NP the man , this attachment will have to be revised , and the PP retrospectively adjoined into the relevant N ' node . </S>
+<S ID='S-110' AZ='OWN'> However , once the preposition with has been attached , the required N ' node will no longer be accessible , and a conscious garden path effect will be predicted , which , intuitively , does not occur . </S>
+<S ID='S-111' AZ='OWN'> Note that there is no garden path effect even if the preposition is separated from the disambiguating head noun by a series of adjectives : ( `` I saw the man with the neat , quaint , old-fashioned moustache / telescope '' ) . </S>
+</P>
+<P>
+<S ID='S-112' AZ='OWN'> The same result obtains if we abstract away from the particular implementational details of tree-lowering , and return to the abstract level at which <REFAUTHOR>Gorrell</REFAUTHOR> states his model . </S>
+<S ID='S-113' AZ='OWN'> Once the PP has been attached as an argument of the verb , it can never be reanalysed as the adjunct of the preceding NP , because the NP will precede the PP before reanalysis , and dominate it after reanalysis , which is against the `` exclusivity condition '' on trees ( i.e. no two nodes may stand in both a dominance and a precedence relation ) . </S>
+</P>
+<P>
+<S ID='S-114' AZ='OWN'> A similar problem concerns examples such as the following , from <REF TYPE='A'>Gibson et al. 1993</REF> . </S>
+<EXAMPLE ID='E-8'>
+<EX-S> the lamps near the paintings of the house [ that was damaged in the flood ] . </EX-S>
+<EX-S> the lamps near the painting of the houses [ that was damaged in the flood ] . </EX-S>
+<EX-S> the lamp near the paintings of the houses [ that was damaged in the flood ] . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-115' AZ='OWN'> in the above , <REFAUTHOR>Gibson et al.</REFAUTHOR> have manipulated number agreement to force low <CREF/> , middle <CREF/> and high <CREF/> attachment of the bracketed relative clause . </S>
+<S ID='S-116' AZ='OWN'> The results of their on - and off-line experiments show clearly that the low attachment ( corresponding to <CREF/> ) is easiest , but the middle attachment ( corresponding to <CREF/> ) is most difficult . </S>
+<S ID='S-117' AZ='OWN'> This behaviour cannot be captured whether we adopt a bottom-up or a top-down search for tree-lowering . </S>
+<S ID='S-118' AZ='OWN'> However , even if we can incorporate the required preferences into the parser , the constraint of incrementality will force us to make the decision on encountering that . </S>
+<S ID='S-119' AZ='OWN'> This means that , assuming we decide initially to attach low , but number agreement on was subsequently forces high attachment , as in <CREF/> , then a conscious garden path effect will be predicted , as lowering cannot derive the reanalysis . </S>
+<S ID='S-120' AZ='OWN'> This is true on the abstract level as well , since there will be nodes in the description which precede the original low position of the relative clause , but are dominated by the subsequent high position of the relative clause . </S>
+<S ID='S-121' AZ='OWN'> However , intuitively , of the above sentences , it is only <CREF/> which causes the conscious garden path effect . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-10'> Conclusion </HEADER>
+<P>
+<S ID='S-122' AZ='CTR'> The current implementation shows that the success of an abstract model such as <REFAUTHOR>Gorrell</REFAUTHOR> 's depends crucially on the computational details of the processing algorithm used . </S>
+<S ID='S-123' AZ='OWN'> The search for the lowering site is of particular importance . </S>
+<S ID='S-124' AZ='OWN'> In the final section we have seen that the combination of informational monotonicity with the assumption of strict incrementality results in a system which is too constrained to capture all the processing data . </S>
+<S ID='S-125' AZ='OWN'> Future research will be aimed at determining , firstly , how we can enrich the information to which the search strategy is sensitive in order to provide a better match with human preferences , and secondly , which constraints should be relaxed in order to avoid the problem of undergeneration . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+<SURNAME>Abney</SURNAME>, S. P. (<DATE>1987</DATE>): Licensing and Parsing. Proceedings of NELS
+17 p.1-15, University of Massachusetts, Amherst
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Abney</SURNAME>, S. P. (<DATE>1989</DATE>): A computational model of human parsing. 
+Journal of Psycholinguistic Research 18 p.129-144
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Crocker</SURNAME>, M. W. (<DATE>1991</DATE>): A Logical Model of Competence and
+Performance in the Human Sentence Processor. PhD thesis, Dept. of
+Artificial Intelligence, University of Edinburgh, Edinburgh, U.K.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Frazier</SURNAME>, L. (<DATE>1987</DATE>): Syntactic processing: Evidence from Dutch. In 
+Natural Language and Linguistic Theory 5.4 p.519-559
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Frazier</SURNAME>, L. and K. <SURNAME>Rayner</SURNAME>, (<DATE>1982</DATE>): Making and correcting errors during
+sentence comprehension: Eye movements in the analysis of structurally
+ambiguous sentences. Cognitive Psychology 14 p.178-210
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Gibson</SURNAME>, E., N. <SURNAME>Pearlmutter</SURNAME>, E. <SURNAME>Canesco-Gonzalez</SURNAME> and Greg <SURNAME>Hickok</SURNAME>
+(<DATE>1993</DATE>): Cross-linguistic Attachment Preferences: Evidence from English
+and Spanish. (ms. submitted to Cognition)
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Gibson</SURNAME>, E. and  N. <SURNAME>Pearlmutter</SURNAME>, E. (<DATE>1994</DATE>): A corpus-based account of
+Psycholinguistic Constraints on Prepositional Phrase Attachment (in
+C. Clifton, L. Frazier and K. Rayner (eds) Perspectives on
+  Sentence Processing New York: Lawrence Erlbaum
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Gorrell</SURNAME>, P. (<DATE>in press</DATE>): Syntax and Perception. to be published
+by Cambridge University Press
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Inoue</SURNAME>, A. (<DATE>1991</DATE>): A comparative study of parsing in English and
+Japanese. PhD thesis, University of Conneticut.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Inoue</SURNAME>, A. and J.D. <SURNAME>Fodor</SURNAME> (<DATE>in press</DATE>): Information-paced parsing of
+Japanese. (<DATE>to appear</DATE> in Mazuka amp; Nagai (eds))
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Joshi</SURNAME>, A.K., L.S. <SURNAME>Levy</SURNAME>, and M. <SURNAME>Takahashi</SURNAME>, (<DATE>1975</DATE>): Tree Adjunct
+grammars. Journal of Computer and System Sciences 10,
+p.136-163
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Marcus</SURNAME>, M. (<DATE>1980</DATE>): A Theory of Syntactic Recognition for Natural
+Language Cambridge, MA: MIT Press
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Marcus</SURNAME>, M., D. <SURNAME>Hindle</SURNAME>, and M. <SURNAME>Fleck</SURNAME> (<DATE>1983</DATE>): D-theory: Talking about
+talking about trees. Association for Computational Linguistics
+21 p.129-136
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Mazuka</SURNAME>, R. and  K. <SURNAME>Itoh</SURNAME>  (<DATE>in press</DATE>): Can Japanese be led down the
+garden path? (<DATE>to appear</DATE> in Mazuka and Nagai)
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Mazuka</SURNAME>, R., and Nagai (eds) (<DATE>to appear</DATE>): Japanese Syntactic
+Processing Hillsdale, NJ: Lawrence Earlbaum
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Milward</SURNAME>, D. (<DATE>1995</DATE>): Incremental Interpretation of Categorial
+Grammar.  in Proceedings of EACL (this volume)
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Mitchell</SURNAME>, D.C. amp; Cuetos, F. (<DATE>1991</DATE>): The origins of parsing
+strategies. Conference proceedings: Current issues in natural
+  language processing University of Texas at Austin, TX
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Partee</SURNAME>, B., A. ter Meulen and R. E. Wall (<DATE>1993</DATE>): Mathematical
+  methods in Linguistics Dordrecht: Kluwer Academic Publishers
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Pritchett</SURNAME>, B. L. (<DATE>1992</DATE>): Grammatical Competence and Parsing
+Performance. Chicago, IL: University of Chicago Press
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

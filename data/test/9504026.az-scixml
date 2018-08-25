@@ -1,0 +1,402 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9504026</FILENO>
+<APPEARED><CONFERENCE>ACL</CONFERENCE><YEAR>1995</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.Gr.Ps </CLASSIFICATION>
+</METADATA>
+<TITLE> The intersection of Finite State Automata and Definite Clause Grammars </TITLE>
+<AUTHORLIST>
+<AUTHOR>Gertjan van Noord</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' AZ='OTH'> <REFAUTHOR>Bernard Lang</REFAUTHOR> defines parsing as the calculation of the intersection of a FSA ( the input ) and a CFG . </A-S>
+<A-S ID='A-1' AZ='OTH'> Viewing the input for parsing as a FSA rather than as a string combines well with some approaches in speech understanding systems , in which parsing takes a word lattice as input ( rather than a word string ) . </A-S>
+<A-S ID='A-2' AZ='OTH'> Furthermore , certain techniques for robust parsing can be modelled as finite state transducers . </A-S>
+<A-S ID='A-3' AZ='AIM'> In this paper we investigate how we can generalize this approach for unification grammars . </A-S>
+<A-S ID='A-4' AZ='AIM'> In particular we will concentrate on how we might the calculation of the intersection of a FSA and a DCG . </A-S>
+<A-S ID='A-5' AZ='OWN'> It is shown that existing parsing algorithms can be easily extended for FSA inputs . </A-S>
+<A-S ID='A-6' AZ='OWN'> However , we also show that the termination properties change drastically : we show that it is undecidable whether the intersection of a FSA and a DCG is empty ( even if the DCG is off-line parsable ) . </A-S>
+<A-S ID='A-7' AZ='OWN'> Furthermore we discuss approaches to cope with the problem . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='AIM'> In this paper we are concerned with the syntactic analysis phase of a natural language understanding system . </S>
+<S ID='S-1' AZ='BKG'> Ordinarily , the input of such a system is a sequence of words . </S>
+<S ID='S-2' AZ='BAS'> However , following <REFAUTHOR>Bernard Lang</REFAUTHOR> we argue that it might be fruitful to take the input more generally as a finite state automaton ( FSA ) to model cases in which we are uncertain about the actual input . </S>
+<S ID='S-3' AZ='BKG'> Parsing uncertain input might be necessary in case of ill-formed textual input , or in case of speech input . </S>
+</P>
+<P>
+<S ID='S-4' AZ='BKG'> For example , if a natural language understanding system is interfaced with a speech recognition component , chances are that this compenent is uncertain about the actual string of words that has been uttered , and thus produces a word lattice of the most promising hypotheses , rather than a single sequence of words . </S>
+<S ID='S-5' AZ='BKG'> FSA of course generalizes such word lattices . </S>
+</P>
+<P>
+<S ID='S-6' AZ='OTH'> As another example , certain techniques to deal with ill-formed input can be characterized as finite state transducers <REF TYPE='P'>Lang 1989</REF> ; the composition of an input string with such a finite state transducer results in a FSA that can then be input for syntactic parsing . </S>
+<S ID='S-7' AZ='OTH'> Such an approach allows for the treatment of missing , extraneous , interchanged or misused words <REF TYPE='P'>Teitelbaum 1973</REF> , <REF  TYPE='P'>Saito and Tomita 1988</REF>, <REF  TYPE='P'>Nederhof and Bertsch 1994</REF> . </S>
+</P>
+<P>
+<S ID='S-8' AZ='OTH'> Such techniques might be of use both in the case of written and spoken language input . </S>
+<S ID='S-9' AZ='OTH'> In the latter case another possible application concerns the treatment of phenomena such as repairs <REF TYPE='P'>Carter 1994</REF> . </S>
+</P>
+<P>
+<S ID='S-10' AZ='OWN'> Note that we allow the input to be a full FSA ( possibly including cycles , etc. ) since some of the above-mentioned techniques indeed result in cycles . </S>
+<S ID='S-11' AZ='BKG'> Whereas an ordinary word-graph always defines a finite language , a FSA of course can easily define an infinite number of sentences . </S>
+<S ID='S-12' AZ='BKG'> Cycles might emerge to treat unknown sequences of words , i.e. sentences with unknown parts of unknown lengths <REF TYPE='P'>Lang 1988</REF> . </S>
+</P>
+<P>
+<S ID='S-13' AZ='BKG'> As suggested by an ACL reviewer , one could also try to model haplology phenomena ( such as the 's in English sentences like ` The chef at Joe 's hat ' , where ` Joe 's ' is the name of a restaurant ) using a finite state transducer . </S>
+<S ID='S-14' AZ='BKG'> In a straightforward approach this would also lead to a finite-state automaton with cycles . </S>
+</P>
+<P>
+<S ID='S-15' AZ='OWN'> It can be shown that the computation of the intersection of a FSA and a CFG requires only a minimal generalization of existing parsing algorithms . </S>
+<S ID='S-16' AZ='OWN'> We simply replace the usual string positions with the names of the states in the FSA . </S>
+<S ID='S-17' AZ='OWN'> It is also straightforward to show that the complexity of this process is cubic in the number of states of the FSA ( in the case of ordinary parsing the number of states equals n + 1 ) <REF TYPE='P'>Lang 1974</REF> , <REF TYPE='P'>Billot and Lang 1989</REF> ( assuming the right-hand-sides of grammar rules have at most two categories ) . </S>
+</P>
+<P>
+<S ID='S-18' AZ='AIM'> In this paper we investigate whether the same techniques can be applied in case the grammar is a constraint-based grammar rather than a CFG . </S>
+<S ID='S-19' AZ='OWN'> For specificity we will take the grammar to be a Definite Clause Grammar ( DCG ) <REF TYPE='P'>Pereira and Warren 1980</REF> . </S>
+<S ID='S-20' AZ='BKG'> A DCG is a simple example of a family of constraint-based grammar formalisms that are widely used in natural language analysis ( and generation ) . </S>
+<S ID='S-21' AZ='OWN'> The main findings of this paper can be extended to other members of that family of constraint-based grammar formalisms . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> The intersection of a CFG and a FSA </HEADER>
+<P>
+<S ID='S-22' AZ='BKG'> The calculation of the intersection of a CFG and a FSA is very simple <REF TYPE='P'>Bar-Hillel et al. 1961</REF> . </S>
+<S ID='S-23' AZ='BKG'> The ( context-free ) grammar defining this intersection is simply constructed by keeping track of the state names in the non-terminal category symbols . </S>
+<S ID='S-24' AZ='BKG'> For each rule <EQN/> there are rules <EQN/> , for all <EQN/> . </S>
+<S ID='S-25' AZ='BKG'> Furthermore for each transition <EQN/> we have a rule <EQN/> . </S>
+<S ID='S-26' AZ='BKG'> Thus the intersection of a FSA and a CFG is a CFG that exactly derives all parse-trees . </S>
+<S ID='S-27' AZ='BKG'> Such a grammar might be called the parse-forest grammar . </S>
+</P>
+<P>
+<S ID='S-28' AZ='BKG'> Although this construction shows that the intersection of a FSA and a CFG is itself a CFG , it is not of practical interest . </S>
+<S ID='S-29' AZ='BKG'> The reason is that this construction typically yields an enormous amount of rules that are ` useless ' . </S>
+<S ID='S-30' AZ='BKG'> In fact the ( possibly enormously large ) parse forest grammar might define an empty language ( if the intersection was empty ) . </S>
+<S ID='S-31' AZ='BKG'> Luckily ` ordinary ' recognizers / parsers for CFG can be easily generalized to construct this intersection yielding ( in typical cases ) a much smaller grammar . </S>
+<S ID='S-32' AZ='BKG'> Checking whether the intersection is empty or not is then usually very simple as well : only in the latter case will the parser terminate succesfully . </S>
+</P>
+<P>
+<S ID='S-33' AZ='OWN'> To illustrate how a parser can be generalized to accept a FSA as input we present a simple top-down parser . </S>
+</P>
+<P>
+<S ID='S-34' AZ='OWN'> A context-free grammar is represented as a definite-clause specification as follows . </S>
+<S ID='S-35' AZ='OWN'> We do not wish to define the sets of terminal and non-terminal symbols explicitly , these can be understood from the rules that are defined using the relation rule/2 , and where symbols of the rhs are prefixed with ` - ' in the case of terminals and ` + ' in the case of non-terminals . </S>
+<S ID='S-36' AZ='OWN'> The relation top/1 defines the start symbol . </S>
+<S ID='S-37' AZ='OWN'> The language <EQN/> is defined as : </S>
+</P>
+<IMAGE ID='I-0'/>
+<P>
+<S ID='S-38' AZ='OWN'> In order to illustrate how ordinary parsers can be used to compute the intersection of a FSA and a CFG consider first the definite-clause specification of a top-down parser . </S>
+<S ID='S-39' AZ='OWN'> This parser runs in polynomial time if implemented using Earley deduction or XOLDT resolution <REF TYPE='P'>Warren 1992</REF> . </S>
+<S ID='S-40' AZ='OWN'> It is assumed that the input string is represented by the trans/3 predicate . </S>
+</P>
+<IMAGE ID='I-1'/>
+<P>
+<S ID='S-41' AZ='OWN'> The predicate side _ effect is used to construct the parse forest grammar . </S>
+<S ID='S-42' AZ='OWN'> The predicate always succeeds , and as a side-effect asserts that its argument is a rule of the parse forest grammar . </S>
+<S ID='S-43' AZ='OWN'> For the sentence ` a a b b ' we obtain the parse forest grammar : </S>
+</P>
+<IMAGE ID='I-2'/>
+<P>
+<S ID='S-44' AZ='OWN'> The reader easily verifies that indeed this grammar generates ( a isomorphism of ) the single parse tree of this example , assuming of course that the start symbol for this parse-forest grammar is <EQN/> . </S>
+<S ID='S-45' AZ='OWN'> In the parse-forest grammar , complex symbols are non-terminals , atomic symbols are terminals . </S>
+</P>
+<IMAGE ID='I-3'/>
+<P>
+<S ID='S-46' AZ='OWN'> Next consider the definite clause specification of a FSA . </S>
+<S ID='S-47' AZ='OWN'> We define the transition relation using the relation trans/3 . </S>
+<S ID='S-48' AZ='OWN'> For start states , the relation start/1 should hold , and for final states the relation final/1 should hold . </S>
+<S ID='S-49' AZ='OWN'> Thus the following FSA , defining the regular language <EQN/> ( i.e. an even number of a 's followed by at least one b ) is given as : </S>
+</P>
+<IMAGE ID='I-4'/>
+<P>
+<S ID='S-50' AZ='OWN'> Interestingly , nothing needs to be changed to use the same parser for the computation of the intersection of a FSA and a CFG . </S>
+<S ID='S-51' AZ='OWN'> If our input ` sentence ' now is the definition of trans/3 as given above , we obtain the following parse forest grammar ( where the start symbol is <EQN/></S>
+</P>
+<IMAGE ID='I-5'/>
+<P>
+<S ID='S-52' AZ='OWN'> Thus , even though we now use the same parser for an infinite set of input sentences ( represented by the FSA ) the parser still is able to come up with a parse forest grammar . </S>
+<S ID='S-53' AZ='OWN'> A possible derivation for this grammar constructs the following ( abbreviated ) parse tree in figure <CREF/> . </S>
+<S ID='S-54' AZ='CTR'> Note that the construction of <REFAUTHOR>Bar-Hillel</REFAUTHOR> would have yielded a grammar with 88 rules . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-2'> The intersection of a DCG and a FSA </HEADER>
+<P>
+<S ID='S-55' AZ='TXT'> In this section we want to generalize the ideas described above for CFG to DCG . </S>
+</P>
+<P>
+<S ID='S-56' AZ='OTH'> First note that the problem of calculating the intersection of a DCG and a FSA can be solved trivially by a generalization of the construction by <REF TYPE='P'>Bar-Hillel et al. 1961</REF> . </S>
+<S ID='S-57' AZ='CTR'> However , if we use that method we will end up ( typically ) with an enormously large forest grammar that is not even guaranteed to contain solutions . </S>
+<S ID='S-58' AZ='OWN'> Therefore , we are interested in methods that only generate a small subset of this ; e.g. if the intersection is empty we want an empty parse-forest grammar . </S>
+</P>
+<P>
+<S ID='S-59' AZ='OTH'> The straightforward approach is to generalize existing recognition algorithms . </S>
+<S ID='S-60' AZ='OTH'> The same techniques that are used for calculating the intersection of a FSA and a CFG can be applied in the case of DCGs . </S>
+<S ID='S-61' AZ='OTH'> In order to compute the intersection of a DCG and a FSA we assume that FSA are represented as before . </S>
+<S ID='S-62' AZ='OTH'> DCGs are represented using the same notation we used for context-free grammars , but now of course the category symbols can be first-order terms of arbitrary complexity ( note that without loss of generality we don't take into account DCGs having external actions defined in curly braces ) . </S>
+</P>
+<IMAGE ID='I-6'/>
+<IMAGE ID='I-7'/>
+<P>
+<S ID='S-63' AZ='CTR'> But if we use existing techniques for parsing DCGs , then we are also confronted with an undecidability problem : the recognition problem for DCGs is undecidable <REF TYPE='P'>Pereira and Warren 1983</REF> . </S>
+<S ID='S-64' AZ='CTR'> A fortiori the problem of deciding whether the intersection of a FSA and a DCG is empty or not is undecidable . </S>
+</P>
+<P>
+<S ID='S-65' AZ='OTH'> This undecidability result is usually circumvented by considering subsets of DCGs which can be recognized effectively . </S>
+<S ID='S-66' AZ='OTH'> For example , we can restrict the attention to DCGs of which the context-free skeleton does not contain cycles . </S>
+<S ID='S-67' AZ='OTH'> Recognition for such ` off-line parsable ' grammars is decidable <REF TYPE='P'>Pereira and Warren 1983</REF> . </S>
+</P>
+<P>
+<S ID='S-68' AZ='OTH'> Most existing constraint-based parsing algorithms will terminate for grammars that exhibit the property that for each string there is only a finite number of possible derivations . </S>
+<S ID='S-69' AZ='OTH'> Note that off-line parsability is one possible way of ensuring that this is the case . </S>
+</P>
+<P>
+<S ID='S-70' AZ='CTR'> This observation is not very helpful in establishing insights concerning interesting subclasses of DCGs for which termination can be guaranteed ( in the case of FSA input ) . </S>
+<S ID='S-71' AZ='CTR'> The reason is that there are now two sources of recursion : in the DCG and in the FSA ( cycles ) . </S>
+<S ID='S-72' AZ='CTR'> As we saw earlier : even for CFG it holds that there can be an infinite number of analyses for a given FSA ( but in the CFG this of course does not imply undecidability ) . </S>
+</P>
+<IMAGE ID='I-8'/>
+<DIV DEPTH='2'>
+<HEADER ID='H-3'> Intersection of Fsa and Off-Line Parsable Dcg Is Undecidable </HEADER>
+<P>
+<S ID='S-73' AZ='OWN'> I now show that the question whether the intersection of a FSA and an off-line parsable DCG is empty is undecidable . </S>
+<S ID='S-74' AZ='OWN'> A yes-no problem is undecidable <REF TYPE='P'>Hopcroft and Ullman 1979</REF>  if there is no algorithm that takes as its input an instance of the problem and determines whether the answer to that instance is ` yes ' or ` no ' . </S>
+<S ID='S-75' AZ='OWN'> An instance of a problem consists of a particular choice of the parameters of that problem . </S>
+</P>
+<P>
+<S ID='S-76' AZ='OWN'> I use Post 's Correspondence Problem ( PCP ) as a well-known undecidable problem . </S>
+<S ID='S-77' AZ='OWN'> I show that if the above mentioned intersection problem were decidable , then we could solve the PCP too . </S>
+<S ID='S-78' AZ='OWN'> The following definition and example of a PCP are taken from <REF TYPE='A'>Hopcroft and Ullman 1979</REF> . </S>
+</P>
+<P>
+<S ID='S-79' AZ='OWN'> An instance of PCP consists of two lists , <EQN/> and <EQN/> of strings over some alphabet <EQN/> . </S>
+<S ID='S-80' AZ='OWN'> This instance has a solution if there is any sequence of integers <EQN/> , with <EQN/> , such that . </S>
+</P>
+<IMAGE ID='I-9'/>
+<P>
+<S ID='S-81' AZ='OWN'> The sequence <EQN/> is a solution to this instance of PCP . </S>
+<S ID='S-82' AZ='OWN'> As an example , assume that <EQN/> . </S>
+<S ID='S-83' AZ='OWN'> Furthermore , let <EQN/> and <EQN/> . </S>
+<S ID='S-84' AZ='OWN'> A solution to this instance of PCP is the sequence 2,1,1,3 ( obtaining the sequence 101111110 ) . </S>
+<S ID='S-85' AZ='OWN'> For an illustration , cf. figure <CREF/> . </S>
+</P>
+<P>
+<S ID='S-86' AZ='OWN'> Clearly there are PCP 's that do not have a solution . </S>
+<S ID='S-87' AZ='OWN'> Assume again that <EQN/> . </S>
+<S ID='S-88' AZ='OWN'> Furthermore let <EQN/> and <EQN/> . </S>
+<S ID='S-89' AZ='OWN'> Clearly this PCP does not have a solution . </S>
+<S ID='S-90' AZ='OWN'> In general , however , the problem whether some PCP has a solution or not is not decidable . </S>
+<S ID='S-91' AZ='BAS'> This result is proved by <REF TYPE='A'>Hopcroft and Ullman 1979</REF> by showing that the halting problem for Turing Machines can be encoded as an instance of Post 's Correspondence Problem . </S>
+</P>
+<P>
+<S ID='S-92' AZ='OWN'> First I give a simple algorithm to encode any instance of a PCP as a pair , consisting of a FSA and an off-line parsable DCG , in such a way that the question whether there is a solution to this PCP is equivalent to the question whether the intersection of this FSA and DCG is empty . </S>
+</P>
+<P>
+<S ID='S-93' AZ='OWN'> Encoding of PCP</S>
+<S ID='S-94' TYPE='ITEM' AZ='OWN' > For each <EQN/> ( k the length of lists A and B ) define a DCG rule ( the i-th member of A is <EQN/> , and the i-th member of B is <EQN/> ) : <EQN/> </S>
+<S ID='S-95' TYPE='ITEM' AZ='OWN' > Furthermore , there is a rule <EQN/> </S>
+<S ID='S-96' TYPE='ITEM' AZ='OWN' > Furthermore , there is a rule <EQN/> </S>
+<S ID='S-97' AZ='OWN'> Also , s is the start category of the DCG . </S>
+<S ID='S-98' TYPE='ITEM' AZ='OWN' > Finally , the FSA consists of a single state q which is both the start state and the final state , and a single transition <EQN/> . </S>
+<S ID='S-99' AZ='OWN'> This FSA generates <EQN/> . </S>
+</P>
+<P>
+<S ID='S-100' AZ='OWN'> Observe that the DCG is off-line parsable . </S>
+</P>
+<P>
+<S ID='S-101' AZ='OWN'> The underlying idea of the algorithm is really very simple . </S>
+<S ID='S-102' AZ='OWN'> For each pair of strings from the lists A and B there will be one lexical entry ( deriving the terminal x ) where these strings are represented by a difference-list encoding . </S>
+<S ID='S-103' AZ='OWN'> Furthermore there is a general combination rule that simply concatenates A-strings and concatenates B-strings . </S>
+<S ID='S-104' AZ='OWN'> Finally the rule for s states that in order to construct a succesful top category the A and B lists must match . </S>
+</P>
+<P>
+<S ID='S-105' AZ='OWN'> The resulting DCG , FSA pair for the example PCP is given in figure <CREF/> : </S>
+</P>
+<P>
+<S ID='S-106' AZ='OWN'> Proposition </S>
+<S ID='S-107' AZ='OWN'> The question whether the intersection of a FSA and an off-line parsable DCG is empty is undecidable . </S>
+</P>
+<P>
+<S ID='S-108' AZ='OWN'> Proof</S>
+<S ID='S-109' AZ='OWN'> Suppose the problem was decidable . </S>
+<S ID='S-110' AZ='OWN'> In that case there would exist an algorithm for solving the problem . </S>
+<S ID='S-111' AZ='OWN'> This algorithm could then be used to solve the PCP , because a PCP <EQN/> has a solution if and only if its encoding given above as a FSA and an off-line parsable DCG is not empty . </S>
+<S ID='S-112' AZ='OWN'> The PCP problem however is known to be undecidable . </S>
+<S ID='S-113' AZ='OWN'> Hence the intersection question is undecidable too . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-4'> What to do ?</HEADER>
+<P>
+<S ID='S-114' AZ='OWN' TYPE='ITEM'> The following approaches towards the undecidability problem can be taken : </S>
+</P>
+<P>
+<S ID='S-115' TYPE='ITEM' AZ='OWN' > limit the power of the FSA </S>
+<S ID='S-116' TYPE='ITEM' AZ='OWN' > limit the power of the DCG </S>
+<S ID='S-117' TYPE='ITEM' AZ='OWN' > compromise completeness</S>
+<S ID='S-118' TYPE='ITEM' AZ='OWN' > compromise soundness </S>
+</P>
+<P>
+<S ID='S-119' AZ='OWN'> These approaches are discussed now in turn . </S>
+</P>
+<P>
+<S ID='S-120' AZ='OWN'> Limit the FSA</S>
+<S ID='S-121' AZ='OWN'> Rather than assuming the input for parsing is a FSA in its full generality , we might assume that the input is an ordinary word graph ( a FSA without cycles ) . </S>
+<S ID='S-122' AZ='OWN'> Thus the techniques for robust processing that give rise to such cycles cannot be used . </S>
+<S ID='S-123' AZ='OWN'> One example is the processing of an unknown sequence of words , e.g. in case there is noise in the input and it is not clear how many words have been uttered during this noise . </S>
+<S ID='S-124' AZ='OWN'> It is not clear to me right now what we loose ( in practical terms ) if we give up such cycles . </S>
+</P>
+<P>
+<S ID='S-125' AZ='OWN'> Note that it is easy to verify that the question whether the intersection of a word-graph and an off-line parsable DCG is empty or not is decidable since it reduces to checking whether the DCG derives one of a finite number of strings . </S>
+</P>
+<P>
+<S ID='S-126' AZ='OWN'> Limit the DCG</S>
+<S ID='S-127' AZ='OWN'> Another approach is to limit the size of the categories that are being employed . </S>
+<S ID='S-128' AZ='OWN'> This is the GPSG and F-TAG approach . </S>
+<S ID='S-129' AZ='OWN'> In that case we are not longer dealing with DCGs but rather with CFGs ( which have been shown to be insufficient in general for the description of natural languages ) . </S>
+</P>
+<P>
+<S ID='S-130' AZ='OWN'> Compromise Completeness</S>
+<S ID='S-131' AZ='OWN'> Completeness in this context means : the parse forest grammar contains all possible parses . </S>
+<S ID='S-132' AZ='OWN'> It is possible to compromise here , in such a way that the parser is guaranteed to terminate , but sometimes misses a few parse-trees . </S>
+<S ID='S-133' AZ='OWN'> For example , if we assume that each edge in the FSA is associated with a probability it is possible to define a threshold such that each partial result that is derived has a probability higher than the threshold . </S>
+<S ID='S-134' AZ='OWN'> Thus , it is still possible to have cycles in the FSA , but anytime the cycle is ` used ' the probability decreases and if too many cycles are encountered the threshold will cut off that derivation . </S>
+<S ID='S-135' AZ='OWN'> Of course this implies that sometimes the intersection is considered empty by this procedure whereas in fact the intersection is not . </S>
+<S ID='S-136' AZ='OWN'> For any threshold it is the case that the intersection problem of off-line parsable DCGs and FSA is decidable . </S>
+</P>
+<P>
+<S ID='S-137' AZ='OWN'> Compromise Soundness</S>
+<S ID='S-138' AZ='OWN'> Soundness in this context should be understood as the property that all parse trees in the parse forest grammar are valid parse trees . </S>
+<S ID='S-139' AZ='OWN'> A possible way to ensure termination is to remove all constraints from the DCG and parse according to this context-free skeleton . </S>
+<S ID='S-140' AZ='OWN'> The resulting parse-forest grammar will be too general most of the times . </S>
+<S ID='S-141' AZ='OWN'> A practical variation can be conceived as follows . </S>
+<S ID='S-142' AZ='OWN'> From the DCG we take its context-free skeleton . </S>
+<S ID='S-143' AZ='OWN'> This skeleton is obtained by removing the constraints from each of the grammar rules . </S>
+<S ID='S-144' AZ='OWN'> Then we compute the intersection of the skeleton with the input FSA . </S>
+<S ID='S-145' AZ='OWN'> This results in a parse forest grammar . </S>
+<S ID='S-146' AZ='OWN'> Finally , we add the corresponding constraints from the DCG to the grammar rules of the parse forest grammar . </S>
+<S ID='S-147' AZ='OWN'> This has the advantage that the result is still sound and complete , although the size of the parse forest grammar is not optimal ( as a consequence it is not guaranteed that the parse forest grammar contains a parse tree ) . </S>
+<S ID='S-148' AZ='OWN'> Of course it is possible to experiment with different ways of taking the context-free skeleton ( including as much information as possible / useful ) . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-5'> Acknowledgments </HEADER>
+<P>
+<S ID='S-149' AZ='OWN'> I would like to thank Gosse Bouma , Mark-Jan Nederhof and John Nerbonne for comments on this paper . </S>
+<S ID='S-150' AZ='OWN'> Furthermore the paper benefitted from remarks made by the anonymous ACL reviewers . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+Y. <SURNAME>Bar-Hillel</SURNAME>, M. <SURNAME>Perles</SURNAME>, and E. <SURNAME>Shamir</SURNAME>.
+<DATE>1961</DATE>.
+On formal properties of simple phrase structure grammars.
+Zeitschrift fr Phonetik, SprachWissenschaft und
+  Kommunicationsforschung, 14:143-172.
+Reprinted in Bar-Hillel's Language and Information - Selected Essays
+  on their Theory and Application, Addison Wesley series in Logic, <DATE>1964</DATE>, pp.
+  116-150.
+</REFERENCE>
+<REFERENCE>
+S. <SURNAME>Billot</SURNAME> and B. <SURNAME>Lang</SURNAME>.
+<DATE>1989</DATE>.
+The structure of shared parse forests in ambiguous parsing.
+In 27th Annual Meeting of the Association for Computational
+  Linguistics, pages 143-151, Vancouver.
+</REFERENCE>
+<REFERENCE>
+David <SURNAME>Carter</SURNAME>.
+<DATE>1994</DATE>.
+Chapter 4: Linguistic analysis.
+In M-S. Agns, H. Alshawi, I. Bretan, D. Carter, K. Ceder,
+  M. Collins, R. Crouch, V. Digalakis, B Ekholm, B. Gambck, J. Kaja,
+  J. Karlgren, B. Lyberg, P. Price, S. Pulman, M. Rayner, C. Samuelsson, and
+  T. Svensson, editors, Spoken Language Translator: First Year Report.
+  SICS Sweden / SRI Cambridge.
+SICS research report R94:03, ISSN 0283-3638.
+</REFERENCE>
+<REFERENCE>
+Barbara <SURNAME>Grosz</SURNAME>, Karen Sparck <SURNAME>Jones</SURNAME>, and Bonny <SURNAME>Lynn</SURNAME> Webber, editors.
+<DATE>1986</DATE>.
+Readings in Natural Language Processing.
+Morgan Kaufmann.
+</REFERENCE>
+<REFERENCE>
+John E. <SURNAME>Hopcroft</SURNAME> and Jeffrey D. <SURNAME>Ullman</SURNAME>.
+<DATE>1979</DATE>.
+Introduction to Automata Theory, Languages and Computation.
+Addison Wesley.
+</REFERENCE>
+<REFERENCE>
+Bernard <SURNAME>Lang</SURNAME>.
+<DATE>1974</DATE>.
+Deterministic techniques for efficient non-deterministic parsers.
+In J. Loeckx, editor, Proceedings of the Second Colloquium on
+  Automata, Languages and Programming.
+Also: Rapport de Recherche 72, IRIA-Laboria, Rocquencourt (France).
+</REFERENCE>
+<REFERENCE>
+Bernard <SURNAME>Lang</SURNAME>.
+<DATE>1988</DATE>.
+Parsing incomplete sentences.
+In Proceedings of the 12th International Conference on
+  Computational Linguistics (COLING), Budapest.
+</REFERENCE>
+<REFERENCE>
+Bernard <SURNAME>Lang</SURNAME>.
+<DATE>1989</DATE>.
+A generative view of ill-formed input processing.
+In ATR Symposium on Basic Research for Telephone Interpretation
+  (ASTI), Kyoto Japan.
+</REFERENCE>
+<REFERENCE>
+Markjan <SURNAME>Nederhof</SURNAME> and Eberhard <SURNAME>Bertsch</SURNAME>.
+<DATE>1994</DATE>.
+Linear-time suffix recognition for deterministic languages.
+Technical Report CSI-R9409, Computing Science Institute, KUN
+  Nijmegen.
+</REFERENCE>
+<REFERENCE>
+Fernando C. <SURNAME>Pereira</SURNAME> and David <SURNAME>Warren</SURNAME>.
+<DATE>1980</DATE>.
+Definite clause grammars for language analysis - a survey of the
+  formalism and a comparison with augmented transition networks.
+Artificial Intelligence, 13.
+ reprinted in <REF TYPE='A'>Grosz et al. 1986</REF> .  
+</REFERENCE>
+<REFERENCE>
+Fernando C. <SURNAME>Pereira</SURNAME> and David <SURNAME>Warren</SURNAME>.
+<DATE>1983</DATE>.
+Parsing as deduction.
+In 21st Annual Meeting of the Association for Computational
+  Linguistics, Cambridge Massachusetts.
+</REFERENCE>
+<REFERENCE>
+H. <SURNAME>Saito</SURNAME> and M. <SURNAME>Tomita</SURNAME>.
+<DATE>1988</DATE>.
+Parsing noisy sentences.
+In Proceedings of the 12th International Conference on
+  Computational Linguistics (COLING), pages 561-566, Budapest.
+</REFERENCE>
+<REFERENCE>
+R. <SURNAME>Teitelbaum</SURNAME>.
+<DATE>1973</DATE>.
+Context-free error analysis by evaluation of algebraic power series.
+In Proceedings of the Fifth Annual ACM Symposium on Theory of
+  Computing, Austin, Texas.
+</REFERENCE>
+<REFERENCE>
+David S. <SURNAME>Warren</SURNAME>.
+<DATE>1992</DATE>.
+Memoing for logic programs.
+Communications of the ACM, 35(3):94-111.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

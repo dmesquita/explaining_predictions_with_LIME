@@ -1,0 +1,382 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9502037</FILENO>
+<APPEARED><CONFERENCE TYPE='Student'>EACL</CONFERENCE><YEAR>1995</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.St </CLASSIFICATION>
+</METADATA>
+<TITLE> A State-Transition Grammar for Data-Oriented Parsing </TITLE>
+<AUTHORLIST>
+<AUTHOR>David Tugwell</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' AZ='AIM'> This paper presents a grammar formalism designed for use in data-oriented approaches to language processing . </A-S>
+<A-S ID='A-1' DOCUMENTC='S-73' AZ='OWN'> It goes on to investigate ways in which a corpus pre-parsed with this formalism may be processed to provide a probabilistic language model for use in the parsing of fresh texts . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> Recent years have seen a resurgence of interest in probabilistic techniques for automatic language analysis . </S>
+<S ID='S-1' AZ='OTH'> In particular , there has arisen a distinct paradigm of processing on the basis of pre-analyzed data which has taken the name Data-Oriented Parsing . </S>
+</P>
+<P>
+<S ID='S-2' AZ='OTH'> `` Data Oriented Parsing ( DOP ) is a model where no abstract rules , but language experiences in the form of an analyzed corpus , constitute the basis for language processing . ''</S>
+<S ID='S-3' AZ='OTH'> There is not space here to present full justification for adopting such an approach or to detail the advantages that it offers . </S>
+<S ID='S-4' AZ='OTH'> The main claim it makes is that effective language processing requires a consideration of both the structural and statistical aspects of language , whereas traditional competence grammars rely only on the former , and standard statistical techniques such as n-gram models only on the latter . </S>
+<S ID='S-5' AZ='OTH'> DOP attempts to combine these two traditions and produce `` performance grammars '' , which : </S>
+</P>
+<P>
+<S ID='S-6' AZ='OTH'> `` ... should not only contain information on the structural possibilities of the general language system , but also on details of actual language use in a language community . ''</S>
+<S ID='S-7' AZ='OTH'> This approach entails however that a corpus has first to be pre-analyzed ( ie. hand-parsed ) , and the question immediately arises as to the formalism to be used for this . </S>
+<S ID='S-8' AZ='CTR'> There is no lack of competing competence grammars available , but also no reason to expect that such grammars should be suited to a DOP approach , designed as they were to characterize the nature of linguistic competence rather than performance . </S>
+</P>
+<P>
+<S ID='S-9' AZ='AIM'> The next section sets out some of the properties that we might require from such a `` performance grammar '' and offers a formalism which attempts to satisfy these requirements . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> A Formalism for DOP </HEADER>
+<P>
+<S ID='S-10' AZ='OWN'> Given that we are attempting to construct a formalism that will do justice to both the statistical and structural aspects of language , the features that we would wish to maximize will include the following : </S>
+</P>
+<P>
+<S ID='S-11' AZ='OWN'> The formalism should be easy to use with probabilistic processing techniques , ideally having a close correspondence to a simple probabilistic model such as a Markov process . </S>
+</P>
+<P>
+<S ID='S-12' AZ='OWN'> The formalism should be fine-grained , ie. responsive to the behaviour of individual words ( as n-gram models are ) . </S>
+<S ID='S-13' AZ='OWN'> This suggests a radically lexicalist approach <REF TYPE='P'>Karttunen 1990</REF> in which all rules are encoded in the lexicon , there being no phrase structure rules which do not introduce lexical items . </S>
+</P>
+<P>
+<S ID='S-14' AZ='OWN'> It should be capable of capturing fully the linguistic intuitions of language users . </S>
+<S ID='S-15' AZ='OWN'> In other words , using the formalism one should be able to characterize the structural regularities of language with at least the sophistication of modern competence grammars . </S>
+</P>
+<P>
+<S ID='S-16' AZ='OWN'> As it is to be used with real data , the formalism should be able to characterize the wide range of syntactic structures found in actual language use , including those normally excluded by competence grammars as belonging to the `` periphery '' of the language or as being `` ungrammatical '' . </S>
+<S ID='S-17' AZ='OWN'> Ideally every interpretable utterance should have one and only one analysis for any interpretation of it . </S>
+</P>
+<P>
+<S ID='S-18' AZ='OWN'> Considering the first of these points , namely a close relation to a simple probabilistic model , a good place to start the search might be with a right-branching finite-state grammar . </S>
+<S ID='S-19' AZ='OWN'> In this class of grammars every rule has the form A <EQN/> a B ( A , B <EQN/> { non-terminals } , a <EQN/> { terminals } ) and all trees have the simple structure : </S>
+<IMAGE ID='I-0'/>
+</P>
+<P>
+<S ID='S-20' AZ='OWN'> Or : [TABLE]  </S>
+</P>
+<P>
+<S ID='S-21' AZ='OWN'> ( with an equivalent vertical alignment , henceforth to be used in this paper , on the right ) . </S>
+</P>
+<P>
+<S ID='S-22' AZ='OWN'> In probabilistic terms , a finite-state grammar corresponds to a first-order Markov process , where given a sequence of states <EQN/> , <EQN/> , ... drawn from a finite set of possible states { <EQN/> , ... , <EQN/> } the probability of a particular state occurring depends solely on the identity of the previous state . </S>
+<S ID='S-23' AZ='OWN'> In the finite-state grammar each word is associated with a transition between two categories , in the tree above ` a ' with the transition A <EQN/> B and so on . </S>
+<S ID='S-24' AZ='OWN'> To calculate the probability that a string of words <EQN/> , <EQN/> , <EQN/> , ... <EQN/> has the parse represented by the string of category-states S <EQN/> , S <EQN/> , S <EQN/> , ... S <EQN/> , we simply take the product of the probability of each transition : ie. <EQN/> . </S>
+</P>
+<P>
+<S ID='S-25' AZ='OWN'> In addition to satisfying our first criterion , a finite-state grammar also fulfills the requirement that the formalism be radically lexicalist , as by definition every rule introduces a lexical item . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-2'> Accounting for Linguistic Structure </HEADER>
+<P>
+<S ID='S-26' AZ='OWN'> If a finite-state grammar is chosen however , the third criterion , that of linguistic adequacy , seems to present an insurmountable stumbling block . </S>
+<S ID='S-27' AZ='OWN'> How can such a simple formalism , in which syntax is reduced to a string of category-states , hope to capture even the basic hierarchical structure , the familiar `` tree structure '' , of linguistic expressions ? </S>
+</P>
+<P>
+<S ID='S-28' AZ='OWN'> Indeed , if the non-terminals are viewed as atomic categories then there is no way this can be done . </S>
+<S ID='S-29' AZ='OWN'> If however , in line with most current theories , categories are taken to be bundles of features and crucially if one of these features has the value of a stack of categories , then this hierarchical structure can indeed be represented . </S>
+</P>
+<P>
+<S ID='S-30' AZ='OWN'> Using the notation <EQN/> to represent a state of basic category A carrying a category B on its stack , the hierarchical structure of the sentence : </S>
+<EXAMPLE ID='E-0'>
+<EX-S> The man gave the dog a bone . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-31' AZ='OWN'> can be represented as : </S>
+<IMAGE ID='I-1'/>
+</P>
+<P>
+<S ID='S-32' AZ='OWN'> Intuitively , syntactic links between non-adjacent words , impossible in a standard finite-state grammar , are here established by passing categories along on the stack `` through '' the state of intervening words . </S>
+<S ID='S-33' AZ='OWN'> That such a formalism can fully capture basic linguistic structures is confirmed by the proof in <REF TYPE='A'>Aho 1968</REF> that an indexed grammar ( ie. one where categories are supplemented with a stack of unbounded length , as above ) , if restricted to right linear trees ( also as above ) , is equivalent to a context-free grammar . </S>
+</P>
+<P>
+<S ID='S-34' AZ='OWN'> A perusal of the state transitions associated with individual words in <CREF/> reveals an obvious relationship to the `` types '' of categorial grammar . </S>
+<S ID='S-35' AZ='OWN'> Using <EQN/> to represent a list of categories ( possibly null ) , we arrive at the following transitions ( with their corresponding categorial types alongside ) . </S>
+</P>
+<P>
+<S ID='S-36' AZ='OWN'> The ditransitive verb ` gave ' is  </S>
+<IMAGE ID='I-2'/>
+</P>
+<P>
+<S ID='S-37' AZ='OWN'> Determiners in complement position are both : </S>
+<IMAGE ID='I-3'/>
+</P>
+<P>
+<S ID='S-38' AZ='OWN'> Determiner in subject position is ` type-raised ' to : </S>
+<IMAGE ID='I-4'/>
+</P>
+<P>
+<S ID='S-39' AZ='OWN'> The common nouns are all : </S>
+<IMAGE ID='I-5'/>
+</P>
+<P>
+<S ID='S-40' AZ='OWN'> In fact as no intermediate constituents are formed in the analysis , an even closer parallel is to a dependency syntax where only rightward pointing arrows are allowed , of which the formalism as presented above is a notational variant . </S>
+<S ID='S-41' AZ='OWN'> This lack of intermediate constituents has the added benefit that no `` spurious ambiguities '' can arise . </S>
+</P>
+<P>
+<S ID='S-42' AZ='OWN'> Knowing now that the addition of a stack-valued feature suffices to capture the basic hierarchical structure of language , additional features can be used to deal with other syntactic relations . </S>
+<S ID='S-43' AZ='OWN'> For example , following the example of GPSG , unbounded dependencies can be captured using `` slashed '' categories . </S>
+<S ID='S-44' AZ='OWN'> If we represent a `` slashed '' category X with the lower case x , and use the notation A(b) for a category A carrying a feature b , then the topicalized sentence : </S>
+<EXAMPLE ID='E-1'>
+<EX-S> This bone the man gave the puppy . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-45' AZ='OWN'> will have the analysis : </S>
+<IMAGE ID='I-6'/>
+</P>
+<P>
+<S ID='S-46' AZ='OWN'> Although there is no space in this paper to go into greater detail , further constructions involving unbounded dependency and complement control phenomena can be captured in similar ways . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-3'> Coverage </HEADER>
+<P>
+<S ID='S-47' AZ='OWN'> The criterion that remains to be satisfied is that of width of coverage : can the formalism cope with the many `` peripheral '' structures found in real written and spoken texts ? </S>
+<S ID='S-48' AZ='OWN'> As it stands the formalism is weakly equivalent to a context-free grammar and as such will have problems dealing with phenomena like discontinuous constituents , non-constituent coordination and gapping . </S>
+<S ID='S-49' AZ='OWN'> Fortunately if extensions are made to the formalism , necessarily taking it outside weak equivalence to a context-free grammar , natural and general analyses present themselves for such constructions . </S>
+<S ID='S-50' AZ='OWN'> Two of these will now be sketched . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-4'> Discontinuous Constituents </HEADER>
+<P>
+<S ID='S-51' AZ='OWN'> Consider the pair of sentences <CREF/> and <CREF/> , identical in interpretation , but the latter containing a discontinuous noun phrase and the former not : </S>
+<EXAMPLE ID='E-2'>
+<EX-S> I saw a dog which had no nose yesterday . </EX-S>
+<EX-S> I saw a dog yesterday which had no nose . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-52' AZ='OWN'> which have the respective analyses : </S>
+<IMAGE ID='I-7'/>
+<IMAGE ID='I-8'/>
+</P>
+<P>
+<S ID='S-53' AZ='OWN'> The only transition in <CREF/> that differs from that of the corresponding word in the ` core ' variant <CREF/> is that of ` dog ' which has the respective transitions : </S>
+<IMAGE ID='I-9'/>
+</P>
+<P>
+<S ID='S-54' AZ='OWN'> Both nouns introduce a relative clause modifier <EQN/> , the difference being that in the discontinuous variant a category has been taken off the stack at the same time as the modifier has been placed on the stack . </S>
+<S ID='S-55' AZ='OWN'> It has been assumed so far that we are using a right-linear indexed grammar , but such a rule is expressly disallowed in an indexed grammar and so allowing transitions of this kind ends the formalism ` s weak equivalence to the context-free grammars . </S>
+</P>
+<P>
+<S ID='S-56' AZ='OWN'> Of course , having allowed such crossed dependencies , there is nothing in the formalism itself that will disallow a similar analysis for a discontinuity unacceptable in English such as : </S>
+<EXAMPLE ID='E-3'>
+<EX-S> I saw a yesterday dog . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-57' AZ='OWN'> This does not present a problem , however , as in DOP it is information in the parsed corpus which determines the structures that are possible . </S>
+<S ID='S-58' AZ='OWN'> There is no need to explicitly rule out <CREF/> , as the transition NP [ <EQN/> ] <EQN/> <EQN/> [ N ] will be vanishingly rare in any corpus of even the most garbled speech , while the transition N [ <EQN/> ] <EQN/> <EQN/> [ S ( rel ) ] is commonly met with in both written and spoken English . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-5'> Non-Constituent Coordination </HEADER>
+<P>
+<S ID='S-59' AZ='OWN'> The analysis of standard coordination is shown in <CREF/> : </S>
+<IMAGE ID='I-10'/>
+</P>
+<P>
+<S ID='S-60' AZ='OWN'> Instead of a typical transition for ` gnawed ' of VP <EQN/> NP , we have a transition introducing a coordinated VP : <EQN/> . </S>
+</P>
+<P>
+<S ID='S-61' AZ='OWN'> In general for any transition X <EQN/> Y , where X is a category and Y a list of categories ( possibly empty ) , there will be a transition introducing coordination : <EQN/> . </S>
+</P>
+<P>
+<S ID='S-62' AZ='OWN'> Non-constituent coordinations such as <CREF/> present serious problems for phrase-structure approaches : </S>
+<EXAMPLE ID='E-4'>
+<EX-S> Fido had a bone yesterday and biscuit today . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-63' AZ='OWN'> However if we generalize the schema already obtained for standard coordination by allowing X to be not only a single category , but a list of categories , it is found to suffice for non-constituent coordination as well . </S>
+<IMAGE ID='I-11'/>
+</P>
+<P>
+<S ID='S-64' AZ='OWN'> In this analysis instead of a regular transition for ` bone ' of : <EQN/> .</S>
+</P>
+<P>
+<S ID='S-65' AZ='OWN'> there is instead a transition introducing coordination : <EQN/> .</S>
+</P>
+<P>
+<S ID='S-66' AZ='OWN'> Allowing categories on the stack to themselves have non-empty stacks moves the formalism one step further from being an indexed grammar . </S>
+<S ID='S-67' AZ='OWN'> This is the final incarnation of the formalism , being the State-Transition Grammar of the title . </S>
+</P>
+<P>
+<S ID='S-68' AZ='OWN'> Similar schemas are being investigated to characterize gapping constructions . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-6'> Centre-Embedding </HEADER>
+<P>
+<S ID='S-69' AZ='OWN'> It should be noted that an indefinite amount of centre-embedding can be described , but only at the expense of unlimited growth in the length of states : </S>
+<IMAGE ID='I-12'/>
+</P>
+<P>
+<S ID='S-70' AZ='OWN'> This contrasts with unlimited right-recursion where there is no growth in state length : </S>
+<IMAGE ID='I-13'/>
+</P>
+<P>
+<S ID='S-71' AZ='OWN'> As the model is to be trained from real data , transitions involving long states as in <CREF/> will have an ever smaller and eventually effectively nil probability . </S>
+<S ID='S-72' AZ='OWN'> Therefore , when tuned to any particular language corpus the resulting grammar will be effectively finite-state . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-7'> Parsing </HEADER>
+<P>
+<S ID='S-73' ABSTRACTC='A-1' AZ='OWN'> Assuming that we now have a corpus parsed with the state-transition grammar , how can this information be used to parse fresh text . </S>
+</P>
+<P>
+<S ID='S-74' AZ='OWN'> Firstly , for each word type in the corpus we can collect the transitions with which it occurs and calculate its probability distribution over all possible transitions ( an infinite number of which will be zero ) . </S>
+<S ID='S-75' AZ='OWN'> To make this concrete , there are five tokens of the word ` dog ' in the examples thus far , and so ` dog ' will have the transition probability distribution : </S>
+<IMAGE ID='I-14'/>
+</P>
+<P>
+<S ID='S-76' AZ='OWN'> To find the most probable parse for a sentence , we simply find the path from word to word which maximizes the product of the state transitions ( as we have a first order Markov process ) . </S>
+</P>
+<P>
+<S ID='S-77' AZ='OWN'> However this simple-minded approach , although easy to implement , in other ways leaves much to be desired . </S>
+<S ID='S-78' AZ='OWN'> The probability distributions are far too `` gappy '' and even if a huge amount of data were collected , the chances that they would provide the desired path for a sentence of any reasonable length are slim . </S>
+<S ID='S-79' AZ='OWN'> The process of generalizing or smoothing the transition probabilities is therefore seen to be indispensable . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-8'> Smoothing Probability Distributions </HEADER>
+<P>
+<S ID='S-80' AZ='OWN'> Although far from exhausting the possible methods for smoothing , the following three are those used in the implementation described at the end of the paper . </S>
+<S ID='S-81' TYPE='ITEM' AZ='OWN' > Factor out elements on the stack which are merely carried over from state to state ( which was done earlier in looking at the correspondence of state transitions to categorial types ) . </S>
+<S ID='S-82' AZ='OWN'> The previous transitions for ` dog ' then become : </S>
+<IMAGE ID='I-15'/>
+<S ID='S-83' TYPE='ITEM' AZ='OWN' > Factor out other features which are merely passed from state to state . </S>
+<S ID='S-84' AZ='OWN'> For instance in the example sentences , ` the ' has the generalized transitions : </S>
+<IMAGE ID='I-16'/>
+</P>
+<P>
+<S ID='S-85' AZ='OWN'> which can be further generalized to the single transition : </S>
+<IMAGE ID='I-17'/>
+<S ID='S-86' TYPE='ITEM' AZ='OWN' > Establish word paradigms , ie. classes of words which occur with similar transitions . </S>
+<S ID='S-87' AZ='OWN'> The probability distribution for individual words can then be smoothed by suitably blending in the paradigmatic distribution . </S>
+<S ID='S-88' AZ='OWN'> These paradigms will correspond to a great extent to the word classes of rule-based grammars . </S>
+<S ID='S-89' AZ='OWN'> The advantage would be retained however that the system is still fine-grained enough to reflect the idiosyncratic patterns of individual words and could override this paradigmatic information if sufficient data were available . </S>
+</P>
+<P>
+<S ID='S-90' AZ='OWN'> Words hitherto unknown to the system can be treated as being extreme examples of words lacking sufficient transition data and they might then be given a transition distribution blended from the open class word paradigms . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-9'> Problems Arising from Smoothing </HEADER>
+<P>
+<S ID='S-91' AZ='OWN'> Although essential for effective processing , the smoothing operations may give rise to new problems . </S>
+<S ID='S-92' AZ='OWN'> For example , factoring out items on the stack , as in <CREF/> , removes from the model the disinclination for long states inherent in the original corpus . </S>
+<S ID='S-93' AZ='OWN'> To recapture this discarded aspect of the language , it would be sufficient to introduce into the model a probabilistic penalty based on state length . </S>
+<S ID='S-94' AZ='OWN'> This penalty may easily be calculated according to the lengths of states in the parsed corpus . </S>
+</P>
+<P>
+<S ID='S-95' AZ='OWN'> Not only would this allow the modelling of the restriction on centre-embedding , but it would also allow many other `` processing '' phenomena to be accurately characterized . </S>
+<S ID='S-96' AZ='OWN'> Taking as an example `` heavy-NP shift '' , suppose that the corpus contained two distinct transitions for the word ` threw ' , with the particle ` out ' both before and after the object . </S>
+<IMAGE ID='I-18'/>
+</P>
+<P>
+<S ID='S-97' AZ='OWN'> Even if <EQN/> were considerably greater than <EQN/> , the cumulative negative effect of the longer states in <CREF/> would eventually lead to the model giving the sentence with the shifted NP <CREF/> a higher probability . </S>
+<IMAGE ID='I-19'/>
+<IMAGE ID='I-20'/>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-10'> Capturing Lexical Preferences </HEADER>
+<P>
+<S ID='S-98' AZ='OTH'> One strength of n-gram models is that they can capture a certain amount of lexical preference information . </S>
+<S ID='S-99' AZ='OTH'> For example , in a bigram model trained on sufficient data the probability of the bigram ` dog barked ' could be expected to be significantly higher than ` cat barked ' , and this slice of `` world knowledge '' is something our model lacks . </S>
+</P>
+<P>
+<S ID='S-100' AZ='OWN'> It would not be difficult to make a small extension to the present model to capture such information , namely by introducing an additional feature containing the '' lexical value '' of the head of a phrase . </S>
+<S ID='S-101' AZ='OWN'> Abandoning the shorthand ` VP ' and representing a subject explicitly as a `` slashed '' NP , a sentence with added lexical head features would appear as : </S>
+<IMAGE ID='I-21'/>
+</P>
+<P>
+<S ID='S-102' AZ='OWN'> In contrast to n-grams , where this sentence would cloud somewhat the `` world knowledge '' , containing as it does the bigram ` cat barked ' , the added structure of our model allows the lexical preference to be captured no matter how far the head noun is from the head verb . </S>
+<S ID='S-103' AZ='OWN'> From <CREF/> the world knowledge of the system would be reinforced by the two stereotypical transitions : </S>
+<IMAGE ID='I-22'/>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-11'> Present Implementation </HEADER>
+<P>
+<S ID='S-104' AZ='OWN'> 16,000 + running words from section N of the Brown corpus ( texts N01 - N08 ) were hand-parsed using the state-transition grammar . </S>
+<S ID='S-105' AZ='OWN'> The actual formalism used was much fuller than the rather schematic one given above , including many additional features such as case , tense , person and number . </S>
+<S ID='S-106' AZ='OWN'> Transition probabilities were generalized in the ways discussed in the previous section . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-12'> Results </HEADER>
+<P>
+<S ID='S-107' AZ='OWN'> sentences of less than 15 words were chosen randomly from other texts in section N of the Brown corpus ( N09 - N14 ) and fed to the parser without alteration . </S>
+<S ID='S-108' AZ='OWN'> Unknown words in the input , of which there were obviously many , were assigned to one of seven orthographic classes and given appropriate transitions calculated from the corpus . </S>
+</P>
+<P>
+<S ID='S-109' TYPE='ITEM' AZ='OWN' > 27 were parsed correctly , ie. exactly the same as the hand parse or differing in only relatively insignificant ways which the model could not hope to know . </S>
+<S ID='S-110' TYPE='ITEM' AZ='OWN' > 23 were parsed wrongly , ie. the analysis differed from the hand parse in some non-trivial way . </S>
+<S ID='S-111' TYPE='ITEM' AZ='OWN' > 50 were not parsed at all , ie. one or more of the transitions necessary to find a parse path was lacking , even after generalizing the transitions . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-13'> Future Development </HEADER>
+<P>
+<S ID='S-112' AZ='OWN'> Although the results at present are extremely modest , it should be borne in mind both that the amount of data the system has to work on is very small and that the smoothing of transition probabilities is still far from optimal . </S>
+<S ID='S-113' AZ='OWN'> The present target is to achieve such a level of performance that the corpus can be extended by hand-correction of the parser output , rather than hand-parsing from scratch . </S>
+<S ID='S-114' AZ='OWN'> Not only will this hopefully save a certain amount of drudgery , it should also help to minimize errors and maintain consistency . </S>
+</P>
+<P>
+<S ID='S-115' AZ='OWN'> A more distant goal is to ascertain whether the performance of the model can improve after parsing new texts and processing the data therein even without hand-correction of the parses , and if so what the limits are to such `` self-improvement '' . </S>
+</P>
+</DIV>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+<SURNAME>Aho</SURNAME>, A.V. <DATE>1968</DATE>. Indexed Grammars. 
+  Journal of the ACM, 15: 647-671.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Bod</SURNAME>, Rens <DATE>1992</DATE>. A Computational Model of
+Language Performance: Data Oriented Parsing. 
+  COLING-92.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Kartunnen</SURNAME>, L. <DATE>1990</DATE>.
+  Radical Lexicalism. In Baltin amp; Kroch (eds), 
+    Alternative conceptions of phrase structure,
+  Univ of Chicago Press, pp 43-65.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Karttunen</SURNAME>, L. <DATE>1990</DATE>.
+  Radical Lexicalism. In Baltin amp; Kroch (eds), 
+    Alternative conceptions of phrase structure,
+  Univ of Chicago Press, pp 43-65.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Krauwer</SURNAME>, Steven amp; Des Tombes, Louis <DATE>1981</DATE>. Transducers and
+Grammars as Theories of Language. Theoretical Linguistics, 8,
+173-202.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Milward</SURNAME>, David <DATE>1990</DATE>. Coordination
+in an Axiomatic Grammar. COLING-90.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Milward</SURNAME>, David <DATE>1994</DATE>.
+Non-constituent Coordination: Theory and Practice. COLING-94.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

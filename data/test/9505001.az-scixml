@@ -1,0 +1,556 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9505001</FILENO>
+<REFLABEL>Chu-Carroll and Carberry, 1995</REFLABEL>
+<APPEARED><CONFERENCE>ACL</CONFERENCE><YEAR>1995</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.Dc </CLASSIFICATION>
+</METADATA>
+<TITLE>Response Generation in Collaborative Negotiation</TITLE>
+<AUTHORLIST>
+<AUTHOR>Jennifer Chu-Charroll</AUTHOR>
+<AUTHOR>Sandra Carberry</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' DOCUMENTC='S-1' AZ='BKG'> In collaborative planning activities , since the agents are autonomous and heterogeneous , it is inevitable that conflicts arise in their beliefs during the planning process . </A-S>
+<A-S ID='A-1' AZ='BKG'> In cases where such conflicts are relevant to the task at hand , the agents should engage in collaborative negotiation as an attempt to square away the discrepancies in their beliefs . </A-S>
+<A-S ID='A-2' DOCUMENTC='S-6' AZ='AIM'> This paper presents a computational strategy for detecting conflicts regarding proposed beliefs and for engaging in collaborative negotiation to resolve the conflicts that warrant resolution . </A-S>
+<A-S ID='A-3' DOCUMENTC='S-36' AZ='OWN'> Our model is capable of selecting the most effective aspect to address in its pursuit of conflict resolution in cases where multiple conflicts arise , and of selecting appropriate evidence to justify the need for such modification . </A-S>
+<A-S ID='A-4' AZ='OWN'> Furthermore , by capturing the negotiation process in a recursive Propose-Evaluate-Modify cycle of actions , our model can successfully handle embedded negotiation subdialogues . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> In collaborative consultation dialogues , the consultant and the executing agent collaborate on developing a plan to achieve the executing agent 's domain goal . </S>
+<S ID='S-1' ABSTRACTC='A-0' AZ='BKG'> Since agents are autonomous and heterogeneous , it is inevitable that conflicts in their beliefs arise during the planning process . </S>
+<S ID='S-2' AZ='BKG'> In such cases , collaborative agents should attempt to square away <REF TYPE='P'>Joshi 1982</REF> the conflicts by engaging in collaborative negotiation to determine what should constitute their shared plan of actions and shared beliefs . </S>
+<S ID='S-3' AZ='BKG'> Collaborative negotiation differs from non-collaborative negotiation and argumentation mainly in the attitude of the participants , since collaborative agents are not self-centered , but act in a way as to benefit the agents as a group . </S>
+<S ID='S-4' AZ='BKG'> Thus , when facing a conflict , a collaborative agent should not automatically reject a belief with which she does not agree ; instead , she should evaluate the belief and the evidence provided to her and adopt the belief if the evidence is convincing . </S>
+<S ID='S-5' AZ='BKG'> On the other hand , if the evaluation indicates that the agent should maintain her original belief , she should attempt to provide sufficient justification to convince the other agent to adopt this belief if the belief is relevant to the task at hand . </S>
+</P>
+<P>
+<S ID='S-6' ABSTRACTC='A-2' AZ='AIM'> This paper presents a model for engaging in collaborative negotiation to resolve conflicts in agents ' beliefs about domain knowledge . </S>
+<S ID='S-7' AZ='OWN' TYPE='ITEM'> Our model </S>
+<S ID='S-8' TYPE='ITEM' AZ='OWN' > detects conflicts in beliefs and initiates a negotiation subdialogue only when the conflict is relevant to the current task , </S>
+<S ID='S-9' TYPE='ITEM' AZ='OWN' > selects the most effective aspect to address in its pursuit of conflict resolution when multiple conflicts exist , </S>
+<S ID='S-10' TYPE='ITEM' AZ='OWN' > selects appropriate evidence to justify the system 's proposed modification of the user 's beliefs , and </S>
+<S ID='S-11' TYPE='ITEM' AZ='OWN' > captures the negotiation process in a recursive Propose-Evaluate-Modify cycle of actions , thus enabling the system to handle embedded negotiation subdialogues . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Related Work </HEADER>
+<P>
+<S ID='S-12' AZ='CTR'> Researchers have studied the analysis and generation of arguments <REF TYPE='P'>Birnbaum et al. 1980</REF> , <REF TYPE='P'>Reichman 1981</REF> , <REF TYPE='P'>Cohen 1987</REF> , <REF TYPE='P'>Sycara 1989</REF> , <REF TYPE='P'>Quilici 1992</REF> , <REF TYPE='P'>Maybury 1993</REF> ; however , agents engaging in argumentative dialogues are solely interested in winning an argument and thus exhibit different behavior from collaborative agents . </S>
+<S ID='S-13' AZ='CTR'> <REF TYPE='A'>Sidner 1992</REF> , <REF TYPE='A'>Sidner 1994</REF> formulated an artificial language for modeling collaborative discourse using proposal / acceptance and proposal / rejection sequences ; however , her work is descriptive and does not specify response generation strategies for agents involved in collaborative interactions . </S>
+</P>
+<P>
+<S ID='S-14' AZ='OTH'> <REF TYPE='A'>Webber and Joshi 1982</REF> have noted the importance of a cooperative system providing support for its responses . </S>
+<S ID='S-15' AZ='CTR'> They identified strategies that a system can adopt in justifying its beliefs ; however , they did not specify the criteria under which each of these strategies should be selected . </S>
+<S ID='S-16' AZ='OTH'> <REF TYPE='A'>Walker 1994c</REF> described a method of determining when to include optional warrants to justify a claim based on factors such as communication cost , inference cost , and cost of memory retrieval . </S>
+<S ID='S-17' AZ='CTR'> However , her model focuses on determining when to include informationally redundant utterances , whereas our model determines whether or not justification is needed for a claim to be convincing and , if so , selects appropriate evidence from the system 's private beliefs to support the claim . </S>
+</P>
+<P>
+<S ID='S-18' AZ='OTH'> <REF TYPE='A'>Cawsey et al. 1993</REF> , <REF TYPE='A'>Logan et al. 1994</REF> introduced the idea of utilizing a belief revision mechanism <REF TYPE='P'>Galliers 1992</REF> to predict whether a set of evidence is sufficient to change a user 's existing belief and to generate responses for information retrieval dialogues in a library domain . </S>
+<S ID='S-19' AZ='OTH'> They argued that in the library dialogues they analyzed , `` in no cases does negotiation extend beyond the initial belief conflict and its immediate resolution . '' <REF TYPE='P'>Logan et al. 1994</REF> . </S>
+<S ID='S-20' AZ='CTR'> However , our analysis of naturally-occurring consultation dialogues <REF TYPE='P'>Columbia University Transcripts 1985</REF> , <REF TYPE='P'>SRI Transcripts 1992</REF> shows that in other domains conflict resolution does extend beyond a single exchange of conflicting beliefs ; therefore we employ a recursive model for collaboration that captures extended negotiation and represents the structure of the discourse . </S>
+<S ID='S-21' AZ='CTR'> Furthermore , their system deals with a single conflict , while our model selects a focus in its pursuit of conflict resolution when multiple conflicts arise . </S>
+<S ID='S-22' AZ='OWN'> In addition , we provide a process for selecting among multiple possible pieces of evidence . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-2'> Features of Collaborative Negotiation </HEADER>
+<P>
+<S ID='S-23' AZ='BKG'> Collaborative negotiation occurs when conflicts arise among agents developing a shared plan during collaborative planning . </S>
+<S ID='S-24' AZ='BKG'> A collaborative agent is driven by the goal of developing a plan that best satisfies the interests of all the agents as a group , instead of one that maximizes his own interest . </S>
+<S ID='S-25' AZ='BKG'> This results in several distinctive features of collaborative negotiation : </S>
+</P>
+<P>
+<S ID='S-26' AZ='BKG'> A collaborative agent does not insist on winning an argument , and may change his beliefs if another agent presents convincing justification for an opposing belief . </S>
+<S ID='S-27' AZ='CTR'> This differentiates collaborative negotiation from argumentation <REF TYPE='P'>Birnbaum et al. 1980</REF> , <REF TYPE='P'>Reichman 1981</REF> , <REF  TYPE='P'>Cohen 1987</REF>, <REF  TYPE='P'>Quilici 1992</REF> . </S>
+</P>
+<P>
+<S ID='S-28' TYPE='ITEM' AZ='BKG' > Agents involved in collaborative negotiation are open and honest with one another ; they will not deliberately present false information to other agents , present information in such a way as to mislead the other agents , or strategically hold back information from other agents for later use . </S>
+<S ID='S-29' AZ='CTR'> This distinguishes collaborative negotiation from non-collaborative negotiation such as labor negotiation <REF TYPE='P'>Sycara 1989</REF> . </S>
+</P>
+<P>
+<S ID='S-30' AZ='BKG'> Collaborative agents are interested in others ' beliefs in order to decide whether to revise their own beliefs so as to come to agreement <REF SELF="YES" TYPE='P'>Chu-Carroll and Carberry 1995</REF> . </S>
+<S ID='S-31' AZ='CTR'> Although agents involved in argumentation and non-collaborative negotiation take other agents ' beliefs into consideration , they do so mainly to find weak points in their opponents ' beliefs and attack them to win the argument . </S>
+</P>
+<P>
+<S ID='S-32' AZ='OTH'> In our earlier work , we built on <REFAUTHOR>Sidner</REFAUTHOR> 's proposal / acceptance and proposal / rejection sequences <REF TYPE='P'>Sidner 1994</REF> and developed a model that captures collaborative planning processes in a Propose-Evaluate-Modify cycle of actions <REF SELF="YES" TYPE='P'>Chu-Carroll and Carberry 1994</REF> . </S>
+<S ID='S-33' AZ='OTH'> This model views collaborative planning as agent A proposing a set of actions and beliefs to be incorporated into the shared plan being developed , agent B evaluating the proposal to determine whether or not he accepts the proposal and , if not , agent B proposing a set of modifications to A 's original proposal . </S>
+<S ID='S-34' AZ='OTH'> The proposed modifications will again be evaluated by A , and if conflicts arise , she may propose modifications to B 's previously proposed modifications , resulting in a recursive process . </S>
+<S ID='S-35' AZ='CTR'> However , our research did not specify , in cases where multiple conflicts arise , how an agent should identify which part of an unaccepted proposal to address or how to select evidence to support the proposed modification . </S>
+<S ID='S-36' ABSTRACTC='A-3' AZ='BAS'> This paper extends that work by incorporating into the modification process a strategy to determine the aspect of the proposal that the agent will address in her pursuit of conflict resolution , as well as a means of selecting appropriate evidence to justify the need for such modification . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-3'> Response Generation in Collaborative Negotiation </HEADER>
+<P>
+<S ID='S-37' AZ='BAS'> In order to capture the agents ' intentions conveyed by their utterances , our model of collaborative negotiation utilizes an enhanced version of the dialogue model described in <REF TYPE='A' SELF="YES">Lambert and Carberry 1991</REF> to represent the current status of the interaction . </S>
+<S ID='S-38' AZ='OTH'> The enhanced dialogue model has four levels : the domain level which consists of the domain plan being constructed for the user 's later execution , the problem-solving level which contains the actions being performed to construct the domain plan , the belief level which consists of the mutual beliefs pursued during the planning process in order to further the problem-solving intentions , and the discourse level which contains the communicative actions initiated to achieve the mutual beliefs <REF SELF="YES" TYPE='P'>Chu-Carroll and Carberry 1994</REF> . </S>
+<S ID='S-39' AZ='AIM'> This paper focuses on the evaluation and modification of proposed beliefs , and details a strategy for engaging in collaborative negotiations . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-4'> Evaluating Proposed Beliefs </HEADER>
+<P>
+<S ID='S-40' AZ='OWN'> Our system maintains a set of beliefs about the domain and about the user 's beliefs . </S>
+<S ID='S-41' AZ='OWN'> Associated with each belief is a strength that represents the agent 's confidence in holding that belief . </S>
+<S ID='S-42' AZ='BAS'> We model the strength of a belief using endorsements , which are explicit records of factors that affect one 's certainty in a hypothesis <REF TYPE='P'>Cohen 1985</REF> , following <REF  TYPE='A'>Galliers 1992</REF>, <REF  TYPE='A'>Logan et al. 1994</REF> . </S>
+<S ID='S-43' AZ='OWN'> Our endorsements are based on the semantics of the utterance used to convey a belief , the level of expertise of the agent conveying the belief , stereotypical knowledge , etc . </S>
+</P>
+<P>
+<S ID='S-44' AZ='OWN'> The belief level of the dialogue model consists of mutual beliefs proposed by the agents ' discourse actions . </S>
+<S ID='S-45' AZ='OWN'> When an agent proposes a new belief and gives ( optional ) supporting evidence for it , this set of proposed beliefs is represented as a belief tree , where the belief represented by a child node is intended to support that represented by its parent . </S>
+<S ID='S-46' AZ='OWN'> The root nodes of these belief trees ( top-level beliefs ) contribute to problem-solving actions and thus affect the domain plan being developed . </S>
+<S ID='S-47' AZ='OWN'> Given a set of newly proposed beliefs , the system must decide whether to accept the proposal or to initiate a negotiation dialogue to resolve conflicts . </S>
+<S ID='S-48' AZ='OWN'> The evaluation of proposed beliefs starts at the leaf nodes of the proposed belief trees since acceptance of a piece of proposed evidence may affect acceptance of the parent belief it is intended to support . </S>
+<S ID='S-49' AZ='OWN'> The process continues until the top-level proposed beliefs are evaluated . </S>
+<S ID='S-50' AZ='OWN'> Conflict resolution strategies are invoked only if the top-level proposed beliefs are not accepted because if collaborative agents agree on a belief relevant to the domain plan being constructed , it is irrelevant whether they agree on the evidence for that belief <REF TYPE='P'>Young et al. 1994</REF> . </S>
+</P>
+<P>
+<S ID='S-51' AZ='OWN'> In determining whether to accept a proposed belief or evidential relationship , the evaluator first constructs an evidence set containing the system 's evidence that supports or attacks _bel and the evidence accepted by the system that was proposed by the user as support for _bel . </S>
+<S ID='S-52' AZ='OWN'> Each piece of evidence contains a belief _bel <EQN/> , and an evidential relationship supports(_bel<EQN/>,_bel). </S>
+<S ID='S-53' AZ='BAS'> Following <REF TYPE='A'>Walker 1992</REF> 's weakest link assumption the strength of the evidence is the weaker of the strength of the belief and the strength of the evidential relationship . </S>
+<S ID='S-54' AZ='BAS'> The evaluator then employs a simplified version of <REFAUTHOR>Galliers</REFAUTHOR> 's belief revision mechanism <REF TYPE='P'>Logan et al. 1994</REF>  to compare the strengths of the evidence that supports and attacks _bel . </S>
+<S ID='S-55' AZ='OWN'> If the strength of one set of evidence strongly outweighs that of the other , the decision to accept or reject _bel is easily made . </S>
+<S ID='S-56' AZ='OWN'> However , if the difference in their strengths does not exceed a pre-determined threshold , the evaluator has insufficient information to determine whether to adopt _bel and therefore will initiate an information-sharing subdialogue <REF TYPE='P' SELF="YES">Chu-Carroll and Carberry 1995</REF> to share information with the user so that each of them can knowledgably re-evaluate the user 's original proposal . </S>
+<S ID='S-57' AZ='OWN'> If , during information-sharing , the user provides convincing support for a belief whose negation is held by the system , the system may adopt the belief after the re-evaluation process , thus resolving the conflict without negotiation . </S>
+</P>
+<DIV DEPTH='3'>
+<HEADER ID='H-5'> Example </HEADER>
+<P>
+<S ID='S-58' AZ='OWN'> To illustrate the evaluation of proposed beliefs , consider the following utterances : </S>
+</P>
+<EXAMPLE ID='E-0'>
+<EX-S> S: I think Dr. Smith is teaching AI next semester . </EX-S>
+<EX-S> U: Dr. Smith is not teaching AI . </EX-S>
+<EX-S> He is going on sabbatical next year . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-59' AZ='OWN'> Figure <CREF/> shows the belief and discourse levels of the dialogue model that captures utterances <CREF/> and <CREF/> . </S>
+<S ID='S-60' AZ='OWN'> The belief evaluation process will start with the belief at the leaf node of the proposed belief tree , On-Sabbatical(Smith,next year)) . </S>
+<S ID='S-61' AZ='OWN' TYPE='ITEM'> The system will first gather its evidence pertaining to the belief , which includes </S>
+<S ID='S-62' TYPE='ITEM' AZ='OWN' > a warranted belief that Dr. Smith has postponed his sabbatical until 1997(Postponed-Sabbatical(Smith,1997)) , </S>
+<S ID='S-63' TYPE='ITEM' AZ='OWN' > a warranted belief that Dr. Smith postponing his sabbatical until 1997 supports the belief that he is not going on sabbatical next year ( supports(Postponed-Sabbatical(Smith,1997), <EQN/> On-Sabbatical(Smith,next year)) , </S>
+<S ID='S-64' TYPE='ITEM' AZ='OWN' > a strong belief that Dr. Smith will not be a visitor at IBM next year ( <EQN/> visitor(Smith,IBM,next year)) , and </S>
+<S ID='S-65' TYPE='ITEM' AZ='OWN' > a warranted belief that Dr. Smith not being a visitor at IBM next year supports the belief that he is not going on sabbatical next year ( supports(<EQN/> visitor(Smith,IBM,next year), <EQN/> On-Sabbatical(Smith,next year)) , perhaps because Dr. Smith has expressed his desire to spend his sabbatical only at IBM ) . </S>
+<S ID='S-66' AZ='OWN'> The belief revision mechanism will then be invoked to determine the system 's belief about On-Sabbatical(Smith,next year) based on the system 's own evidence and the user 's statement . </S>
+<S ID='S-67' AZ='OWN'> Since beliefs <CREF/> and <CREF/> above constitute a warranted piece of evidence against the proposed belief and beliefs <CREF/> and <CREF/> constitute a strong piece of evidence against it , the system will not accept On-Sabbatical(Smith,next year) . </S>
+</P>
+<P>
+<S ID='S-68' AZ='OWN'> The system believes that being on sabbatical implies a faculty member is not teaching any courses ; thus the proposed evidential relationship will be accepted . </S>
+<S ID='S-69' AZ='OWN'> However , the system will not accept the top-level proposed belief , <EQN/> Teaches(Smith,AI) , since the system has a prior belief to the contrary ( as expressed in utterance <CREF/> ) and the only evidence provided by the user was an implication whose antecedent was not accepted . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-6'> Modifying Unaccepted Proposals </HEADER>
+<P>
+<S ID='S-70' AZ='OTH'> The collaborative planning principle in <REF TYPE='A'>Whittaker and Stenton 1988</REF> , <REF TYPE='A'>Walker 1992</REF> suggests that `` conversants must provide evidence of a detected discrepancy in belief as soon as possible . '' </S>
+<S ID='S-71' AZ='OTH'> Thus , once an agent detects a relevant conflict , she must notify the other agent of the conflict and initiate a negotiation subdialogue to resolve it -- to do otherwise is to fail in her responsibility as a collaborative agent . </S>
+<S ID='S-72' AZ='OWN'> We capture the attempt to resolve a conflict with the problem-solving action Modify-Proposal , whose goal is to modify the proposal to a form that will potentially be accepted by both agents . </S>
+<S ID='S-73' AZ='OWN'> When applied to belief modification , Modify-Proposal has two specializations : Correct-Node , for when a proposed belief is not accepted , and Correct-Relation , for when a proposed evidential relationship is not accepted . </S>
+<S ID='S-74' AZ='OWN'> Figure <CREF/> shows the problem-solving recipes for Correct-Node and its subaction , Modify-Node , that is responsible for the actual modification of the proposal . </S>
+<S ID='S-75' AZ='OWN'> The applicability conditions of Correct-Node specify that the action can only be invoked when _s1 believes that _node is not acceptable while _s2 believes that it is ( when _s1 and _s2 disagree about the proposed belief represented by _node ) . </S>
+<S ID='S-76' AZ='OWN'> However , since this is a collaborative interaction , the actual modification can only be performed when both _s1 and _s2 believe that _node is not acceptable -- that is , the conflict between _s1 and _s2 must have been resolved . </S>
+<S ID='S-77' AZ='OWN'> This is captured by the applicability condition and precondition of Modify-Node . </S>
+<S ID='S-78' AZ='OWN'> The attempt to satisfy the precondition causes the system to post as a mutual belief to be achieved the belief that _node is not acceptable , leading the system to adopt discourse actions to change _s2 's beliefs , thus initiating a collaborative negotiation subdialogue . </S>
+</P>
+<IMAGE ID='I-0'/>
+<DIV DEPTH='3'>
+<HEADER ID='H-7'> Selecting the Focus of Modification </HEADER>
+<P>
+<S ID='S-79' AZ='OWN'> When multiple conflicts arise between the system and the user regarding the user 's proposal , the system must identify the aspect of the proposal on which it should focus in its pursuit of conflict resolution . </S>
+<S ID='S-80' AZ='OWN'> For example , in the case where Correct-Node is selected as the specialization of Modify-Proposal , the system must determine how the parameter _node in Correct-Node should be instantiated . </S>
+<S ID='S-81' AZ='OWN'> The goal of the modification process is to resolve the agents ' conflicts regarding the unaccepted top-level proposed beliefs . </S>
+<S ID='S-82' AZ='OWN'> For each such belief , the system could provide evidence against the belief itself , address the unaccepted evidence proposed by the user to eliminate the user 's justification for the belief , or both . </S>
+<S ID='S-83' AZ='OWN'> Since collaborative agents are expected to engage in effective and efficient dialogues , the system should address the unaccepted belief that it predicts will most quickly resolve the top-level conflict . </S>
+<S ID='S-84' AZ='OWN'> Therefore , for each unaccepted top-level belief , our process for selecting the focus of modification involves two steps : identifying a candidate foci tree from the proposed belief tree , and selecting a focus from the candidate foci tree using the heuristic `` attack the belief ( s ) that will most likely resolve the conflict about the top-level belief . '' </S>
+<S ID='S-85' AZ='OWN'> A candidate foci tree contains the pieces of evidence in a proposed belief tree which , if disbelieved by the user , might change the user 's view of the unaccepted top-level proposed belief ( the root node of that belief tree ) . </S>
+<S ID='S-86' AZ='OWN'> It is identified by performing a depth-first search on the proposed belief tree . </S>
+<S ID='S-87' AZ='OWN'> When a node is visited , both the belief and the evidential relationship between it and its parent are examined . </S>
+<S ID='S-88' AZ='OWN'> If both the belief and relationship were accepted by the evaluator , the search on the current branch will terminate , since once the system accepts a belief , it is irrelevant whether it accepts the user 's support for that belief <REF TYPE='P'>Young et al. 1994</REF> . </S>
+<S ID='S-89' AZ='OWN'> Otherwise , this piece of evidence will be included in the candidate foci tree and the system will continue to search through the evidence in the belief tree proposed as support for the unaccepted belief and / or evidential relationship . </S>
+</P>
+<IMAGE ID='I-1'/>
+<P>
+<S ID='S-90' AZ='OWN'> Once a candidate foci tree is identified , the system should select the focus of modification based on the likelihood of each choice changing the user 's belief about the top-level belief . </S>
+<S ID='S-91' AZ='OWN'> Figure <CREF/> shows our algorithm for this selection process . </S>
+<S ID='S-92' AZ='OWN' TYPE='ITEM'> Given an unaccepted belief ( _bel ) and the beliefs proposed to support it , Select-Focus-Modification will annotate _bel with </S>
+<S ID='S-93' TYPE='ITEM' AZ='OWN' > its focus of modification ( _bel focus ) , which contains a set of beliefs ( _bel and / or its descendents ) which , if disbelieved by the user , are predicted to cause him to disbelieve _bel , and </S>
+<S ID='S-94' TYPE='ITEM' AZ='OWN' > the system 's evidence against _bel itself ( _bel s-attack ) . </S>
+</P>
+<P>
+<S ID='S-95' AZ='OWN'> Select-Focus-Modification determines whether to attack _bel 's supporting evidence separately , thereby eliminating the user 's reasons for holding _bel , to attack _bel itself , or both . </S>
+<S ID='S-96' AZ='OWN'> However , in evaluating the effectiveness of attacking the proposed evidence for _bel , the system must determine whether or not it is possible to successfully refute a piece of evidence ( i.e. , whether or not the system believes that sufficient evidence is available to convince the user that a piece of proposed evidence is invalid ) , and if so , whether it is more effective to attack the evidence itself or its support . </S>
+<S ID='S-97' AZ='OWN'> Thus the algorithm recursively applies itself to the evidence proposed as support for _bel which was not accepted by the system ( step <CREF/> ) . </S>
+<S ID='S-98' AZ='OWN'> In this recursive process , the algorithm annotates each unaccepted belief or evidential relationship proposed to support _bel with its focus of modification ( _bel <EQN/>.focus ) and the system 's evidence against it ( _bel <EQN/>.s-attack ) . </S>
+<S ID='S-99' AZ='OWN'> bel <EQN/>.focus contains the beliefs selected to be addressed in order to change the user 's belief about _bel <EQN/> , and its value will be nil if the system predicts that insufficient evidence is available to change the user 's belief about _bel <EQN/> . </S>
+</P>
+<P>
+<S ID='S-100' AZ='OWN'> Based on the information obtained in step <CREF/> , Select-Focus-Modification decides whether to attack the evidence proposed to support _bel , or _bel itself ( step <CREF/> ) . </S>
+<S ID='S-101' AZ='BAS'> Its preference is to address the unaccepted evidence , because <REFAUTHOR>McKeown</REFAUTHOR> 's focusing rules suggest that continuing a newly introduced topic ( about which there is more to be said ) is preferable to returning to a previous topic <REF TYPE='P'>McKeown 1985</REF> . </S>
+<S ID='S-102' AZ='OWN'> Thus the algorithm first considers whether or not attacking the user 's support for _bel is sufficient to convince him of <EQN/> _bel ( step <CREF/> ) . </S>
+<S ID='S-103' AZ='OWN'> It does so by gathering ( in cand-set ) evidence proposed by the user as direct support for _bel but which was not accepted by the system and which the system predicts it can successfully refute ( i.e. , _bel <EQN/>.focus is not nil ) . </S>
+<S ID='S-104' AZ='OWN'> The algorithm then hypothesizes that the user has changed his mind about each belief in cand-set and predicts how this will affect the user 's belief about _bel ( step <CREF/> ) . </S>
+<S ID='S-105' AZ='OWN'> If the user is predicted to accept <EQN/> _bel under this hypothesis , the algorithm invokes Select-Min-Set to select a minimum subset of cand-set as the unaccepted beliefs that it would actually pursue , and the focus of modification ( _bel.focus ) will be the union of the focus for each of the beliefs in this minimum subset . </S>
+</P>
+<P>
+<S ID='S-106' AZ='OWN'> If attacking the evidence for _bel does not appear to be sufficient to convince the user of <EQN/> _bel , the algorithm checks whether directly attacking _bel will accomplish this goal . </S>
+<S ID='S-107' AZ='OWN'> If providing evidence directly against _bel is predicted to be successful , then the focus of modification is _bel itself ( step <CREF/> ) . </S>
+<S ID='S-108' AZ='OWN'> If directly attacking _bel is also predicted to fail , the algorithm considers the effect of attacking both _bel and its unaccepted proposed evidence by combining the previous two prediction processes ( step <CREF/> ) . </S>
+<S ID='S-109' AZ='OWN'> If the combined evidence is still predicted to fail , the system does not have sufficient evidence to change the user 's view of _bel ; thus , the focus of modification for _bel is nil ( step <CREF/> ) . </S>
+<S ID='S-110' AZ='BAS'> Notice that steps <CREF/> and <CREF/> of the algorithm invoke a function , Predict , that makes use of the belief revision mechanism <REF TYPE='P'>Galliers 1992</REF> discussed in Section <CREF/> to predict the user 's acceptance or unacceptance of _bel based on the system 's knowledge of the user 's beliefs and the evidence that could be presented to him <REF TYPE='P'>Logan et al. 1994</REF> . </S>
+<S ID='S-111' AZ='OWN'> The result of Select-Focus-Modification is a set of user beliefs ( in _bel.focus ) that need to be modified in order to change the user 's belief about the unaccepted top-level belief . </S>
+<S ID='S-112' AZ='OWN'> Thus , the negations of these beliefs will be posted by the system as mutual beliefs to be achieved in order to perform the Modify actions . </S>
+</P>
+</DIV>
+<DIV DEPTH='3'>
+<HEADER ID='H-8'> Selecting Justification for a Claim </HEADER>
+<P>
+<S ID='S-113' AZ='OTH'> Studies in communication and social psychology have shown that evidence improves the persuasiveness of a message <REF TYPE='P'>Luchok and McCroskey 1978</REF> , <REF TYPE='P'>Reynolds and Burgoon 1983</REF> , <REF  TYPE='P'>Petty and Cacioppo 1984</REF>, <REF  TYPE='P'>Hample 1985</REF> . </S>
+<S ID='S-114' AZ='OTH'> Research on the quantity of evidence indicates that there is no optimal amount of evidence , but that the use of high-quality evidence is consistent with persuasive effects <REF TYPE='P'>Reinard 1988</REF> . </S>
+<S ID='S-115' AZ='OTH'> On the other hand , <REF TYPE='A'>Grice 1975</REF> 's maxim of quantity specifies that one should not contribute more information than is required . </S>
+<S ID='S-116' AZ='OWN'> Thus , it is important that a collaborative agent selects sufficient and effective , but not excessive , evidence to justify an intended mutual belief . </S>
+</P>
+<P>
+<S ID='S-117' AZ='OWN'> To convince the user of a belief , _bel , our system selects appropriate justification by identifying beliefs that could be used to support _bel and applying filtering heuristics to them . </S>
+<S ID='S-118' AZ='OWN'> The system must first determine whether justification for _bel is needed by predicting whether or not merely informing the user of _bel will be sufficient to convince him of _bel . </S>
+<S ID='S-119' AZ='OWN'> If so , no justification will be presented . </S>
+<S ID='S-120' AZ='OWN'> If justification is predicted to be necessary , the system will first construct the justification chains that could be used to support _bel . </S>
+<S ID='S-121' AZ='OWN'> For each piece of evidence that could be used to directly support _bel , the system first predicts whether the user will accept the evidence without justification . </S>
+<S ID='S-122' AZ='OWN'> If the user is predicted not to accept a piece of evidence ( evid <EQN/> ) , the system will augment the evidence to be presented to the user by posting evid <EQN/> as a mutual belief to be achieved , and selecting propositions that could serve as justification for it . </S>
+<S ID='S-123' AZ='OWN'> This results in a recursive process that returns a chain of belief justifications that could be used to support _bel . </S>
+</P>
+<P>
+<S ID='S-124' AZ='OWN'> Once a set of beliefs forming justification chains is identified , the system must then select from this set those belief chains which , when presented to the user , are predicted to convince the user of _bel . </S>
+<S ID='S-125' AZ='OWN'> Our system will first construct a singleton set for each such justification chain and select the sets containing justification which , when presented , is predicted to convince the user of _bel . </S>
+<S ID='S-126' AZ='OWN'> If no single justification chain is predicted to be sufficient to change the user 's beliefs , new sets will be constructed by combining the single justification chains , and the selection process is repeated . </S>
+<S ID='S-127' AZ='OWN'> This will produce a set of possible candidate justification chains , and three heuristics will then be applied to select from among them . </S>
+<S ID='S-128' AZ='BAS'> The first heuristic prefers evidence in which the system is most confident since high-quality evidence produces more attitude change than any other evidence form <REF TYPE='P'>Luchok and McCroskey 1978</REF> . </S>
+<S ID='S-129' AZ='OWN'> Furthermore , the system can better justify a belief in which it has high confidence should the user not accept it . </S>
+<S ID='S-130' AZ='BAS'> The second heuristic prefers evidence that is novel to the user , since studies have shown that evidence is most persuasive if it is previously unknown to the hearer <REF  TYPE='P'>Wyer 1970</REF>, <REF  TYPE='P'>Morley 1987</REF> . </S>
+<S ID='S-131' AZ='BAS'> The third heuristic is based on <REFAUTHOR>Grice</REFAUTHOR> 's maxim of quantity and prefers justification chains that contain the fewest beliefs . </S>
+</P>
+</DIV>
+<DIV DEPTH='3'>
+<HEADER ID='H-9'> Example </HEADER>
+<P>
+<S ID='S-132' AZ='OWN'> After the evaluation of the dialogue model in Figure <CREF/> , Modify-Proposal is invoked because the top-level proposed belief is not accepted . </S>
+<S ID='S-133' AZ='OWN'> In selecting the focus of modification , the system will first identify the candidate foci tree and then invoke the Select-Focus-Modification algorithm on the belief at the root node of the candidate foci tree . </S>
+<S ID='S-134' AZ='OWN'> The candidate foci tree will be identical to the proposed belief tree in Figure <CREF/> since both the top-level proposed belief and its proposed evidence were rejected during the evaluation process . </S>
+<S ID='S-135' AZ='OWN'> This indicates that the focus of modification could be either <EQN/> Teaches(Smith,AI) or On-Sabbatical(Smith,next year) ( since the evidential relationship between them was accepted ) . </S>
+<S ID='S-136' AZ='OWN'> When Select-Focus-Modification is applied to <EQN/> Teaches(Smith,AI) , the algorithm will first be recursively invoked on On-Sabbatical(Smith,next year) to determine the focus for modifying the child belief ( step <CREF/> in Figure <CREF/> ) . </S>
+<S ID='S-137' AZ='OWN' TYPE='ITEM'> Since the system has two pieces of evidence against On-Sabbatical(Smith,next year) , </S>
+<S ID='S-138' TYPE='ITEM' AZ='OWN' > a warranted piece of evidence containing Postponed-Sabbatical(Smith,1997) and supports(Postponed-Sabbatical(Smith,1997) , <EQN/> On-Sabbatical(Smith,next year)) , and </S>
+<S ID='S-139' TYPE='ITEM' AZ='OWN' > a strong piece of evidence containing <EQN/> visitor(Smith,IBM,next year) and supports(<EQN/> visitor(Smith,IBM,next year) , <EQN/> On-Sabbatical(Smith,next year)) , the evidence is predicted to be sufficient to change the user 's belief in On-Sabbatical(Smith,next year) , and hence <EQN/> Teaches(Smith,AI) ; thus , the focus of modification will be On-Sabbatical(Smith,next year) . </S>
+<S ID='S-140' AZ='OWN'> The Correct-Node specialization of Modify-Proposal will be invoked since the focus of modification is a belief , and in order to satisfy the precondition of Modify-Node(Figure <CREF/>) , MB(S,U,<EQN/> On-Sabbatical(Smith,next year)) will be posted as a mutual belief to be achieved . </S>
+</P>
+<P>
+<S ID='S-141' AZ='OWN'> Since the user has a warranted belief in On-Sabbatical(Smith,next year) ( indicated by the semantic form of utterance <CREF/> ) , the system will predict that merely informing the user of the intended mutual belief is not sufficient to change his belief ; therefore it will select justification from the two available pieces of evidence supporting <EQN/> On-Sabbatical(Smith,next year) presented earlier . </S>
+<S ID='S-142' AZ='OWN'> The system will predict that either piece of evidence combined with the proposed mutual belief is sufficient to change the user 's belief ; thus , the filtering heuristics are applied . </S>
+<S ID='S-143' AZ='OWN'> The first heuristic will cause the system to select Postponed-Sabbatical(Smith,1997) and supports(Postponed-Sabbatical(Smith,1997) , <EQN/> On-Sabbatical(Smith,next year)) as support , since it is the evidence in which the system is more confident . </S>
+</P>
+<P>
+<S ID='S-144' AZ='OWN'> The system will try to establish the mutual beliefs as an attempt to satisfy the precondition of Modify-Node . </S>
+<S ID='S-145' AZ='OWN'> This will cause the system to invoke Inform discourse actions to generate the following utterances : </S>
+</P>
+<EXAMPLE ID='E-1'>
+<EX-S> S: Dr. Smith is not going on sabbatical next year . </EX-S>
+<EX-S> He postponed his sabbatical until 1997 . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-146' AZ='OWN'> If the user accepts the system 's utterances,thus satisfying the precondition that the conflict be resolved , Modify-Node can be performed and changes made to the original proposed beliefs . </S>
+<S ID='S-147' AZ='OWN'> Otherwise , the user may propose modifications to the system 's proposed modifications , resulting in an embedded negotiation subdialogue . </S>
+</P>
+</DIV>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-10'> Conclusion </HEADER>
+<P>
+<S ID='S-148' AZ='AIM'> This paper has presented a computational strategy for engaging in collaborative negotiation to square away conflicts in agents ' beliefs . </S>
+<S ID='S-149' AZ='OWN'> The model captures features specific to collaborative negotiation . </S>
+<S ID='S-150' AZ='OWN'> It also supports effective and efficient dialogues by identifying the focus of modification based on its predicted success in resolving the conflict about the top-level belief and by using heuristics motivated by research in social psychology to select a set of evidence to justify the proposed modification of beliefs . </S>
+<S ID='S-151' AZ='OWN'> Furthermore , by capturing collaborative negotiation in a cycle of Propose-Evaluate-Modify actions , the evaluation and modification processes can be applied recursively to capture embedded negotiation subdialogues . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-11'> Acknowledgments </HEADER>
+<P>
+<S ID='S-152'> Discussions with Candy Sidner , Stephanie Elzer , and Kathy McCoy have been very helpful in the development of this work . </S>
+<S ID='S-153'> Comments from the anonymous reviewers have also been very useful in preparing the final version of this paper . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+James <SURNAME>Allen</SURNAME>.
+<DATE>1991</DATE>.
+Discourse structure in the TRAINS project.
+In Darpa Speech and Natural Language Workshop.
+</REFERENCE>
+<REFERENCE>
+Lawrence <SURNAME>Birnbaum</SURNAME>, Margot <SURNAME>Flowers</SURNAME>, and Rod <SURNAME>McGuire</SURNAME>.
+<DATE>1980</DATE>.
+Towards an AI model of argumentation.
+In Proceedings of the National Conference on Artificial
+  Intelligence, pages 313-315.
+</REFERENCE>
+<REFERENCE>
+Alison <SURNAME>Cawsey</SURNAME>, Julia <SURNAME>Galliers</SURNAME>, Brian <SURNAME>Logan</SURNAME>, Steven <SURNAME>Reece</SURNAME>, and Karen
+  Sparck <SURNAME>Jones</SURNAME>.
+<DATE>1993</DATE>.
+Revising beliefs and intentions: A unified framework for agent
+  interaction.
+In The Ninth Biennial Conference of the Society for the Study of
+  Artificial Intelligence and Simulation of Behaviour, pages 130-139.
+</REFERENCE>
+<REFERENCE>
+Jennifer <SURNAME>Chu-Carroll</SURNAME> and Sandra <SURNAME>Carberry</SURNAME>.
+<DATE>1994</DATE>.
+A plan-based model for response generation in collaborative
+  task-oriented dialogues.
+In Proceedings of the Twelfth National Conference on Artificial
+  Intelligence, pages 799-805.
+</REFERENCE>
+<REFERENCE>
+Jennifer <SURNAME>Chu-Carroll</SURNAME> and Sandra <SURNAME>Carberry</SURNAME>.
+<DATE>1995</DATE>.
+Generating information-sharing subdialogues in expert-user
+  consultation.
+In Proceedings of the 14th International Joint Conference on
+  Artificial Intelligence.
+<DATE>To appear</DATE>.
+</REFERENCE>
+<REFERENCE>
+Jennifer <SURNAME>Chu-Carroll</SURNAME>.
+<DATE>1995</DATE>.
+A Plan-Based Model for Response Generation in Collaborative
+  Consultation Dialogues.
+Ph.D. thesis, University of Delaware.
+<DATE>Forthcoming</DATE>.
+</REFERENCE>
+<REFERENCE>
+Paul R. <SURNAME>Cohen</SURNAME>.
+<DATE>1985</DATE>.
+Heuristic Reasoning about Uncertainty: An Artificial
+  Intelligence Approach.
+Pitman Publishing Company.
+</REFERENCE>
+<REFERENCE>
+Robin <SURNAME>Cohen</SURNAME>.
+<DATE>1987</DATE>.
+Analyzing the structure of argumentative discourse.
+Computational Linguistcis, 13(1-2):11-24, January-June.
+</REFERENCE>
+<REFERENCE>
+Columbia <SURNAME>University</SURNAME> Transcripts.
+<DATE>1985</DATE>.
+Transcripts derived from audiotape conversations made at Columbia
+  University, New York, NY.
+Provided by Kathleen McKeown.
+</REFERENCE>
+<REFERENCE>
+Julia R. <SURNAME>Galliers</SURNAME>.
+<DATE>1992</DATE>.
+Autonomous belief revision and communication.
+In Gardenfors, editor, Belief Revision. Cambridge University
+  Press.
+</REFERENCE>
+<REFERENCE>
+H. Paul <SURNAME>Grice</SURNAME>.
+<DATE>1975</DATE>.
+Logic and conversation.
+In Peter Cole and Jerry L. Morgan, editors, Syntax and Semantics
+  3: Speech Acts, pages 41-58. Academic Press, Inc., New York.
+</REFERENCE>
+<REFERENCE>
+Barbara J. <SURNAME>Grosz</SURNAME> and Candace L. <SURNAME>Sidner</SURNAME>.
+<DATE>1990</DATE>.
+Plans for discourse.
+In Cohen, Morgan, and Pollack, editors, Intentions in
+  Communication, chapter 20, pages 417-444. MIT Press.
+</REFERENCE>
+<REFERENCE>
+Dale <SURNAME>Hample</SURNAME>.
+<DATE>1985</DATE>.
+Refinements on the cognitive model of argument: Concreteness,
+  involvement and group scores.
+The Western Journal of Speech Communication, 49:267-285.
+</REFERENCE>
+<REFERENCE>
+Aravind K. <SURNAME>Joshi</SURNAME>.
+<DATE>1982</DATE>.
+Mutual beliefs in question-answer systems.
+In N.V. Smith, editor, Mutual Knowledge, chapter 4, pages
+  181-197. Academic Press.
+</REFERENCE>
+<REFERENCE>
+Lynn <SURNAME>Lambert</SURNAME> and Sandra <SURNAME>Carberry</SURNAME>.
+<DATE>1991</DATE>.
+A tripartite plan-based model of dialogue.
+In Proceedings of the 29th Annual Meeting of the Association for
+  Computational Linguistics, pages 47-54.
+</REFERENCE>
+<REFERENCE>
+Brian <SURNAME>Logan</SURNAME>, Steven <SURNAME>Reece</SURNAME>, Alison <SURNAME>Cawsey</SURNAME>, Julia <SURNAME>Galliers</SURNAME>, and Karen
+  Sparck <SURNAME>Jones</SURNAME>.
+<DATE>1994</DATE>.
+Belief revision and dialogue management in information retrieval.
+Technical Report 339, University of Cambridge, Computer Laboratory.
+</REFERENCE>
+<REFERENCE>
+Joseph A. <SURNAME>Luchok</SURNAME> and James C. <SURNAME>McCroskey</SURNAME>.
+<DATE>1978</DATE>.
+The effect of quality of evidence on attitude change and source
+  credibility.
+The Southern Speech Communication Journal, 43:371-383.
+</REFERENCE>
+<REFERENCE>
+Mark T. <SURNAME>Maybury</SURNAME>.
+<DATE>1993</DATE>.
+Communicative acts for generating natural language arguments.
+In Proceedings of the National Conference on Artificial
+  Intelligence, pages 357-364.
+</REFERENCE>
+<REFERENCE>
+Kathleen R. <SURNAME>McKeown</SURNAME>.
+<DATE>1985</DATE>.
+Text Generation : Using Discourse Strategies and Focus
+  Constraints to Generate Natural Language Text.
+Cambridge University Press.
+</REFERENCE>
+<REFERENCE>
+Donald D. <SURNAME>Morley</SURNAME>.
+<DATE>1987</DATE>.
+Subjective message constructs: A theory of persuasion.
+Communication Monographs, 54:183-203.
+</REFERENCE>
+<REFERENCE>
+Richard E. <SURNAME>Petty</SURNAME> and John T. <SURNAME>Cacioppo</SURNAME>.
+<DATE>1984</DATE>.
+The effects of involvement on responses to argument quantity and
+  quality: Central and peripheral routes to persuasion.
+Journal of Personality and Social Psychology, 46(1):69-81.
+</REFERENCE>
+<REFERENCE>
+Martha E. <SURNAME>Pollack</SURNAME>.
+<DATE>1986</DATE>.
+A model of plan inference that distinguishes between the beliefs of
+  actors and observers.
+In Proceedings of the 24th Annual Meeting of the Association for
+  Computational Linguistics, pages 207-214.
+</REFERENCE>
+<REFERENCE>
+Alex <SURNAME>Quilici</SURNAME>.
+<DATE>1992</DATE>.
+Arguing about planning alternatives.
+In Proceedings of the 14th International Conference on
+  Computational Linguistics, pages 906-910.
+</REFERENCE>
+<REFERENCE>
+Rachel <SURNAME>Reichman</SURNAME>.
+<DATE>1981</DATE>.
+Modeling informal debates.
+In Proceedings of the 7th International Joint Conference on
+  Artificial Intelligence, pages 19-24.
+</REFERENCE>
+<REFERENCE>
+John C. <SURNAME>Reinard</SURNAME>.
+<DATE>1988</DATE>.
+The empirical study of the persuasive effects of evidence, the status
+  after fifty years of research.
+Human Communication Research, 15(1):3-59.
+</REFERENCE>
+<REFERENCE>
+Rodney A. <SURNAME>Reynolds</SURNAME> and Michael <SURNAME>Burgoon</SURNAME>.
+<DATE>1983</DATE>.
+Belief processing, reasoning, and evidence.
+In Bostrom, editor, Communication Yearbook 7, chapter 4, pages
+  83-104. Sage Publications.
+</REFERENCE>
+<REFERENCE>
+Candace L. <SURNAME>Sidner</SURNAME>.
+<DATE>1992</DATE>.
+Using discourse to negotiate in collaborative activity: An artificial
+  language.
+In AAAI-92 Workshop: Cooperation Among Heterogeneous Intelligent
+  Systems, pages 121-128.
+</REFERENCE>
+<REFERENCE>
+Candace L. <SURNAME>Sidner</SURNAME>.
+<DATE>1994</DATE>.
+An artificial discourse language for collaborative negotiation.
+In Proceedings of the Twelfth National Conference on Artificial
+  Intelligence, pages 814-819.
+</REFERENCE>
+<REFERENCE>
+SRI Transcripts.
+<DATE>1992</DATE>.
+Transcripts derived from audiotape conversations made at SRI
+  International, Menlo Park, CA.
+Prepared by Jacqueline Kowtko under the direction of Patti Price.
+</REFERENCE>
+<REFERENCE>
+Katia <SURNAME>Sycara</SURNAME>.
+<DATE>1989</DATE>.
+Argumentation: Planning other agents' plans.
+In Proceedings of the 11th International Joint Conference on
+  Artificial Intelligence, pages 517-523.
+</REFERENCE>
+<REFERENCE>
+Marilyn <SURNAME>Walker</SURNAME> and Steve <SURNAME>Whittaker</SURNAME>.
+<DATE>1990</DATE>.
+Mixed initiative in dialogue: An investigation into discourse
+  segmentation.
+In Proceedings of the 28th Annual Meeting of the Association for
+  Computational Linguistics, pages 70-78.
+</REFERENCE>
+<REFERENCE>
+Marilyn A. <SURNAME>Walker</SURNAME>.
+<DATE>1992</DATE>.
+Redundancy in collaborative dialogue.
+In Proceedings of the 15th International Conference on
+  Computational Linguistics, pages 345-351.
+</REFERENCE>
+<REFERENCE>
+Marilyn A. <SURNAME>Walker</SURNAME>.
+<DATE>1994</DATE>.
+Discourse and deliberation: Testing a collaborative strategy.
+In Proceedings of the 15th International Conference on
+  Computational Linguistics.
+</REFERENCE>
+<REFERENCE>
+Bonnie <SURNAME>Webber</SURNAME> and Aravind <SURNAME>Joshi</SURNAME>.
+<DATE>1982</DATE>.
+Taking the initiative in natural language data base interactions:
+  Justifying why.
+In Proceedings of COLING-82, pages 413-418.
+</REFERENCE>
+<REFERENCE>
+Steve <SURNAME>Whittaker</SURNAME> and Phil <SURNAME>Stenton</SURNAME>.
+<DATE>1988</DATE>.
+Cues and control in expert-client dialogues.
+In Proceedings of the 26th Annual Meeting of the Association for
+  Computational Linguistics, pages 123-130.
+</REFERENCE>
+<REFERENCE>
+Robert S. <SURNAME>Wyer</SURNAME>, Jr.
+<DATE>1970</DATE>.
+Information redundancy, inconsistency, and novelty and their role in
+  impression formation.
+Journal of Experimental Social Psychology, 6:111-127.
+</REFERENCE>
+<REFERENCE>
+R. Michael <SURNAME>Young</SURNAME>, Johanna D. <SURNAME>Moore</SURNAME>, and Martha E. <SURNAME>Pollack</SURNAME>.
+<DATE>1994</DATE>.
+Towards a principled representation of discourse plans.
+In Proceedings of the Sixteenth Annual Meeting of the Cognitive
+  Science Society, pages 946-951.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

@@ -1,0 +1,10 @@
+[
+  "dataset_reader_test.py::TestSemanticScholarDatasetReader::test_read_from_file",
+  "label_test.py::TestLabelField::test_as_tensor_returns_integer_tensor",
+  "label_test.py::TestLabelField::test_class_variables_for_namespace_warnings_work_correctly",
+  "label_test.py::TestLabelField::test_label_field_can_index_with_vocab",
+  "label_test.py::TestLabelField::test_label_field_empty_field_works",
+  "label_test.py::TestLabelField::test_label_field_raises_with_incorrect_label_type",
+  "label_test.py::TestLabelField::test_label_field_raises_with_non_integer_labels_and_no_indexing",
+  "label_test.py::TestLabelField::test_printing_doesnt_crash"
+]

@@ -1,0 +1,378 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9502024</FILENO>
+<APPEARED><CONFERENCE>EACL</CONFERENCE><YEAR>1995</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.Gr.Pr </CLASSIFICATION>
+</METADATA>
+<TITLE> A Robust Parser Based on Syntactic Information </TITLE>
+<AUTHORLIST>
+<AUTHOR>Kong Joo Lee</AUTHOR>
+<AUTHOR>Cheol Jung Kweon</AUTHOR>
+<AUTHOR>Jungyun Seo</AUTHOR>
+<AUTHOR>Gil Chang Kim</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' DOCUMENTC='S-0' AZ='BKG'> An extragrammatical sentence is what a normal parser fails to analyze . </A-S>
+<A-S ID='A-1' DOCUMENTC='S-12' AZ='OWN'> It is important to recover it using only syntactic information although results of recovery are better if semantic factors are considered . </A-S>
+<A-S ID='A-2' DOCUMENTC='S-18' AZ='OTH'> A general algorithm for least-errors recognition , which is based only on syntactic information , was proposed by <REFAUTHOR>G. Lyon</REFAUTHOR> to deal with the extragrammaticality . </A-S>
+<A-S ID='A-3' AZ='AIM'> We extended this algorithm to recover extragrammatical sentence into grammatical one in running text . </A-S>
+<A-S ID='A-4' DOCUMENTC='S-150' AZ='AIM'> Our robust parser with recovery mechanism - extended general algorithm for least-errors recognition - can be easily scaled up and modified because it utilize only syntactic information . </A-S>
+<A-S ID='A-5' DOCUMENTC='S-151' AZ='OWN'> To upgrade this robust parser we proposed heuristics through the analysis on the Penn treebank corpus . </A-S>
+<A-S ID='A-6' DOCUMENTC='S-154' AZ='OWN'> The experimental result shows 68 % - 77 % accuracy in error recovery . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' ABSTRACTC='A-0' AZ='BKG'> Extragrammatical sentences include patently ungrammatical constructions as well as utterances that may be grammatically acceptable but are beyond the syntactic coverage of a parser , and any other difficult ones that are encountered in parsing <REF TYPE='P'>Carbonell and Hayes 1983</REF> . </S>
+</P>
+<IMAGE ID='I-0'/>
+<P>
+<S ID='S-1' AZ='BKG'> Above examples show that people are used to write same meaningful sentences differently . </S>
+<S ID='S-2' AZ='BKG'> In addition , people are prone to mistakes in writing sentences . </S>
+<S ID='S-3' AZ='BKG'> So , the bulk of written sentences are open to the extragrammaticality . </S>
+</P>
+<P>
+<S ID='S-4' AZ='BKG'> In the Penn treebank tree-tagged corpus <REF TYPE='P'>Marcus 1991</REF> , for instance , about 80 percents of the rules are concerned with peculiar sentences which include inversive , elliptic , parenthetic , or emphatic phrases . </S>
+<S ID='S-5' AZ='BKG'> For example , we can drive a rule VP <EQN/> vb NP comma rb comma PP from the following sentence . </S>
+</P>
+<EXAMPLE ID='E-0'>
+<EX-S> The same jealousy can breed confusion , however , in the absence of any authorization bill this year . </EX-S>
+</EXAMPLE>
+<IMAGE ID='I-1'/>
+<P>
+<S ID='S-6' AZ='BKG'> A robust parser is one that can analyze these extragrammatical sentences without failure . </S>
+<S ID='S-7' AZ='BKG'> However , if we try to preserve robustness by adding such rules whenever we encounter an extragrammatical sentence , the rulebase will grow up rapidly , and thus processing and maintaining the excessive number of rules will become inefficient and impractical . </S>
+<S ID='S-8' AZ='BKG'> Therefore , extragrammatical sentences should be handled by some recovery mechanism ( s ) rather than by a set of additional rules . </S>
+</P>
+<P>
+<S ID='S-9' AZ='OTH'> Many researchers have attempted several techniques to deal with extragrammatical sentences such as Augmented Transition Network ( ATN ) <REF TYPE='P'>Kwasny and Sondheimer 1981</REF> , network-based semantic grammar <REF TYPE='P'>Hendrix 1977</REF> , partial pattern matching <REF TYPE='P'>Hayes and Mouradian 1981</REF> , conceptual case frame <REF TYPE='P'>Schank et al. 1980</REF> , and multiple cooperating methods <REF TYPE='P'>Hayes and Carbonell 1981</REF> . </S>
+<S ID='S-10' AZ='OTH'> Above mentioned techniques take into account various semantic factors depending on specific domains on question in recovering extragrammatical sentences . </S>
+<S ID='S-11' AZ='CTR'> Whereas they can provide even better solutions intrinsically , they are usually ad-hoc and are lack of extensibility . </S>
+<S ID='S-12' ABSTRACTC='A-1' AZ='OWN'> Therefore , it is important to recover extragrammatical sentences using syntactic factors only , which are independent of any particular system and any particular domain . </S>
+</P>
+<P>
+<S ID='S-13' AZ='OTH'> <REF TYPE='A'>Mellish 1989</REF> introduced some chart-based techniques using only syntactic information for extragrammatical sentences . </S>
+<S ID='S-14' AZ='OTH'> This technique has an advantage that there is no repeating work for the chart to prevent the parser from generating the same edge as the previously existed edge . </S>
+<S ID='S-15' AZ='OTH'> Also , because the recovery process runs when a normal parser terminates unsuccessfully , the performance of the normal parser does not decrease in case of handling grammatical sentences . </S>
+<S ID='S-16' AZ='CTR'> However , his experiment was not based on the errors in running texts but on artificial ones which were randomly generated by human . </S>
+<S ID='S-17' AZ='CTR'> Moreover , only one word error was considered though several word errors can occur simultaneously in the running text . </S>
+</P>
+<P>
+<S ID='S-18' ABSTRACTC='A-2' AZ='OTH'> A general algorithm for least-errors recognition <REF TYPE='P'>Lyon 1974</REF> , proposed by <REFAUTHOR>G. Lyon</REFAUTHOR> , is to find out the least number of errors necessary to successful parsing and recover them . </S>
+<S ID='S-19' AZ='OTH'> Because this algorithm is also syntactically oriented and based on a chart , it has the same advantage as that of <REFAUTHOR>Mellish</REFAUTHOR> 's parser . </S>
+<S ID='S-20' AZ='OTH'> When the original parsing algorithm terminates unsuccessfully , the algorithm begins to assume errors of insertion , deletion and mutation of a word . </S>
+<S ID='S-21' AZ='OTH'> For any input , including grammatical and extragrammatical sentences , this algorithm can generate the resultant parse tree . </S>
+<S ID='S-22' AZ='CTR'> At the cost of the complete robustness , however , this algorithm degrades the efficiency of parsing , and generates many intermediate edges . </S>
+</P>
+<P>
+<S ID='S-23' AZ='AIM'> In this paper , we present a robust parser with a recovery mechanism . </S>
+<S ID='S-24' AZ='BAS'> We extend the general algorithm for least-errors recognition to adopt it as the recovery mechanism in our robust parser . </S>
+<S ID='S-25' AZ='OWN'> Because our robust parser handle extragrammatical sentences with this syntactic information oriented recovery mechanism , it can be independent of a particular system or particular domain . </S>
+<S ID='S-26' AZ='OWN'> Also , we present the heuristics to reduce the number of edges so that we can upgrade the performance of our parser . </S>
+</P>
+<P>
+<S ID='S-27' AZ='TXT'> This paper is organized as follows : We first review a general algorithm for least-errors recognition . </S>
+<S ID='S-28' AZ='TXT'> Then we present the extension of this algorithm , and the heuristics adopted by the robust parser . </S>
+<S ID='S-29' AZ='TXT'> Next , we describe the implementation of the system and the result of the experiment of parsing real sentences . </S>
+<S ID='S-30' AZ='TXT'> Finally , we make conclusion with future direction . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Algorithm and Heuristics </HEADER>
+<DIV DEPTH='2'>
+<HEADER ID='H-2'> General algorithm for least-errors recognition </HEADER>
+<P>
+<S ID='S-31' AZ='OTH'> The general algorithm for least-errors recognition <REF TYPE='P'>Lyon 1974</REF> , which is based on Earley 's algorithm , assumes that sentences may have insertion , deletion , and mutation errors of terminal symbols . </S>
+<S ID='S-32' AZ='OTH'> The objective of this algorithm is to parse input string with the least number of errors . </S>
+</P>
+<P>
+<S ID='S-33' AZ='OTH'> A state used in this algorithm is quadruple <EQN/> , where p is a production number in grammar , j marks a position in <EQN/> , f is a start position of the state in input string , and e is an error value . </S>
+<S ID='S-34' AZ='OTH'> A final state <EQN/> denotes recognition of a phrase <EQN/> with e errors where <EQN/> is a number of components in rule p . </S>
+<S ID='S-35' AZ='OTH'> A stateset <EQN/> , where i is the position of the input , is an ordered set of states . </S>
+<S ID='S-36' AZ='OTH'> States within a stateset are ordered by ascending value of j , within a p within a f ; f takes descending value . </S>
+</P>
+<P>
+<S ID='S-37' AZ='OTH'> When adding to statesets , if state <EQN/> is a candidate for admission to a stateset which already has a similar member <EQN/> and e ' <EQN/> e , then <EQN/> is rejected . </S>
+<S ID='S-38' AZ='OTH'> However , if <EQN/> , then <EQN/> is replaced by <EQN/>. </S>
+</P>
+<P>
+<S ID='S-39' AZ='OTH'> The algorithm works as follows : A procedure SCAN is carried out for each state in <EQN/> . </S>
+<S ID='S-40' AZ='OTH'> SCAN checks various correspondences of input token <EQN/> against terminal symbols in RHS of rules . </S>
+<S ID='S-41' AZ='OTH'> Once SCAN is done , COMPLETER substitutes all final states of <EQN/> into all other analyses which can use them as components . </S>
+<S ID='S-42' TYPE='ITEM' AZ='OTH' > SCAN </S>
+<S ID='S-43' AZ='OTH'> SCAN handles states of <EQN/> , checking each input terminal against requirements of states in <EQN/> and various error hypotheses . </S>
+<S ID='S-44' AZ='OTH'> Figure <CREF/> shows how SCAN processes . </S>
+</P>
+<IMAGE ID='I-2'/>
+<P>
+<S ID='S-45' AZ='OTH'> Let <EQN/> be j-th component of <EQN/> and <EQN/> be i-th word of input string .</S>
+</P>
+<P>
+<S ID='S-46' AZ='OTH'> perfect match : </S>
+<S ID='S-47' AZ='OTH'> If <EQN/> then add <EQN/> to <EQN/> if possible . </S>
+</P>
+<P>
+<S ID='S-48' AZ='OTH'> insertion-error hypothesis : </S>
+<S ID='S-49' AZ='OTH'> Add <EQN/> to <EQN/> if possible . </S>
+<S ID='S-50' AZ='OTH'> <EQN/> is the cost of an insertion-error for a terminal symbol . </S>
+</P>
+<P>
+<S ID='S-51' AZ='OTH'> deletion-error hypothesis : </S>
+<S ID='S-52' AZ='OTH'> If <EQN/> is terminal , then add <EQN/> to <EQN/> if possible . </S>
+<S ID='S-53' AZ='OTH'> <EQN/> is the cost of a deletion-error for a terminal symbol . </S>
+</P>
+<P>
+<S ID='S-54' AZ='OTH'> mutation-error hypothesis : </S>
+<S ID='S-55' AZ='OTH'> If <EQN/> is terminal but not equal to <EQN/> , then add <EQN/> to <EQN/> if possible . </S>
+<S ID='S-56' AZ='OTH'> <EQN/> is the cost of a mutation-error for a terminal symbol . </S>
+</P>
+<P>
+<S ID='S-57' TYPE='ITEM' AZ='OTH' > COMPLETER </S>
+<S ID='S-58' AZ='OTH'> COMPLETER handles substitution of final states in <EQN/> like that of original Earley 's algorithm . </S>
+<S ID='S-59' AZ='OTH'> Each final state means the recognition of a nonterminal . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-3'> Extension of least-errors recognition algorithm </HEADER>
+<P>
+<S ID='S-60' AZ='OTH'> The algorithm in section <CREF/> can analyze any input string with the least number of errors . </S>
+<S ID='S-61' AZ='CTR'> But this algorithm can handle only the errors of terminal symbols because it doesn't consider the errors of nonterminal nodes . </S>
+<S ID='S-62' AZ='CTR'> In the real text , however , the insertion , deletion , or inversion of a phrase - namely , nonterminal node - occurs more frequently . </S>
+<S ID='S-63' AZ='AIM'> So , we extend the original algorithm in order to handle the errors of nonterminal symbols as well . </S>
+</P>
+<P>
+<S ID='S-64' AZ='OWN'> In our extended algorithm , the same SCAN as that of the original algorithm is used , while COMPLETER is modified and extended . </S>
+<S ID='S-65' AZ='OWN'> Figure <CREF/> shows the processing of extended-COMPLETER . </S>
+<S ID='S-66' AZ='OWN'> In figure <CREF/> , [ NP ] denotes the final state whose rule has NP as its LHS . </S>
+<S ID='S-67' AZ='OWN'> In other words , it means the recognition of a noun phrase . </S>
+<IMAGE ID='I-3'/>
+<S ID='S-68' TYPE='ITEM' AZ='OWN' > extended-COMPLETER </S>
+<S ID='S-69' AZ='OWN'> If there is a final state <EQN/> in <EQN/> , </S>
+</P>
+<P>
+<S ID='S-70' AZ='OWN'> phrase perfect match </S>
+<S ID='S-71' AZ='OWN'> If there exists a state <EQN/> in <EQN/> and <EQN/> then add <EQN/> into <EQN/> . </S>
+</P>
+<P>
+<S ID='S-72' AZ='OWN'> phrase insertion-error hypothesis </S>
+<S ID='S-73' AZ='OWN'> If there exists a state <EQN/> in <EQN/> then add <EQN/> into <EQN/> if possible . </S>
+<S ID='S-74' AZ='OWN'> <EQN/> is the cost of a insertion-error for a nonterminal symbol . </S>
+</P>
+<P>
+<S ID='S-75' AZ='OWN'> phrase deletion-error hypothesis </S>
+<S ID='S-76' AZ='OWN'> If there exists a state <EQN/> in <EQN/> and <EQN/> is a nonterminal then add <EQN/> into <EQN/> if possible . </S>
+<S ID='S-77' AZ='OWN'> <EQN/> is the cost of a deletion-error for a nonterminal symbol . </S>
+</P>
+<P>
+<S ID='S-78' AZ='OWN'> phrase mutation-error hypothesis </S>
+<S ID='S-79' AZ='OWN'> If there exists a state <EQN/> in <EQN/> and <EQN/> is a nonterminal but not equal to <EQN/> then add <EQN/> into <EQN/> if possible . </S>
+<S ID='S-80' AZ='OWN'> <EQN/> is the cost of a mutation-error for a nonterminal symbol . </S>
+</P>
+<P>
+<S ID='S-81' AZ='OWN'> The extended least-errors recognition algorithm can handle not only terminal errors but also nonterminal errors . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-4'> Heuristics </HEADER>
+<P>
+<S ID='S-82' AZ='OWN'> The robust parser using the extended least-errors recognition algorithm overgenerates many error-hypothesis edges during parsing process . </S>
+<S ID='S-83' AZ='OWN'> To cope with this problem , we adjust error values according to the following heuristics . </S>
+<S ID='S-84' AZ='OWN'> Edges with more error values are regarded as less important ones , so that those edges are processed later than those of less error values . </S>
+</P>
+<P>
+<S ID='S-85' AZ='OWN'> Heuristics 1 : error types </S>
+<S ID='S-86' AZ='OWN'> The analysis on 3,538 sentences of the Penn treebank corpus WSJ shows that there are 498 sentences with phrase deletions and 224 sentences with phrase insertions . </S>
+<S ID='S-87' AZ='OWN'> So , we assign less error value to the deletion-error hypothesis edge than to the insertion - and mutation-errors . </S>
+<IMAGE ID='I-4'/>
+</P>
+<P>
+<S ID='S-88' AZ='OWN'> where <EQN/> is the error cost of a terminal symbol , <EQN/> is the error cost of a nonterminal symbol . </S>
+</P>
+<P>
+<S ID='S-89' AZ='OWN'> Heuristics 2 : fiducial nonterminal </S>
+<S ID='S-90' AZ='OWN'> People often make mistakes in writing English . </S>
+<S ID='S-91' AZ='OWN'> These mistakes usually take place rather between small constituents such as a verbal phrase , an adverbial phrase and noun phrase than within small constituents themselves . </S>
+<S ID='S-92' AZ='OWN'> The possibility of error occurrence within noun phrases are lower than between a noun phrase and a verbal phrase , a preposition phrase , an adverbial phrase . </S>
+<S ID='S-93' AZ='OWN'> So , we assume some phrases , for example noun phrases , as fiducial nonterminals , which means error-free nonterminals . </S>
+<S ID='S-94' AZ='OWN'> When handling sentences , the robust parser assings more error values ( <EQN/> ) to the error hypothesis edge occurring within a fiducial nonterminal . </S>
+</P>
+<P>
+<S ID='S-95' AZ='OWN'> Heuristics 3 : kinds of terminal symbols </S>
+<S ID='S-96' AZ='OWN'> Some terminal symbols like punctuation symbols , conjunctions and particles are often misused . </S>
+<S ID='S-97' AZ='OWN'> So , the robust parser assigns less error values ( <EQN/> ) to the error hypothesis edges with these symbols than to the other terminal symbols . </S>
+</P>
+<P>
+<S ID='S-98' AZ='OWN'> Heuristics 4 : inserted phrases between commas or parentheses </S>
+<S ID='S-99' AZ='OWN'> Most of inserted phrases are surrounded by commas or parentheses . </S>
+<S ID='S-100' AZ='OWN'> For example ,  </S>
+<EXAMPLE ID='E-1'>
+<EX-S> They 're active , generally , at night or on damp , cloudy days . </EX-S>
+<EX-S> All refrigerators , whether they are defrosted manually or not , need to be cleaned . </EX-S>
+<EX-S> I was a last-minute ( read interloping ) attendee at a French journalism convention ...</EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-101' AZ='OWN'> We will assign less error values ( <EQN/> ) to the insertion-error hypothesis edges of nonterminals which are embraced by comma or parenthesis . </S>
+<S ID='S-102' AZ='OWN'> <EQN/> and <EQN/> are weights for the error of terminal nodes , and <EQN/> is a weight for the error of nonterminal nodes . </S>
+</P>
+<P>
+<S ID='S-103' AZ='OWN'> The error value e of an edge is calculated as follows . </S>
+<S ID='S-104' AZ='OWN'> All error values are additive . </S>
+<S ID='S-105' AZ='OWN'> The error value e for a rule <EQN/> , where a is a terminal node and A is a nonterminal node , is  </S>
+<IMAGE ID='I-5'/>
+</P>
+<P>
+<S ID='S-106' AZ='OWN'> where <EQN/> , <EQN/> and <EQN/> is an error value of a child edge . </S>
+<S ID='S-107' AZ='OWN'> By these heuristics , our robust parser can process only plausible edges first , instead of processing all generated edges at the same time , so that we can enhance the performance of the robust parser and result in the great reduction in the number of resultant trees . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-5'> Implementation and Evaluation </HEADER>
+<DIV DEPTH='2'>
+<HEADER ID='H-6'> The robust parser </HEADER>
+<P>
+<S ID='S-108' AZ='OWN'> Our robust parsing system is composed of two modules . </S>
+<S ID='S-109' AZ='OWN'> One module is a normal parser which is the bottom-up chart parser . </S>
+<S ID='S-110' AZ='OWN'> The other is a robust parser with the error recovery mechanism proposed herein . </S>
+<S ID='S-111' AZ='OWN'> At first , an input sentence is processed by the normal parser . </S>
+<S ID='S-112' AZ='OWN'> If the sentence is within the grammatical coverage of the system , the normal parser succeed to analyze it . </S>
+<S ID='S-113' AZ='OWN'> Otherwise , the normal parser fails , and then the robust parser starts to execute with edges generated by the normal parser . </S>
+<S ID='S-114' AZ='OWN'> The result of the robust parser is the parse trees which are within the grammatical coverage of the system . </S>
+<S ID='S-115' AZ='OWN'> The overview of the system is shown in figure <CREF/> . </S>
+<IMAGE ID='I-6'/>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-7'> Experimental Result </HEADER>
+<P>
+<S ID='S-116' AZ='OWN'> To show usefulness of the robust parser proposed in this paper , we made some experiments . </S>
+<IMAGE ID='I-7'/>
+</P>
+<P>
+<S ID='S-117' AZ='OWN'> Rule </S>
+<S ID='S-118' AZ='OWN'> We can derive 4,958 rules and their frequencies out of 14,137 sentences in the Penn treebank tree-tagged corpus , the Wall Street Journal . </S>
+<S ID='S-119' AZ='OWN'> The average frequency of each rule is 48 times in the corpus . </S>
+<S ID='S-120' AZ='OWN'> Of these rules , we remove rules which occurs fewer times than the average frequency in the corpus , and then only 192 rules are left . </S>
+<S ID='S-121' AZ='OWN'> These removed rules are almost for peculiar sentences and the left rules are very general rules . </S>
+<S ID='S-122' AZ='OWN'> We can show that our robust parser can compensate for lack of rules using only 192 rules with the recovery mechanism and heuristics . </S>
+</P>
+<P>
+<S ID='S-123' AZ='OWN'> Test set </S>
+<S ID='S-124' AZ='OWN'> First , 1,000 sentences are selected randomly from the WSJ corpus , which we have referred to in proposing the robust parser . </S>
+<S ID='S-125' AZ='OWN'> Of these sentences , 410 are failed in normal parsing , and are processed again by the robust parser . </S>
+<S ID='S-126' AZ='OWN'> To show the validity of these heuristics , we compare the result of the robust parser using heuristics with one not using heuristics . </S>
+<S ID='S-127' AZ='OWN'> Second , to show the adaptability of our robust parser ,  </S>
+<S ID='S-128' AZ='OWN'> same experiments are carried out on 1,000 sentences from the ATIS corpus in Penn treebank , which we haven't referred to when we propose the robust parser . </S>
+<S ID='S-129' AZ='OWN'> Among 1,000 sentences from the ATIS , 465 sentences are processed by the robust parser after the failure of the normal parsing . </S>
+</P>
+<P>
+<S ID='S-130' AZ='OWN'> Parameter adjustment </S>
+<S ID='S-131' AZ='OWN'> We chose the best parameters of heuristics by executing several experiments . </S>
+<IMAGE ID='I-8'/>
+</P>
+<P>
+<S ID='S-132' AZ='OWN'> Accuracy is measured as the percentage of constituents in the test sentences which do not cross any Penn treebank constituents <REF TYPE='P'>Black 1991</REF> . </S>
+<S ID='S-133' AZ='OWN'> Table <CREF/> shows the results of the robust parser on WSJ . </S>
+<S ID='S-134' AZ='OWN'> In table <CREF/> , 5th , 6th and 7th raw mean that the percentage of sentences which have no crossing constituents , less than one crossing and less than two crossing respectively . </S>
+<S ID='S-135' AZ='OWN'> With heuristics , our robust parser can enhance the processing time and reduce the number of edges . </S>
+<S ID='S-136' AZ='OWN'> Also , the accuracy is improved from 72.8 % to 77.1 % even if the heuristics differentiate edges and prefer some edges . </S>
+<S ID='S-137' AZ='OWN'> It shows that the proposed heuristics is valid in parsing the real sentences . </S>
+<S ID='S-138' AZ='OWN'> The experiment says that our robust parser with heuristics can recover perfectly about 23 sentences out of 100 sentences which are just failed in normal parsing , as the percentage of no-crossing sentences is about 23.28 . </S>
+</P>
+<P>
+<S ID='S-139' AZ='OWN'> Table <CREF/> is the results of the robust parser on ATIS which we did not refer to before . </S>
+<S ID='S-140' AZ='OWN'> The accuracy of the result on ATIS is lower than WSJ because the parameters of the heuristics are adjusted not by ATIS itself but by WSJ . </S>
+<S ID='S-141' AZ='OWN'> However , the percentage of sentences with constituents crossing less than 2 is higher than the WSJ , as sentences of ATIS are more or less simple . </S>
+<IMAGE ID='I-9'/>
+</P>
+<P>
+<S ID='S-142' AZ='OWN'> The experimental results of our robust parser show high accuracy in recovery even though 96 % of total rules are removed . </S>
+<S ID='S-143' AZ='OWN'> It is impossible to construct complete grammar rules in the real parsing system to succeed in analyzing every real sentence . </S>
+<S ID='S-144' AZ='OWN'> So , parsing systems are likely to have extragrammatical sentences which cannot be analyzed by the systems . </S>
+<S ID='S-145' AZ='OWN'> Our robust parser can recover these extragrammatical sentences with 68 - 77 % accuracy . </S>
+</P>
+<P>
+<S ID='S-146' AZ='OWN'> It is very interesting that parameters of heuristics reflect the characteristics of the test corpus . </S>
+<S ID='S-147' AZ='OWN'> For example , if people tend to write sentences with inserted phrases , then the parameter <EQN/> must increase . </S>
+<S ID='S-148' AZ='OWN'> Therefore we can get better results if the parameter are fitted to the characteristics of the corpus . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-8'> Conclusion </HEADER>
+<P>
+<S ID='S-149' AZ='AIM'> In this paper , we have presented the robust parser with the extended least-errors recognition algorithm as the recovery mechanism . </S>
+<S ID='S-150' ABSTRACTC='A-4' AZ='OWN'> This robust parser can easily be scaled up and applied to various domains because this parser depends only on syntactic factors . </S>
+<S ID='S-151' ABSTRACTC='A-5' AZ='OWN'> To enhance the performance of the robust parser for extragrammatical sentences , we proposed several heuristics . </S>
+<S ID='S-152' AZ='OWN'> The heuristics assign the error values to each error-hypothesis edge , and edges which has less error values are processed first . </S>
+<S ID='S-153' AZ='OWN'> So , not all the generated edges are processed by the robust parser , but the most plausible parse trees can be generated first . </S>
+<S ID='S-154' ABSTRACTC='A-6' AZ='OWN'> The accuracy of the recovery in our robust parser is about 68 % - 77 % . </S>
+<S ID='S-155' AZ='OWN'> Hence , this parser is suitable for systems in real application areas . </S>
+</P>
+<P>
+<S ID='S-156' AZ='OWN'> Our short term goal is to propose an automatic method that can learn parameter values of heuristics by analyzing the corpus . </S>
+<S ID='S-157' AZ='OWN'> We expect that automatically learned values of parameters can upgrade the performance of the parser . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-9'> Acknowledgement </HEADER>
+<P>
+<S ID='S-158' AZ='OWN'> This work was supported ( in part ) by Korea Science and Engineering Foundation ( KOSEF ) through Center for Artificial Intelligence Research ( CAIR ) , the Engineering Research Center ( ERC ) of Excellence Program . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>E. <SURNAME>Black</SURNAME> et al.
+A Procedure for quantitatively comparing the syntactic coverage of English grammars.
+Proceedings of Fourth  DARPA Speech and Natural Language Workshop, 
+                        pp. 306-311, <DATE>1991</DATE>.
+</REFERENCE>
+<REFERENCE>J. G. <SURNAME>Carbonell</SURNAME> and P. J. <SURNAME>Hayes</SURNAME>.
+Recovery Strategies for Parsing Extragrammatical Language.
+American Journal of Computational
+  Linguistics, vol. 9, no. 3-4, pp. 123-146, <DATE>1983</DATE>.
+</REFERENCE>
+<REFERENCE>P. <SURNAME>Hayes</SURNAME> and J. <SURNAME>Carbonell</SURNAME>.
+Multi-strategy Construction-Specific Parsing for Flexible Data Base Query Update.
+Proceedings of the 7th International Joint Conference on Artificial
+                        Intelligence, pp. 432-439, <DATE>1981</DATE>.
+</REFERENCE>
+<REFERENCE> P. J. <SURNAME>Hayes</SURNAME> and G. V. <SURNAME>Mouradian</SURNAME>.
+Flexible Parsing.
+American Journal of Computational Linguistics, 
+                        vol. 7, no. 4, pp. 232-242, <DATE>1981</DATE>.
+</REFERENCE>
+<REFERENCE>G. <SURNAME>Hendrix</SURNAME>. 
+Human Engineering for Applied Natural Language Processing.
+Proceedings of the 5th International Joint Conference
+                         on Artificial Intelligence, pp. 183-191, <DATE>1977</DATE>.
+</REFERENCE>
+<REFERENCE>S. <SURNAME>Kwasny</SURNAME> and N. <SURNAME>Sondheimer</SURNAME>. 
+Relaxation Techniques for Parsing Grammatically Ill-Formed Input 
+              in Natural Language Understanding Systems.
+American Journal of Computational Linguistics, 
+                         vol. 7, no. 2, pp. 99-108, <DATE>1981</DATE>.
+</REFERENCE>
+<REFERENCE>G. <SURNAME>Lyon</SURNAME>.
+Syntax-Directed Least-Errors Analysis for Context-Free Languages.
+Communications of the ACM, vol. 17, no. 1, pp. 3-14, <DATE>1974</DATE>.
+</REFERENCE>
+<REFERENCE>M. P. <SURNAME>Marcus</SURNAME>.
+Building very Large natural language corpora : the Penn Treebank, <DATE>1991</DATE>.
+</REFERENCE>
+<REFERENCE>C. S. <SURNAME>Mellish</SURNAME>. 
+Some Chart-Based Techniques for Parsing Ill-Formed Input.
+Association for Computational Linguistics,
+                pp. 102-109, <DATE>1989</DATE>.
+</REFERENCE>
+<REFERENCE>R. C. <SURNAME>Schank</SURNAME>, M. <SURNAME>Lebowitz</SURNAME> and L. <SURNAME>Brinbaum</SURNAME>.
+An Intergrated Understander.
+American Journal of Computational Linguistics, 
+                        vol. 6, no. 1, pp. 13-30, <DATE>1980</DATE>.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

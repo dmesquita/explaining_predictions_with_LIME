@@ -1,0 +1,400 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9504024</FILENO>
+<APPEARED><CONFERENCE>ACL</CONFERENCE><YEAR>1995</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.Ap.Ot  Lg.Pr.Ml </CLASSIFICATION>
+</METADATA>
+<TITLE> A Morphographemic Model for Error Correction in Nonconcatenative Strings </TITLE>
+<AUTHORLIST>
+<AUTHOR>Tanya Bowden</AUTHOR>
+<AUTHOR>George Anton Kiraz</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' AZ='AIM'> This paper introduces a spelling correction system which integrates seamlessly with morphological analysis using a multi-tape formalism . </A-S>
+<A-S ID='A-1' AZ='OWN'> Handling of various Semitic error problems is illustrated , with reference to Arabic and Syriac examples . </A-S>
+<A-S ID='A-2' AZ='OWN'> The model handles errors vocalisation , diacritics , phonetic syncopation and morphographemic idiosyncrasies , in addition to <REFAUTHOR>Damerau</REFAUTHOR> errors . </A-S>
+<A-S ID='A-3' DOCUMENTC='S-136' AZ='OWN'> A complementary correction strategy for morphologically sound but morphosyntactically ill-formed words is outlined . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> Semitic is known amongst computational linguists , in particular computational morphologists , for its highly inflexional morphology . </S>
+<S ID='S-1' AZ='BKG'> Its root-and-pattern phenomenon not only poses difficulties for a morphological system , but also makes error detection a difficult task . </S>
+<S ID='S-2' AZ='AIM'> This paper aims at presenting a morphographemic model which can cope with both issues . </S>
+</P>
+<P>
+<S ID='S-3' AZ='OWN'> The following convention has been adopted . </S>
+<S ID='S-4' AZ='OWN'> Morphemes are represented in braces , { } , surface ( phonological ) forms in solidi , / / , and orthographic strings in acute brackets , <EQN/> <EQN/> . </S>
+<S ID='S-5' AZ='OWN'> In examples of grammars , variables begin with a capital letter . </S>
+<S ID='S-6' AZ='OWN'> Cs denote consonants , Vs denote vowels and a bar denotes complement . </S>
+<S ID='S-7' AZ='OWN'> An asterisk , * , indicates ill-formed strings . </S>
+</P>
+<P>
+<S ID='S-8' AZ='BKG'> The difficulties in morphological analysis and error detection in Semitic arise from the following facts : </S>
+</P>
+<P>
+<S ID='S-9' AZ='BKG'> Non-Linearity </S>
+<S ID='S-10' AZ='BKG'> A Semitic stem consists of a root and a vowel melody , arranged according to a canonical pattern . </S>
+<S ID='S-11' AZ='BKG'> For example , Arabic /kuttib/ ` caused to write - perfect passive ' is composed from the root morpheme { ktb } ` notion of writing ' and the vowel melody morpheme { ui } ` perfect passive ' ; the two are arranged according to the pattern morpheme { CVCCVC } ` causative ' . </S>
+<S ID='S-12' AZ='OTH'> This phenomenon is analysed by <REF TYPE='A'>McCarthy 1981</REF> along the lines of autosegmental phonology <REF TYPE='P'>Goldsmith 1976</REF> . </S>
+<S ID='S-13' AZ='OTH'> The analysis appears in <CREF/> . </S>
+<IMAGE ID='I-0'/>
+</P>
+<P>
+<S ID='S-14' AZ='BKG'> Vocalisation </S>
+<S ID='S-15' AZ='BKG'> Orthographically , Semitic texts appear in three forms : </S>
+<S ID='S-16' TYPE='ITEM' AZ='BKG' > consonantal texts do not incorporate any short vowels but matres lectionis , e.g. Arabic <EQN/> ktb <EQN/> for /katab/ , /kutib/ and /kutub/ , but <EQN/> kaatb <EQN/> for /kaatab/ and /kaatib/ ; </S>
+<S ID='S-17' TYPE='ITEM' AZ='BKG' > partially vocalised texts incorporate some short vowels to clarify ambiguity , e.g. <EQN/> kutb <EQN/> for /kutib/ to distinguish it from /katab/ ; and </S>
+<S ID='S-18' TYPE='ITEM' AZ='BKG' > vocalised texts incorporate full vocalisation , e.g. <EQN/> tada ' 043 ra for /tada ' 043 ra/ . </S>
+</P>
+<P>
+<S ID='S-19' AZ='BKG'> Vowel and Diacritic Shifts </S>
+<S ID='S-20' AZ='BKG'> Semitic languages employ a large number of diacritics to represent enter alia short vowels , doubled letters , and nunation . </S>
+<S ID='S-21' AZ='BKG'> Most editors allow the user to enter such diacritics above and below letters . </S>
+<S ID='S-22' AZ='BKG'> To speed data entry , the user usually enters the base characters ( say a paragraph ) and then goes back and enters the diacritics . </S>
+<S ID='S-23' AZ='BKG'> A common mistake is to place the cursor one extra position to the left when entering diacritics . </S>
+<S ID='S-24' AZ='BKG'> This results in the vowels being shifted one position , e.g. * <EQN/> wkatubi <EQN/> instead of <EQN/> wakutib <EQN/> . </S>
+</P>
+<P>
+<S ID='S-25' AZ='BKG'> Vocalisms </S>
+<S ID='S-26' AZ='BKG'> The quality of the perfect and imperfect vowels of the basic forms of the Semitic verbs are idiosyncratic . </S>
+<S ID='S-27' AZ='BKG'> For example , the Syriac root { ktb } takes the perfect vowel a , e.g. /ktab/ , while the root <EQN/> takes the vowel e , e.g. <EQN/> . </S>
+<S ID='S-28' AZ='BKG'> It is common among learners to make mistakes such as */kteb/ or <EQN/> . </S>
+</P>
+<P>
+<S ID='S-29' AZ='BKG'> Phonetic Syncopation </S>
+<S ID='S-30' AZ='BKG'> A consonantal segment may be omitted from the phonetic surface form , but maintained in the orthographic surface from . </S>
+<S ID='S-31' AZ='BKG'> For example , Syriac <EQN/> mdnt <EQN/> ` city ' is pronounced /mdt/ . </S>
+</P>
+<P>
+<S ID='S-32' AZ='BKG'> Idiosyncrasies </S>
+<S ID='S-33' AZ='BKG'> The application of a morphographemic rule may have constraints as on which lexical morphemes it may or may not apply . </S>
+<S ID='S-34' AZ='BKG'> For example , the glottal stop [ ' 145 ] at the end of a stem may become [ w ] when followed by the relative adjective morpheme { iyy } , as in Arabic /samaa + iyy/ <EQN/> /samaawiyy/ ` heavenly ' , but /hawaa + iyy/ <EQN/> /hawaa ' 145 iyy/ ` of air ' . </S>
+</P>
+<P>
+<S ID='S-35' AZ='BKG'> Morphosyntactic Issues </S>
+<S ID='S-36' AZ='BKG'> In broken plurals , diminutives and deverbal nouns , the user may enter a morphologically sound , but morphosyntactically ill-formed word . </S>
+<S ID='S-37' AZ='TXT'> We shall discuss this in more detail in section <CREF/> . </S>
+</P>
+<P>
+<S ID='S-38' AZ='OTH'> To the above , one adds language-independent issues in spell checking such as the four <REFAUTHOR>Damerau</REFAUTHOR> transformations : omission , insertion , transposition and substitution <REF TYPE='P'>Damerau 1964</REF> . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> A Morphographemic Model </HEADER>
+<P>
+<S ID='S-39' AZ='TXT'> This section presents a morphographemic model which handles error detection in non-linear strings . </S>
+<S ID='S-40' AZ='TXT'> Subsection <CREF/> presents the formalism used , and subsection <CREF/> describes the model . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-2'> The Formalism </HEADER>
+<P>
+<S ID='S-41' AZ='BAS'> In order to handle the non-linear phenomenon of Arabic , our model adopts the two-level formalism presented by <REF TYPE='P'>Pulman and Hepple 1993</REF> , with the multi tape extensions in <REF SELF="YES" TYPE='A'>Kiraz 1994</REF> . </S>
+<S ID='S-42' AZ='OTH'> Their formalism appears in <CREF/> . </S>
+<IMAGE ID='I-1'/>
+</P>
+<P>
+<S ID='S-43' AZ='OTH'> The special symbol * is a wildcard matching any context , with no length restrictions . </S>
+<S ID='S-44' AZ='OTH'> The operator <EQN/> caters for obligatory rules . </S>
+<S ID='S-45' AZ='OTH'> A lexical string maps to a surface string iff they can be partitioned into pairs of lexical-surface subsequences , where each pair is licenced by a <EQN/> or <EQN/> rule , and no partition violates a <EQN/> rule . </S>
+<S ID='S-46' AZ='OTH'> In the multi-tape version , lexical expressions ( i.e. LLC , LEX and RLC ) are n-tuple of regular expressions of the form <EQN/> : the ith expression refers to symbols on the ith tape ; a nill slot is indicated by <EQN/> . </S>
+<S ID='S-47' AZ='OTH'> Another extension is giving LLC the ability to contain ellipsis , <EQN/> , which indicates the ( optional ) omission from LLC of tuples , provided that the tuples to the left of <EQN/> are the first to appear on the left of LEX . </S>
+</P>
+<P>
+<S ID='S-48' AZ='OWN'> In our morphographemic model , we add a similar formalism for expressing error rules <CREF/> . </S>
+<IMAGE ID='I-2'/>
+</P>
+<P>
+<S ID='S-49' AZ='OWN'> The error rules capture the correspondence between the error surface and the correct surface , given the surrounding partition into surface and lexical contexts . </S>
+<S ID='S-50' AZ='OWN'> They happily utilise the multi-tape format and integrate seamlessly into morphological analysis . </S>
+<S ID='S-51' AZ='OWN'> PLC and PRC above are the left and right contexts of both the lexical and ( correct ) surface levels . </S>
+<S ID='S-52' AZ='OWN'> Only the <EQN/> is used ( error is not obligatory ) . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-3'> The Model </HEADER>
+<DIV DEPTH='3'>
+<HEADER ID='H-4'> Finding the error </HEADER>
+<P>
+<S ID='S-53' AZ='OWN'> Morphological analysis is first called with the assumption that the word is free of errors . </S>
+<S ID='S-54' AZ='OWN'> If this fails , analysis is attempted again without the ` no error ' restriction . </S>
+<S ID='S-55' AZ='OWN'> The error rules are then considered when ordinary morphological rules fail . </S>
+<S ID='S-56' AZ='OWN'> If no error rules succeed , or lead to a successful partition of the word , analysis backtracks to try the error rules at successively earlier points in the word . </S>
+</P>
+<P>
+<S ID='S-57' AZ='OWN'> For purposes of simplicity and because on the whole is it likely that words will contain no more than one error <REF TYPE='P'>Damerau 1964</REF> , <REF TYPE='P'>Pollock and Zamora 1983</REF> , normal ` no error ' analysis usually resumes if an error rule succeeds . </S>
+<S ID='S-58' AZ='OWN'> The exception occurs with a vowel shift error <CREF/> . </S>
+<S ID='S-59' AZ='OWN'> If this error rule succeeds , an expectation of further shifted vowels is set up , but no other error rule is allowed in the subsequent partitions . </S>
+<S ID='S-60' AZ='OWN'> For this reason rules are marked as to whether they can occur more than once . </S>
+</P>
+</DIV>
+<DIV DEPTH='3'>
+<HEADER ID='H-5'> Suggesting a correction </HEADER>
+<P>
+<S ID='S-61' AZ='OWN'> Once an error rule is selected , the corrected surface is substituted for the error surface , and normal analysis continues - at the same position . </S>
+<S ID='S-62' AZ='OWN'> The substituted surface may be in the form of a variable , which is then ground by the normal analysis sequence of lexical matching over the lexicon tree . </S>
+<S ID='S-63' AZ='OWN'> In this way only lexical words are considered , as the variable letter can only be instantiated to letters branching out from the current position on the lexicon tree . </S>
+<S ID='S-64' AZ='OWN'> Normal prolog backtracking to explore alternative rules / lexical branches applies throughout . </S>
+</P>
+</DIV>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-6'> Error Checking in Arabic </HEADER>
+<P>
+<S ID='S-65' AZ='OWN'> We demonstrate our model on the Arabic verbal stems shown in <CREF/> <REF TYPE='P'>McCarthy 1981</REF> . </S>
+<S ID='S-66' AZ='OWN'> Verbs are classified according to their measure ( M ) : there are 15 trilateral measures and 4 quadrilateral ones . </S>
+<S ID='S-67' AZ='OWN'> Moving horizontally across the table , one notices a change in vowel melody ( active { a } , passive { ui } ) ; everything else remains invariant . </S>
+<S ID='S-68' AZ='OWN'> Moving vertically , a change in canonical pattern occurs ; everything else remains invariant . </S>
+</P>
+<P>
+<S ID='S-69' AZ='TXT'> Subsection <CREF/> presents a simple two-level grammar which describes the above data . </S>
+<S ID='S-70' AZ='TXT'> Subsection <CREF/> presents error checking . </S>
+<IMAGE ID='I-3'/>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-7'> Two-Level Rules </HEADER>
+<P>
+<S ID='S-71' AZ='OWN'> The lexical level maintains three lexical tapes <REF TYPE='P'>Kay 1987</REF> , <REF SELF="YES" TYPE='P'>Kiraz 1994</REF> : pattern tape , root tape and vocalism tape ; each tape scans a lexical tree . </S>
+<S ID='S-72' AZ='OWN'> Examples of pattern morphemes are : <EQN/> , <EQN/> .</S>
+<S ID='S-73' AZ='OWN'> The root morphemes are { ktb } and <EQN/> , and the vocalism morphemes are { a } ( active ) and { ui } ( passive ) . </S>
+</P>
+<P>
+<S ID='S-74' AZ='OWN'> The following two-level grammar handles the above data . </S>
+<S ID='S-75' AZ='OWN'> Each lexical expression is a triple ; lexical expressions with one symbol assume <EQN/> on the remaining positions . </S>
+<IMAGE ID='I-4'/>
+</P>
+<P>
+<S ID='S-76' AZ='OWN'> <CREF/> gives three general rules : <CREF/> allows any character on the first lexical tape to surface , e.g. infixes , prefixes and suffixes . </S>
+<S ID='S-77' AZ='OWN'> <CREF/> states that any P <EQN/> on the first ( pattern ) tape and C on the second ( root ) tape with no transition on the third ( vocalism ) tape corresponds to C on the surface tape ; this rule sanctions consonants . </S>
+<S ID='S-78' AZ='OWN'> Similarly , <CREF/> states that any P <EQN/> on the pattern tape and V on vocalism tape with no transition on the root tape corresponds to V on the surface tape ; this rule sanctions vowels . </S>
+<IMAGE ID='I-5'/>
+</P>
+<P>
+<S ID='S-79' AZ='OWN'> <CREF/> gives two boundary rules : <CREF/> is used for non-stem morphemes , e.g. prefixes and suffixes . </S>
+<S ID='S-80' AZ='OWN'> <CREF/> applies to stem morphemes reading three boundary symbols simultaneously ; this marks the end of a stem . </S>
+<S ID='S-81' AZ='OWN'> Notice that LLC ensures that the right boundary rule is invoked at the right time . </S>
+</P>
+<P>
+<S ID='S-82' AZ='OWN'> Before embarking on the rest of the rules , an illustrated example seems in order . </S>
+<S ID='S-83' AZ='OWN'> The derivation of /d ' 043 unri a/ ( M Q 5 , passive ) , from the three morphemes { c <EQN/> c <EQN/> v <EQN/> nc <EQN/> v <EQN/> c <EQN/> } , { d ' 043 r } and { ui } , and the suffix { a } ` 3rd person ' is illustrated in <CREF/> . </S>
+<IMAGE ID='I-6'/>
+</P>
+<P>
+<S ID='S-84' AZ='OWN'> The numbers between the surface tape and the lexical tapes indicate the rules which sanction the moves . </S>
+<IMAGE ID='I-7'/>
+</P>
+<P>
+<S ID='S-85' AZ='OWN'> Resuming the description of the grammar , <CREF/> presents spreading rules . </S>
+<S ID='S-86' AZ='OWN'> Notice the use of ellipsis to indicate that there can be tuples separating LEX and LLC , as far as the tuples in LLC are the nearest ones to LEX . </S>
+<S ID='S-87' AZ='OWN'> <CREF/> sanctions the spreading ( and gemination ) of consonants . </S>
+<S ID='S-88' AZ='OWN'> <CREF/> sanctions the spreading of the first vowel . </S>
+<S ID='S-89' AZ='OWN'> Spreading examples appear in <CREF/> . </S>
+<IMAGE ID='I-8'/>
+</P>
+<P>
+<S ID='S-90' AZ='OWN'> The following rules allow for the different possible orthographic vocalisations in Semitic texts : </S>
+<IMAGE ID='I-9'/>
+</P>
+<P>
+<S ID='S-91' AZ='OWN'> where <EQN/> . </S>
+</P>
+<P>
+<S ID='S-92' AZ='OWN'> <CREF/> and <CREF/> allow the optional deletion of short vowels in non-stem and stem morphemes , respectively ; note that the lexical contexts make sure that long vowels are not deleted . </S>
+<S ID='S-93' AZ='OWN'> <CREF/> allows the optional deletion of a short vowel what is the cause of spreading . </S>
+<S ID='S-94' AZ='OWN'> For example the rules sanction both /katab/ ( M 1 , active ) and /kutib/ ( M 1 , passive ) as interpretations of <EQN/> ktb <EQN/> as showin in <CREF/> . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-8'> Error Rules </HEADER>
+<P>
+<S ID='S-95' AZ='OWN'> Below are outlined error rules resulting from peculiarly Semitic problems . </S>
+<S ID='S-96' AZ='OWN'> Error rules can also be constructed in a similar vein to deal with typographical <REFAUTHOR>Damerau</REFAUTHOR> error ( which also take care of the issue of wrong vocalisms ) . </S>
+<IMAGE ID='I-10'/>
+</P>
+<DIV DEPTH='3'>
+<HEADER ID='H-9'> Vowel Shift </HEADER>
+<P>
+<S ID='S-97' AZ='OWN'> A vowel shift error rule will be tried with a partition on a ( short ) vowel which is not an expected ( lexical ) vowel at that position . </S>
+<S ID='S-98' AZ='OWN'> Short vowels can legitimately be omitted from an orthographic representation - it is this fact which contributes to the problem of vowel shifts . </S>
+<S ID='S-99' AZ='OWN'> A vowel is considered shifted if the same vowel has been omitted earlier in the word . </S>
+<S ID='S-100' AZ='OWN'> The rule deletes the vowel from the surface . </S>
+<S ID='S-101' AZ='OWN'> Hence in the next pass of ( normal ) analysis , the partition is analysed as a legitimate omission of the expected vowel . </S>
+<S ID='S-102' AZ='OWN'> This prepares for the next shifted vowel to be treated in exactly the same way as the first . </S>
+<S ID='S-103' AZ='OWN'> The expectation of this reapplication is allowed for in reap = y . </S>
+<IMAGE ID='I-11'/>
+</P>
+<P>
+<S ID='S-104' AZ='OWN'> In the rules above , ` X ' is the shifted vowel . </S>
+<S ID='S-105' AZ='OWN'> It is deleted from the surface . </S>
+<S ID='S-106' AZ='OWN'> The partition contextual tuples consist of [ RULE NAME , SURF , LEX ] . </S>
+<S ID='S-107' AZ='OWN'> The LEX element is a tuple itself of [ PATTERN , ROOT , VOCALISM ] . </S>
+<S ID='S-108' AZ='OWN'> In E 0 the shifted vowel was analysed earlier as an omitted stem vowel ( om_stmv ) , whereas in E 1 it was analysed earlier as an omitted spread vowel ( om_sprv ) . </S>
+<S ID='S-109' AZ='OWN'> The surface / lexical restrictions in the contexts could be written out in more detail , but both rules make use of the fact that those contexts are analysed by other partitions , which check that they meet the conditions for an omitted stem vowel or omitted spread vowel . </S>
+</P>
+<P>
+<S ID='S-110' AZ='OWN'> For example , <EQN/> will be interpreted as <EQN/> .</S>
+<S ID='S-111' AZ='OWN'> The ` E 0 's on the rule number line indicate where the vowel shift rule was applied to replace an error surface vowel with <EQN/> . </S>
+<S ID='S-112' AZ='OWN'> The error surface vowels are written in italics . </S>
+<IMAGE ID='I-12'/>
+</P>
+</DIV>
+<DIV DEPTH='3'>
+<HEADER ID='H-10'> Deleted Consonant </HEADER>
+<P>
+<S ID='S-113' AZ='OWN'> Problems resulting from phonetic syncopation can be treated as accidental omission of a consonant , e.g. <EQN/> .</S>
+<IMAGE ID='I-13'/>
+</P>
+</DIV>
+<DIV DEPTH='3'>
+<HEADER ID='H-11'> Deleted Long Vowel </HEADER>
+<P>
+<S ID='S-114' AZ='OWN'> Although the error probably results from a different fault , a deleted long vowel can be treated in the same way as a deleted consonant . </S>
+<S ID='S-115' AZ='OWN'> With current transcription practice , long vowels are commonly written as two characters - they are possibly better represented as a single , distinct character . </S>
+<IMAGE ID='I-14'/>
+</P>
+<P>
+<S ID='S-116' AZ='OWN'> The form <EQN/>] can be interpreted as either <EQN/> with a deleted consonant ( geminated ` t ' ) or <EQN/> with a deleted long vowel . </S>
+<IMAGE ID='I-15'/>
+</P>
+</DIV>
+<DIV DEPTH='3'>
+<HEADER ID='H-12'> Substituted Consonant </HEADER>
+<P>
+<S ID='S-117' AZ='OWN'> One type of morphographemic error is that consonant substitution may not take place before appending a suffix . </S>
+<S ID='S-118' AZ='OWN'> For example <EQN/> ` heaven ' + <EQN/> ` relative adjective ' surfaces as <EQN/> , where <EQN/> in the given context . </S>
+<S ID='S-119' AZ='OWN'> A common mistake is to write it as <EQN/> .</S>
+<IMAGE ID='I-16'/>
+</P>
+<P>
+<S ID='S-120' AZ='OWN'> The ` glottal _ change ' rule would be a normal morphological spelling change rule , incorporating contextual constraints ( e.g. for the morpheme boundary ) as necessary . </S>
+</P>
+</DIV>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-13'> Broken Plurals , Diminutive and Deverbal Nouns </HEADER>
+<P>
+<S ID='S-121' AZ='TXT'> This section deals with morphosyntactic errors which are independent of the two-level analysis . </S>
+<S ID='S-122' AZ='BAS'> The data described below was obtained from <REFAUTHOR>Daniel Ponsford</REFAUTHOR> ( personal communication ) , based on <REF TYPE='A'>Wehr 1971</REF> . </S>
+</P>
+<P>
+<S ID='S-123' AZ='OWN'> Recall that a Semitic stems consists of a root morpheme and a vocalism morpheme arranged according to a canonical pattern morpheme . </S>
+<S ID='S-124' AZ='OWN'> As each root does not occur in all vocalisms and patterns , each lexical entry is associated with a feature structure which indicates inter alia the possible patterns and vocalisms for a particular root . </S>
+<S ID='S-125' AZ='OWN'> Consider the nominal data in <CREF/> . </S>
+<IMAGE ID='I-17'/>
+</P>
+<P>
+<S ID='S-126' AZ='OWN'> Patterns marked with * are morphologically plausible , but do not occur lexically with the cited nouns . </S>
+<S ID='S-127' AZ='OWN'> A common mistake is to choose the wrong pattern . </S>
+</P>
+<P>
+<S ID='S-128' AZ='OWN'> In such a case , the two-level model succeeds in finding two-level analyses of the word in question , but fails when parsing the word morphosyntactically : at this stage , the parser is passed a root , vocalism and pattern whose feature structures do not unify . </S>
+</P>
+<P>
+<S ID='S-129' AZ='OWN'> Usually this feature-clash situation creates the problem of which constituent to give preference to <REF TYPE='A'>Langer 1990</REF> . </S>
+<S ID='S-130' AZ='OWN'> Here the vocalism indicates the inflection ( e.g. broken plural ) and the preferance of vocalism pattern for that type of inflection belongs to the root . </S>
+<S ID='S-131' AZ='OWN'> For example <EQN/> would be analysed as <EQN/> with a broken plural vocalism . </S>
+<S ID='S-132' AZ='OWN'> The pattern type of the vocalism clashes with the broken plural pattern that the root expects . </S>
+<S ID='S-133' AZ='OWN'> To correct , the morphological analyser is executed in generation mode to generate the broken plural form of { kd } in the normal way . </S>
+</P>
+<P>
+<S ID='S-134' AZ='OWN'> The same procedure can be applied on diminutive and deverbal nouns . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-14'> Conclusion </HEADER>
+<P>
+<S ID='S-135' AZ='AIM'> The model presented corrects errors resulting from combining nonconcatenative strings as well as more standard morphological or spelling errors . </S>
+<S ID='S-136' ABSTRACTC='A-3' AZ='OWN'> It covers Semitic errors relating to vocalisation , diacritics , phonetic syncopation and morphographemic idiosyncrasies . </S>
+<S ID='S-137' AZ='OWN'> Morphosyntactic issues of broken plurals , diminutives and deverbal nouns can be handled by a complementary correction strategy which also depends on morphological analysis . </S>
+</P>
+<P>
+<S ID='S-138' AZ='OWN'> Other than the economic factor , an important advantage of combining morphological analysis and error detection / correction is the way the lexical tree associated with the analysis can be used to determine correction possibilities . </S>
+<S ID='S-139' AZ='OWN'> The morphological analysis proceeds by selecting rules that hypothesise lexical strings for a given surface string . </S>
+<S ID='S-140' AZ='OWN'> The rules are accepted / rejected by checking that the lexical string ( s ) can extend along the lexical tree ( s ) from the current position ( s ) . </S>
+<S ID='S-141' AZ='OWN'> Variables introduced by error rules into the surface string are then instantiated by associating surface with lexical , and matching lexical strings to the lexicon tree ( s ) . </S>
+<S ID='S-142' AZ='OWN'> The system is unable to consider correction characters that would be lexical impossibilities . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+<SURNAME>Abduh</SURNAME>, D. (<DATE>1990</DATE>).
+suubat tadqiq al-imla 
+  aliyyan fi al-arabiyyah [Difficulties in automatic spell
+  checking of Arabic].
+In Proceedings of the Second Cambridge Conference: Bilingual
+  Computing in Arabic and English.
+In Arabic.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Damerau</SURNAME>, F. (<DATE>1964</DATE>).
+A technique for computer detection and correction of spelling errors.
+Comm. of the Assoc. for Computing Machinery, 7(3):171-6.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Goldsmith</SURNAME>, J. (<DATE>1976</DATE>).
+Autosegmental Phonology.
+PhD thesis, MIT.
+Published as Autosegmental and Metrical Phonology, Oxford <DATE>1990</DATE>.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Kay</SURNAME>, M. (<DATE>1987</DATE>).
+Nonconcatenative finite-state morphology.
+In Proceedings of the Third Conference of the European Chapter
+  of the Association for Computational Linguistics, pages 2-10.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Kiraz</SURNAME>, G.
+Computational analyses of Arabic morphology.
+<DATE>Forthcoming</DATE> in Narayanan, A. and Ditters, E., editors, The
+  Linguistic Computation of Arabic. Intellect. Article 9408002 in 
+  cmp-lg@xxx.lanl.gov archive.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Kiraz</SURNAME>, G. (<DATE>1994</DATE>).
+Multi-tape two-level morphology: a case study in Semitic non-linear
+  morphology.
+In COLING-94: Papers Presented to the 15th International
+  Conference on Computational Linguistics, volume 1, pages 180-6.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Kiraz</SURNAME>, G. and <SURNAME>Grimley-Evans</SURNAME>, E. (<DATE>1995</DATE>).
+Compilation of n:1 two-level rules into finite state automata.
+Manuscript.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Langer</SURNAME>, H. (<DATE>1990</DATE>).
+Syntactic normalization of spontaneous speech.
+In COLING-90: Papers Presented to the 14th International
+  Conference on Computational Linguistics, pages 180-3.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>McCarthy</SURNAME>, J. (<DATE>1981</DATE>).
+A prosodic theory of nonconcatenative morphology.
+Linguistic Inquiry, 12(3):373-418.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Pollock</SURNAME>, J. and <SURNAME>Zamora</SURNAME>, A. (<DATE>1983</DATE>).
+Collection and characterization of spelling errors in scientific and
+  scholarly text.
+Journal of the American Society for Information Science,
+  34(1):51-8.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Pulman</SURNAME>, S. and <SURNAME>Hepple</SURNAME>, M. (<DATE>1993</DATE>).
+A feature-based formalism for two-level phonology: a description and
+  implementation.
+Computer Speech and Language, 7:333-58.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Wehr</SURNAME>, H. (<DATE>1971</DATE>).
+A Dictionary of Modern Written Arabic.
+Spoken Language Services, Ithaca.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

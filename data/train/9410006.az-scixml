@@ -1,0 +1,764 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9410006</FILENO>
+<APPEARED><CONFERENCE>ACL</CONFERENCE><YEAR>1989</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.Dc </CLASSIFICATION>
+</METADATA>
+<TITLE> Evaluating Discourse Processing Algorithms </TITLE>
+<AUTHORLIST>
+<AUTHOR>Marilyn A. Walker</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' DOCUMENTC='S-8' AZ='AIM'> In order to take steps towards establishing a methodology for evaluating Natural Language systems , we conducted a case study . </A-S>
+<A-S ID='A-1' DOCUMENTC='S-9' AZ='AIM'> We attempt to evaluate two different approaches to anaphoric processing in discourse by comparing the accuracy and coverage of two published algorithms for finding the co-specifiers of pronouns in naturally occurring texts and dialogues . </A-S>
+<A-S ID='A-2' AZ='OWN'> We present the quantitative results of hand-simulating these algorithms , but this analysis naturally gives rise to both a qualitative evaluation and recommendations for performing such evaluations in general . </A-S>
+<A-S ID='A-3' DOCUMENTC='S-11' AZ='OWN'> We illustrate the general difficulties encountered with quantitative evaluation . </A-S>
+<A-S ID='A-4' DOCUMENTC='S-12' AZ='OWN'> These are problems with : </A-S>
+<A-S ID='A-5' DOCUMENTC='S-13' AZ='OWN'> allowing for underlying assumptions , </A-S>
+<A-S ID='A-6' DOCUMENTC='S-14' AZ='OWN'> determining how to handle underspecifications , and </A-S>
+<A-S ID='A-7' DOCUMENTC='S-15' AZ='OWN'> evaluating the contribution of false positives and error chaining . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> In the course of developing natural language interfaces , computational linguists are often in the position of evaluating different theoretical approaches to the analysis of natural language ( NL ) . </S>
+<S ID='S-1' AZ='BKG' TYPE='ITEM'> They might want to </S>
+<S ID='S-2' TYPE='ITEM' AZ='BKG'> evaluate and improve on a current system , </S>
+<S ID='S-3' TYPE='ITEM' AZ='BKG'> add a capability to a system that it didn't previously have , </S>
+<S ID='S-4' TYPE='ITEM' AZ='BKG'> combine modules from different systems . </S>
+</P>
+<P>
+<S ID='S-5' AZ='BKG'> Consider the goal of adding a discourse component to a system , or evaluating and improving one that is already in place . </S>
+<S ID='S-6' AZ='OTH'> A discourse module might combine theories on , e.g. , centering or local focusing <REF TYPE='P'>Grosz et al. 1983</REF> , <REF TYPE='P'>Sidner 1979</REF> , global focus <REF TYPE='P'>Grosz 1977</REF> , coherence relations <REF TYPE='P'>Hobbs 1985</REF> , event reference <REF TYPE='P'>Webber 1986</REF> , intonational structure <REF TYPE='P'>Pierrehumbert and Hirschberg 1990</REF> , system vs. user beliefs <REF TYPE='P'>Pollack 1986</REF> , plan or intent recognition or production <REF TYPE='P'>Cohen 1978</REF> , <REF TYPE='P'>Allen and Perrault 1980</REF> , <REF TYPE='P'>Sidner and Israel 1981</REF> , control <REF TYPE='P'>Whittaker and Stenton 1988</REF> , or complex syntactic structures <REF TYPE='P'>Prince 1985</REF> . </S>
+<S ID='S-7' AZ='AIM'> How might one evaluate the relative contributions of each of these factors or compare two approaches to the same problem ? </S>
+</P>
+<P>
+<S ID='S-8' ABSTRACTC='A-0' AZ='AIM'> In order to take steps towards establishing a methodology for doing this type of comparison , we conducted a case study . </S>
+<S ID='S-9' ABSTRACTC='A-1' AZ='AIM'> We attempt to evaluate two different approaches to anaphoric processing in discourse by comparing the accuracy and coverage of two published algorithms for finding the co-specifiers of pronouns in naturally occurring texts and dialogues <REF  TYPE='P'>Hobbs 1976b</REF>, <REF  SELF="YES" TYPE='P'>Brennan et al. 1987</REF> . </S>
+<S ID='S-10' AZ='OWN'> Thus there are two parts to this paper : we present the quantitative results of hand-simulating these algorithms ( henceforth <REFAUTHOR>Hobbs</REFAUTHOR> algorithm and <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> algorithm ) , but this analysis naturally gives rise to both a qualitative evaluation and recommendations for performing such evaluations in general . </S>
+<S ID='S-11' ABSTRACTC='A-3' AZ='OWN'> We illustrate the general difficulties encountered with quantitative evaluation . </S>
+<S ID='S-12' ABSTRACTC='A-4' AZ='OWN' TYPE='ITEM'> These are problems with : </S>
+<S ID='S-13' ABSTRACTC='A-5' TYPE='ITEM' AZ='OWN' > allowing for underlying assumptions , </S>
+<S ID='S-14' ABSTRACTC='A-6' TYPE='ITEM' AZ='OWN' > determining how to handle underspecifications , and </S>
+<S ID='S-15' ABSTRACTC='A-7' TYPE='ITEM' AZ='OWN' > evaluating the contribution of false positives and error chaining . </S>
+</P>
+<P>
+<S ID='S-16' AZ='OWN'> Although both algorithms are part of theories of discourse that posit the interaction of the algorithm with an inference or intentional component , we will not use reasoning in tandem with the algorithm 's operation . </S>
+<S ID='S-17' AZ='OWN'> We have made this choice because we want to be able to analyse the performance of the algorithms across different domains . </S>
+<S ID='S-18' AZ='OWN'> We focus on the linguistic basis of these approaches , using only selectional restrictions , so that our analysis is independent of the vagaries of a particular knowledge representation . </S>
+<S ID='S-19' AZ='OWN'> Thus what we are evaluating is the extent to which these algorithms suffice to narrow the search of an inference component . </S>
+<S ID='S-20' AZ='OWN'> This analysis gives us some indication of the contribution of syntactic constraints , task structure and global focus to anaphoric processing . </S>
+</P>
+<P>
+<S ID='S-21' AZ='OWN'> The data on which we compare the algorithms are important if we are to evaluate claims of generality . </S>
+<S ID='S-22' AZ='OWN'> If we look at types of NL input , one clear division is between textual and interactive input . </S>
+<S ID='S-23' AZ='OWN'> A related , though not identical factor is whether the language being analysed is produced by more than one person , although this distinction may be conflated in textual material such as novels that contain reported conversations . </S>
+<S ID='S-24' AZ='OWN'> Within two-person interactive dialogues , there are the task-oriented master-slave type , where all the expertise and hence much of the initiative , rests with one person . </S>
+<S ID='S-25' AZ='OWN'> In other two-person dialogues , both parties may contribute discourse entities to the conversation on a more equal basis . </S>
+<S ID='S-26' AZ='OWN'> Other factors of interest are whether the dialogues are human-to-human or human-to-computer , as well as the modality of communication , e.g. spoken or typed , since some researchers have indicated that dialogues , and particularly uses of reference within them , vary along these dimensions <REF TYPE='P'>Cohen 1984</REF> , <REF TYPE='P'>Henisz Thompson 1980</REF> , <REF TYPE='P'>Guindon et al. 1986</REF> , <REF  TYPE='P'>Dahlbach and Johnson 1989</REF>, <REF  TYPE='P'>Whittaker and Stenton 1989</REF> . </S>
+</P>
+<P>
+<S ID='S-27' AZ='OWN'> We analyse the performance of the algorithms on three types of data . </S>
+<S ID='S-28' AZ='OWN'> Two of the samples are those that <REFAUTHOR>Hobbs</REFAUTHOR> used when developing his algorithm . </S>
+<S ID='S-29' AZ='OWN'> One is an excerpt from a novel and the other a sample of journalistic writing . </S>
+<S ID='S-30' AZ='OWN'> The remaining sample is a set of 5 human-human , keyboard-mediated , task-oriented dialogues about the assembly of a plastic water pump <REF TYPE='P'>Cohen 1984</REF> . </S>
+<S ID='S-31' AZ='OWN'> This covers only a subset of the above types . </S>
+<S ID='S-32' AZ='OWN'> Obviously it would be instructive to conduct a similar analysis on other textual types . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Quantitative Evaluation-Black Box </HEADER>
+<DIV DEPTH='2'>
+<HEADER ID='H-2'> The Algorithms </HEADER>
+<P>
+<S ID='S-33' AZ='OWN'> When embarking on such a comparison , it would be convenient to assume that the inputs to the algorithms are identical and compare their outputs . </S>
+<S ID='S-34' AZ='BKG'> Unfortunately since researchers do not even agree on which phenomena can be explained syntactically and which semantically , the boundaries between two modules are rarely the same in NL systems . </S>
+<S ID='S-35' AZ='OWN'> In this case the <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> centering algorithm and <REFAUTHOR>Hobbs</REFAUTHOR> algorithm both make ASSUMPTIONS about other system components . </S>
+<S ID='S-36' AZ='OWN'> These are , in some sense , a further specification of the operation of the algorithms that must be made in order to hand-simulate the algorithms . </S>
+<S ID='S-37' AZ='OWN'> There are two major sets of assumptions , based on discourse segmentation and syntactic representation . </S>
+<S ID='S-38' AZ='OWN'> We attempt to make these explicit for each algorithm and pinpoint where the algorithms might behave differently were these assumptions not well-founded . </S>
+</P>
+<P>
+<S ID='S-39' AZ='OWN'> In addition , there may be a number of UNDERSPECIFICATIONS in the descriptions of the algorithms . </S>
+<S ID='S-40' AZ='OWN'> These often arise because theories that attempt to categorize naturally occurring data and algorithms based on them will always be prey to previously unencountered examples . </S>
+<S ID='S-41' AZ='OTH'> For example , since the <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> salience hierarchy for discourse entities is based on grammatical relation , an implicit assumption is that an utterance only has one subject . </S>
+<S ID='S-42' AZ='CTR'> However the novel Wheels has many examples of reported dialogue such as </S>
+</P>
+<EXAMPLE ID='E-0'>
+<EX-S> She continued , unperturbed , `` Mr. Vale quotes the Bible about air pollution . '' </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-43' AZ='CTR'> One might wonder whether the subject is She or Mr. Vale . </S>
+<S ID='S-44' AZ='OWN'> In some cases , the algorithm might need to be further specificied in order to be able to process any of the data , whereas in others they may just highlight where the algorithm needs to be modified ( see section <CREF/> ) . </S>
+<S ID='S-45' AZ='OWN'> In general we count underspecifications as failures . </S>
+</P>
+<P>
+<S ID='S-46' AZ='OWN'> Finally , it may not be clear what the DEFINITION OF SUCCESS is . </S>
+<S ID='S-47' AZ='OWN'> In particular it is not clear what to do in those cases where an algorithm produces multiple or partial interpretations . </S>
+<S ID='S-48' AZ='OWN'> In this situation a system might flag the utterance as ambiguous and draw in support from other discourse components . </S>
+<S ID='S-49' AZ='OWN' TYPE='ITEM'> This arises in the present analysis for two reasons : </S>
+<S ID='S-50' TYPE='ITEM' AZ='OWN'> the constraints given by <REF TYPE='A'>Grosz et al. 1986</REF> do not always allow one to choose a preferred interpretation , </S>
+<S ID='S-51' TYPE='ITEM' AZ='OWN'> the <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> algorithm proposes equally ranked interpretations in parallel . </S>
+<S ID='S-52' AZ='CTR'> This doesn't happen with the <REFAUTHOR>Hobbs</REFAUTHOR> algorithm because it proposes interpretations in a sequential manner , one at a time . </S>
+<S ID='S-53' AZ='OWN'> We chose to count as a failure those situations in which the <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> algorithm only reduces the number of possible interpretations , but <REFAUTHOR>Hobbs</REFAUTHOR> algorithm stops with a correct interpretation . </S>
+<S ID='S-54' AZ='OWN'> This ignores the fact that <REFAUTHOR>Hobbs</REFAUTHOR> may have rejected a number of interpretations before stopping . </S>
+<S ID='S-55' AZ='OWN'> We also have not needed to make a decision on how to score an algorithm that only finds one interpretation for an utterance that humans find ambiguous . </S>
+</P>
+<DIV DEPTH='3'>
+<HEADER ID='H-3'> Centering Algorithm </HEADER>
+<P>
+<S ID='S-56' AZ='OTH'> The centering algorithm as defined by <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> ( BNF algorithm ) , is derived from a set of rules and constraints put forth by <REFAUTHOR>Grosz et al.</REFAUTHOR> <REF TYPE='P'>Grosz et al. 1983</REF> , <REF TYPE='P'>Grosz et al. 1986</REF> . </S>
+<S ID='S-57' AZ='OTH'> We shall not reproduce this algorithm here <REF TYPE='P' SELF="YES">Brennan et al. 1987</REF> . </S>
+<S ID='S-58' AZ='OTH'> There are two main structures in the centering algorithm , the CB , the BACKWARD LOOKING CENTER , which is what the discourse is ` about ' , and an ordered list , CF , of FORWARD LOOKING CENTERS , which are the discourse entities available to the next utterance for pronominalization . </S>
+<S ID='S-59' AZ='OTH'> The centering framework predicts that in a local coherent stretch of dialogue , speakers will prefer to CONTINUE talking about the same discourse entity , that the CB will be the highest ranked entity of the previous utterance 's forward centers that is realized in the current utterance , and that if anything is pronominalized the CB must be . </S>
+</P>
+<P>
+<S ID='S-60' AZ='OTH'> In the centering framework , the order of the forward-centers list is intended to reflect the salience of discourse entities . </S>
+<S ID='S-61' AZ='OTH'> The <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> algorithm orders this list by grammatical relation of the complements of the main verb , i.e. first the subject , then object , then indirect object , then other subcategorized-for complements , then noun phrases found in adjunct clauses . </S>
+<S ID='S-62' AZ='OTH'> This captures the intuition that subjects are more salient than other discourse entities . </S>
+</P>
+<P>
+<S ID='S-63' AZ='OTH'> The <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> algorithm added linguistic constraints on CONTRA-INDEXING to the centering framework . </S>
+<S ID='S-64' AZ='OTH'> These constraints are exemplified by the fact that , in the sentence he likes him , the entity cospecified by he cannot be the same as that cospecified by him . </S>
+<S ID='S-65' AZ='OTH'> We say that he and him are CONTRA-INDEXED . </S>
+<S ID='S-66' AZ='OTH'> The <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> algorithm depends on semantic processing to precompute these constraints , since they are derived from the syntactic structure , and depend on some notion of c-command <REF TYPE='P'>Reinhart 1976</REF> . </S>
+<S ID='S-67' AZ='OTH'> The other assumption that is dependent on syntax is that the the representations of discourse entities can be marked with the grammatical function through which they were realized , e.g. subject . </S>
+</P>
+<P>
+<S ID='S-68' AZ='OTH'> The <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> algorithm assumes that some other mechanism can structure both written texts and task-oriented dialogues into hierarchical segments . </S>
+<S ID='S-69' AZ='OTH'> The present concern is not with whether there might be a grammar of discourse that determines this structure , or whether it is derived from the cues that cooperative speakers give hearers to aid in processing . </S>
+<S ID='S-70' AZ='OTH'> Since centering is a local phenomenon and is intended to operate within a segment , we needed to deduce a segmental structure in order to analyse the data . </S>
+<S ID='S-71' AZ='OTH'> Speaker 's intentions , task structure , cue words like `` O.K. now ... '' , intonational properties of utterances , coherence relations , the scoping of modal operators , and mechanisms for shifting control between discourse participants have all been proposed as ways of determining discourse segmentation <REF TYPE='P'>Grosz 1977</REF> , <REF TYPE='P'>Grosz and Sidner 1986</REF> , <REF TYPE='P'>Reichman 1985</REF> , <REF TYPE='P'>Pierrehumbert and Hirschberg 1990</REF> , <REF TYPE='P'>Hirschberg and Litman 1987</REF> , <REF TYPE='P'>Hobbs 1978</REF> , <REF TYPE='P'>Hobbs 1985</REF> , <REF  TYPE='P'>Roberts 1988</REF>, <REF  TYPE='P'>Whittaker and Stenton 1988</REF> . </S>
+<S ID='S-72' AZ='OTH'> Here , we use a combination of orthography , anaphora distribution , cue words and task structure . </S>
+<S ID='S-73' AZ='OTH'> The rules are : </S>
+</P>
+<P>
+<S ID='S-74' AZ='OTH'> In published texts , a paragraph is a new segment unless the first sentence has a pronoun in subject position or a pronoun where none of the preceding sentence-internal noun phrases match its syntactic features . </S>
+</P>
+<P>
+<S ID='S-75' AZ='OTH'> In the task-oriented dialogues , the action PICK-UP marks task boundaries hence segment boundaries . </S>
+<S ID='S-76' AZ='OTH'> Cue words like next , then , and now also mark segment boundaries . </S>
+<S ID='S-77' AZ='OTH'> These will usually co-occur but either one is sufficient for marking a segment boundary . </S>
+</P>
+<P>
+<S ID='S-78' AZ='OTH'> <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> never state that cospecifiers for pronouns within the same segment are preferred over those in previous segments , but this is an implicit assumption , since this line of research is derived from <REFAUTHOR>Sidner</REFAUTHOR> 's work on local focusing . </S>
+<S ID='S-79' AZ='OTH'> Segment initial utterances therefore are the only situation where the <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> algorithm will prefer a within-sentence noun phrase as the cospecifier of a pronoun . </S>
+</P>
+</DIV>
+<DIV DEPTH='3'>
+<HEADER ID='H-4'> <REFAUTHOR>Hobbs</REFAUTHOR> 's algorithm </HEADER><P>
+<S ID='S-80' AZ='OTH'> The <REFAUTHOR>Hobbs</REFAUTHOR> algorithm is based on searching for a pronoun 's co-specifier in the syntactic parse tree of input sentences <REF TYPE='P'>Hobbs 1976b</REF> . </S>
+<S ID='S-81' AZ='TXT'> We reproduce this algorithm in full in the appendix along with an example . </S>
+<S ID='S-82' AZ='OTH'> <REFAUTHOR>Hobbs</REFAUTHOR> algorithm operates on one sentence at a time , but the structure of previous sentences in the discourse is available . </S>
+<S ID='S-83' AZ='OTH'> It is stated in terms of searches on parse trees . </S>
+<S ID='S-84' AZ='OTH'> When looking for an intrasentential antecedent , these searches are conducted in a left-to-right , breadth-first manner . </S>
+<S ID='S-85' AZ='OTH'> However , when looking for a pronoun 's antecedent within a sentence , it will go sequentially further and further up the tree to the left of the pronoun , and that failing will look in the previous sentence . </S>
+<S ID='S-86' AZ='OTH'> <REFAUTHOR>Hobbs</REFAUTHOR> does not assume a segmentation of discourse structure in this algorithm ; the algorithm will go back arbitrarily far in the text to find an antecedent . </S>
+<S ID='S-87' AZ='OTH'> In more recent work , <REFAUTHOR>Hobbs</REFAUTHOR> uses the notion of COHERENCE RELATIONS to structure the discourse <REF TYPE='P'>Hobbs and Martin 1987</REF> . </S>
+</P>
+<P>
+<S ID='S-88' AZ='OTH'> The order by which <REFAUTHOR>Hobbs</REFAUTHOR> 's algorithm traverses the parse tree is the closest thing in his framework to predictions about which discourse entities are salient . </S>
+<S ID='S-89' AZ='OTH'> In the main it prefers co-specifiers for pronouns that are within the same sentence , and also ones that are closer to the pronoun in the sentence . </S>
+<S ID='S-90' AZ='OTH'> This amounts to a claim that different discourse entities are salient , depending on the position of a pronoun in a sentence . </S>
+<S ID='S-91' AZ='OTH'> When seeking an intersentential co-specification , <REFAUTHOR>Hobbs</REFAUTHOR> algorithm searches the parse tree of the previous utterance breadth-first , from left to right . </S>
+<S ID='S-92' AZ='OTH'> This predicts that entities realized in subject position are more salient , since even if an adjunct clause linearly precedes the main subject , any noun phrases within it will be deeper in the parse tree . </S>
+<S ID='S-93' AZ='OTH'> This also means that objects and indirect objects will be among the first possible antecedents found , and in general that the depth of syntactic embedding is an important determiner of discourse prominence . </S>
+</P>
+<P>
+<S ID='S-94' AZ='OTH'> Turning to the assumptions about syntax , we note that <REFAUTHOR>Hobbs</REFAUTHOR> assumes that one can produce the correct syntactic structure for an utterance , with all adjunct phrases attached at the proper point of the parse tree . </S>
+<S ID='S-95' AZ='OTH'> In addition , in order to obey linguistic constraints on coreference , the algorithm depends on the existence of a <EQN/> parse tree node , which denotes a noun phrase without its determiner ( See the example in the Appendix ) . </S>
+<S ID='S-96' AZ='OTH'> <REFAUTHOR>Hobbs</REFAUTHOR> algorithm procedurally encodes contra-indexing constraints by skipping over NP nodes whose <EQN/> node dominates the part of the parse tree in which the pronoun is found , which means that he cannot guarantee that two contra-indexed pronouns will not choose the same NP as a co-specifier . </S>
+</P>
+<P>
+<S ID='S-97' AZ='OTH'> <REFAUTHOR>Hobbs</REFAUTHOR> also assumes that his algorithm can somehow collect discourse entities mentioned alone into sets as co-specifiers of plural anaphors . </S>
+<S ID='S-98' AZ='OTH'> <REFAUTHOR>Hobbs</REFAUTHOR> discusses at length other assumptions that he makes about the capabilities of an interpretive process that operates before the algorithm <REF TYPE='P'>Hobbs 1976b</REF> . </S>
+<S ID='S-99' AZ='OTH'> This includes such things as being able to recover syntactically recoverable omitted text , such as elided verb phrases , and the identities of the speakers and hearers in a dialogue . </S>
+</P>
+</DIV>
+<DIV DEPTH='3'>
+<HEADER ID='H-5'> Summary </HEADER>
+<P>
+<S ID='S-100' AZ='BKG'> A major component of any discourse algorithm is the prediction of which entities are salient , even though all the factors that contribute to the salience of a discourse entity have not been identified <REF TYPE='P'>Prince 1981</REF> , <REF TYPE='P'>Prince 1985</REF> , <REF  TYPE='P'>Brown and Fish 1983</REF>, <REF  TYPE='P'>Hudson et al. 1986</REF> . </S>
+<S ID='S-101' AZ='OWN'> So an obvious question is when the two algorithms actually make different predictions . </S>
+<S ID='S-102' AZ='OWN'> The main difference is that the choice of a co-specifier for a pronoun in the <REFAUTHOR>Hobbs</REFAUTHOR> algorithm depends in part on the position of that pronoun in the sentence . </S>
+<S ID='S-103' AZ='OTH'> In the centering framework , no matter what criteria one uses to order the forward-centers list , pronouns take the most salient entities as antecedents , irrespective of that pronoun 's position . </S>
+<S ID='S-104' AZ='OTH'> <REFAUTHOR>Hobbs</REFAUTHOR> ordering of entities from a previous utterance varies from <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> in that possessors come before case-marked objects and indirect objects , and there may be some other differences as well but none of them were relevant to the analysis that follows . </S>
+</P>
+<P>
+<S ID='S-105' AZ='OWN'> The effects of some of the assumptions are measurable and we will attempt to specify exactly what these effects are , however some are not , e.g. we cannot measure the effect of <REFAUTHOR>Hobbs</REFAUTHOR> 's syntax assumption since it is difficult to say how likely one is to get the wrong parse . </S>
+<S ID='S-106' AZ='OWN'> We adopt the set collection assumption for both algorithms as well as the ability to recover the identity of speakers and hearers in dialogue . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-6'> Quantitative Results of the Algorithms </HEADER>
+<P>
+<S ID='S-107' AZ='OWN'> The texts on which the algorithms are analysed are the first chapter of Arthur Hailey 's novel Wheels , and the July 7 , 1975 edition of Newsweek . </S>
+<S ID='S-108' AZ='OWN'> The sentences in Wheels are short and simple with long sequences consisting of reported conversation , so it is similar to a conversational text . </S>
+<S ID='S-109' AZ='OWN'> The articles from Newsweek are typical of journalistic writing . </S>
+<S ID='S-110' AZ='OWN'> For each text , the first 100 occurrences of singular and plural third-person pronouns were used to test the performance of the algorithms . </S>
+<S ID='S-111' AZ='OWN'> The task-dialogues contain a total of 81 uses of it and no other pronouns except for I and you . </S>
+<S ID='S-112' AZ='OWN'> In the figures below note that possessives like his are counted along with he and that accusatives like him and her are counted as he and she . </S>
+<IMAGE ID='I-0'/>
+</P>
+<P>
+<S ID='S-113' AZ='OWN'> We performed three analyses on the quantitative results . </S>
+<S ID='S-114' AZ='OWN'> A comparison of the two algorithms on each data set individually and an overall analysis on the three data sets combined revealed no significant differences in the performance of the two algorithms ( <EQN/> , not significant ) . </S>
+<S ID='S-115' AZ='OWN'> In addition for each algorithm alone we tested whether there were significant differences in performance for different textual types . </S>
+<S ID='S-116' AZ='OWN'> Both of the algorithms performed significantly worse on the task dialogues ( <EQN/> for <REFAUTHOR>Hobbs</REFAUTHOR> , <EQN/> for <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> , p  &#60;  0.05 ) . </S>
+</P>
+<P>
+<S ID='S-117' AZ='OWN'> We might wonder with what confidence we should view these numbers . </S>
+<S ID='S-118' AZ='OWN'> A significant factor that must be considered is the contribution of FALSE POSITIVES and ERROR CHAINING . </S>
+<S ID='S-119' AZ='OWN'> A FALSE POSITIVE is when an algorithm gets the right answer for the wrong reason . </S>
+<S ID='S-120' AZ='OWN'> A very simple example of this phenomena is illustrated by this sequence from one of the task dialogues . </S>
+<IMAGE ID='I-1'/>
+</P>
+<P>
+<S ID='S-121' AZ='OWN'> The first it in <EQN/> refers to the pump . </S>
+<S ID='S-122' AZ='OWN'> <REFAUTHOR>Hobbs</REFAUTHOR> algorithm gets the right antecedent for it in <EQN/> , which is the little handle , but then fails on it in <EQN/> , whereas the <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> algorithm has the pump centered at <EQN/> and continues to select that as the antecedent for it throughout the text . </S>
+<S ID='S-123' AZ='OWN'> This means <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> gets the wrong co-specifier in <EQN/> but this error allows it to get the correct co-specifier in <EQN/> . </S>
+</P>
+<P>
+<S ID='S-124' AZ='OWN'> Another type of false positive example is </S>
+<EXAMPLE ID='E-1'>
+<EX-S> `` Everybody and HIS brother suddenly wants to be the President 's friend , '' said one aide . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-125' AZ='OWN'> <REFAUTHOR>Hobbs</REFAUTHOR> gets this correct as long as one is willing to accept that Everybody is really the antecedent of his . </S>
+<S ID='S-126' AZ='OWN'> It seems to me that this might be an idiomatic use . </S>
+</P>
+<P>
+<S ID='S-127' AZ='OWN'> ERROR CHAINING refers to the fact that once an algorithm makes an error , other errors can result . </S>
+<S ID='S-128' AZ='OWN'> Consider : </S>
+<IMAGE ID='I-2'/>
+</P>
+<P>
+<S ID='S-129' AZ='OWN'> In this example once an algorithm fails at <EQN/> it will fail on <EQN/> and <EQN/> as well since the choices of a cospecifier in the following examples are dependent on the choice in <EQN/> . </S>
+</P>
+<P>
+<S ID='S-130' AZ='OWN'> It isn't possible to measure the effect of false positives , since in some sense they are subjective judgements . </S>
+<S ID='S-131' AZ='OWN'> However one can and should measure the effects of error chaining , since reporting numbers that correct for error chaining is misleading , but if the error that produced the error chain can be corrected then the algorithm might show a significant improvement . </S>
+<S ID='S-132' AZ='OWN'> In this analysis , error chains contributed 22 failures to <REFAUTHOR>Hobbs</REFAUTHOR> 's algorithm and 19 failures to <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-7'> Qualitative Evaluation-Glass Box </HEADER>
+<P>
+<S ID='S-133' AZ='OWN'> The numbers presented in the previous section are intuitively unsatisfying . </S>
+<S ID='S-134' AZ='OWN'> They tell us nothing about what makes the algorithms more or less general , or how they might be improved . </S>
+<S ID='S-135' AZ='OWN'> In addition , given the assumptions that we needed to make in order to produce them , one might wonder to what extent the data is a result of these assumptions . </S>
+<S ID='S-136' AZ='OWN'> Figure <CREF/> also fails to indicate whether the two algorithms missed the same examples or are covering a different set of phenomena , i.e. what the relative distribution of the successes and failures are . </S>
+<S ID='S-137' AZ='OWN'> But having done the hand-simulation in order to produce such numbers , all of this information is available . </S>
+<S ID='S-138' AZ='TXT'> In this section we will first discuss the relative importance of various factors that go into producing the numbers above , then discuss if the algorithms can be modified since the flexibility of a framework in allowing one to make modifications is an important dimension of evaluation . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-8'> Distributions </HEADER>
+<P>
+<S ID='S-139' AZ='OWN'> The figures <CREF/> , <CREF/> and <CREF/> show for each pronominal category , the distribution of successes and failures for both algorithms . </S>
+<IMAGE ID='I-3'/>
+<IMAGE ID='I-4'/>
+<IMAGE ID='I-5'/>
+</P>
+<P>
+<S ID='S-140' AZ='OWN'> Since the main purpose of evaluation must be to improve the theory that we are evaluating , the most interesting cases are the ones on which the algorithms 's performance varies and those that neither algorithm gets correct . </S>
+<S ID='S-141' AZ='OWN'> We discuss these below . </S>
+</P>
+<DIV DEPTH='3'>
+<HEADER ID='H-9'> Both </HEADER>
+<P>
+<S ID='S-142' AZ='OWN'> In the Wheels data , 4 examples rest on the assumption that the identities of speakers and hearers is recoverable . </S>
+<S ID='S-143' AZ='OWN'> For example in </S>
+<EXAMPLE ID='E-2'>
+<EX-S> The GM president smiled . </EX-S>
+<EX-S> `` Except Henry will be damned forceful and the papers won't print all HIS language . '' , </EX-S>
+<EX-S> getting the his correct here depends on knowing that it is the GM president speaking . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-144' AZ='OWN'> Only 4 examples rest on being able to produce collections or discourse entities , and 2 of these occurred with an explicit instruction to the hearer to produce such a collection by using the phrase them both . </S>
+</P>
+</DIV>
+<DIV DEPTH='3'>
+<HEADER ID='H-10'> <REFAUTHOR>Hobbs</REFAUTHOR> only </HEADER><P>
+<S ID='S-145' AZ='OWN'> There are 21 cases that <REFAUTHOR>Hobbs</REFAUTHOR> gets that <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> don't , and of these these a few classes stand out . </S>
+<S ID='S-146' AZ='OWN'> In every case the relevant factor is <REFAUTHOR>Hobbs</REFAUTHOR> 's preference for intrasentential co-specifiers . </S>
+</P>
+<P>
+<S ID='S-147' AZ='OWN'> One class , ( n = 3 ) , is exemplified by </S>
+<EXAMPLE ID='E-3'>
+<EX-S> Put the little black ring into the the large blue CAP with the hole in IT . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-148' AZ='OWN'> All three involved using the preposition with in a descriptive adjunct on a noun phrase . </S>
+<S ID='S-149' AZ='OWN'> It may be that with-adjuncts are common in visual descriptions , since they were only found in our data in the task dialogues , and a quick inspection of <REFAUTHOR>Grosz</REFAUTHOR> 's task-oriented dialogues revealed some as well <REF TYPE='P'>Grosz 1974</REF> . </S>
+</P>
+<P>
+<S ID='S-150' AZ='OWN'> Another class , ( n = 7 ) , are possessives . </S>
+<S ID='S-151' AZ='OWN'> In some cases the possessive co-specified with the subject of the sentence , e.g . </S>
+<EXAMPLE ID='E-4'>
+<EX-S> The SENATE took time from ITS paralyzing New Hampshire election debate to vote agreement , </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-152' AZ='OWN'> and in others it was within a relative clause and co-specified with the subject of that clause , e.g . </S>
+<EXAMPLE ID='E-5'>
+<EX-S> The auto industry should be able to produce a totally safe , defect-free CAR that doesn't pollute ITS environment . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-153' AZ='OWN'> Other cases seem to be syntactically marked subject matching with constructions that link two S clauses ( n = 8 ) . </S>
+<S ID='S-154' AZ='OWN'> These are uses of more-than in e.g. </S>
+<EXAMPLE ID='E-6'>
+<EX-S> but Chamberlain grossed about $8.3 million more than HE could have made by selling on the home front . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-155' AZ='OWN'> There also are S-if-S cases , as in </S>
+<EXAMPLE ID='E-7'>
+<EX-S> Mondale said : `` I think THE MAFIA would be broke if IT conducted all its business that way . '' </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-156' AZ='OWN'> We also have subject matching in AS-AS examples as in </S>
+<EXAMPLE ID='E-8'>
+<EX-S> ... and the resulting EXPOSURE to daylight has become as uncomfortable as IT was unaccustomed , </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-157' AZ='OWN'> as well as in sentential complements , such as </S>
+<EXAMPLE ID='E-9'>
+<EX-S> But another liberal , Minnesota 's Walter MONDALE , said HE had found a lot of incompetence in the agency 's operations . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-158' AZ='OWN'> The fact that quite a few of these are also marked with But may be significant . </S>
+</P>
+<P>
+<S ID='S-159' AZ='OWN'> In terms of the possible effects that we noted earlier , the DEFINITION OF SUCCESS ( see section <CREF/> ) favors <REFAUTHOR>Hobbs</REFAUTHOR> ( n = 2 ) . </S>
+<S ID='S-160' AZ='OWN'> Consider : </S>
+<EXAMPLE ID='E-10'>
+<EX-S> K : Next take the red piece that is the smallest and insert it into the hole in the side of the large plastic tube . </EX-S>
+<EX-S> IT goes in the hole nearest the end with the engravings on IT . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-161' AZ='OWN'> The <REFAUTHOR>Hobbs</REFAUTHOR> algorithm will correctly choose the end as the antecedent for the second it . </S>
+<S ID='S-162' AZ='OWN'> The <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> algorithm on the other hand will get two interpretations , one in which the second it co-specifies the red piece and one in which it co-specifies the end . </S>
+<S ID='S-163' AZ='OWN'> They are both CONTINUING interpretations since the first it co-specifies the CB , but the constraints don't make a choice . </S>
+</P>
+</DIV>
+<DIV DEPTH='3'>
+<HEADER ID='H-11'> <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> only </HEADER><P>
+<S ID='S-164' AZ='OWN'> All of the examples on which <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> succeed and <REFAUTHOR>Hobbs</REFAUTHOR> fails have to do with extended discussion of one discourse entity . </S>
+<S ID='S-165' AZ='OWN'> For instance : </S>
+<IMAGE ID='I-6'/>
+</P>
+<P>
+<S ID='S-166' AZ='OWN'> On this example , <REFAUTHOR>Hobbs</REFAUTHOR> fails by choosing the co-specifier of it in <EQN/> to be the rubber ring , even though the whole segment has been about the blue cap . </S>
+</P>
+<P>
+<S ID='S-167' AZ='OWN'> Another example from the novel WHEELS is given below . </S>
+<S ID='S-168' AZ='OWN'> On this one <REFAUTHOR>Hobbs</REFAUTHOR> gets the first use of he but then misses the next four , as a result of missing the second one by choosing `` a housekeeper '' as the co-specifier for HIS. </S>
+<EXAMPLE ID='E-11'>
+<EX-S> ... An executive vice-president of Ford was preparing to leave for Detroit Metropolitan Airport . </EX-S>
+<EX-S> HE had already breakfasted , alone . </EX-S>
+<EX-S> A housekeeper had brought a tray to HIS desk in the softly lighted study where , since 5 a.m. , HE had been alternately reading memoranda ( mostly on special blue stationery which Ford vice-presidents used in implementing policy ) and dictating crisp instructions into a recording machine . </EX-S>
+<EX-S> HE had scarcely looked up , either as the mail arrived , or while eating , as HE accomplished in an hour what would have taken ...</EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-169' AZ='OWN'> Since `` an executive vice-president '' is centered in the first sentence , and continued in each following sentence , the <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> algorithm will correctly choose the cospecifier . </S>
+</P>
+</DIV>
+<DIV DEPTH='3'>
+<HEADER ID='H-12'> Neither </HEADER>
+<P>
+<S ID='S-170' AZ='OWN'> Among the examples that neither algorithm gets correctly are 20 examples from the task dialogues of it referring to the global focus , the pump . </S>
+<S ID='S-171' AZ='OWN'> In 15 cases , these shifts to global focus are marked syntactically with a cue word such as Now , and are not marked in 5 cases . </S>
+<S ID='S-172' AZ='OWN'> Presumably they are felicitous since the pump is visually salient . </S>
+<S ID='S-173' AZ='OWN'> Besides the global focus cases , pronominal references to entities that were not linguistically introduced are rare . </S>
+<S ID='S-174' AZ='OWN'> The only other example is an implicit reference to ` the problem ' of the pump not working : </S>
+<IMAGE ID='I-7'/>
+</P>
+<P>
+<S ID='S-175' AZ='OWN'> We have only two examples of sentential or VP anaphora altogether , such as </S>
+<EXAMPLE ID='E-12'>
+<EX-S> Madam Chairwoman , said Colby at last , I am trying to run a secret intelligence service . </EX-S>
+<EX-S> IT was a forlorn hope . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-176' AZ='OWN'> Neither <REFAUTHOR>Hobbs</REFAUTHOR> algorithm nor <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> attempt to cover these examples . </S>
+</P>
+<P>
+<S ID='S-177' AZ='OWN'> Three of the examples are uses of it that seem to be lexicalized with certain verbs , e.g . </S>
+<EXAMPLE ID='E-13'>
+<EX-S> They hit IT off real well . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-178' AZ='OWN'> One can imagine these being treated as phrasal lexical items , and therefore not handled by an anaphoric processing component <REF TYPE='P'>Abeille and Schabes 1989</REF> . </S>
+</P>
+<P>
+<S ID='S-179' AZ='OWN'> Most of the interchanges in the task dialogues consist of the client responding to commands with cues such as O.K. or Ready to let the expert know when they have completed a task . </S>
+<S ID='S-180' AZ='OWN'> When both parties contribute discourse entities to the common ground , both algorithms may fail ( n = 4 ) . </S>
+</P>
+<P>
+<S ID='S-181' AZ='OWN'> Consider : </S>
+<IMAGE ID='I-8'/>
+</P>
+<P>
+<S ID='S-182' AZ='OWN'> In <EQN/> , one might claim that it and there are contraindexed , and that there can be properly resolved to a hole , so that it cannot be any of the noun phrases in the prepositional phrases that modify a hole , but whether any theory of contra-indexing actually give us this is questionable . </S>
+</P>
+<P>
+<S ID='S-183' AZ='OWN'> The main factor seems to be that even though <EQN/> is not syntactically a question , the little red piece is the focus of a question , and as such is in focus despite the fact that the syntactic construction there is supposedly focuses `` a hole in the green plunger ... '' <REF TYPE='P'>Sidner 1979</REF> . </S>
+<S ID='S-184' AZ='OWN'> These examples suggest that a questioned entity is left focused until the point in the dialogue at which the question is resolved . </S>
+<S ID='S-185' AZ='OWN'> The fact that well has been noted as a marker of response to questions supports this analysis <REF TYPE='P'>Schiffrin 1987</REF> . </S>
+<S ID='S-186' AZ='OWN'> Thus the relevant factor here may be the switching of control among discourse participants <REF TYPE='P'>Whittaker and Stenton 1988</REF> . </S>
+<S ID='S-187' AZ='OWN'> These mixed-initiative features make these sequences inherently different than text . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-13'> Modifiability </HEADER>
+<P>
+<S ID='S-188' AZ='OWN'> Task structure in the pump dialogues is an important factor especially as it relates to the use of global focus . </S>
+<S ID='S-189' AZ='OWN'> Twenty of the cases on which both algorithms fail are references to the pump , which is the global focus . </S>
+<S ID='S-190' AZ='OWN'> We can include a global focus in the centering framework , as a separate notion from the current CB . </S>
+<S ID='S-191' AZ='OWN'> This means that in the 15 out of 20 cases where the shift to global focus is identifiably marked with a cue-word such as now , the segment rules will allow <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> to get the global focus examples . </S>
+</P>
+<P>
+<S ID='S-192' AZ='OTH'> <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> can add the VP and the S onto the end of the forward centers list , as <REFAUTHOR>Sidner</REFAUTHOR> does in her algorithm for local focusing <REF TYPE='P'>Sidner 1979</REF> . </S>
+<S ID='S-193' AZ='OTH'> This lets <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> get the two examples of event anaphora . </S>
+<S ID='S-194' AZ='OTH'> <REFAUTHOR>Hobbs</REFAUTHOR> discusses the fact that his algorithm cannot be modified to get event anaphora in <REF TYPE='A'>Hobbs 1976b</REF> . </S>
+</P>
+<P>
+<S ID='S-195' AZ='OWN'> Another interesting fact is that in every case in which <REFAUTHOR>Hobbs</REFAUTHOR> 's algorithm gets the correct co-specifier and <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> didn't , the relevant factor is <REFAUTHOR>Hobbs</REFAUTHOR> 's preference for intrasentential co-specifiers . </S>
+<S ID='S-196' AZ='OWN'> One view on these cases may be that these are not discourse anaphora , but there seems to be no principled way to make this distinction . </S>
+<S ID='S-197' AZ='OTH'> However , <REFAUTHOR>Carter</REFAUTHOR> has proposed some extensions to <REFAUTHOR>Sidner</REFAUTHOR> 's algorithm for local focusing that seem to be relevant here <REF TYPE='P'>Carter 1987</REF> . </S>
+<S ID='S-198' AZ='OTH'> He argues that intra-sentential candidates ( ISCs ) should be preferred over candidates from the previous utterance , ONLY in the cases where no discourse center has been established or the discourse center is rejected for syntactic or selectional reasons . </S>
+<S ID='S-199' AZ='OTH'> He then uses <REFAUTHOR>Hobbs</REFAUTHOR> algorithm to produce an ordering of these ISCs . </S>
+<S ID='S-200' AZ='OTH'> This is compatible with the centering framework since it is underspecified as to whether one should always choose to establish a discourse center with a co-specifier from a previous utterance . </S>
+<S ID='S-201' AZ='OWN'> If we adopt <REFAUTHOR>Carter</REFAUTHOR> 's rule into the centering framework , we find that of the 21 cases that <REFAUTHOR>Hobbs</REFAUTHOR> gets that <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> don't , in 7 cases there is no discourse center established , and in another 4 the current center can be rejected on the basis of syntactic or sortal information . </S>
+<S ID='S-202' AZ='OWN'> Of these <REFAUTHOR>Carter</REFAUTHOR> 's rule clearly gets 5 , and another 3 seem to rest on whether one might want to establish a discourse entity from a previous utterance . </S>
+<S ID='S-203' AZ='OWN'> Since the addition of this constraint does not allow <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> to get any examples that neither algorithm got , it seems that this combination is a way of making the best out of both algorithms . </S>
+</P>
+<P>
+<S ID='S-204' AZ='OWN'> The addition of these modifications changes the quantitative results . </S>
+<S ID='S-205' AZ='OWN'> See the Figure <CREF/> . </S>
+<IMAGE ID='I-9'/>
+</P>
+<P>
+<S ID='S-206' AZ='OWN'> However , the statistical analyses still show that there is no significant difference in the performance of the algorithms in general . </S>
+<S ID='S-207' AZ='OWN'> It is also still the case that the performance of each algorithm significantly varies depending on the data . </S>
+<S ID='S-208' AZ='OWN'> The only significant difference as a result of the modifications is that the <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> algorithm now performs significantly better on the pump dialogues alone ( <EQN/> ) . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-14'> Conclusion </HEADER>
+<P>
+<S ID='S-209' AZ='OWN' TYPE='ITEM'> We can benefit in two ways from performing such evaluations : </S>
+<S ID='S-210' TYPE='ITEM' AZ='OWN'> we get general results on a methodology for doing evaluation , </S>
+<S ID='S-211' TYPE='ITEM' AZ='OWN'> we discover ways we can improve current theories . </S>
+<S ID='S-212' AZ='OWN'> A split of evaluation efforts into quantitative versus qualitative is incoherent . </S>
+<S ID='S-213' AZ='OWN'> We cannot trust the results of a quantitative evaluation without doing a considerable amount of qualitative analyses and we should perform our qualitative analyses on those components that make a significant contribution to the quantitative results ; we need to be able to measure the effect of various factors . </S>
+<S ID='S-214' AZ='OWN'> These measurements must be made by doing comparisons at the data level . </S>
+</P>
+<P>
+<S ID='S-215' AZ='OWN'> In terms of general results , we have identified some factors that make evaluations of this type more complicated and which might lead us to evaluate solely quantitative results with care . </S>
+<S ID='S-216' AZ='OWN' TYPE='ITEM'> These are : </S>
+<S ID='S-217' TYPE='ITEM' AZ='OWN'> To decide how to evaluate UNDERSPECIFICATIONS and the contribution of ASSUMPTIONS , and </S>
+<S ID='S-218' TYPE='ITEM' AZ='OWN'> To determine the effects of FALSE POSITIVES and ERROR CHAINING . </S>
+<S ID='S-219' AZ='OWN'> We advocate an approach in which the contribution of each underspecification and assumption is tabulated as well as the effect of error chains . </S>
+<S ID='S-220' AZ='OWN'> If a principled way could be found to identify false positives , their effect should be reported as well as part of any quantitative evaluation . </S>
+</P>
+<P>
+<S ID='S-221' AZ='OWN'> In addition , we have taken a few steps towards determining the relative importance of different factors to the successful operation of discourse modules . </S>
+<S ID='S-222' AZ='OWN'> The percent of successes that both algorithms get indicates that syntax has a strong influence , and that at the very least we can reduce the amount of inference required . </S>
+<S ID='S-223' AZ='OWN'> In 59 % to 82 % of the cases both algorithms get the correct result . </S>
+<S ID='S-224' AZ='OWN'> This probably means that in a large number of cases there was no potential conflict of co-specifiers . </S>
+<S ID='S-225' AZ='OWN'> In addition , this analysis has shown , that at least for task-oriented dialogues global focus is a significant factor , and in general discourse structure is more important in the task dialogues . </S>
+<S ID='S-226' AZ='OWN'> However simple devices such as cue words may go a long way toward determining this structure . </S>
+</P>
+<P>
+<S ID='S-227' AZ='OWN'> Finally , we should note that doing evaluations such as this allows us to determine the GENERALITY of our approaches . </S>
+<S ID='S-228' AZ='OWN'> Since the performance of both <REFAUTHOR>Hobbs</REFAUTHOR> and <REFAUTHOR SELF="YES">Brennan et al.</REFAUTHOR> varies according to the type of the text , and in fact was significantly worse on the task dialogues than on the texts , we might question how their performance would vary on other inputs . </S>
+<S ID='S-229' AZ='OWN'> An annotated corpus comprising some of the various NL input types such as those I discussed in the introduction would go a long way towards giving us a basis against which we could evaluate the generality of our theories . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-15'> Appendix : The <REFAUTHOR>Hobbs</REFAUTHOR> algorithm </HEADER><P>
+<S ID='S-230' AZ='OTH'> The algorithm and an example is reproduced below . </S>
+<S ID='S-231' AZ='OTH'> In it , NP denotes NOUN PHRASE and S denotes SENTENCE . </S>
+</P>
+<P>
+<S ID='S-232' AZ='OTH'> Begin at the NP node immediately dominating the pronoun in the parse tree of S . </S>
+</P>
+<P>
+<S ID='S-233' AZ='OTH'> Go up the tree until you encounter an NP or S node . </S>
+<S ID='S-234' AZ='OTH'> Call this node X , and call the path used to reach it p . </S>
+</P>
+<P>
+<S ID='S-235' AZ='OTH'> Traverse all branches below node X to the left of path p in a left-to-right breadth-first fashion . </S>
+<S ID='S-236' AZ='OTH'> Propose as the antecedent any NP node encountered that has an NP or S node on the path from it to X . </S>
+</P>
+<P>
+<S ID='S-237' AZ='OTH'> If X is not the highest S node in the sentence , continue to step <CREF/> . </S>
+<S ID='S-238' AZ='OTH'> Otherwise traverse the surface parse trees of previous sentences in the text in reverse chronological order until an acceptable antecedent is found ; each tree is traversed in a left-to-right , breadth-first manner , and when an NP node is encountered , it is proposed as the antecedent . </S>
+</P>
+<P>
+<S ID='S-239' AZ='OTH'> From node X , go up the tree to the first NP or S node encountered . </S>
+<S ID='S-240' AZ='OTH'> Call this new node X , and call the path traversed to reach it p . </S>
+</P>
+<P>
+<S ID='S-241' AZ='OTH'> If X is an NP node and if the path p to X did not pass through the <EQN/> node that X immediately dominates , propose X as the antecedent . </S>
+</P>
+<P>
+<S ID='S-242' AZ='OTH'> Traverse all branches below node X to the left of path p in a left-to-right , breadth-first manner , but do not go below any NP or S node encountered . </S>
+<S ID='S-243' AZ='OTH'> Propose any NP or S node encountered as the antecedent . </S>
+</P>
+<P>
+<S ID='S-244' AZ='OTH'> Go to step <CREF/> . </S>
+</P>
+<P>
+<S ID='S-245' AZ='OTH'> The purpose of steps <CREF/> and <CREF/> is to observe the contra-indexing constraints . </S>
+<S ID='S-246' AZ='OTH'> Let us consider a simple conversational sequence . </S>
+<IMAGE ID='I-10'/>
+</P>
+<P>
+<S ID='S-247' AZ='OTH'> We are trying to find the antecedent for her in the second utterance . </S>
+<S ID='S-248' AZ='OTH'> Let us go through the algorithm step by step , using the parse trees for <EQN/> and <EQN/> in the figure . </S>
+<IMAGE ID='I-11'/>
+</P>
+<P>
+<S ID='S-249' AZ='OTH'> <EQN/> labels the starting point of step <CREF/> . </S>
+</P>
+<P>
+<S ID='S-250' AZ='OTH'> <EQN/> is called X . </S>
+<S ID='S-251' AZ='OTH'> We mark the path p with a dotted line . </S>
+</P>
+<P>
+<S ID='S-252' AZ='OTH'> We traverse <EQN/> to the left of p . </S>
+<S ID='S-253' AZ='OTH'> We encounter <EQN/> but it does not have an NP or S node between it and X . </S>
+<S ID='S-254' AZ='OTH'> This means that <EQN/> is contra-indexed with <EQN/> . </S>
+<S ID='S-255' AZ='OTH'> Note that if the structure corresponded to Craige 's mom likes her then the NP for Craige would be an NP to the left of p that has an NP node between it and X , and Craige would be selected as the antecedent for her . </S>
+</P>
+<P>
+<S ID='S-256' AZ='OTH'> The node X is the highest S node in <EQN/> , so we go to the previous sentence <EQN/> . </S>
+<S ID='S-257' AZ='OTH'> As we traverse the tree of <EQN/> , the first NP we encounter is <EQN/> , so Lyn 's mom is proposed as the antecedent for her and we are done . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+James F. <SURNAME>Allen</SURNAME> and C. Raymond <SURNAME>Perrault</SURNAME>.
+Analyzing intention in utterances.
+Artificial Intelligence, 15:143-178, <DATE>1980</DATE>.
+</REFERENCE>
+<REFERENCE>
+Anne <SURNAME>Abeille</SURNAME> and Yves <SURNAME>Schabes</SURNAME>.
+Parsing idioms in lexicalized tags.
+In Proc. 4th Conference of the European Chapter of the ACL,
+  Association of Computational Linguistics, pages 161-65, <DATE>1989</DATE>.
+</REFERENCE>
+<REFERENCE>
+Roger <SURNAME>Brown</SURNAME> and Deborah <SURNAME>Fish</SURNAME>.
+The psychological causality implicit in language.
+Cognition, 14:237-273, <DATE>1983</DATE>.
+</REFERENCE>
+<REFERENCE>
+Susan E. <SURNAME>Brennan</SURNAME>, Marilyn <SURNAME>Walker</SURNAME> Friedman, and Carl J. Pollard.
+A centering approach to pronouns.
+In Proc. 25th Annual Meeting of the ACL, Stanford, pages
+  155-162, <DATE>1987</DATE>.
+</REFERENCE>
+<REFERENCE>
+David M. <SURNAME>Carter</SURNAME>.
+Interpreting Anaphors in Natural Language Texts.
+Ellis Horwood, <DATE>1987</DATE>.
+</REFERENCE>
+<REFERENCE>
+Phillip R. <SURNAME>Cohen</SURNAME>.
+On knowing what to say: Planning speech acts.
+Technical Report 118, University of Toronto; Department of Computer
+  Science, <DATE>1978</DATE>.
+</REFERENCE>
+<REFERENCE>
+Phillip R. <SURNAME>Cohen</SURNAME>.
+The pragmatics of referring and the modality of communication.
+Computational Linguistics, 10:97-146, <DATE>1984</DATE>.
+</REFERENCE>
+<REFERENCE>
+Barbara <SURNAME>Grosz</SURNAME> Deutsch.
+Typescripts of task oriented dialogs, August <DATE>1974</DATE>.
+</REFERENCE>
+<REFERENCE>
+Nils <SURNAME>Dahlback</SURNAME> and Arne <SURNAME>Jonsson</SURNAME>.
+Empirical studies of discourse representations for natural language
+  interfaces.
+In Proc. 4th Conference of the European Chapter of the ACL,
+  Association of Computational Linguistics, pages 291-298, <DATE>1989</DATE>.
+</REFERENCE>
+<REFERENCE>
+Barbara J. <SURNAME>Grosz</SURNAME>, Aravind K. <SURNAME>Joshi</SURNAME>, and Scott <SURNAME>Weinstein</SURNAME>.
+Providing a unified account of definite noun phrases in discourse.
+In Proc. 21st Annual Meeting of the ACL, Association of
+  Computational Linguistics, pages 44-50, <DATE>1983</DATE>.
+</REFERENCE>
+<REFERENCE>
+Barbara J. <SURNAME>Grosz</SURNAME>, Aravind K. <SURNAME>Joshi</SURNAME>, and Scott <SURNAME>Weinstein</SURNAME>.
+Towards a computational theory of discourse interpretation.
+Unpublished Manuscript, <DATE>1986</DATE>.
+</REFERENCE>
+<REFERENCE>
+Barbara J. <SURNAME>Grosz</SURNAME>.
+The representation and use of focus in dialogue understanding.
+Technical Report 151, SRI International, 333 Ravenswood Ave, Menlo
+  Park, Ca. 94025, <DATE>1977</DATE>.
+</REFERENCE>
+<REFERENCE>
+Barbara J. <SURNAME>Grosz</SURNAME> and Candace L. <SURNAME>Sidner</SURNAME>.
+Attentions, intentions and the structure of discourse.
+Computational Linguistics, 12:175-204, <DATE>1986</DATE>.
+</REFERENCE>
+<REFERENCE>
+Raymonde <SURNAME>Guindon</SURNAME>, P. <SURNAME>Sladky</SURNAME>, H. <SURNAME>Brunner</SURNAME>, and J. <SURNAME>Conner</SURNAME>.
+The structure of user-adviser dialogues: Is there method in their
+  madness?
+In Proc. 24th Annual Meeting of the ACL, Association of
+  Computational Linguistics, pages 224-230, <DATE>1986</DATE>.
+</REFERENCE>
+<REFERENCE>
+Julia <SURNAME>Hirschberg</SURNAME> and Diane <SURNAME>Litman</SURNAME>.
+Now lets talk about now: Identifying cue phrases intonationally.
+In Proc. 25th Annual Meeting of the ACL, Stanford, pages
+  163-171, Stanford University, Stanford, Ca., <DATE>1987</DATE>.
+</REFERENCE>
+<REFERENCE>
+Jerry R. <SURNAME>Hobbs</SURNAME> and Paul <SURNAME>Martin</SURNAME>.
+Local pragmatics.
+Technical report, SRI International, 333 Ravenswood Ave., Menlo Park,
+  Ca 94025, <DATE>1987</DATE>.
+</REFERENCE>
+<REFERENCE>
+Jerry R. <SURNAME>Hobbs</SURNAME>.
+A computational approach to discourse analysis.
+Technical Report 76-2, Department of Computer Science, City College,
+  City University of New York, <DATE>1976</DATE>.
+</REFERENCE>
+<REFERENCE>
+Jerry R. <SURNAME>Hobbs</SURNAME>.
+Pronoun resolution.
+Technical Report 76-1, Department of Computer Science, City College,
+  City University of New York, <DATE>1976</DATE>.
+</REFERENCE>
+<REFERENCE>
+Jerry R. <SURNAME>Hobbs</SURNAME>.
+Why is discourse coherent?
+Technical Report 176, SRI International, 333 Ravenswood Ave., Menlo
+  Park, Ca 94025, <DATE>1978</DATE>.
+</REFERENCE>
+<REFERENCE>
+Jerry R. <SURNAME>Hobbs</SURNAME>.
+On the coherence and structure of discourse.
+Technical Report CSLI-85-37, Center for the Study of Language and
+  Information, Ventura Hall, Stanford University, Stanford, CA 94305, <DATE>1985</DATE>.
+</REFERENCE>
+<REFERENCE>
+Susan B. <SURNAME>Hudson</SURNAME>, Michael K. <SURNAME>Tanenhaus</SURNAME>, and Gary S. <SURNAME>Dell</SURNAME>.
+The effect of the Discourse Center on the local coherence of a
+  discourse.
+Technical Report.University of Rochester, <DATE>1986</DATE>.
+</REFERENCE>
+<REFERENCE>
+Janet <SURNAME>Pierrehumbert</SURNAME> and Julia <SURNAME>Hirschberg</SURNAME>.
+The meaning of intonational contours in the interpretation of
+  discourse.
+In Cohen, Morgan and Pollack, eds. Intentions in Communication,
+  MIT Press, <DATE>1990</DATE>.
+</REFERENCE>
+<REFERENCE>
+Martha <SURNAME>Pollack</SURNAME>.
+A model of plan inference that distinguishes between the beliefs of
+  actors and observers.
+In Proc. 24th Annual Meeting of the Association of
+  Computational Linguistics, pages 207-214, Columbia University, N.Y.,
+  N.Y, <DATE>1986</DATE>.
+</REFERENCE>
+<REFERENCE>
+Ellen F. <SURNAME>Prince</SURNAME>.
+Toward a taxonomy of given-new information.
+In Radical Pragmatics, pages 223-255. Academic Press, <DATE>1981</DATE>.
+</REFERENCE>
+<REFERENCE>
+Ellen F. <SURNAME>Prince</SURNAME>.
+Fancy syntax and shared knowledge.
+Journal of Pragmatics, pages 65-81, <DATE>1985</DATE>.
+</REFERENCE>
+<REFERENCE>
+Tanya <SURNAME>Reinhart</SURNAME>.
+The Syntactic Domain of Anaphora.
+PhD thesis, MIT, Cambridge Mass., <DATE>1976</DATE>.
+</REFERENCE>
+<REFERENCE>
+Rachel <SURNAME>Reichman</SURNAME>.
+Getting Computers to Talk Like You and Me.
+MIT Press, Cambridge, MA, <DATE>1985</DATE>.
+</REFERENCE>
+<REFERENCE>
+Craige <SURNAME>Roberts</SURNAME>.
+Modal subordination and pronominal anaphora in discourse.
+Technical Report No. 127, CSLI, May,<DATE>1988</DATE>.
+Also appeared in Linguistics and Philosophy.
+</REFERENCE>
+<REFERENCE>
+Deborah <SURNAME>Schiffrin</SURNAME>.
+Discourse Markers.
+Cambridge University Press, <DATE>1987</DATE>.
+</REFERENCE>
+<REFERENCE>
+Candace <SURNAME>Sidner</SURNAME> and David <SURNAME>Israel</SURNAME>.
+Recognizing intended meaning and speakers plans.
+In Proc. International Joint Conference on Artificial
+  Intelligence, pages 203-208, Vancouver, BC, Canada, <DATE>1981</DATE>.
+</REFERENCE>
+<REFERENCE>
+Candace L. <SURNAME>Sidner</SURNAME>.
+Toward a computational theory of definite anaphora comprehension in
+  English.
+Technical Report AI-TR-537, MIT, <DATE>1979</DATE>.
+</REFERENCE>
+<REFERENCE>
+Bozena <SURNAME>Henisz</SURNAME> Thompson.
+Linguistic analysis of natural language communication with computers.
+In COLING80: Proc. 8th International Conference on Computational
+  Linguistics. Tokyo, pages 190-201, <DATE>1980</DATE>.
+</REFERENCE>
+<REFERENCE>
+Bonnie <SURNAME>Webber</SURNAME>.
+Two steps closer to event reference.
+Technical Report MS-CIS-86-74, Linc Lab 42, Department of Computer
+  and Information Science, University of Pennsylvania, <DATE>1986</DATE>.
+</REFERENCE>
+<REFERENCE>
+Steve <SURNAME>Whittaker</SURNAME> and Phil <SURNAME>Stenton</SURNAME>.
+Cues and control in expert client dialogues.
+In Proc. 26th Annual Meeting of the ACL, Association of
+  Computational Linguistics, pages 123-130, <DATE>1988</DATE>.
+</REFERENCE>
+<REFERENCE>
+Steve <SURNAME>Whittaker</SURNAME> and Phil <SURNAME>Stenton</SURNAME>.
+User studies and the design of natural language systems.
+In Proc. 4th Conference of the European Chapter of the ACL,
+  Association of Computational Linguistics, pages 116-123, <DATE>1989</DATE>.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

@@ -1,0 +1,227 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9503007</FILENO>
+<APPEARED><CONFERENCE>EACL</CONFERENCE><YEAR>1995</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.Sm </CLASSIFICATION>
+</METADATA>
+<TITLE> The Semantics of Motion </TITLE>
+<AUTHORLIST>
+<AUTHOR>Pierre Sablayrolles</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' AZ='AIM'> In this paper we present a semantic study of motion complexes ( ie. of a motion verb followed by a spatial preposition ) . </A-S>
+<A-S ID='A-1' DOCUMENTC='S-6' AZ='OWN'> We focus on the spatial and the temporal intrinsic semantic properties of the motion verbs , on the one hand , and of the spatial prepositions , on the other hand . </A-S>
+<A-S ID='A-2' AZ='AIM'> Then we address the problem of combining these basic semantics in order to formally and automatically derive the spatiotemporal semantics of a motion complex from the spatiotemporal properties of its components . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> Most of natural languages provide two types of lexical items to describe the motion of an entity with respect to some location : motion verbs ( to run ; to enter ) and spatial prepositions ( from ; towards ) . </S>
+<S ID='S-1' AZ='BKG'> Motion verbs can be used directly with a location , when they are transitive ( to cross the town ) or with a spatial preposition , when they are intransitive ( to go through the town ) . </S>
+<S ID='S-2' AZ='BKG'> The latter case is more interesting : most of the French motion verbs are intransitive and the interaction between motion verbs and spatial prepositions gives detailed informations about the way human beeings mentally represent spatiotemporal aspects of a motion . </S>
+<S ID='S-3' AZ='BKG'> When we describe a motion , the fact to choose a verb instead of another , a preposition instead of another , a syntactic structure instead of another , reveals our mental cognitive representation . </S>
+<S ID='S-4' AZ='OWN'> We claim that natural languages can be considered as a trace of these representations , in which it is possible , with systematic and detailled linguistic studies , to light up the way spatiotemporal properties are represented and on which basic concepts these representations lie . </S>
+<S ID='S-5' AZ='AIM'> We present such linguistic investigations on French motion verbs and spatial prepositions and the basic concepts we have found . </S>
+<S ID='S-6' ABSTRACTC='A-1' AZ='OWN'> We also address compositional semantics for motion complexes ( ie. a motion verb followed by a spatial preposition ) and show that the complexity and the refinements of the linguistic studies presented just before are justified and required at the compositional level in order to capture the different behaviours in the compositional processes that exist with the French language . </S>
+<S ID='S-7' AZ='OWN'> We also compare with the English language and draw some conclusions on the benefits of our approach . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Lexical Semantics for Motion Verbs </HEADER>
+<P>
+<S ID='S-8' AZ='BAS'> Following <REF TYPE='A'>Gruber 1965</REF> , <REF TYPE='A'>Jackendoff 1976</REF> , <REF TYPE='A'>Boons 1985</REF> , we approach motion verbs in terms of some `` localist semantical '' role labels . </S>
+<S ID='S-9' AZ='OTH' TYPE='ITEM'> The linguistic study of French intransitive motion verbs <REF TYPE='P' SELF="YES">Asher and Sablayrolles 1994a</REF> we have realized has allowed the definition of an ontology for `` location '' in three basic concepts : </S>
+</P>
+<P>
+<S ID='S-10' TYPE='ITEM' AZ='OTH' > locations which are concrete places ( a room ; a house ; a street ) ; </S>
+<S ID='S-11' TYPE='ITEM' AZ='OTH' > positions which are parts of a location ( the position where I am in this room ) ; </S>
+<S ID='S-12' TYPE='ITEM' AZ='OTH' > postures which are ways to be in a position ( to be standing , sitting , lying ) . </S>
+</P>
+<P>
+<S ID='S-13' AZ='BAS'> With the help of this ontology we have realized a typology for intransitive motion verbs . </S>
+<S ID='S-14' AZ='OWN'> We distinguish 4 categories on the basis of which kind of `` location '' they intrinsically refer to . </S>
+</P>
+<P>
+<S ID='S-15' AZ='OWN'> Change of location ( CoL ) verbs ( entrer-to enter ; sortir-to go out ) denote a change of location . </S>
+<S ID='S-16' AZ='OWN'> When we enter some place or go out of some place , we have different spatial relation with the location ( ie . inside / outside ) before and after the motion . </S>
+</P>
+<P>
+<S ID='S-17' AZ='OWN'> Change of position verbs ( voyager-to travel ; courir-to run ) denote a change of position . </S>
+<S ID='S-18' AZ='OWN'> When we travel or run , we go from some part to another part of a same global location . </S>
+<S ID='S-19' AZ='OWN'> Such verbs do not behave all homogeneously . </S>
+<S ID='S-20' TYPE='ITEM' AZ='OWN' > Some denote a change of position which always occur ( voyager-to travel ) . </S>
+<S ID='S-21' AZ='OWN'> For example , we cannot say voyager sur place-to travel in place . </S>
+<S ID='S-22' AZ='OWN'> We call these verbs change of position ( CoPs ) verbs . </S>
+<S ID='S-23' TYPE='ITEM' AZ='OWN' > Others denote only possible change of position ( courir-to run ) . </S>
+<S ID='S-24' AZ='OWN'> For example , we can say courir sur place-to run in place . </S>
+<S ID='S-25' AZ='OWN'> We call these verbs inertial change of position ( ICoPs ) verbs . </S>
+</P>
+<P>
+<S ID='S-26' TYPE='ITEM' AZ='OWN' > Change of posture ( CoPtu ) verbs ( s 'asseoir - to sit down ; se baisser-to bend down ) . </S>
+<S ID='S-27' AZ='OWN'> They denote a change of the relations between the parts of an entity . </S>
+</P>
+<P>
+<S ID='S-28' AZ='OWN'> For the following , we will focus on CoL verbs ( the Change of Location verbs ) , mainly because they are rich in spatiotemporal informations , but also because we have at disposal exhaustive lists of French CoL verbs . </S>
+<S ID='S-29' AZ='OWN'> We have realized a systematic and fine linguistic study on these verbs , looking carefully at each of them , one by one ( and we have 440 CoL verbs in French ) , in order to extract their intrinsic spatiotemporal properties . </S>
+<S ID='S-30' AZ='OWN'> These semantic properties can be characterized by a restructuration of the space induced by the so-called reference location ( lref ) <REF TYPE='P'>Talmy 1983</REF> . </S>
+<S ID='S-31' AZ='OWN'> This lref , implicitly suggested by each CoL verb , can be either the initial location ( as with partir-to leave ; sortir-to go out ) , or the path ( passer , traverser-to pass through ) or the final location ( arriver-to arrive ; entrer-to enter ) of the motion . </S>
+<S ID='S-32' AZ='OWN'> Indeed , verbs like sortir intrinsically suggest a location of which we have gone out . </S>
+<S ID='S-33' AZ='OWN'> This space , induced by the lref , is characterized by most of the authors in the literature by a two-part spatial system consisting in the inside and the outside of the lref . </S>
+<S ID='S-34' AZ='OWN'> We propose to refine this structure with two new concepts , required to distinguish minimal pairs like sortir ( to go out ) / partir ( to leave ) , and entrer ( to enter ) / atterir ( to land ) . </S>
+<S ID='S-35' AZ='OWN' TYPE='ITEM'> These concepts are : </S>
+</P>
+<P>
+<S ID='S-36' TYPE='ITEM' AZ='OWN' > a limit of proximity distinguishing an outside of proximity from a far away outside ; indeed , if sortir simply requires to go out of the lref , partir in addition forces the mobile to go sufficiently far away from that lref . </S>
+<S ID='S-37' TYPE='ITEM' AZ='OWN' > an external zone of contact required by verbs like atterir for which the final location is neither the lref ( in contrast with entrer ) or the outside ( or proximity outside ) of the lref ( in contrast with s 'approcher - to approach ) . </S>
+</P>
+<P>
+<S ID='S-38' AZ='OWN' TYPE='ITEM'> We have so defined a structuration of the space based on 4 zones : </S>
+</P>
+<P>
+<S ID='S-39' TYPE='ITEM' AZ='OWN' > the inside ; </S>
+<S ID='S-40' TYPE='ITEM' AZ='OWN' > the external zone of contact ; </S>
+<S ID='S-41' TYPE='ITEM' AZ='OWN' > the outside of proximity ; </S>
+<S ID='S-42' TYPE='ITEM' AZ='OWN' > the far away outside . </S>
+</P>
+<P>
+<S ID='S-43' AZ='OTH'> This structuration is close to the way <REF TYPE='A'>Jackendoff and Landau 1992</REF> encode the space induced by the reference object introduced by a static spatial preposition . </S>
+<S ID='S-44' AZ='OWN'> As we have come to these distinctions by examining different linguistic material , we conclude that language structures space in the same way whatever sort of lexical items ( motion verbs ( dynamic ) / ( static ) spatial prepositions ) we examine . </S>
+<S ID='S-45' AZ='OWN'> This has allowed us to classify CoL verbs into 10 classes on the basis of which zones the mobile is inside , at the beginning and at the end of its motion . </S>
+<S ID='S-46' AZ='OWN'> Note that all the geometrical possibilities are not lexicalized in French . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-2'> Lexical Semantics for Spatial Prepositions </HEADER>
+<P>
+<S ID='S-47' AZ='OWN'> We have followed the same approach with French spatial prepositions , but using a structuration of the space induced by the location introduced in the PP by the preposition , and not induced by the lref as for verbs . </S>
+<S ID='S-48' AZ='OWN'> Following <REF TYPE='A'>Laur 1993</REF> , we consider simple prepositions ( like in ) as well as prepositional phrases ( like in front of ) . </S>
+<S ID='S-49' AZ='OWN' TYPE='ITEM'> We have classified 199 such French prepositions into 16 groups using in addition of our zones two other criteria : </S>
+</P>
+<P>
+<S ID='S-50' AZ='OWN' TYPE='ITEM'> prepositions can be : </S>
+<S ID='S-51' TYPE='ITEM' AZ='OWN' > positional ( like in ) </S>
+<S ID='S-52' TYPE='ITEM' AZ='OWN' > directional ( like into ) </S>
+</P>
+<P>
+<S ID='S-53' TYPE='ITEM' AZ='OWN' > directional prepositions can be : </S>
+<S ID='S-54' TYPE='ITEM' AZ='OWN' > Initial ( like from ) </S>
+<S ID='S-55' TYPE='ITEM' AZ='OWN' > Medial ( like through ) </S>
+<S ID='S-56' TYPE='ITEM' AZ='OWN' > Final ( like to ) </S>
+<S ID='S-57' AZ='OWN' TYPE='ITEM'> depending if they focus on the initial location , on the path or on the final location of the motion . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-3'> Compositional Semantics for Motion Complexes </HEADER>
+<P>
+<S ID='S-58' AZ='OWN'> The linguistic studies , used for the typologies of CoL verbs and spatial prepositions , have been realized on verbs considered without any adjuncts , in their atemporal form and independently of any context , on the one hand , and on prepositions considered independently of any context , on the other . </S>
+<S ID='S-59' AZ='BAS'> This methodology , discussed in <REF TYPE='A' SELF="YES">Borillo and Sablayrolles 1993</REF> , has allowed us to extract the intrinsic semantics of these lexical items . </S>
+</P>
+<P>
+<S ID='S-60' AZ='OTH'> Since natural languages put together verbs and prepositions in a sentence , we have developped a formal calculus <REF TYPE='P' SELF="YES">Asher and Sablayrolles 1994b</REF> , based on these two typologies , which computes , in a compositional way , the spatiotemporal properties of a motion complex from the semantic properties of the verb and of the preposition . </S>
+<S ID='S-61' AZ='OTH'> For reason of space we cannot detail our formalism here , but we intend to present it in the talk . </S>
+</P>
+<P>
+<S ID='S-62' AZ='OWN'> The semantics of a motion complex is not the simple addition of the semantics of its constituents . </S>
+<S ID='S-63' AZ='OWN'> On the contrary , it is the result of a complex interaction between these properties . </S>
+<S ID='S-64' AZ='OWN'> It is often the case that from this interaction appear new properties that belong neither to the verb or the preposition . </S>
+<S ID='S-65' AZ='OWN'> These new properties are only the result of the interaction of the verb with the preposition . </S>
+</P>
+<P>
+<S ID='S-66' AZ='OWN'> Let us consider for example the following VP : sortir dans le jardin-to go out into the garden . </S>
+<S ID='S-67' AZ='OWN'> The verb sortir-to go out implicitly suggests an initial location ; the preposition dans - ( which means in , but which is translated here by into ) is a positional preposition and , as so , only denotes the static spatial relation inside . </S>
+<S ID='S-68' AZ='OWN'> The location le jardin-the garden is the final location of the motion . </S>
+<S ID='S-69' AZ='OWN'> This final information was contained neither in the verb or in the preposition . </S>
+<S ID='S-70' AZ='OWN'> This information is the result of the interaction of the verb sortir-to go out with the preposition dans-in / into . </S>
+</P>
+<P>
+<S ID='S-71' AZ='OWN'> Note that the combination for such items does not behave the same in English , where the final information is explicitly brought by the preposition into , which is a directional preposition , and where this particular combination does not create new information . </S>
+</P>
+<P>
+<S ID='S-72' AZ='OWN'> This shows the neccesity to take into account such language specific behaviour in natural languages understanding systems and in natural languages machine translation . </S>
+<S ID='S-73' AZ='OWN'> We formalize with 11 axioms in a non-monotonic first order logic the behaviour of all possible kinds of verb-preposition association for the French language . </S>
+<S ID='S-74' AZ='OWN'> We use non-monotonic logic in order to represent defeasible or generic rules and also in order to encode defaults about lexical entries . </S>
+</P>
+<P>
+<S ID='S-75' AZ='OWN'> These axioms are based on the lexical semantics of CoL verbs and of spatial prepositions . </S>
+<S ID='S-76' AZ='OWN'> They also take into account the syntactic structure of the sentence ( we have supposed an X-bar syntax with a VP internal subject , though this is not essential ) and the links which exist at the level of discours between this sentence and the previous and following sentences of the text . </S>
+<S ID='S-77' AZ='OWN'> These links , called discourse relations , are basic concepts on which texts are structured <REF TYPE='P'>Asher 1993</REF> . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-4'> Conclusion </HEADER>
+<P>
+<S ID='S-78' AZ='AIM'> The study and the first results we have here presented cover from lexical semantics to discourse structures , with strong interactions between these two ends . </S>
+<S ID='S-79' AZ='OWN'> Indeed , lexical informations can be used to disambiguate the structure of the discours , as well as discourse relations can be used to disambiguate lexical entries , as shown in <REF SELF="YES" TYPE='A'>Asher and Sablayrolles 1994b</REF> . </S>
+<S ID='S-80' AZ='OWN'> Our work is based on systematic and very detailed linguistic studies which lead to rather complex computations for calculating the spatiotemporal semantics of a motion complex . </S>
+<S ID='S-81' AZ='OWN'> But we have seen that this level of detail and complexity is necessary if one want to understand , to formalize and to compute a right spatiotemporal semantics for motion complexes . </S>
+<S ID='S-82' AZ='OWN' TYPE='ITEM'> We continue our investigations on two directions : </S>
+</P>
+<P>
+<S ID='S-83' TYPE='ITEM' AZ='OWN' > we compare our results with similar works in course of realization on the Basquian language ( by <REFAUTHOR>Michel Aurnague</REFAUTHOR> ) and on the Japanese language ( by <REFAUTHOR>Junichi Saito</REFAUTHOR> ) ; </S>
+<S ID='S-84' TYPE='ITEM' AZ='OWN' > we use the results presented here for refining the notions of the Aktionsart , where the structuration of the space in 4 zones can be used to distinguish sub-classes inside the traditional well known classes of aspectual studies . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+Nicholas <SURNAME>Asher</SURNAME> and Pierre <SURNAME>Sablayrolles</SURNAME>. <DATE>1994a</DATE>.
+   A Compositional Spatio-temporal Semantics for French Motion Verbs and
+      Spatial PPs.
+   Proccedings of SALT4, Semantics and Linguistic Theory,
+      Rochester, NY, May 6-8, <DATE>1994</DATE>.
+</REFERENCE>
+<REFERENCE>
+Nicholas <SURNAME>Asher</SURNAME> and Pierre <SURNAME>Sablayrolles</SURNAME>. <DATE>1994b</DATE>.
+   A Typology and Discourse Semantics for Motion Verbs and Spatial PPs
+      in French.
+   Journal of Semantics, <DATE>in press</DATE>, <DATE>1994</DATE>.
+</REFERENCE>
+<REFERENCE>
+Nicholas <SURNAME>Asher</SURNAME>. <DATE>1993</DATE>.
+   Reference to Abstract Objects in Discourse.
+   Kluwer Academic Publishers, <DATE>1993</DATE>.
+</REFERENCE>
+<REFERENCE>
+Jean <SURNAME>Boons</SURNAME>. <DATE>1985</DATE>.
+   Prliminaires  la classification des verbes locatifs : les
+      complments de lieu, leurs critres, leurs valeurs aspectuelles.
+   Linguisticae Investigationes, 9(2):195-267, <DATE>1985</DATE>.
+</REFERENCE>
+<REFERENCE>
+Mario <SURNAME>Borillo</SURNAME> and Pierre <SURNAME>Sablayrolles</SURNAME>. <DATE>1993</DATE>.
+   The Semantics of Motion Verbs in French.
+   Proceedings of the 13th International Conference on Natural Language
+      Processing of Avignon, May 24-28, <DATE>1993</DATE>, Avignon, France.
+</REFERENCE>
+<REFERENCE>
+J.S. <SURNAME>Gruber</SURNAME>. <DATE>1965</DATE>.
+   Studies in Lexical Relations.
+   Doctoral Dissertation, MIT, <DATE>1965</DATE>.
+</REFERENCE>
+<REFERENCE>
+Ray <SURNAME>Jackendoff</SURNAME>. <DATE>1976</DATE>.
+   Towards an Explanatory Semantic Representation.
+   Linguistic Inquiry, 7:89-150.
+</REFERENCE>
+<REFERENCE>
+Ray <SURNAME>Jackendoff</SURNAME> and Barbara <SURNAME>Landau</SURNAME>. <DATE>1992</DATE>.
+   ``What'' and ``Where'' in Spatial Language and Spatial Cognition.
+   BBS report, Cambridge University Press, <DATE>1992</DATE>.
+</REFERENCE>
+<REFERENCE>
+Dany <SURNAME>Laur</SURNAME>. <DATE>1993</DATE>.
+   La relation entre le verbe et la prposition dans la smantique
+      du dplacement.
+   Language, La couleur des prpositions:47-67, June <DATE>1993</DATE>.
+</REFERENCE>
+<REFERENCE>
+Leonard <SURNAME>Talmy</SURNAME>. <DATE>1983</DATE>.
+   How Language Structures Space.
+   Spatial Orientation: theory, research and application, Pick and
+      Acredolo (eds), Plenum pub. corporation, NY, <DATE>1983</DATE>.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

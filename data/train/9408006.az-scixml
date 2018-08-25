@@ -1,0 +1,395 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9408006</FILENO>
+<APPEARED><CONFERENCE>COLING</CONFERENCE><YEAR>1994</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.Gr.Fm </CLASSIFICATION>
+</METADATA>
+<TITLE> LHIP : Extended DCGs for Configurable Robust Parsing </TITLE>
+<AUTHORLIST>
+<AUTHOR>Afzal Ballim</AUTHOR>
+<AUTHOR>Graham Russell</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' DOCUMENTC='S-0' AZ='AIM'> We present LHIP , a system for incremental grammar development using an extended DCG formalism . </A-S>
+<A-S ID='A-1' DOCUMENTC='S-1' AZ='OWN'> The system uses a robust island-based parsing method controlled by user-defined performance thresholds . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Lhip Overview </HEADER>
+<P>
+<S ID='S-0' ABSTRACTC='A-0' AZ='AIM'> This paper describes LHIP ( Left-Head corner Island Parser ) , a parser designed for broad-coverage handling of unrestricted text . </S>
+<S ID='S-1' ABSTRACTC='A-1' AZ='AIM'> The system interprets an extended DCG formalism to produce a robust analyser that finds parses of the input made from ` islands ' of terminals ( corresponding to terminals consumed by successful grammar rules ) . </S>
+<S ID='S-2' AZ='OWN'> It is currently in use for processing dialogue transcripts from the HCRC Map Task Corpus <REF TYPE='P'>Anderson et al. 1991</REF> , although we expect its eventual applications to be much wider . </S>
+<S ID='S-3' AZ='BKG'> Transcribed natural speech contains a number of frequent characteristic ` ungrammatical ' phenomena : filled pauses , repetitions , restarts , etc. ( as in e.g. </S>
+</P>
+<EXAMPLE ID='E-0'>
+<EX-S> Right I 'll have ... you know , like I 'll have to ... so I 'm going between the picket fence and the mill , right . ) </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-4' AZ='BKG'> While a full analysis of a conversation might well take these into account , for many purposes they represent a significant obstacle to analysis . </S>
+<S ID='S-5' AZ='OWN'> LHIP provides a processing method which allows selected portions of the input to be ignored or handled differently . </S>
+</P>
+<P>
+<S ID='S-6' AZ='CTR'> The chief modifications to the standard Prolog ` grammar rule ' format are of two types : one or more right-hand side ( RHS ) items may be marked as ` heads ' , and one or more RHS items may be marked as ` ignorable ' . </S>
+<S ID='S-7' AZ='TXT'> We expand on these points and introduce other differences below . </S>
+</P>
+<P>
+<S ID='S-8' AZ='OWN'> The behaviour of LHIP can best be understood in terms of the notions of island , span , cover and threshold : </S>
+</P>
+<P>
+<S ID='S-9' AZ='OWN'> Island : </S>
+<S ID='S-10' AZ='OWN'> Within an input string consisting of the terminals <EQN/> , an island is a subsequence <EQN/> , whose length is m + 1 . </S>
+</P>
+<P>
+<S ID='S-11' AZ='OWN'> Span : </S>
+<S ID='S-12' AZ='OWN'> The span of a grammar rule R is the length of the longest island <EQN/> such that terminals <EQN/> and <EQN/> are both consumed ( directly or indirectly ) by R . </S>
+</P>
+<P>
+<S ID='S-13' AZ='OWN'> Cover : </S>
+<S ID='S-14' AZ='OWN'> A rule R is said to cover m items if m terminals are consumed within the island described by R . </S>
+<S ID='S-15' AZ='OWN'> The coverage of R is then m . </S>
+</P>
+<P>
+<S ID='S-16' AZ='OWN'> Threshold : </S>
+<S ID='S-17' AZ='OWN'> The threshold of a rule is the minimum value for the ratio of its coverage c to its span s which must hold in order for the rule to succeed . </S>
+<S ID='S-18' AZ='OWN'> Note that <EQN/> , and that if c = s the rule has completely covered the span , consuming all terminals . </S>
+</P>
+<P>
+<S ID='S-19' AZ='OWN'> As implied here , rules need not cover all of the input in order to succeed . </S>
+<S ID='S-20' AZ='OWN'> More specifically , the constraints applied in creating islands are such that islands do not have to be adjacent , but may be separated by non-covered input . </S>
+<S ID='S-21' AZ='OWN'> Moreover , an island may itself contain input which is unaccounted for by the grammar . </S>
+<S ID='S-22' AZ='OWN'> Islands do not overlap , although when multiple analyses exist they will in general involve different segmentations of the input into islands . </S>
+</P>
+<P>
+<S ID='S-23' AZ='OWN'> There are two notions of non-coverage of the input : sanctioned and unsanctioned non-coverage . </S>
+<S ID='S-24' AZ='OWN'> The latter case arises when the grammar simply does not account for some terminal . </S>
+<S ID='S-25' AZ='OWN'> Sanctioned non-coverage means that some number of special ` ignore ' rules have been applied which simulate coverage of input material lying between the islands , thus in effect making the islands contiguous . </S>
+<S ID='S-26' AZ='OWN'> Those parts of the input that have been ` ignored ' are considered to have been consumed . </S>
+<S ID='S-27' AZ='OWN'> These ignore rules can be invoked individually or as a class . </S>
+<S ID='S-28' AZ='OWN'> It is this latter capability which distinguishes ignore rules from regular rules , as they are functionally equivalent otherwise , mainly serving as a notational aid for the grammar writer . </S>
+</P>
+<P>
+<S ID='S-29' AZ='OWN'> Strict adjacency between RHS clauses can be specified in the grammar . </S>
+<S ID='S-30' AZ='OWN'> It is possible to define global and local thresholds for the proportion of the spanned input that must be covered by rules ; in this way , the user of an LHIP grammar can exercise quite fine control over the required accuracy and completeness of the analysis . </S>
+</P>
+<P>
+<S ID='S-31' AZ='OWN'> A chart is kept of successes and failures of rules , both to improve efficiency and to provide a means of identifying unattached constituents . </S>
+<S ID='S-32' AZ='OWN'> In addition , feedback is given to the grammar writer on the degree to which the grammar is able to cope with the given input ; in a context of grammar development , this may serve as notification of areas to which the coverage of the grammar might next be extended . </S>
+</P>
+<P>
+<S ID='S-33' AZ='OWN'> The notion of ` head ' employed here is connected more closely with processing control than linguistics . </S>
+<S ID='S-34' AZ='OWN'> In particular , nothing requires that a head of a rule should share any information with the LHS item , although in practice it often will . </S>
+<S ID='S-35' AZ='OWN'> Heads serve as anchor-points in the input string around which islands may be formed , and are accordingly treated before non-head items ( RHS items are re-ordered during compilation-see below ) . </S>
+<S ID='S-36' AZ='CTR'> In the central role of heads , LHIP resembles parsers devised by <REF TYPE='A'>Kay 1989</REF> and <REF TYPE='A'>van Noord 1991</REF> ; in other respects , including the use which is made of heads , the approaches are rather different , however . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> The LHIP System </HEADER>
+<P>
+<S ID='S-37' AZ='TXT'> In this section we describe the LHIP system . </S>
+<S ID='S-38' AZ='OWN'> First , we define what constitutes an acceptable LHIP grammar , second , we describe the process of converting such a grammar into Prolog code , and third , we describe the analysis of input with such a grammar . </S>
+</P>
+<P>
+<S ID='S-39' AZ='OWN'> LHIP grammars are an extended form of Prolog DCG grammars . </S>
+<S ID='S-40' AZ='OWN'> The extensions can be summarized as follows : </S>
+</P>
+<P>
+<S ID='S-41' TYPE='ITEM' AZ='OWN'> one or more RHS clauses may be nominated as heads ; </S>
+<S ID='S-42' TYPE='ITEM' AZ='OWN'> one or more RHS clauses may be marked as optional ; </S>
+<S ID='S-43' TYPE='ITEM' AZ='OWN'> ` ignore ' rules may be invoked ; </S>
+<S ID='S-44' TYPE='ITEM' AZ='OWN'> adjacency constraints may be imposed between RHS clauses ; </S>
+<S ID='S-45' TYPE='ITEM' AZ='OWN'> a global threshold level may be set to determine the minimum fraction of spanned input that may be covered in a parse , and </S>
+<S ID='S-46' TYPE='ITEM' AZ='OWN'> a local threshold level may be set in a rule to override the global threshold within that rule .</S>
+</P>
+<P>
+<S ID='S-47' AZ='OWN'> We provide a syntactic definition ( below ) of a LHIP grammar rule , using a notation with syntactic rules of the form <EQN/> which indicates that the category C may take any of the forms <EQN/> to <EQN/> . </S>
+<S ID='S-48' AZ='OWN'> An optional item in a form is denoted by surrounding it with square brackets ` [ ... ] ' . </S>
+<S ID='S-49' AZ='OWN'> Syntactic categories are italicised , while terminals are underlined : ` <EQN/> ' . </S>
+</P>
+<P>
+<S ID='S-50' AZ='OWN'> A LHIP grammar rule has the form : </S>
+<IMAGE ID='I-0'/>
+</P>
+<P>
+<S ID='S-51' AZ='OWN'> where T is a value between zero and one . </S>
+<S ID='S-52' AZ='OWN'> If present , this value defines the local threshold fraction for that rule . </S>
+</P>
+<P>
+<S ID='S-53' AZ='OWN'> This local threshold value overrules the global threshold . </S>
+<S ID='S-54' AZ='OWN'> The symbol ` <EQN/> ' before the name of a rule marks it as being an ` ignore ' rule . </S>
+<S ID='S-55' AZ='OWN'> Only a rule defined this way can be invoked as an ignore rule in an RHS clause . </S>
+<IMAGE ID='I-1'/>
+</P>
+<P>
+<S ID='S-56' AZ='OWN'> The connectives ` , ' and ` ; ' have the same precedence as in Prolog , while ` : ' has the same precedence as ` , ' . </S>
+<S ID='S-57' AZ='OWN'> Parentheses may be used to resolve ambiguities . </S>
+<S ID='S-58' AZ='OWN'> The connective ` , ' is used to indicate that strings subsumed by two RHS clauses are ordered but not necessarily adjacent in the input . </S>
+<S ID='S-59' AZ='OWN'> Thus ` A , B ' indicates that A precedes B in the input , perhaps with some intervening material . </S>
+<S ID='S-60' AZ='OWN'> The stronger constraint of immediate precedence is marked by ` : ' ; ` A : B ' indicates that the span of A precedes that of B , and that there is no uncovered input between the two . </S>
+<S ID='S-61' AZ='OWN'> Disjunction is expressed by ` ; ' , and optional RHS clauses are surrounded by ` ( ?.? ) ' . </S>
+<IMAGE ID='I-2'/>
+</P>
+<P>
+<S ID='S-62' AZ='OWN'> The symbol ` * ' is used to indicate a head clause . </S>
+<S ID='S-63' AZ='OWN'> A rule name is a Prolog term , and only rules and terminal items may act as heads within a rule body . </S>
+<S ID='S-64' AZ='OWN'> The symbol ` @ ' introduces a terminal string . </S>
+<S ID='S-65' AZ='OWN'> As previously said , the purpose of ignore rules is simply to consume input terminals , and their intended use is in facilitating repairs in analysing input that contains the false starts , restarts , filled pauses , etc . </S>
+<S ID='S-66' AZ='OWN'> mentioned above . </S>
+<S ID='S-67' AZ='OWN'> These rules are referred to individually by preceding their name by the ` <EQN/> ' symbol . </S>
+<S ID='S-68' AZ='OWN'> They can also be referred to as a class in a rule body by the special RHS clause ` <EQN/> ' . </S>
+<S ID='S-69' AZ='OWN'> If used in a rule body , they indicate that input is potentially ignored-the problems that ignore rules are intended to repair will not always occur , in which case the rules succeed without consuming any input . </S>
+<S ID='S-70' AZ='OWN'> There is a semantic restriction on the body of a rule which is that it must contain at least one clause which necessarily covers input ( optional clauses and ignore rules do not necessarily cover input ) . </S>
+</P>
+<P>
+<S ID='S-71' AZ='OWN'> The following is an example of a LHIP rule . </S>
+<S ID='S-72' AZ='OWN'> Here , the sub-rule ` conjunction ( Conj ) ' is marked as a head and is therefore evaluated before either of ` s ( Sl ) ' or ` s ( Sr ) ' : </S>
+<IMAGE ID='I-3'/>
+</P>
+<P>
+<S ID='S-73' AZ='OWN'> How is such a rule converted into Prolog code by the LHIP system ? </S>
+<S ID='S-74' AZ='OWN'> First , the rule is read and the RHS clauses are partitioned into those marked as heads , and those not . </S>
+<S ID='S-75' AZ='OWN'> A record is kept of their original ordering , and this record allows each clause to be constrained with respect to the clause that precedes it , as well as with respect to the next head clause which follows it . </S>
+<S ID='S-76' AZ='OWN'> Additional code is added to maintain a chart of known successes and failures of each rule . </S>
+<S ID='S-77' AZ='OWN'> Each rule name is turned into the name of a Prolog clause , and additional arguments are added to it . </S>
+<S ID='S-78' AZ='OWN'> These arguments are used for the input , the start and end points of the area of the input in which the rule may succeed , the start and end points of the actual part of the input over which it in fact succeeds , the number of terminal items covered within that island , a reference to the point in the chart where the result is stored , and a list of pointers to sub-results . </S>
+<S ID='S-79' AZ='OWN'> The converted form of the above rule is given below ( minus the code for chart maintenance ) : </S>
+<IMAGE ID='I-4'/>
+</P>
+<P>
+<S ID='S-80' AZ='OWN'> The important points to note about this converted form are the following : </S>
+</P>
+<P>
+<S ID='S-81' TYPE='ITEM' AZ='OWN'> the conjunction clause is searched for before either of the two s clauses ; </S>
+<S ID='S-82' TYPE='ITEM' AZ='OWN'> the region of the input to be searched for the conjunction clause is the same as that for the rule 's LHS ( B-C ) : its island extends from O to P and covers Q items ; </S>
+<S ID='S-83' TYPE='ITEM' AZ='OWN'> the search region for the first s clause is B-O ( i.e. from the start of the LHS search region to the start of the conjunction island ) , its island starts at D and covers T items ; </S>
+<S ID='S-84' TYPE='ITEM' AZ='OWN'> the search region for the second s clause is P-C ( i.e. from the end of the conjunction island to the end of the LHS search region ) , its island ends at E and covers U items ; </S>
+<S ID='S-85' TYPE='ITEM' AZ='OWN'> the island associated with the rule as a whole extends from D to E and covers F items , where F is U + Q + T ; </S>
+<S ID='S-86' TYPE='ITEM' AZ='OWN'> lhip_threshold_value/1 unifies its argument M with the current global threshold value . </S>
+</P>
+<P>
+<S ID='S-87' AZ='OWN'> In the current implementation of LHIP , compiled rules are interpreted depth-first and left-to-right by the standard Prolog theorem-prover , giving an analyser that proceeds in a top-down , ` left-head-corner ' fashion . </S>
+<S ID='S-88' AZ='OWN'> Because of the reordering carried out during compilation , the situation regarding left-recursion is slightly more subtle than in a conventional DCG . </S>
+<S ID='S-89' AZ='OWN'> The ` s ( conjunct ( ... ) ) ' rule shown above is a case in point . </S>
+<S ID='S-90' AZ='OWN'> While at first sight it appears left-recursive , inspection of its converted form shows its true leftmost subrule to be ` conjunction ' . </S>
+<S ID='S-91' AZ='OWN'> Naturally , compilation may induce left-recursion as well as eliminating it , in which case LHIP will suffer from the same termination problems as an ordinary DCG formalism interpreted in this way . </S>
+<S ID='S-92' AZ='OWN'> And as with an ordinary DCG formalism , it is possible to apply different parsing methods to LHIP in order to circumvent these problems <REF TYPE='P'>Pereira and Shieber 1987</REF> . </S>
+<S ID='S-93' AZ='OWN'> A related issue concerns the interpretation of embedded Prolog code . </S>
+<S ID='S-94' AZ='OWN'> Reordering of RHS clauses will result in code which precedes a head within a LHIP rule being evaluated after it ; judicious freezing of goals and avoidance of unsafe cuts are therefore required . </S>
+</P>
+<P>
+<S ID='S-95' AZ='OWN'> LHIP provides a number of ways of applying a grammar to input . </S>
+<S ID='S-96' AZ='OWN'> The simplest allows one to enumerate the possible analyses of the input with the grammar . </S>
+<S ID='S-97' AZ='OWN'> The order in which the results are produced will reflect the lexical ordering of the rules as they are converted by LHIP . </S>
+<S ID='S-98' AZ='OWN'> With the threshold level set to 0 , all analyses possible with the grammar by deletion of input terminals can be generated . </S>
+<S ID='S-99' AZ='OWN'> Thus , supposing a suitable grammar , for the sentence John saw Mary and Mark saw them there would be analyses corresponding to the sentence itself , as well as John saw Mary , John saw Mark , John saw them , Mary saw them , Mary and Mark saw them , etc . </S>
+</P>
+<P>
+<S ID='S-100' AZ='OWN'> By setting the threshold to 1 , only those partial analyses that have no unaccounted for terminals within their spans can succeed . </S>
+<S ID='S-101' AZ='OWN'> Hence , Mark saw them would receive a valid analysis , as would Mary and Mark saw them , provided that the grammar contains a rule for conjoined NPs ; John saw them , on the other hand , would not . </S>
+<S ID='S-102' AZ='OWN'> As this example illustrates , a partial analysis of this kind may not in fact correspond to a true sub-parse of the input ( since Mary and Mark was not a conjoined subject in the original ) . </S>
+<S ID='S-103' AZ='OWN'> Some care must therefore be taken in interpreting results . </S>
+</P>
+<P>
+<S ID='S-104' AZ='OWN'> A number of built-in predicates are provided which allow the user to constrain the behaviour of the parser in various ways , based on the notions of coverage , span and threshold : </S>
+</P>
+<P>
+<S ID='S-105' AZ='OWN'> lhip_phrase(+C,+S)</S>
+<S ID='S-106' AZ='OWN'> Succeeds if the input S can be parsed as an instance of category C . </S>
+</P>
+<P>
+<S ID='S-107' AZ='OWN'> lhip_cv_phrase(+C,+S)</S>
+<S ID='S-108' AZ='OWN'> As for lhip_phrase / 2 , except that all of the input must be covered . </S>
+</P>
+<P>
+<S ID='S-109' AZ='OWN'> lhip_phrase(+C,+S,-B,-E,-Cov)</S>
+<S ID='S-110' AZ='OWN'> As for lhip_phrase / 2 , except that B binds to the beginning of the island described by this application of C , E binds to the position immediately following the end , and Cov binds to the number of terminals covered . </S>
+</P>
+<P>
+<S ID='S-111' AZ='OWN'> lhip_mc_phrases(+C,+S,-Cov,-Ps)</S>
+<S ID='S-112' AZ='OWN'> The maximal coverage of S by C is Cov. Ps is the set of parses of S by C with coverage Cov . </S>
+</P>
+<P>
+<S ID='S-113' AZ='OWN'> lhip_minmax_phrases(+C,+S,-Cov,-Ps)</S>
+<S ID='S-114' AZ='OWN'> As for lhip_mc_phrases / 4 , except that Ps is additionally the set of parses with the least span . </S>
+</P>
+<P>
+<S ID='S-115' AZ='OWN'> lhip_seq_phrase(+C,+S,-Seq)</S>
+<S ID='S-116' AZ='OWN'> Succeeds if Seq is a sequence of one or more parses of S by C such that they are non-overlapping and each consumes input that precedes that consumed by the next . </S>
+</P>
+<P>
+<S ID='S-117' AZ='OWN'> lhip_maxT_phrases(+C,+S,-MaxT)</S>
+<S ID='S-118' AZ='OWN'> MaxT is the set of parses of S by C that have the highest threshold value . </S>
+<S ID='S-119' AZ='OWN'> On backtracking it returns the set with the next highest threshold value . </S>
+</P>
+<P>
+<S ID='S-120' AZ='OWN'> In addition , other predicates can be used to search the chart for constituents that have been identified but have not been attached to the parse tree . </S>
+<S ID='S-121' AZ='OWN'> These include : </S>
+</P>
+<P>
+<S ID='S-122' AZ='OWN'>  lhip_success </S>
+<S ID='S-123' AZ='OWN'> Lists successful rules , indicating island position and coverage . </S>
+</P>
+<P>
+<S ID='S-124' AZ='OWN'>  lhip_ms_success </S>
+<S ID='S-125' AZ='OWN'> As for lhip_success , but lists only the most specific successful rules ( i.e. those which have themselves succeeded but whose results have not been used elsewhere ) . </S>
+</P>
+<P>
+<S ID='S-126' AZ='OWN'>  lhip_ms_success(N ) </S>
+<S ID='S-127' AZ='OWN'> As for lhip_ms_success , but lists only successful instances of rule N . </S>
+</P>
+<P>
+<S ID='S-128' AZ='OWN'> Even if a sentence receives no complete analysis , it is likely to contain some parsable substrings ; results from these are recorded together with their position within the input . </S>
+<S ID='S-129' AZ='OWN'> By using these predicates , partial but possibly useful information can be extracted from a sentence despite a global failure to parse it ( see section <CREF/> ) . </S>
+</P>
+<P>
+<S ID='S-130' AZ='OWN'> The conversion of the grammar into Prolog code means that the user of the system can easily develop analysis tools that apply different constraints , using the tools provided as building blocks . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-2'> Using Lhip </HEADER>
+<P>
+<S ID='S-131' AZ='OWN'> As previously mentioned , LHIP facilitates a cyclic approach to grammar development . </S>
+<S ID='S-132' AZ='OWN'> Suppose one is writing an English grammar for the Map Task Corpus , and that the following is the first attempt at a rule for noun phrases ( with appropriate rules for determiners and nouns ) : </S>
+<IMAGE ID='I-5'/>
+</P>
+<P>
+<S ID='S-133' AZ='OWN'> While this rule will adequately analyse simple NPs such as your map , or a missionary camp , on a NP such as the bottom right-hand corner it will give analyses for the bottom , the right-hand and the corner . </S>
+<S ID='S-134' AZ='OWN'> Worse still , in a long sentence it will join determiners from the start of the sentence to nouns that occur in the latter half of the sentence . </S>
+<S ID='S-135' AZ='OWN'> The number of superfluous analyses can be reduced by imposing a local threshold level , of say 0.5 . </S>
+<S ID='S-136' AZ='OWN'> By looking at the various analyses of sentences in the corpus , one can see that this rule gives the skeleton for noun phrases , but from the fraction of coverage of these parses one can also see that it leaves out an important feature , adjectives , which are optionally found in noun phrases . </S>
+<IMAGE ID='I-6'/>
+</P>
+<P>
+<S ID='S-137' AZ='OWN'> With this rule , one can now handle such phrases as the left-hand bottom corner , and a banana tree . </S>
+<S ID='S-138' AZ='OWN'> Suppose further that this rule is now applied to the corpus , and then the rule is applied again but with a local threshold level of 1 . </S>
+<S ID='S-139' AZ='OWN'> By looking at items parsed in the first case but not in the second , one can identify features of noun phrases found in the corpus that are not covered by the current rules . </S>
+<S ID='S-140' AZ='OWN'> This might include , for instance , phrases of the form a slightly dipping line . </S>
+<S ID='S-141' AZ='OWN'> One can then go back to the grammar and see that the noun phrase rule needs to be changed to account for certain types of modifier including adjectives and adverbial modifiers . </S>
+</P>
+<P>
+<S ID='S-142' AZ='OWN'> It is also possible to set local thresholds dynamically , by making use of the ` { prolog code } ' facility : </S>
+<IMAGE ID='I-7'/>
+</P>
+<P>
+<S ID='S-143' AZ='OWN'> In this way , the strictness of a rule may be varied according to information originating either within the particular run-time invocation of the rule , or elsewhere in the current parse . </S>
+<S ID='S-144' AZ='OWN'> For example , it would be possible , by providing a suitable definition for set_dynamic_threshold / 2 , to set T to 0.5 when more than one optional adjective has been found , and 0.9 otherwise . </S>
+</P>
+<P>
+<S ID='S-145' AZ='OWN'> Once a given rule or set of rules is stable , and the writer is satisfied with the performance of that part of the grammar , a local threshold value of 1 may be assigned so that superfluous parses will not interfere with work elsewhere . </S>
+</P>
+<P>
+<S ID='S-146' AZ='OWN'> The use of the chart to store known results and failures allows the user to develop hybrid parsing techniques , rather than relying on the default depth-first top-down strategy given by analysing with respect to the top-most category . </S>
+<S ID='S-147' AZ='OWN'> For instance , it is possible to analyse the input in ` layers ' of linguistic categories , perhaps starting by analysing noun-phrases , then prepositions , verbs , relative clauses , clauses , conjuncts , and finally complete sentences . </S>
+<S ID='S-148' AZ='OWN'> Such a strategy allows the user to perform processing of results between these layers , which can be useful in trying to find the ` best ' analyses first . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-3'> Partial Results </HEADER>
+<P>
+<S ID='S-149' AZ='OWN'> The discussion of built-in predicates mentioned facilities for recovering partial parses . </S>
+<S ID='S-150' AZ='TXT'> Here we illustrate this process , and indicate what further use might be made of the information thus obtained . </S>
+</P>
+<P>
+<S ID='S-151' AZ='OWN'> In the following example , the chart is inspected to reveal what constituents have been built during a failed parse of the truncated sentence </S>
+<EXAMPLE ID='E-1'>
+<EX-S> Have you the tree by the brook that ...</EX-S>
+</EXAMPLE>
+<IMAGE ID='I-8'/>
+</P>
+<P>
+<S ID='S-152' AZ='OWN'> Each rule is listed with its identifier ( ` -1 ' for lexical rules ) , the island which it has analysed with beginning and ending positions , its coverage , and the representation that was constructed for it . </S>
+<S ID='S-153' AZ='OWN'> From this output it can be seen that the grammar manages reasonably well with noun phrases , but is unable to deal with questions ( the initial auxiliary have remains unattached ) . </S>
+</P>
+<P>
+<S ID='S-154' AZ='OWN'> Users will often be more interested in the successful application of rules which represent maximal constituents . </S>
+<S ID='S-155' AZ='OWN'> These are displayed by lhip_ms_success : </S>
+<IMAGE ID='I-9'/>
+</P>
+<P>
+<S ID='S-156' AZ='OWN'> Here , two unattached lexical items have been identified , together with two instances of rule 4 , which combines a NP with a postmodifying PP . </S>
+<S ID='S-157' AZ='OWN'> The first of these has analysed the island you the tree by the brook , ignoring the tree , while the second has analysed the tree by the brook , consuming all terminals . </S>
+<S ID='S-158' AZ='OWN'> There is a second analysis for the tree by the brook , due to rule 5 , which has been obtained by ignoring the sequence tree by the . </S>
+<S ID='S-159' AZ='OWN'> From this information , a user might wish to rank the three results according to their respective span : coverage ratios , probably preferring the second . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-4'> Discussion </HEADER>
+<P>
+<S ID='S-160' AZ='BKG'> The ability to deal with large amounts of possibly ill-formed text is one of the principal objectives of current NLP research . </S>
+<S ID='S-161' AZ='OTH'> Recent proposals include the use of probabilistic methods <REF TYPE='P'>Briscoe and Carroll 1993</REF> and large robust deterministic systems like <REFAUTHOR>Hindle</REFAUTHOR> 's Fidditch <REF TYPE='P'>Hindle 1989</REF> . </S>
+<S ID='S-162' AZ='CTR'> Experience so far suggests that systems like LHIP may in the right circumstances provide an alternative to these approaches . </S>
+<S ID='S-163' AZ='OWN'> It combines the advantages of Prolog-interpreted DCGs ( ease of modification , parser output suitable for direct use by other programs , etc. ) with the ability to relax the adjacency constraints of that formalism in a flexible and dynamic manner . </S>
+</P>
+<P>
+<S ID='S-164' AZ='OWN'> LHIP is based on the assumption that partial results can be useful ( often much more useful than no result at all ) , and that an approximation to complete coverage is more useful when it comes with indications of how approximate it is . </S>
+<S ID='S-165' AZ='OWN'> This latter point is especially important in cases where a grammar must be usable to some degree at a relatively early stage in its development , as is , for example , the case with the development of a grammar for the Map Task Corpus . </S>
+<S ID='S-166' AZ='OWN'> In the near future , we expect to apply LHIP to a different problem , that of defining a restricted language for specialized parsing . </S>
+</P>
+<P>
+<S ID='S-167' AZ='OWN'> The rationale for the distinction between sanctioned and unsanctioned non-coverage of input is twofold . </S>
+<S ID='S-168' AZ='OWN'> First , the ` ignore ' facility permits different categories of unidentified input to be distinguished . </S>
+<S ID='S-169' AZ='OWN'> For example , it may be interesting to separate material which occurs at the start of the input from that appearing elsewhere . </S>
+<S ID='S-170' AZ='OWN'> Ignore rules have a similar functionality to that of normal rules . </S>
+<S ID='S-171' AZ='OWN'> In particular , they can have arguments , and may therefore be used to assign a structure to unidentified input so that it may be flagged as such within an overall parse . </S>
+<S ID='S-172' AZ='OWN'> Secondly , by setting a threshold value of 1 , LHIP can be made to perform like a standardly interpreted Prolog DCG , though somewhat more efficiently due to the use of the chart . </S>
+</P>
+<P>
+<S ID='S-173' AZ='OWN'> A number of possible extensions to the system can be envisaged . </S>
+<S ID='S-174' AZ='OWN'> Whereas at present each rule is compiled individually , it would be preferable to enhance preprocessing in order to compute certain kinds of global information from the grammar . </S>
+<S ID='S-175' AZ='OWN'> One improvement would be to determine possible linking of ` root-to-head ' sequences of rules , and index these to terminal items for use as an oracle during analysis . </S>
+<S ID='S-176' AZ='OWN'> A second would be to identify those items whose early analysis would most strongly reduce the search space for subsequent processing and scan the input to begin parsing at those points rather than proceeding strictly from left to right . </S>
+<S ID='S-177' AZ='OWN'> This further suggests the possibility of a parallel approach to parsing . </S>
+<S ID='S-178' AZ='OWN'> We expect that these measures would increase the efficiency of LHIP . </S>
+</P>
+<P>
+<S ID='S-179' AZ='OWN'> Currently , also , results are returned in an order determined by the order of rules in the grammar . </S>
+<S ID='S-180' AZ='OWN'> It would be preferable to arrange matters in a more cooperative fashion so that the best ( those with the highest coverage to span ratio ) are displayed first . </S>
+<S ID='S-181' AZ='OWN'> Support for bidirectional parsing <REF TYPE='P'>Satta and Stock to appear</REF> is another candidate for inclusion in a later version . </S>
+<S ID='S-182' AZ='OWN'> These appear to be longer-term research goals , however . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-5'> Acknowledgments : </HEADER>
+<P>
+<S ID='S-183' AZ='OWN'> The authors would like to thank Louis des Tombe and Dominique Estival for comments on earlier versions of this paper . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+<SURNAME>Anderson</SURNAME>, A.H., M. <SURNAME>Bader</SURNAME>, E.G. <SURNAME>Bard</SURNAME>, E. <SURNAME>Boyle</SURNAME>, G. <SURNAME>Doherty</SURNAME>, S. <SURNAME>Garrod</SURNAME>, S.
+<SURNAME>Isard</SURNAME>, J. <SURNAME>Kowtko</SURNAME>, J. <SURNAME>McAllister</SURNAME>, J. <SURNAME>Miller</SURNAME>, C. <SURNAME>Sotillo</SURNAME>, H. <SURNAME>Thompson</SURNAME> and R.
+<SURNAME>Weinert</SURNAME> (<DATE>1991</DATE>) ``The HCRC Map Task Corpus'', Language and Speech
+34(4), 351-366.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Briscoe</SURNAME>, T. and J. <SURNAME>Carroll</SURNAME> (<DATE>1993</DATE>) ``Generalized Probabilistic LR Parsing of
+Natural Language (Corpora) with Unification-Based Grammars'', 
+Computational Linguistics 19(1), 25-59.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Hindle</SURNAME>, D. (<DATE>1989</DATE>) ``Acquiring Disambiguation Rules from Text'', 
+Proceedings of the 27th Annual Meeting of the Association for Computational
+Linguistics, 118-125.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Kay</SURNAME>, M. (<DATE>1989</DATE>) ``Head-Driven Parsing'', Proceedings of the Workshop on
+Parsing Technologies, 52-62.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Pereira</SURNAME>, F.C.N. and S.M. <SURNAME>Shieber</SURNAME> (<DATE>1987</DATE>) Prolog and Natural Language
+Analysis, CSLI Lecture Notes No.10, Stanford University.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Satta</SURNAME>, G. and O. <SURNAME>Stock</SURNAME> (<DATE>to appear</DATE>) ``Bidirectional Context-Free Grammar
+Parsing for Natural Language Processing'', Artificial Intelligence.
+</REFERENCE>
+<REFERENCE>
+van <SURNAME>Noord</SURNAME>, G. (<DATE>1991</DATE>) ``Head Corner Parsing for Discontinuous Constituency'',
+Proceedings of the 29th Annual Meeting of the Association for
+Computational Linguistics, 114-121.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

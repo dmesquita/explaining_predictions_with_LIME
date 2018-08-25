@@ -1,0 +1,371 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9405013</FILENO>
+<APPEARED><CONFERENCE>COLING</CONFERENCE><YEAR>1994</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.Dc </CLASSIFICATION>
+</METADATA>
+<TITLE> Collaboration on Reference to Objects that are not Mutually Known </TITLE>
+<AUTHORLIST>
+<AUTHOR>Philip G. Edmonds</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' DOCUMENTC='S-0' AZ='BKG'> In conversation , a person sometimes has to refer to an object that is not previously known to the other participant . </A-S>
+<A-S ID='A-1' DOCUMENTC='S-129' AZ='AIM'> We present a plan-based model of how agents collaborate on reference of this sort . </A-S>
+<A-S ID='A-2' AZ='OWN'> In making a reference , an agent uses the most salient attributes of the referent . </A-S>
+<A-S ID='A-3' DOCUMENTC='S-131' AZ='OWN'> In understanding a reference , an agent determines his confidence in its adequacy as a means of identifying the referent . </A-S>
+<A-S ID='A-4' DOCUMENTC='S-132' AZ='OWN'> To collaborate , the agents use judgment , suggestion , and elaboration moves to refashion an inadequate referring expression . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' ABSTRACTC='A-0' AZ='BKG'> In conversation , a person sometimes has to refer to an object that is not previously known to the other participant . </S>
+<S ID='S-1' AZ='BKG'> One particular situation in which this arises is in giving directions . </S>
+<S ID='S-2' AZ='BKG'> For example : </S>
+</P>
+<EXAMPLE ID='E-0'>
+<EX-S> A : Go straight ahead until you get to a funny-looking building . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-3' AZ='BKG'> The hearer has to understand the reference well enough that when he later reaches the building , he will recognize it as the intended referent . </S>
+</P>
+<P>
+<S ID='S-4' AZ='BKG'> A reference of this sort is often achieved through a collaboration between the conversants . </S>
+<S ID='S-5' AZ='BKG'> In such cases , the speaker has the goal of having the hearer know how to identify an object . </S>
+<S ID='S-6' AZ='BKG'> The speaker attempts to achieve this goal by building a description of the object that she believes will give the hearer the ability to identify it when it is possible to do so . </S>
+<S ID='S-7' AZ='BKG'> The hearer needs to be confident that the description will be adequate as a means of identifying the referent , but because of the inevitable differences in beliefs about the world , he might not be . </S>
+<S ID='S-8' AZ='BKG'> When the hearer is not confident , the speaker and hearer collaborate to make a new referring expression that the hearer believes is adequate . </S>
+<S ID='S-9' AZ='BKG'> This can be seen in the following portion of a telephone conversation recorded by <REF TYPE='A'>Psathas 1991</REF> , p. 196 . </S>
+</P>
+<EXAMPLE ID='E-1'>
+<EX-S> A : Ya just stay on 2A , until ya get to Lowell Street . </EX-S>
+<EX-S> B : Is it marked ? </EX-S>
+<EX-S> A : Yeah , I think there 's a street sign there , it 's an intersection with lights . </EX-S>
+<EX-S> B : Okay . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-10' AZ='BKG'> In this dialogue , speaker B is not confident that he will be able to identify the intersection at Lowell Street , and so suggests that the intersection might be marked . </S>
+<S ID='S-11' AZ='BKG'> Speaker A replies with an elaboration of the initial expression , and B finds that he is now confident , and so accepts the reference . </S>
+</P>
+<P>
+<S ID='S-12' AZ='CTR'> This type of reference is different from the type that has been studied traditionally by researchers who have usually assumed that the agents have mutual knowledge of the referent <REF TYPE='P'>Appelt 1985a</REF> , <REF TYPE='P'>Appelt and Kronfeld 1987</REF> , <REF TYPE='P'>Clark and Wilkes-Gibbs 1986</REF> , <REF TYPE='P'>Heeman and Hirst 1992</REF> , <REF TYPE='P'>Searle 1969</REF> , are copresent with the referent <REF TYPE='P'>Heeman and Hirst 1992</REF> , <REF TYPE='P'>Cohen 1981</REF> , or have the referent in their focus of attention <REF TYPE='P'>Reiter and Dale 1992</REF> . </S>
+<S ID='S-13' AZ='OTH'> In these theories , the speaker has the intention that the hearer either know the referent or identify it immediately . </S>
+</P>
+<P>
+<S ID='S-14' AZ='OWN'> Although the type of reference that we wish to model does not rely on these assumptions , we can nevertheless draw from these theories . </S>
+<S ID='S-15' AZ='BAS'> Thus , we base our model on the work of <REF TYPE='A'>Clark and Wilkes-Gibbs 1986</REF> , and <REF TYPE='A'>Heeman and Hirst 1992</REF> who both modeled ( the first psychologically , and the second computationally ) how people collaborate on reference to objects for which they have mutual knowledge . </S>
+<S ID='S-16' AZ='TXT'> We will briefly discuss these models , before we describe our own . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Collaboration on reference </HEADER>
+<P>
+<S ID='S-17' AZ='OTH'> In their fundamental experiment , <REF TYPE='A'>Clark and Wilkes-Gibbs 1986</REF> demonstrated that conversants use a set of inherently collaborative procedures to establish the mutual belief that the hearer has understood a reference . </S>
+<S ID='S-18' AZ='OTH'> In the experiment , two subjects were each given a set of hard-to-describe tangram figures that were kept hidden from the other . </S>
+<S ID='S-19' AZ='OTH'> One subject was required to get the other subject to rearrange his set to match the ordering of her set , and to do so through conversation alone . </S>
+<S ID='S-20' AZ='OTH'> Thus , the two subjects were obliged to collaborate on constructing descriptions of the figures that would allow them to be unambiguously identified ; for example , the one that looks like an angel with a stick . </S>
+</P>
+<P>
+<S ID='S-21' AZ='OTH'> <REFAUTHOR>Clark and Wilkes-Gibbs</REFAUTHOR> developed the following process model to explain their findings . </S>
+<S ID='S-22' AZ='OTH'> To initiate the process , speaker A presents an initial version of a referring expression on which speaker B passes judgment . </S>
+<S ID='S-23' AZ='OTH'> B can either accept it , reject it , or postpone his decision until later . </S>
+<S ID='S-24' AZ='OTH'> If B rejects or postpones , then the expression must be refashioned by either A or B. Refashionings are accomplished in three main ways : repairing the expression by correcting speech errors , expanding the expression by adding more qualifications , or replacing part or all of the expression with new qualifications . </S>
+<S ID='S-25' AZ='OTH'> Each judgment / refashioning pair operates on the current referring expression , replacing it with a new one . </S>
+<S ID='S-26' AZ='OTH'> This process continues until the expression , kept in the participants ' common ground , is mutually accepted . </S>
+</P>
+<P>
+<S ID='S-27' AZ='OTH'> This excerpt from <REFAUTHOR>Clark and Wilkes-Gibbs</REFAUTHOR> 's data illustrates rejection ( line 2 ) , replacement ( line 2 ) , and acceptance ( lines 3 and 4 ) : </S>
+</P>
+<EXAMPLE ID='E-2'>
+<EX-S> A : Okay , and the next one is the person that looks like they 're carrying something and it 's sticking out to the left . </EX-S>
+<EX-S> It looks like a hat that 's upside down . </EX-S>
+<EX-S> B : The guy that 's pointing to the left again ? </EX-S>
+<EX-S> Yeah , pointing to the left , that 's it ! </EX-S>
+<EX-S> [ laughs ] </EX-S>
+<EX-S> B : Okay . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-28' AZ='OTH'> <REF TYPE='A'>Heeman and Hirst 1992</REF> rendered <REFAUTHOR>Clark and Wilkes-Gibbs</REFAUTHOR> 's model computationally by casting it into the planning paradigm . </S>
+<S ID='S-29' AZ='OTH'> Their model covers both the initiator of a referring action , and the recipient who tries to understand the reference . </S>
+<S ID='S-30' AZ='OTH'> In this model , the initiator has the goal of having the recipient identify the referent , and so constructs a referring plan given a set of beliefs about what the recipient believes . </S>
+<S ID='S-31' AZ='OTH'> The result of the initiator 's plan is a set of surface speech actions , and hearing only these actions , the recipient tries to infer a plan in order to understand the reference . </S>
+<S ID='S-32' AZ='OTH'> Thus , referring expressions are represented as plan derivations , and an unsuccessful referring expression is an invalid plan in whose repair the agents collaborate . </S>
+</P>
+<P>
+<S ID='S-33' AZ='OTH'> An agent can infer a plan even if it is invalid in that agent 's view <REF TYPE='P'>Pollack 1990</REF> . </S>
+<S ID='S-34' AZ='OTH'> The evaluation process attempts to find an instantiation of the variables such that all of the constraints are satisfied and the mental actions executable with respect to the hearer 's beliefs about the speaker 's beliefs . </S>
+</P>
+<P>
+<S ID='S-35' AZ='OTH'> If the recipient finds the initial referring expression plan invalid , then the agents will collaborate in its repair . </S>
+<S ID='S-36' AZ='OTH'> <REFAUTHOR>Heeman and Hirst</REFAUTHOR> used plan repair techniques to refashion an expression , and used discourse plans , or meta-plans , to communicate the changes to it . </S>
+<S ID='S-37' AZ='OTH'> Thus , a collaborative dialogue is modeled in terms of the evolution of the referring plan . </S>
+</P>
+<P>
+<S ID='S-38' AZ='OTH'> First , an agent must communicate that she has not understood a plan . </S>
+<S ID='S-39' AZ='OTH'> Depending on how the referring plan constrains the choice of referent , she constructs an instance of either reject-plan or postpone-plan , whose resulting surface speech actions are s-reject and s-postpone respectively . </S>
+<S ID='S-40' AZ='OTH'> Next , one agent or the other must refashion the referring expression plan in the context of the judgment by either replacing some of its actions ( by using replace-plan ) or by adding new actions to it ( by using expand-plan ) . </S>
+<S ID='S-41' AZ='OTH'> The result of both plans is the surface speech action s-actions . </S>
+</P>
+<P>
+<S ID='S-42' AZ='OTH'> Because the model can play the role of both the initiator and the recipient , and because it can perform both plan construction and inference , two copies of the model can converse with one another , acting alternately as speaker and hearer . </S>
+<S ID='S-43' AZ='OTH'> Acting as hearer , one copy of the system performs plan inference on each set of surface speech actions that it observes , and updates the state of the collaboration . </S>
+<S ID='S-44' AZ='OTH'> It then switches roles to become the speaker , and looks for a goal to adopt , and constructs a plan that achieves it . </S>
+<S ID='S-45' AZ='OTH'> After responding with the surface actions of the plan , it updates the state of the collaboration , presupposing that the other copy will accept the plan . </S>
+<S ID='S-46' AZ='OTH'> The system repeats the process until it can find no more goals to adopt , at which time it switches back to being the hearer and waits for a response from the other copy . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-2'> Confidence and salience </HEADER>
+<P>
+<S ID='S-47' AZ='OTH'> A crucial assumption of <REFAUTHOR>Clark and Wilkes-Gibbs</REFAUTHOR> 's work -- and of <REFAUTHOR>Heeman and Hirst</REFAUTHOR> 's model -- is that the recipient of the initial referring expression already has some knowledge of the referent in question . </S>
+<S ID='S-48' AZ='OTH'> In <REFAUTHOR>Clark and Wilkes-Gibbs</REFAUTHOR> 's experiments , for example , it is one of the tangram figures . </S>
+<S ID='S-49' AZ='OTH'> In other words , the hearer can understand a referring expression if its content uniquely describes an object that he knows about . </S>
+<S ID='S-50' AZ='CTR'> Obviously , an agent cannot use this criterion to understand the reference to the building in Example <CREF/> -- he has never heard of the building before . </S>
+<S ID='S-51' AZ='OWN'> What criteria , then , does he base his understanding on ? </S>
+</P>
+<P>
+<S ID='S-52' AZ='OWN' TYPE='ITEM'> The basis of our model is that the hearer can accept a referring expression plan if </S>
+<S ID='S-53' TYPE='ITEM' AZ='OWN'> the plan contains a description that is useful for making an identification plan that the hearer can execute to identify the referent , and </S>
+<S ID='S-54' TYPE='ITEM' AZ='OWN'> the hearer is confident that the identification plan is adequate . </S>
+</P>
+<P>
+<S ID='S-55' AZ='OWN'> The first condition , originally described by <REF TYPE='A'>Appelt 1985b</REF> , is important because the success of the referring action depends on the hearer formulating a useful identification plan . </S>
+<S ID='S-56' AZ='OWN'> We take the referring expression plan itself to be the identification plan . </S>
+<S ID='S-57' AZ='OWN'> The mental actions in the plan will encode only useful descriptions . </S>
+<S ID='S-58' AZ='OWN'> For the second condition to hold , the hearer must believe that the identification plan is good enough to uniquely identify the referent when it becomes visible . </S>
+<S ID='S-59' AZ='OWN'> This involves giving enough information by using the most salient attributes of the referent . </S>
+</P>
+<P>
+<S ID='S-60' AZ='OWN'> In our model , each agent associates a numeric confidence value with each of the attributes in the referring expression , and by composing these , computes a level of confidence in the adequacy of the complete referring expression plan that can be interpreted as ranging from low confidence to high confidence . </S>
+<S ID='S-61' AZ='OWN'> The present composition function is simple addition , but one could envision more complex systems to compute confidence , such as an algebra of confidence or a non-numeric system . </S>
+<S ID='S-62' AZ='OWN'> If the overall confidence value exceeds some set value , the agent 's confidence threshold , then the agent believes the plan is adequate . </S>
+<S ID='S-63' AZ='OWN'> That is , if the agent is the initiator , she believes that the other will be able to understand the reference ; if the agent is the other , he believes that he has understood the reference . </S>
+</P>
+<P>
+<S ID='S-64' AZ='OWN'> Now , the confidence value of each attribute is equivalent to its salience within the context of the referring expression . </S>
+<S ID='S-65' AZ='OWN'> Salience , for our purposes in direction-giving , is primarily visual prominence , but can also involve identifiability , familiarity , and functional importance <REF  TYPE='P'>Devlin 1976</REF>, <REF  TYPE='P'>Lynch 1960</REF> . </S>
+<S ID='S-66' AZ='OTH'> One approach is to encode the salient properties in a static hierarchy as <REF TYPE='A'>Davis 1989</REF> , and <REF TYPE='A'>Reiter and Dale 1992</REF> have done . </S>
+<S ID='S-67' AZ='CTR'> But , ideally , salience should depend on the context surrounding the referent . </S>
+<S ID='S-68' AZ='CTR'> For example , the height of a tall building would normally be salient , but not if it were surrounded by other tall buildings . </S>
+<S ID='S-69' AZ='OWN'> This computation would be quite complex , so we have adopted a middle ground between the simple context-independent approaches , and a full-blown contextual analysis . </S>
+<S ID='S-70' AZ='OWN'> The middle ground involves taking the type of object into account when choosing attributes and landmarks that relate to it . </S>
+<S ID='S-71' AZ='OWN'> For example , height and architectural style can be very salient features for describing a building , but not for describing an intersection , for which having a sign or traffic lights is important . </S>
+<S ID='S-72' AZ='OWN'> This approach still allows us to encode salience in a hierarchy , but it is dependent on the referent . </S>
+</P>
+<P>
+<S ID='S-73' AZ='OWN'> Table <CREF/> shows an example of a simple salience hierarchy that an agent might have . </S>
+<S ID='S-74' AZ='OWN'> The hierarchy is actually a set of partial orderings of attributes , represented by lambda expressions , indexed by object type . </S>
+</P>
+<IMAGE ID='I-0'/>
+<P>
+<S ID='S-75' AZ='OWN'> In the table , the confidence value of using architectural style to describe a building is 4 . </S>
+<S ID='S-76' AZ='OWN'> The confidence value of a tall building is 3 , and so this attribute is less salient than architectural style . </S>
+<S ID='S-77' AZ='OWN'> The other rows ( for describing intersections ) follow similarly . </S>
+</P>
+<P>
+<S ID='S-78' AZ='OWN'> Each agent has his own beliefs about salience . </S>
+<S ID='S-79' AZ='OWN'> It is the difference in their beliefs that leads to the necessity for collaboration on reference . </S>
+<S ID='S-80' AZ='OWN'> Ideally , the initiator should construct referring expressions with the recipients ' ( believed ) beliefs about salience in mind , but we have chosen to avoid this complexity by making the simplifying assumption that the initiator is an expert ( and thus knows best what is salient ) . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-3'> Plans for referring </HEADER>
+<P>
+<S ID='S-81' AZ='OWN'> An agent uses his salience hierarchy for two related purposes : the first to determine what is salient in a particular situation , and the second to determine the adequacy of a description . </S>
+<S ID='S-82' AZ='OWN'> So , the hierarchy is accessed during both plan construction and plan inference . </S>
+</P>
+<P>
+<S ID='S-83' AZ='OWN'> In plan construction , the hierarchy is used for constructing initial referring expression plans , and for elaborating on inadequate plans by allowing an agent to choose the most salient properties of the referent first . </S>
+<S ID='S-84' AZ='OWN'> The agent constructs an initial referring expression plan in almost the same way as in <REFAUTHOR>Heeman and Hirst</REFAUTHOR> 's system . </S>
+<S ID='S-85' AZ='OWN'> Mental actions in the intermediate plans of a referring expression plan allow the speaker to choose the most salient attributes that have not yet been chosen , and constraints in the surface speech actions make sure the speaker believes that each attribute is true . </S>
+<S ID='S-86' AZ='OWN'> Other mental actions in the intermediate plans add up the confidence values of the attributes , and a final constraint makes sure that the sum exceeds the agent 's confidence threshold . </S>
+<S ID='S-87' AZ='OWN'> So , for a referring plan to be valid , it must describe a unique object , and it must be adequate with respect to the speaker 's beliefs . </S>
+<S ID='S-88' AZ='OWN'> This means that attributes beyond those required for a unique description could be necessary . </S>
+<S ID='S-89' AZ='OWN'> For example , to construct the reference to the building in Example <CREF/> , the speaker consulted her salience hierarchy ( in table <CREF/> ) and determined that architectural style is salient . </S>
+<S ID='S-90' AZ='OWN'> Hence , she described the building as funny-looking . </S>
+<S ID='S-91' AZ='OWN'> This single attribute was enough to exceed her confidence threshold . </S>
+</P>
+<P>
+<S ID='S-92' AZ='OWN'> During plan inference , the salience hierarchy is used when evaluating a recognized plan . </S>
+<S ID='S-93' AZ='OWN'> The mental actions in the intermediate plans determine the confidence values of each attribute ( from the hearer 's salience hierarchy ) , and add them up . </S>
+<S ID='S-94' AZ='OWN'> The final constraint in the plan makes sure that the hearer 's confidence threshold is exceeded . </S>
+<S ID='S-95' AZ='OWN'> Thus , judging the adequacy of a referring expression plan falls out of the regular plan evaluation process . </S>
+<S ID='S-96' AZ='OWN'> If the final constraint does not hold , then the invalidity is noted so that the plan can be operated on appropriately by the discourse plans . </S>
+</P>
+<P>
+<S ID='S-97' AZ='OWN'> For example , after recognizing the reference in Example <CREF/> , the hearer evaluates the plan . </S>
+<S ID='S-98' AZ='OWN'> Assuming he believes the salience information in table <CREF/> , he computes the confidence value of 4 . </S>
+<S ID='S-99' AZ='OWN'> If this value exceeds his confidence threshold , then he will accept the plan . </S>
+<S ID='S-100' AZ='OWN'> If not , he will believe that there is an error at the constraint that checks his confidence threshold . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-4'> Suggestion and elaboration </HEADER>
+<P>
+<S ID='S-101' AZ='OWN'> If the recipient is not confident in the adequacy of the plan , he uses an instance of postpone-plan to inform the initiator that he is not confident of its adequacy , thereby causing the initiator to raise her own confidence threshold . </S>
+<S ID='S-102' AZ='OWN'> Now , although he cannot refashion the expression himself , he does have the ability to help the initiator by suggesting a good way to expand it ; suggestion is a conversational move in which an agent suggests a new attribute that he deems would increase his confidence in the expression 's adequacy if the expression were expanded to include the attribute . </S>
+<S ID='S-103' AZ='OWN'> Continuing with the example , if the hearer were not confident about the adequacy of the funny-looking building , he might suggest that the initiator use height ( as well as architectural style ) , by asking Is it tall ? </S>
+<S ID='S-104' AZ='OWN'> From this suggestion the initiator might expand her expression to the tall funny-looking building . </S>
+<S ID='S-105' AZ='OWN'> So , in our sense , a suggestion is an illocutionary act of questioning ; along with actually suggesting a way to expand a plan , the agent is asking whether or not the referent has the suggested attribute . </S>
+</P>
+<P>
+<S ID='S-106' AZ='OWN'> To decide what suggestion to make , the agent uses an instance of suggest-expand-plan , which has a mental action in its decomposition that chooses the attribute that he believes is the most salient that has not been used already . </S>
+<S ID='S-107' AZ='OWN'> The result of the plan is the surface speech action , s-suggest , that communicates the suggestion . </S>
+</P>
+<P>
+<S ID='S-108' AZ='OWN'> However , only the initiator of the referring expression can actually elaborate a referring expression , because only she has the knowledge to do so . </S>
+<S ID='S-109' AZ='OWN'> Depending on whether the hearer of the expression makes a suggestion or not , the initiator has two options when elaborating a plan . </S>
+<S ID='S-110' AZ='OWN'> If no suggestion was made , then she can expand the plan according to her own beliefs about the referent 's attributes and their salience . </S>
+<S ID='S-111' AZ='OWN'> On the other hand , if a suggestion was made , she could instead attempt to expand the plan by affirming or denying the attribute suggested . </S>
+<S ID='S-112' AZ='OWN'> If possible , she should use the suggestion to elaborate the plan , thus avoiding unwanted conversational implicature , but its use may not be enough to make the plan adequate . </S>
+</P>
+<P>
+<S ID='S-113' AZ='OWN'> The decomposition of expand-plan calls the plan constructor with the goal of constructing a modifiers schema and with the suggested attribute as input -- in a sense , continuing the construction of the initial referring plan . </S>
+<S ID='S-114' AZ='OWN'> The plan constructor attempts to find a plan with the surface speech actions for the suggested attribute in its yield , but this might not be possible . </S>
+<S ID='S-115' AZ='OWN'> In any case , the speaker constructs an expansion that will make the plan adequate according to her beliefs . </S>
+</P>
+<P>
+<S ID='S-116' AZ='OWN'> The response to a suggestion depends , obviously , on whether or not the suggestion was used to expand the plan . </S>
+<S ID='S-117' AZ='OWN' TYPE='ITEM'> The speaker can </S>
+<S ID='S-118' TYPE='ITEM' AZ='OWN'> affirm that the plan was expanded with the suggestion by using the s-affirm speech act ; </S>
+<S ID='S-119' TYPE='ITEM' AZ='OWN'> affirm that the suggestion was used , along with additional attributes that weren't suggested , by using s-affirm and s-actions ; or </S>
+<S ID='S-120' TYPE='ITEM' AZ='OWN'> deny the suggestion with s-deny , and inform the other by s-actions as to how the plan was expanded . </S>
+</P>
+<P>
+<S ID='S-121' AZ='OWN'> By repeatedly using the postponement , elaboration , and suggestion moves , the two agents collaborate through discourse on refashioning the referring expression until they mutually believe that the recipient is confident that it is adequate . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-5'> Example </HEADER>
+<P>
+<S ID='S-122' AZ='OWN'> We have implemented the model in Prolog . </S>
+<S ID='S-123' AZ='OWN'> Table <CREF/> shows the input / output of two copies of the system engaging in a simplified version of Example <CREF/> . </S>
+<S ID='S-124' AZ='OWN'> Note that the system generates and understands utterances in the form of descriptions of the surface speech actions , not surface natural language forms . </S>
+<S ID='S-125' AZ='OWN'> The existence of a parser and a generator that can map between the two forms is assumed . </S>
+<S ID='S-126' AZ='BAS'> Complete details of this example and of the model are given by <REF SELF="YES" TYPE='P'>Edmonds 1993</REF> . </S>
+</P>
+<IMAGE ID='I-1'/>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-6'> Conclusion </HEADER>
+<P>
+<S ID='S-127' AZ='BKG'> When an agent refers to a particular object that is not previously known to another agent , she has the intention that the agent be able to identify the object ( when it is possible to do so ) by means of the referring expression . </S>
+<S ID='S-128' AZ='BKG'> Because of the inevitable differences in their beliefs about the world -- specifically about what is salient -- the agents may have to collaborate to make the expression adequate . </S>
+</P>
+<P>
+<S ID='S-129' ABSTRACTC='A-1' AZ='AIM'> We have implemented a computational plan-based model that accounts for the collaborative nature of reference in the domain of interactive direction-giving . </S>
+<S ID='S-130' AZ='OWN'> An agent constructs a referring expression plan by using the referent 's most salient features . </S>
+<S ID='S-131' ABSTRACTC='A-3' AZ='OWN'> An agent understands a reference once he is confident in the adequacy of its ( inferred ) plan as a means of identifying the referent . </S>
+<S ID='S-132' ABSTRACTC='A-4' AZ='OWN'> To collaborate , the agents use judgment , suggestion , and elaboration moves to refashion the referring expression until they mutually believe that the recipient has understood . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-7'> Acknowledgments </HEADER>
+<P>
+<S ID='S-133' AZ='OWN'> Our work is supported by the University of Toronto and by the Natural Sciences and Engineering Research Council of Canada . </S>
+<S ID='S-134' AZ='OWN'> We are grateful to Peter Heeman , Graeme Hirst , and Jeffrey Siskind for many helpful discussions . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+Douglas E. <SURNAME>Appelt</SURNAME>
+(<DATE>1985a</DATE>).
+Planning English referring expressions.
+Artificial Intelligence, 26(1):1-33.
+</REFERENCE>
+<REFERENCE>
+Douglas E. <SURNAME>Appelt</SURNAME>
+(<DATE>1985b</DATE>).
+Some pragmatic issues in the planning of definite and indefinite noun
+  phrases.
+In Proceedings of the 23rd Annual Meeting of the Association for
+  Computational Linguistics, pages 198-203.
+</REFERENCE>
+<REFERENCE>
+Douglas E. <SURNAME>Appelt</SURNAME> and Amichai <SURNAME>Kronfeld</SURNAME>
+(<DATE>1987</DATE>).
+A computational model of referring.
+In Proceedings of the Tenth International Joint Conference on
+  Artificial Intelligence (IJCAI-87), pages 640-647.
+</REFERENCE>
+<REFERENCE>
+Herbert H. <SURNAME>Clark</SURNAME> and Deanna <SURNAME>Wilkes-Gibbs</SURNAME>
+(<DATE>1986</DATE>).
+Referring as a collaborative process.
+Cognition, 22:1-39.
+Reprinted in Cohen, P. R., Morgan, J., and Pollack, M. E.,
+editors. (<DATE>1990</DATE>). Intentions in Communication. MIT Press. pages 463-493.
+</REFERENCE>
+<REFERENCE>
+Philip R. <SURNAME>Cohen</SURNAME>
+(<DATE>1981</DATE>).
+The need for referent identification as a planned action.
+In Proceedings of the Seventh International Joint Conference on
+  Artificial Intelligence (IJCAI-81), pages 31-36.
+</REFERENCE>
+<REFERENCE>
+James <SURNAME>Raymond</SURNAME> Davis
+(<DATE>1989</DATE>).
+Back Seat Driver: Voice Assisted Automobile Navigation.
+Ph.D. thesis, Massachusetts Institute of Technology.
+</REFERENCE>
+<REFERENCE>
+Ann S. <SURNAME>Devlin</SURNAME>
+(<DATE>1976</DATE>).
+The ``small town'' cognitive map: Adjusting to a new environment.
+In G.T. Moore and R.G. Golledge, editors, Environmental Knowing:
+  Theories, Research and Methods. Dowden, Hutchinson and Ross.
+</REFERENCE>
+<REFERENCE>
+Philip G. <SURNAME>Edmonds</SURNAME>
+(<DATE>1993</DATE>).
+A computational model of collaboration on reference in
+  direction-giving dialogues.
+M.Sc. thesis, published as technical report CSRI-289,
+Department of Computer Science, University of Toronto.
+</REFERENCE>
+<REFERENCE>
+Peter A. <SURNAME>Heeman</SURNAME> and Graeme <SURNAME>Hirst</SURNAME>
+(<DATE>1992</DATE>).
+Collaborating on referring expressions.
+Technical Report TR 435, Computer Science Dept., Univ. of Rochester,
+  Rochester, New York.
+</REFERENCE>
+<REFERENCE>
+Kevin <SURNAME>Lynch</SURNAME>
+(<DATE>1960</DATE>).
+The Image of the City.
+MIT Press.
+</REFERENCE>
+<REFERENCE>
+Martha <SURNAME>Pollack</SURNAME>
+(<DATE>1990</DATE>).
+Plans as complex mental attitudes.
+In P. R. Cohen, J. Morgan, and M. E. Pollack, editors, 
+  Intentions in Communication, pages 77-103. MIT Press.
+</REFERENCE>
+<REFERENCE>
+George <SURNAME>Psathas</SURNAME>
+(<DATE>1991</DATE>).
+The structure of direction-giving in interaction.
+In Deirdre Boden and Don H. Zimmerman, editors, Talk and Social
+  Structure, pages 195-216. Polity Press.
+</REFERENCE>
+<REFERENCE>
+Ehud <SURNAME>Reiter</SURNAME> and Robert <SURNAME>Dale</SURNAME>
+(<DATE>1992</DATE>).
+A fast algorithm for the generation of referring expressions.
+In Proceedings of the 14th International Conference on
+  Computational Linguistics (COLING-92), pages 232-238.
+</REFERENCE>
+<REFERENCE>
+John R. <SURNAME>Searle</SURNAME>
+(<DATE>1969</DATE>).
+Speech Acts: An Essay in the Philosophy of Language.
+Cambridge University Press.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

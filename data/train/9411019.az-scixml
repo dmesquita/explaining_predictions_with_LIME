@@ -1,0 +1,306 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9411019</FILENO>
+<REFLABEL>Ramsay 1994b</REFLABEL>
+<APPEARED><CONFERENCE>COLING</CONFERENCE><YEAR>1994</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.Sm </CLASSIFICATION>
+</METADATA>
+<TITLE> FOCUS ON " ONLY " AND " NOT " </TITLE>
+<AUTHORLIST>
+<AUTHOR>Allan Ramsay</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' AZ='BAS'> <REF TYPE='A'>Krifka 1993</REF> has suggested that focus should be seen as a means of providing material for a range of semantic and pragmatic functions to work on , rather than as a specific semantic or pragmatic function itself . </A-S>
+<A-S ID='A-1' DOCUMENTC='S-10' AZ='AIM'> The current paper describes an implementation of this general idea , and applies it to the interpretation of only and not . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Background </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> Consider the following sentences : </S>
+</P>
+<EXAMPLE ID='E-0'>
+<EX-S> I only borrowed your CAR . </EX-S>
+<EX-S> I only borrowed YOUR car . </EX-S>
+<EX-S> I only BORROWED your car . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-1' AZ='BKG'> All of them entail the same basic message , namely that I borrowed your car . </S>
+<S ID='S-2' AZ='BKG'> In addition to the basic message , however , they also carry information about what I didn't do . </S>
+<S ID='S-3' AZ='BKG'> <CREF/> says that I didn't borrow any of your other possessions , <CREF/> says that I didn't borrow anyone else 's car , and <CREF/> says that I didn't do anything else to your car . </S>
+<S ID='S-4' AZ='BKG'> It seems as though the word only and the focus marker ( indicated here by underlining the stressed word ) combine to add an extra message about what I didn't do . </S>
+</P>
+<P>
+<S ID='S-5' AZ='BKG'> A similar phenomenon appears to be taking place in the next set of sentences : </S>
+</P>
+<EXAMPLE ID='E-1'>
+<EX-S> I didn't steal your CAR . </EX-S>
+<EX-S> I didn't steal YOUR car . </EX-S>
+<EX-S> I didn't STEAL your car . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-6' AZ='BKG'> Each of these says that I didn't steal your car , but again they each carry some extra message . </S>
+<S ID='S-7' AZ='BKG'> <CREF/> says that I did steal something which belongs to you , <CREF/> says that I stole somebody 's car , but not yours , and <CREF/> says that I did do something to your car ( I probably borrowed it , though that is not entailed by <CREF/> ) . </S>
+</P>
+<P>
+<S ID='S-8' AZ='OTH'> <REF TYPE='A'>Krifka 1993</REF> argues that in <CREF/> - <CREF/> and <CREF/> - <CREF/> , and in a number of other situations as well , the focus marker is used to extract part of the interpretation . </S>
+<S ID='S-9' AZ='OTH'> Operators like only and so-called `` focussed negation then combine the extracted element of the interpretation with what was left behind to carry complex messages of the kind discussed above . </S>
+</P>
+<P>
+<S ID='S-10' ABSTRACTC='A-1' AZ='AIM'> The current paper shows how to implement this general notion , without following <REFAUTHOR>Krifka</REFAUTHOR> 's analysis in detail . </S>
+<S ID='S-11' AZ='OWN'> The crucial point is the provision of some way of storing the extracted part of the interpretation and making it available when required . </S>
+<S ID='S-12' AZ='OWN'> The interpretation of only and focussed negation is fairly straightforward , so long as the treatment of the focussed item itself is coherent . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Abstraction and Focus </HEADER>
+<P>
+<S ID='S-13' AZ='AIM'> The general aim of this paper is to show how to use focus to decompose the interpretation of a phrase into two parts , where one part is the interpretation of the focussed item and the other is some object with which this can combine . </S>
+<S ID='S-14' AZ='OWN'> Suppose , for example , we thought that the VP ` ate a peach ' should be interpreted as : </S>
+</P>
+<IMAGE ID='I-0'/>
+<P>
+<S ID='S-15' AZ='OWN'> In other words , this VP is an abstraction over events where somebody ate a peach . </S>
+<S ID='S-16' AZ='OWN'> Then we would want the two objects corresponding to the interpretation of ate a peach to be something like : </S>
+</P>
+<IMAGE ID='I-1'/>
+<P>
+<S ID='S-17' AZ='OWN'> and </S>
+</P>
+<IMAGE ID='I-2'/>
+<P>
+<S ID='S-18' AZ='OWN'> Here we have extracted the denotation of peach as the property of being a peach , and converted the interpretation of the VP to an abstraction which will combine appropriately with this property to reproduce the original interpretation . </S>
+</P>
+<P>
+<S ID='S-19' AZ='BKG'> Where else do we see a phenomenon of this kind ? </S>
+<S ID='S-20' AZ='BKG'> Consider the following phrases : </S>
+</P>
+<EXAMPLE ID='E-2'>
+<EX-S> the man who stole your bike . </EX-S>
+<EX-S> the man who I wanted you to meet . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-21' AZ='BKG'> In <CREF/> the property of being a man combines with the property of being someone who stole your bike to construct a contextually minimal unique characterisation of the relevant individual , and similarly in <CREF/> . </S>
+<S ID='S-22' AZ='OWN'> To achieve this , we need to interpret the relative pronouns in the two relative clauses as leaving a hole in the interpretation of clause and then abstracting with respect to that hole . </S>
+<S ID='S-23' AZ='OWN'> This is clear for <CREF/> , but it also holds for <CREF/> if we want to interpret a sentence like a man stole a bike as  </S>
+</P>
+<IMAGE ID='I-3'/>
+<P>
+<S ID='S-24' AZ='OTH'> where the quantifier introduced by the subject does not in fact have maximal scope ( an analysis I have argued for elsewhere <REF TYPE='P' SELF="YES">Ramsay 1992a</REF> ) . </S>
+</P>
+<P>
+<S ID='S-25' AZ='OWN'> The treatment of <CREF/> clearly requires much the same mechanism as we will require if we want to deal with focus as outlined above , and this may or may not also hold for <CREF/> . </S>
+<S ID='S-26' AZ='OWN'> Any serious NLP system will include some way of dealing with the interpretation of cases like <CREF/> , and almost any such mechanism should be open to adaptation to deal with focus along the suggested lines . </S>
+<S ID='S-27' AZ='TXT'> One such approach is outlined below . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-2'> Quantification , Presupposition , Abstraction and Focus </HEADER>
+<P>
+<S ID='S-28' AZ='OWN'> We expect to interpret relative clauses ( uncontroversially ) and phrases with focussed constituents ( more controversially ) as abstractions over the interpretations of simple sentences . </S>
+<S ID='S-29' AZ='OWN'> In order to construct interpretations of the kinds of objects we are interested in , then , we have to start by looking at simple sentences . </S>
+<S ID='S-30' AZ='OWN'> The analyses presented in this paper start from the following observations , most of which are fairly orthodox : </S>
+</P>
+<P>
+<S ID='S-31' AZ='OWN'> Indefinite NPs should be viewed as a way of introducing items ( or preferably sets of items ) into the discourse . </S>
+<S ID='S-32' AZ='OWN'> Universally quantified NPs say that all items of the specified type satisfy some property . </S>
+</P>
+<P>
+<S ID='S-33' AZ='OWN'> VPs should be viewed as a way of introducing events or possibly sets of events into the discourse . </S>
+</P>
+<P>
+<S ID='S-34' AZ='OWN'> If you construct interpretations by paraphrasing NL sentences into a formal language which extends predicate calculus , you have to realise that the scope of quantifiers in your paraphrases may not be determined by simple structural properties of the source text . </S>
+</P>
+<P>
+<S ID='S-35' AZ='BAS'> Definite NPs and other presuppositional constructions place constraints on the discourse , so that a sentence containing the phrase the man will be uninterpretable in contexts not containing a unique man ( a version of this point has been made by , among others , <REF TYPE='A'>Barwise and Perry 1983</REF> , <REF TYPE='A'>Kamp 1984</REF> , <REF TYPE='A'>Groenendijk and Stokhof 1987</REF> ) . </S>
+</P>
+<P>
+<S ID='S-36' AZ='OWN'> There are interactions of scope between definite NPs and other types of expression : in Each man kills the thing he loves , the presuppositional construct the thing he loves requires the existence of a single target of affection per man . </S>
+</P>
+<P>
+<S ID='S-37' AZ='OTH'> The standard way to deal with the potential discrepancy between where a phrase appears and the width of its scope is by storing quantifiers on a quantifier stack until the entire sentence has been interpreted , and then using explicit information about the priority of various quantifiers to sort things out <REF  TYPE='P'>Cooper 1983</REF>, <REF  TYPE='P'>Vestre 1991</REF> . </S>
+<S ID='S-38' AZ='BAS'> The work reported here follows this treatment , but extends it by introducing quantifier-like entities for dealing with presuppositional items such as definite NPs ( see <REF TYPE='A' SELF="YES">Ramsay 1992b</REF> , <REF TYPE='A' SELF="YES">Ramsay 1994a</REF> for a formal account of such CONSTRAINTS on whether a sentence is meaningful with respect to a situation ) . </S>
+<S ID='S-39' AZ='OWN'> As an example , the sentence the woman stole a bike is interpreted as  </S>
+<IMAGE ID='I-4'/>
+</P>
+<P>
+<S ID='S-40' AZ='OWN'> This says that the relationship simple holds between some past instant A and the property of being a certain sort of event . </S>
+<S ID='S-41' AZ='OWN'> What sort of event ? </S>
+<S ID='S-42' AZ='OWN'> One where a bike is stolen by someone ( or rather , where a singleton set of bikes is stolen ) . </S>
+<S ID='S-43' AZ='OWN'> Writing something like <EQN/> , where W may contain occurrences of B , says that W holds for the contextually unique individual B which satisfies the restriction that B is a woman ( is a singleton set of women ) . </S>
+<S ID='S-44' AZ='OWN'> If this restriction fails to pick out a unique individual the whole expression is meaningless in the context . </S>
+</P>
+<P>
+<S ID='S-45' AZ='OWN'> Most of this analysis is fairly orthodox . </S>
+<S ID='S-46' AZ='OWN'> The two main points that might require some defence are the analysis of aspect in terms of a relationship between temporal objects and event types , which is discussed in <REF TYPE='A' SELF="YES">Ramsay 1993</REF> , and the treatment of definite reference in terms of constraints on meaningfulness . </S>
+<S ID='S-47' AZ='OWN'> Neither of these is crucial to the remainder of the paper , but if you don't like them you will have to replace them with something better , and you are unlikely to find something which is both better and simpler . </S>
+</P>
+<P>
+<S ID='S-48' AZ='BAS'> The analysis above was obtained in a framework where quantifier scope is determined on the basis of information explicitly associated with a form of COOPER STORAGE <REF TYPE='P'>Cooper 1983</REF> , using abstraction operators of the form <EQN/> , <EQN/> or <EQN/> which can be applied to a formula to bind its free variables . </S>
+<S ID='S-49' AZ='OTH'> Within this framework , it is perfectly easy to deal with cases like <CREF/> by allowing the relative pronoun to add the expression <EQN/> to the quantifier store , annotated to specify that this expression has maximal scope . </S>
+<S ID='S-50' AZ='OWN'> If this expression is applied to a formula containing a free occurrence of X it will return an abstraction with respect to X -- exactly what we want . </S>
+<S ID='S-51' AZ='OWN'> The requirement that this should have maximal scope will ensure that X is the last free variable in W . </S>
+</P>
+<P>
+<S ID='S-52' AZ='OWN'> But if we can use this mechanism to construct an abstraction as the interpretation of a relative clause , we can also use it to construct an abstraction as the interpretation of a phrase containing a focussed item . </S>
+<S ID='S-53' AZ='OWN'> The only extra work we have to perform is that we have to find somewhere to put the interpretation of the focussed item itself . </S>
+<S ID='S-54' AZ='OWN'> To do this , all that is needed is an extra feature focus in the descriptions of linguistic items . </S>
+<S ID='S-55' AZ='OWN'> The value of focus is the focussed item itself . </S>
+<S ID='S-56' AZ='OWN'> focus behaves like a GPSG FOOT FEATURE , in that at most one daughter of an item can have a non-vacuous value for focus , and that if an item does have exactly one daughter with a non-vacuous value for this feature then the item will share this value with that daughter . </S>
+<S ID='S-57' AZ='OWN'> focus is thus very like the standard feature slash which is used for dealing with left extraposition -- it is a foot feature whose value is some item which is somehow `` out of position . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-3'> Applications of Focus </HEADER>
+<P>
+<S ID='S-58' AZ='OWN'> Once we have this mechanism , we can use it to construct interpretations of sentences like <CREF/> - <CREF/> . </S>
+<S ID='S-59' AZ='OWN'> Consider , for instance , the example : </S>
+<EXAMPLE ID='E-3'>
+<EX-S> I only borrowed a CAR . </EX-S>
+</EXAMPLE>
+<IMAGE ID='I-5'/>
+</P>
+<P>
+<S ID='S-60' AZ='OWN'> where K is <EQN/> ( this has been extracted from the displayed formula to get it inside the available space -- it is in fact part of that formula ) . </S>
+</P>
+<P>
+<S ID='S-61' AZ='OWN'> This says that the relationship only holds between the property of being a car and some other object . </S>
+<S ID='S-62' AZ='OWN'> This is fine as far as it goes , but it isn't worth very much unless we spell out the conditions under which this relationship holds . </S>
+<S ID='S-63' AZ='OWN'> The following meaning postulate does just that : </S>
+<IMAGE ID='I-6'/>
+</P>
+<P>
+<S ID='S-64' AZ='OWN'> In other words , if only ( P , Q ) holds then P satisfies Q and nothing else does . </S>
+<S ID='S-65' AZ='OWN'> In the present case , the first of these consequences means that I did indeed borrow a car : </S>
+<IMAGE ID='I-7'/>
+</P>
+<P>
+<S ID='S-66' AZ='OWN'> where <EQN/> has again been extracted to save space . </S>
+<S ID='S-67' AZ='OWN'> This was obtained from the meaning postulate by substituting <EQN/> for B and using <EQN/> . </S>
+</P>
+<P>
+<S ID='S-68' AZ='OWN'> The second consequence of the MP for only says that there is no other category of item which satisfies the abstraction -- that the only thing I borrowed was a car . </S>
+</P>
+<P>
+<S ID='S-69' AZ='OWN'> If we put the focus somewhere else , we get another interpretation : </S>
+<EXAMPLE ID='E-4'>
+<EX-S> I only BORROWED a car . </EX-S>
+</EXAMPLE>
+<IMAGE ID='I-8'/>
+</P>
+<P>
+<S ID='S-70' AZ='OWN'> where <EQN/> . </S>
+</P>
+<P>
+<S ID='S-71' AZ='OWN'> This says that only holds between a description of the type of event C where somebody B borrows something A , and an abstraction over situations in which I did something to some car . </S>
+<S ID='S-72' AZ='OWN'> Then the first consequence of only says that what I did to this car was I borrowed it : substituting the description of the event type for the abstracted variable F produces <EQN/> as the second argument of simple , and this reduces to <EQN/> , which is what we want . </S>
+<S ID='S-73' AZ='OWN'> The second says that I didn't do anything else to it . </S>
+</P>
+<P>
+<S ID='S-74' AZ='OWN'> Much the same will happen with . </S>
+<EXAMPLE ID='E-5'>
+<EX-S> I didn't STEAL it . </EX-S>
+</EXAMPLE>
+<IMAGE ID='I-9'/>
+</P>
+<P>
+<S ID='S-75' AZ='OWN'> where <EQN/> . </S>
+</P>
+<P>
+<S ID='S-76' AZ='OWN'> Here we have a 2-place relation not , which is backed up by the following MP : </S>
+<IMAGE ID='I-10'/>
+</P>
+<P>
+<S ID='S-77' AZ='OWN'> This says that this form of negation holds between P and Q if Q does not hold of P , but does hold for some other entity P ' . </S>
+<S ID='S-78' AZ='OWN'> In the present case , this means that I did do something to it ( whatever `` it is ) , but what I did was not stealing . </S>
+</P>
+<P>
+<S ID='S-79' AZ='OWN'> This contrasts with simple negation , with no focussed item , as in : </S>
+<EXAMPLE ID='E-6'>
+<EX-S> I didn't steal it . </EX-S>
+</EXAMPLE>
+<IMAGE ID='I-11'/>
+</P>
+<P>
+<S ID='S-80' AZ='OWN'> where <EQN/> . </S>
+</P>
+<P>
+<S ID='S-81' AZ='OWN'> This simply says that it is not the case that there is a past stealing event involving me and it . </S>
+<S ID='S-82' AZ='OWN'> The choice between the two is forced by the presence or absence of a focussed item . </S>
+</P>
+<P>
+<S ID='S-83' AZ='OWN'> As a final example , consider a sentence which contains a focussed item but no operator for using it up : </S>
+<EXAMPLE ID='E-7'>
+<EX-S> A man ate it . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-84' AZ='OWN'> The analysis of this is an abstraction over kinds of individuals who ate it . </S>
+<IMAGE ID='I-12'/>
+</P>
+<P>
+<S ID='S-85' AZ='OWN'> with <EQN/> , and with the focus set as the description ( including the semantic analysis ) of the focussed phrase man . </S>
+<S ID='S-86' AZ='OWN'> This is just the kind of object required for a discourse operator such as contrast or elaboration -- exactly which such operator is appropriate depends on factors not visible in <CREF/> itself , but whatever it is it will require a pair of arguments of this kind . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-4'> Conclusions </HEADER>
+<P>
+<S ID='S-87' AZ='OWN'> The discussion above shows what can be achieved by treating focus as a syntactic marker which makes information available to a variety of operators . </S>
+<S ID='S-88' AZ='OWN'> The mechanism for doing this involves introducing a foot feature to carry the focussed item around , and constructing appropriate abstractions by using the standard quantifier scoping mechanism which is required for other phenomena anyway . </S>
+<S ID='S-89' AZ='OWN'> Different NLP systems will deal with the syntax and semantics of phenomena such as left - and right-extraposition in different ways . </S>
+<S ID='S-90' AZ='OWN'> What I have argued is that almost any approach to these phenomena can be adapted to deal with focus as well . </S>
+<S ID='S-91' AZ='TXT'> The examples in Section <CREF/> showed how you can combine these analyses of focus with a variety of operators to convey a range of interpretations of the same sequence of words . </S>
+<S ID='S-92' AZ='OWN'> It is important to recall at this point that the interpretation language being used here is a highly intensional logic which permits quantification over arbitrary kinds of individual , including quantification over properties and propositions . </S>
+<S ID='S-93' AZ='OTH'> I have argued elsewhere that such a language is required for a wide variety of phenomena . </S>
+<S ID='S-94' AZ='OWN'> The interpretation of focus is just another example . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-5'> Implementation </HEADER>
+<P>
+<S ID='S-95' AZ='BAS'> All the analyses in this paper were produced , and <EQN/> - reduced ( and turned into LaTeX ! ) , by a version of the system described in <REF SELF="YES" TYPE='A'>Ramsay 1992a</REF> . </S>
+<S ID='S-96' AZ='OTH'> This consists of a highly lexical grammar with a compositional semantics , parsed via a bi-directional head-driven chart parser . </S>
+<S ID='S-97' AZ='OWN'> I believe it is virtually impossible to do this kind of work without embodying it in a working system . </S>
+<S ID='S-98' AZ='OWN'> You simply cannot explore the consequences of doing something one way rather than another , or of combining an analysis of this with an analysis of that , unless activities such as compositional construction and subsequent <EQN/> - reduction of interpretations is done for you by machine . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+<SURNAME>Barwise</SURNAME>, J. ;amp Perry, J. (<DATE>1983</DATE>): Situations and Attitudes: Bradford Books, Cambridge, MA. 
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Cooper</SURNAME>, R. (<DATE>1983</DATE>): Quantification and Syntactic Theory: Reidel, Dordrecht.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Groenendijk</SURNAME>, J. ;amp Stokhof, M. (<DATE>1991</DATE>): Dynamic Predicate Logic, Linguistics ;amp Philosophy 14:39-100.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Kamp</SURNAME>, H. (<DATE>1984</DATE>): A Theory of Truth and Semantic Representation, in Formal methods in the study of language (eds. J. Groenendijk, J. Jansen ;amp M. Stokhof): Foris Publications, Dordrecht: 277-322.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Krifka</SURNAME>, M. (<DATE>1993</DATE>): Focus, Presupposition and Dynamic Interpretation, Journal of Semantics 10.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Ramsay</SURNAME>, A. M. (<DATE>1992a</DATE>): Bare Plural NPs and Habitual VPs, COLING-92, Nantes: 226-231.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Ramsay</SURNAME>, A. M. (<DATE>1992b</DATE>): Presuppositions and WH-clauses, Journal of  Semantics 9: 251-186.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Ramsay</SURNAME>, A. M. (<DATE>1993</DATE>): Aspect and Aktionsart Without Coercion, submitted to ACL-94.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Ramsay</SURNAME>, A. M. (<DATE>1994</DATE>): Meanings as Constraints on Information States, in Constraings, Language and Computation (eds. C.J. Rupp, M. A. Rosner ;amp R. L. Johnson): Academic Press, London: 249-276.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Turner</SURNAME>, R. (<DATE>1987</DATE>): A Theory of Properties, Journal of Symbolic Logic 52(2): 455-472.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Vestre</SURNAME>, E. (<DATE>1991</DATE>): An Algorithm for Generating Nonredundant Quantifier Scopings, Fifth Conference of the European Chapter of the Assoc. for Computational Linguistics, Berlin: 251-256.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

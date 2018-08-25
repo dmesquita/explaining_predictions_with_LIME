@@ -1,0 +1,191 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9410008</FILENO>
+<APPEARED><CONFERENCE>COLING</CONFERENCE><YEAR>1994</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.St </CLASSIFICATION>
+</METADATA>
+<TITLE> Recognizing Text Genres with Simple Metrics Using Discriminant Analysis </TITLE>
+<AUTHORLIST>
+<AUTHOR>Jussi Karlgren</AUTHOR>
+<AUTHOR>Douglass Cutting</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' AZ='AIM'> A simple method for categorizing texts into pre-determined text genre categories using the statistical standard technique of discriminant analysis is demonstrated with application to the Brown corpus . </A-S>
+<A-S ID='A-1' AZ='OWN'> Discriminant analysis makes it possible use a large number of parameters that may be specific for a certain corpus or information stream , and combine them into a small number of functions , with the parameters weighted on basis of how useful they are for discriminating text genres . </A-S>
+<A-S ID='A-2' DOCUMENTC='S-57' AZ='OWN'> An application to information retrieval is discussed . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Text Types </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> There are different types of text . </S>
+<S ID='S-1' AZ='BKG'> Texts `` about '' the same thing may be in differing genres , of different types , and of varying quality . </S>
+<S ID='S-2' AZ='BKG'> Texts vary along several parameters , all relevant for the general information retrieval problem of matching reader needs and texts . </S>
+<S ID='S-3' AZ='BKG' TYPE='ITEM'> Given this variation , in a text retrieval context the problems are </S>
+<S ID='S-4' TYPE='ITEM' AZ='BKG'> identifying genres , and </S>
+<S ID='S-5' TYPE='ITEM' AZ='BKG'> choosing criteria to cluster texts of the same genre , with predictable precision and recall . </S>
+<S ID='S-6' AZ='BKG'> This should not be confused with the issue of identifying topics , and choosing criteria that discriminate one topic from another . </S>
+<S ID='S-7' AZ='BKG'> Although not orthogonal to genre-dependent variation , the variation that relates directly to content and topic is along other dimensions . </S>
+<S ID='S-8' AZ='BKG'> Naturally , there is co-variance . </S>
+<S ID='S-9' AZ='BKG'> Texts about certain topics may only occur in certain genres , and texts in certain genres may only treat certain topics ; most topics do , however , occur in several genres , which is what interests us here . </S>
+</P>
+<P>
+<S ID='S-10' AZ='OTH'> <REFAUTHOR>Douglas Biber</REFAUTHOR> has studied text variation along several parameters , and found that texts can be considered to vary along five dimensions . </S>
+<S ID='S-11' AZ='OTH'> In his study , he clusters features according to covariance , to find underlying dimensions <REF TYPE='P'>Biber 1989</REF> . </S>
+<S ID='S-12' AZ='AIM'> We wish to find a method for identifying easily computable parameters that rapidly classify previously unseen texts in general classes and along a small set - smaller than <REFAUTHOR>Biber</REFAUTHOR> 's five - of dimensions , such that they can be explained in intuitively simple terms to the user of an information retrieval application . </S>
+<S ID='S-13' AZ='AIM'> Our aim is to take a set of texts that has been selected by some sort of crude semantic analysis such as is typically performed by an information retrieval system and partition it further by genre or text type , and to display this variation as simply as possible in one or two dimensions . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Method </HEADER>
+<P>
+<S ID='S-14' AZ='BAS'> We start by using features similar to those first investigated by <REFAUTHOR>Biber</REFAUTHOR> , but we concentrate on those that are easy to compute assuming we have a part of speech tagger  <REF TYPE='P' SELF="YES">Cutting et al. 1992</REF> , <REF TYPE='P'>Church 1988</REF> , such as such as third person pronoun occurrence rate as opposed to 'general hedges ' <REF TYPE='P'>Biber 1989</REF> . </S>
+<S ID='S-15' AZ='OWN'> More and more of <REFAUTHOR>Biber</REFAUTHOR> 's features will be available with the advent of more proficient analysis programs , for instance if complete surface syntactic parsing were performed before categorization <REF TYPE='P'>Voutilainen and Tapanainen 1993</REF> . </S>
+</P>
+<P>
+<S ID='S-16' AZ='BAS'> We then use discriminant analysis , a technique from descriptive statistics . </S>
+<S ID='S-17' AZ='OWN'> Discriminant analysis takes a set of precategorized individuals and data on their variation on a number of parameters , and works out a set discriminant functions which distinguishes between the groups . </S>
+<S ID='S-18' AZ='OWN'> These functions can then be used to predict the category memberships of new individuals based on their parameter scores  <REF TYPE='P'>Tatsuoka 1971</REF> , <REF TYPE='P'>Mustonen 1965</REF> . </S>
+</P>
+<IMAGE ID='I-0'/>
+<IMAGE ID='I-1'/>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-2'> Evaluation </HEADER>
+<P>
+<S ID='S-19' AZ='OWN'> For data we used the Brown corpus of English text samples of uniform length , categorized in several categories as seen in table <CREF/> . </S>
+<S ID='S-20' AZ='OWN'> We ran discriminant analysis on the texts in the corpus using several different features as seen in table <CREF/> . </S>
+<S ID='S-21' AZ='BAS'> We used the <REFAUTHOR>SPSS</REFAUTHOR> system for statistical data analysis , which has as one of its features a complete discriminant analysis <REF TYPE='P'>SPSS 1990</REF> . </S>
+<S ID='S-22' AZ='OWN'> The discriminant function extracted from the data by the analysis is a linear combination of the parameters . </S>
+<S ID='S-23' AZ='OWN'> To categorize a set into N categories N - 1 functions need to be determined . </S>
+<S ID='S-24' AZ='OWN'> However , if we are content with being able to plot all categories on a two-dimensional plane , which probably is what we want to do , for ease of exposition , we only use the two first and most significant functions . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-3'> 2 Categories </HEADER>
+<P>
+<S ID='S-25' AZ='OWN'> In the case of two categories , only one function is necessary for determining the category of an item . </S>
+<S ID='S-26' AZ='OWN'> The function classified 478 cases correctly and misclassified 22 , out of the 500 cases , as shown in table <CREF/> and figure <CREF/> . </S>
+</P>
+<IMAGE ID='I-2'/>
+<IMAGE ID='I-3'/>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-4'> 4 Categories </HEADER>
+<P>
+<S ID='S-27' AZ='OWN'> Using the three functions extracted , 366 cases were correctly classified , and 134 cases were misclassified , out of the 500 cases , as can be seen in table <CREF/> and figure <CREF/> . </S>
+<S ID='S-28' AZ='OWN'> `` Miscellaneous '' , the most problematic category , is a loose grouping of different informative texts . </S>
+<S ID='S-29' AZ='OWN'> The single most problematic subsubset of texts is a subset of eighteen non-fiction texts labeled `` learned / humanities '' . </S>
+<S ID='S-30' AZ='OWN'> Sixteen of them were misclassified , thirteen as `` miscellaneous '' . </S>
+</P>
+<IMAGE ID='I-4'/>
+<IMAGE ID='I-5'/>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-5'> 15 ( or 10 ) Categories </HEADER>
+<P>
+<S ID='S-31' AZ='OWN'> Using the fourteen functions extracted , 258 cases were correctly classified and 242 cases misclassified out of the 500 cases , as shown in table <CREF/> . </S>
+<S ID='S-32' AZ='OWN'> Trying to distinguish between the different types of fiction is expensive in terms of errors . </S>
+<S ID='S-33' AZ='OWN'> If the fiction subcategories were collapsed there only would be ten categories , and the error rate for the categorization would improve as shown in the `` revised total '' record of the table . </S>
+<S ID='S-34' AZ='OWN'> The `` learned / humanities '' subcategory is , as before , problematic : only two of the eighteen items were correctly classified . </S>
+<S ID='S-35' AZ='OWN'> The others were most often misclassified as `` Religion '' or `` Belles Lettres '' . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-6'> Validation of the Technique </HEADER>
+<P>
+<S ID='S-36' AZ='OWN'> It is important to note that this experiment does not claim to show how genres in fact differ . </S>
+<S ID='S-37' AZ='OWN'> What we show is that this sort of technique can be used to determine which parameters to use , given a set of them . </S>
+<S ID='S-38' AZ='OWN'> We did not use a test set disjoint from the training set , and we do not claim that the functions we had the method extract from the data are useful in themselves . </S>
+<S ID='S-39' AZ='OWN'> We discuss how well this method categorizes a set text , given a set of categories , and given a set of parameters . </S>
+</P>
+<P>
+<S ID='S-40' AZ='OWN'> The error rates climb steeply with the number of categories tested for in the corpus we used . </S>
+<S ID='S-41' AZ='OWN'> This may have to do with how the categories are chosen and defined . </S>
+<S ID='S-42' AZ='OWN'> For instance , distinguishing between different types of fiction by formal or stylistic criteria of this kind may just be something we should not attempt : the fiction types are naturally defined in terms of their content , after all . </S>
+</P>
+<P>
+<S ID='S-43' AZ='OTH'> The statistical technique of factor analysis can be used to discover categories , like <REFAUTHOR>Biber</REFAUTHOR> has done . </S>
+<S ID='S-44' AZ='CTR'> The problem with using automatically derived categories is that even if they are in a sense real , meaning that they are supported by data , they may be difficult to explain for the unenthusiastic layman if the aim is to use the technique in retrieval tools . </S>
+</P>
+<P>
+<S ID='S-45' AZ='OWN'> Other criteria that should be studied are second and higher order statistics on the respective parameters . </S>
+<S ID='S-46' AZ='OWN'> Certain parameters probably vary more in certain text types than others , and they may have a skewed distribution as well . </S>
+<S ID='S-47' AZ='OWN'> This is not difficult to determine , although the standard methods do not support automatic determination of standard deviation or skewness as discrimination criteria . </S>
+<S ID='S-48' AZ='OWN'> Together with the investigation of several hitherto untried parameters , this is a next step . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-7'> Readability Indexing </HEADER>
+<P>
+<S ID='S-49' AZ='OWN'> Not unrelated to the study of genre is the study of readability which aims to categorize texts according to their suitability for assumed sets of assumed readers . </S>
+<S ID='S-50' AZ='OWN'> There is a wealth of formul to compute readability . </S>
+<S ID='S-51' AZ='OWN'> Most commonly they combine easily computed text measures , typically average or sampled average sentence length combined with similarly computed word length , or incidence of words not on a specified `` easy word list ''  <REF TYPE='P'>Chall 1948</REF> , <REF TYPE='P'>Klare 1963</REF> . </S>
+<S ID='S-52' AZ='OWN'> In spite of <REFAUTHOR>Chall</REFAUTHOR> 's warnings about injudicious application to writing tasks , readability measurement has naively come to be used as a prescriptive metric of good writing as a tool for writers , and has thus come into some disrepute among text researchers . </S>
+<S ID='S-53' AZ='OWN'> Our small study confirms the basic findings of the early readability studies : the most important factors of the ones we tested are word length , sentence length , and different derivatives of these two parameters . </S>
+<S ID='S-54' AZ='OWN'> As long as readability indexing schemes are used in descriptive applications they work well to discriminate between text types . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-8'> Application </HEADER>
+<P>
+<S ID='S-55' AZ='OWN'> The technique shows practical promise . </S>
+<S ID='S-56' AZ='OWN'> The territorial maps shown in figures <CREF/> , <CREF/> , and <CREF/> are intuitively useful tools for displaying what type a particular text is , compared with other existing texts . </S>
+<S ID='S-57' ABSTRACTC='A-2' AZ='OWN'> The technique demonstrated above has an obvious application in information retrieval , for picking out interesting texts , if content based methods select a too large set for easy manipulation and browsing <REF SELF="YES" TYPE='P'>Cutting et al. 1992</REF> . </S>
+</P>
+<P>
+<S ID='S-58' AZ='OWN'> In any specific application area it will be unlikely that the text database to be accessed will be completely free form . </S>
+<S ID='S-59' AZ='OWN'> The texts under consideration will probably be specific in some way . </S>
+<S ID='S-60' AZ='OWN'> General text types may be useful , but quite probably there will be a domain - or field-specific text typology . </S>
+<S ID='S-61' AZ='OWN'> In an envisioned application , a user will employ a cascade of filters starting with filtering by topic , and continuing with filters by genre or text type , and ending by filters for text quality , or other tentative finer-grained qualifications . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-9'> The <REFAUTHOR>IntFilter</REFAUTHOR> Project </HEADER><P>
+<S ID='S-62' AZ='OTH'> The <REFAUTHOR>IntFilter</REFAUTHOR> Project at the departments of Computer and Systems Sciences , Computational Linguistics , and Psychology at Stockholm University is at present studying texts on the USENET News conferencing system . </S>
+<S ID='S-63' AZ='OTH'> The project at present studies texts which appear on several different types of USENET News conferences , and investigates how well the classification criteria and categories that experienced USENET News users report using <REF TYPE='P'>IntFilter 1993</REF> can be used by a newsreader system . </S>
+<S ID='S-64' AZ='BAS'> To do this the project applies the method described here . </S>
+<S ID='S-65' AZ='OTH'> The project uses categories such as `` query '' , `` comment '' , `` announcement '' , `` FAQ '' , and so forth , categorizing them using parameters such as different types of length measures , form word content , quote level , percentage quoted text and other USENET News specific parameters . </S>
+</P>
+<IMAGE ID='I-6'/>
+<IMAGE ID='I-7'/>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+Douglas <SURNAME>Biber</SURNAME> <DATE>1989</DATE>. "A typology of English texts", Linguistics, 27:3-43.
+</REFERENCE>
+<REFERENCE>
+Jeanne S. <SURNAME>Chall</SURNAME> <DATE>1948</DATE>. Readability, Ohio State Univ. 
+</REFERENCE>
+<REFERENCE>
+Kenneth <SURNAME>Church</SURNAME> <DATE>1988</DATE>. "A stochastic Parts of Speech and Noun Phrase Parser for Unrestricted Text", Procs. 2nd ANLP, Austin.
+</REFERENCE>
+<REFERENCE>
+Douglass <SURNAME>Cutting</SURNAME>, D. <SURNAME>Karger</SURNAME>, Jan <SURNAME>Pedersen</SURNAME>, and John <SURNAME>Tukey</SURNAME> <DATE>1992</DATE>. "Scatter/Gather: A Cluster-based Approach to Browsing Large Document Collections"  Procs. SIGIR-92.
+</REFERENCE>
+<REFERENCE>
+IntFilter <DATE>1993</DATE>. Working Papers of the IntFilter Project, available by gopher from dsv.su.se:/pub/IntFilter.
+</REFERENCE>
+<REFERENCE>
+George R. <SURNAME>Klare</SURNAME> <DATE>1963</DATE>. The Measurement of Readability, Iowa Univ. press.
+</REFERENCE>
+<REFERENCE>
+W. N. <SURNAME>Francis</SURNAME> and F. <SURNAME>Kuncera</SURNAME> <DATE>1982</DATE>. Frequency Analysis of English Usage, Houghton Mifflin.
+</REFERENCE>
+<REFERENCE>
+Seppo <SURNAME>Mustonen</SURNAME> <DATE>1965</DATE>. "Multiple Discriminants Analysis in Linguistic problems", Statistical Methods in Linguistics, 4:37-44.
+</REFERENCE>
+<REFERENCE>
+M. M. <SURNAME>Tatsuoka</SURNAME> <DATE>1971</DATE>. Multivariate Analysis, New York:John Wiley and Sons.
+</REFERENCE>
+<REFERENCE>
+Atro <SURNAME>Voutilainen</SURNAME> and Pasi <SURNAME>Tapanainen</SURNAME> <DATE>1993</DATE>. "Ambiguity resolution in a reductionistic parser", Procs. 6th European ACL, Utrecht.
+</REFERENCE>
+<REFERENCE>
+SPSS <DATE>1990</DATE>. The SPSS Reference Guide, Chicago: SPSS Inc.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

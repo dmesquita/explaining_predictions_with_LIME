@@ -1,0 +1,390 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9503005</FILENO>
+<APPEARED><CONFERENCE>EACL</CONFERENCE><YEAR>95</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.Gr.Fm </CLASSIFICATION>
+</METADATA>
+<TITLE> A Specification Language for Lexical Functional Grammars </TITLE>
+<AUTHORLIST>
+<AUTHOR>Patrick Blackburn</AUTHOR>
+<AUTHOR>Claire Gardent</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' DOCUMENTC='S-48' AZ='AIM'> This paper defines a language <EQN/> for specifying LFG grammars . </A-S>
+<A-S ID='A-1' AZ='OWN'> This enables constraints on LFG 's composite ontology ( c-structures synchronised with f-structures ) to be stated directly ; no appeal to the LFG construction algorithm is needed . </A-S>
+<A-S ID='A-2' DOCUMENTC='S-18' AZ='OWN'> We use <EQN/> to specify schemata annotated rules and the LFG uniqueness , completeness and coherence principles . </A-S>
+<A-S ID='A-3' AZ='OWN'> Broader issues raised by this work are noted and discussed . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='OTH'> Unlike most linguistic theories , LFG <REF TYPE='P'>Kaplan and Bresnan 1982</REF> treats grammatical relations as first class citizens . </S>
+<S ID='S-1' AZ='OTH'> Accordingly , it casts its linguistic analyses in terms of a composite ontology : two independent domains -- a domain of constituency information ( c-structure ) , and a domain of grammatical function information ( f-structure ) -- linked together in a mutually constraining manner . </S>
+<S ID='S-2' AZ='OTH'> As has been amply demonstrated over the last fifteen years , this view permits perspicuous analyses of a wide variety of linguistic data . </S>
+</P>
+<P>
+<S ID='S-3' AZ='CTR'> However standard formalisations of LFG do not capture its strikingly simple underlying intuitions . </S>
+<S ID='S-4' AZ='OTH'> Instead , they make a detour via the LFG construction algorithm , which explains how equational constraints linking subtrees and feature structures are to be resolved . </S>
+<S ID='S-5' AZ='CTR'> The main point of the present paper is to show that such detours are unnecessary . </S>
+<S ID='S-6' AZ='AIM'> We define a specification language <EQN/> in which ( most of ) the interactions between c - and f-structure typical of LFG grammars can be stated directly . </S>
+</P>
+<P>
+<S ID='S-7' AZ='OWN'> The key idea underlying our approach is to think about LFG model theoretically . </S>
+<S ID='S-8' AZ='AIM'> That is , our first task will be to give a precise -- and transparent -- mathematical picture of the LFG ontology . </S>
+<S ID='S-9' AZ='OWN'> As has already been noted , the basic entities underlying the LFG analyses are composite structures consisting of a finite tree , a finite feature structure , and a function that links the two . </S>
+<S ID='S-10' AZ='OWN'> Such structures can straightforwardly be thought of as models , in the usual sense of first order model theory <REF TYPE='P'>Hodges 1993</REF> . </S>
+<S ID='S-11' AZ='OWN'> Viewing the LFG ontology in such terms does no violence to intuition : indeed , as we shall see , a more direct mathematical embodiment of the LFG universe can hardly be imagined . </S>
+</P>
+<P>
+<S ID='S-12' AZ='AIM'> Once the ontological issues have been settled we turn to our ultimate goal : providing a specification language for LFG grammars . </S>
+<S ID='S-13' AZ='OWN'> Actually , with the ontological issues settled it is a relatively simple task to devise suitable specification languages : we simply consider how LFG linguists talk about such structures when they write grammars . </S>
+<S ID='S-14' AZ='OWN'> That is , we ask ourselves what kind of constraints the linguist wishes to impose , and then devise a language in which they can be stated . </S>
+</P>
+<P>
+<S ID='S-15' AZ='OWN'> Thus we shall proceed as follows . </S>
+<S ID='S-16' AZ='OWN'> After a brief introduction to LFG , we isolate a class of models which obviously mirrors the composite nature of the LFG ontology , and then turn to the task of devising a language for talking about them . </S>
+<S ID='S-17' AZ='OWN'> We opt for a particularly simple specification language : a propositional language enriched with operators for talking about c - and f-structures , together with a path equality construct for enforcing synchronisation between the two domains . </S>
+<S ID='S-18' ABSTRACTC='A-2' AZ='OWN'> We illustrate its use by showing how to capture the effect of schemata annotated rules , and the LFG uniqueness , completeness and coherence principles . </S>
+</P>
+<P>
+<S ID='S-19' AZ='OWN'> Before proceeding , a word of motivation is in order . </S>
+<S ID='S-20' AZ='BKG'> Firstly , we believe that there are practical reasons for interest in grammatical specification languages : formal specification seems important ( perhaps essential ) if robust large scale grammars are to be defined and maintained . </S>
+<S ID='S-21' AZ='OWN'> Moreover , the essentially model theoretic slant on specification we propose here seems particularly well suited to this aim . </S>
+<S ID='S-22' AZ='OWN'> Models do not in any sense `` code '' the LFG ontology : they take it pretty much at face value . </S>
+<S ID='S-23' AZ='OWN'> In our view this is crucial . </S>
+<S ID='S-24' AZ='OWN'> Formal approaches to grammatical theorising should reflect linguistic intuitions as directly as possible , otherwise they run the risk of being an obstacle , not an aid , to grammar development . </S>
+</P>
+<P>
+<S ID='S-25' AZ='OWN'> The approach also raises theoretical issues . </S>
+<S ID='S-26' AZ='OWN'> The model theoretic approach to specification languages forces one to think about linguistic ontologies in a systematic way , and to locate them in a well understood mathematical space . </S>
+<S ID='S-27' AZ='OWN'> This has at least two advantages . </S>
+<S ID='S-28' AZ='OWN'> Firstly , it offers the prospect of meaningful comparison of linguistic frameworks . </S>
+<S ID='S-29' AZ='OWN'> Secondly , it can highlight anomalous aspects of a given system . </S>
+<S ID='S-30' AZ='OWN'> For example , as we shall later see , there seems to be no reasonable way to deal with LFG 's <EQN/> definitions using the simple models of the present paper . </S>
+<S ID='S-31' AZ='OWN'> There is a plausible model theoretic strategy strategy for extending our account to cover <EQN/> ; but the nature of the required extension clearly shows that <EQN/> is of a quite different character to the bulk of LFG . </S>
+<S ID='S-32' AZ='TXT'> We discuss the matter in the paper 's concluding section . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Lexical Functional Grammar </HEADER>
+<P>
+<S ID='S-33' AZ='BKG'> A lexical functional grammar consists of three main components : a set of context free rules annotated with schemata , a set of well formedness conditions on feature structures , and a lexicon . </S>
+<S ID='S-34' AZ='BKG'> The role of these components is to assign two interrelated structures to any linguistic entity licensed by the grammar : a tree ( the c-structure ) and a feature structure ( the f-structure ) . </S>
+<S ID='S-35' AZ='BKG'> Briefly , the context free skeleton of the grammar rules describes the c-structure , the well-formedness conditions restrict f-structure admissibility , and the schemata synchronise the information contained in the c - and f-structures . </S>
+</P>
+<IMAGE ID='I-0'/>
+<P>
+<S ID='S-36' AZ='BKG'> To see how this works , let 's run through a simple example . </S>
+<S ID='S-37' AZ='BKG'> Consider the grammar given in Figure <CREF/> . </S>
+<S ID='S-38' AZ='BKG'> Briefly , the up - and down-arrows in the schemata can be read as follows : <EQN/> denotes the value of Feature in the f-structure associated with the tree node immediately dominating the current tree node , whereas <EQN/> denotes the value of Feature in the f-structure associated with the current tree node . </S>
+<S ID='S-39' AZ='BKG'> For instance , in rule <CREF/> the NP schema indicates that the f-structure associated with the NP node is the value of the subj feature in the f-structure associated with the mother node . </S>
+<S ID='S-40' AZ='BKG'> As for the VP schema , it requires that the f-structure associated with the mother node is identical with the f-structure associated with the VP node . </S>
+</P>
+<P>
+<S ID='S-41' AZ='BKG'> Given the above lexical entries , it is possible to assign a correctly interrelated c-structure and f-structure to the sentence A girl walks . </S>
+<S ID='S-42' AZ='BKG'> Moreover , the resulting f-structure respects the LFG well formedness conditions , namely the uniqueness , completeness and coherence principles discussed in section <CREF/> . </S>
+<S ID='S-43' AZ='BKG'> Thus A girl walks is accepted by this grammar . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-2'> Modeling the LFG Ontology </HEADER>
+<P>
+<S ID='S-44' AZ='BKG'> The ontology underlying LFG is a composite one , consisting of trees , feature structures and links between the two . </S>
+<S ID='S-45' AZ='OWN'> Our first task is to mathematically model this ontology , and to do so as transparently as possible . </S>
+<S ID='S-46' AZ='OWN'> That is , the mathematical entities we introduce should clearly reflect the intuitions important to LFG theorising -- `` No coding ! '' , should be our slogan . </S>
+<S ID='S-47' AZ='TXT'> In this section , we introduce such a representation of LFG ontology . </S>
+<S ID='S-48' ABSTRACTC='A-0' AZ='TXT'> In the following section , we shall present a formal language for talking about this representation ; that is , a language for specifying LFG grammars . </S>
+</P>
+<P>
+<S ID='S-49' AZ='OWN'> We work with the following objects . </S>
+<S ID='S-50' AZ='OWN'> A model is a tripartite structure <EQN/> , where <EQN/> is our mathematical picture of c - structure , <EQN/> our picture of f-structure , and zoomin our picture of the link between the two . </S>
+<S ID='S-51' AZ='OWN'> We now define each of these components . </S>
+<S ID='S-52' AZ='OWN'> Our definitions are given with respect to a signature of the form <EQN/> , where Cat , Atom and Feat are non-empty , finite or denumerably infinite sets . </S>
+<S ID='S-53' AZ='OWN'> The intuition is that these sets denote the syntactic categories , the atomic values , and the features that the linguist has chosen for some language . </S>
+<S ID='S-54' AZ='OWN'> For instance , Cat could be <EQN/> , Atom might be <EQN/> and Feat might be <EQN/> . </S>
+</P>
+<P>
+<S ID='S-55' AZ='OWN'> Firstly we define <EQN/> . </S>
+<S ID='S-56' AZ='OWN'> As this is our mathematical embodiment of c-structure ( that is , a category labeled tree ) we take it to be a pair <EQN/> , where T is a finite ordered tree and <EQN/> is a function from the set of tree nodes to Cat . </S>
+<S ID='S-57' AZ='OWN'> We will freely use the usual tree terminology such as mother-of , daughter-of , dominates , and so on . </S>
+</P>
+<P>
+<S ID='S-58' AZ='OWN'> Second , we take <EQN/> to be a tuple of the form <EQN/> , where W is a finite , non-empty set of nodes ; <EQN/> is a partial function from W to W , for all <EQN/> ; initial is a unique node in W such that any other node w ' of W can be reached by applying a finite number of <EQN/> to initial ; Final is a non-empty set of nodes such that for all <EQN/> and all <EQN/> , <EQN/> is undefined ; and <EQN/> is a function from Final to <EQN/> . </S>
+<S ID='S-59' AZ='OWN'> This is a standard way of viewing feature structures , and is appropriate for LFG . </S>
+</P>
+<P>
+<S ID='S-60' AZ='OWN'> Finally , we take zoomin , the link between c-structure and f-structure information , to be a partial function from T to W . </S>
+<S ID='S-61' AZ='OWN'> This completes our mathematical picture of LFG ontology . </S>
+<S ID='S-62' AZ='OWN'> It is certainly a precise picture ( all three components , and how they are related are well defined ) , but , just as importantly , it is also a faithful picture ; models capture the LFG ontology perspicuously . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-3'> A Specification Language </HEADER>
+<P>
+<S ID='S-63' AZ='OWN'> Although models pin down the essence of the LFG universe , our work has only just begun . </S>
+<S ID='S-64' AZ='OWN'> For a start , not all models are created equal . </S>
+<S ID='S-65' AZ='OWN'> Which of them correspond to grammatical utterances of English ? </S>
+<S ID='S-66' AZ='OWN'> Of Dutch ? </S>
+<S ID='S-67' AZ='OWN'> Moreover , there is a practical issue to be addressed : how should we go about saying which models we deem ` good ' ? </S>
+<S ID='S-68' AZ='OWN'> To put in another way , in what medium should we specify grammars . </S>
+</P>
+<P>
+<S ID='S-69' AZ='OWN'> Now , it is certainly possible to talk about models using natural language ( as readers of this paper will already be aware ) and for many purposes ( such as discussion with other linguists ) natural language is undoubtedly the best medium . </S>
+<S ID='S-70' AZ='OWN'> However , if our goal is to specify large scale grammars in a clear , unambiguous manner , and to do so in such a way that our grammatical analyses are machine verifiable , then the use of formal specification languages has obvious advantages . </S>
+<S ID='S-71' AZ='OWN'> But which formal specification language ? </S>
+<S ID='S-72' AZ='OWN'> There is no single best answer : it depends on one 's goals . </S>
+<S ID='S-73' AZ='OWN'> However there are some important rules of thumb : one should carefully consider the expressive capabilities required ; and a judicious commitment to simplicity and elegance will probably pay off in the long run . </S>
+<S ID='S-74' AZ='OWN'> Bearing this advice in mind , let us consider the nature of LFG grammars . </S>
+</P>
+<P>
+<S ID='S-75' AZ='OWN'> Firstly , LFG grammars impose constraints on <EQN/> . </S>
+<S ID='S-76' AZ='OWN'> Context free rules are typically used for this purpose -- which means , in effect , that constraints are being imposed on the ` daughter of ' and ` sister of ' relations of the tree . </S>
+<S ID='S-77' AZ='OWN'> Secondly , LFG grammars impose general constraints on various features in <EQN/> . </S>
+<S ID='S-78' AZ='OWN'> Such constraints ( for example the completeness constraint ) are usually expressed in English and make reference to specific features ( notably pred ) . </S>
+<S ID='S-79' AZ='OWN'> Thirdly , LFG grammars impose constraints on zoomin . </S>
+<S ID='S-80' AZ='OWN'> As we have already seen , this is done by annotating the context free rules with equations . </S>
+<S ID='S-81' AZ='OWN'> These constraints regulate the interaction of the ` mother of ' relation on <EQN/> , zoomin , and specific features in <EQN/> . </S>
+</P>
+<P>
+<S ID='S-82' AZ='OWN'> Thus a specification language adequate for LFG must be capable of talking about the usual tree relations , the various features , and zoomin ; it must also be powerful enough to permit the statement of generalisations ; and it must have some mechanism for regulating the interaction between <EQN/> and <EQN/> . </S>
+<S ID='S-83' AZ='OWN' TYPE='ITEM'> These desiderata can be met by making use of a propositional language augmented with </S>
+<S ID='S-84' TYPE='ITEM' AZ='OWN' > modal operators for talking about trees </S>
+<S ID='S-85' TYPE='ITEM' AZ='OWN' > modal operators for talking about feature structures , and </S>
+<S ID='S-86' TYPE='ITEM' AZ='OWN' > a modal operator for talking about zoomin , together with a path equality construct for synchronising the information flow between the two domains . </S>
+<S ID='S-87' AZ='OWN'> Let us build such a language . </S>
+</P>
+<P>
+<S ID='S-88' AZ='OWN' TYPE='ITEM'> Our language is called and its primitive symbols ( with respect to a given signature <EQN/> ) consists of </S>
+<S ID='S-89' TYPE='ITEM' AZ='OWN' > all items in Cat and Atom </S>
+<S ID='S-90' TYPE='ITEM' AZ='OWN' > two constants , c-struct and f-struct , </S>
+<S ID='S-91' TYPE='ITEM' AZ='OWN' > the Boolean connectives ( true , false , <EQN/> , <EQN/> , <EQN/> , etc . </S>
+<S ID='S-92' AZ='OWN' TYPE='ITEM'> ) , </S>
+<S ID='S-93' TYPE='ITEM' AZ='OWN' > three tree modalities <EQN/> , <EQN/> and <EQN/> , </S>
+<S ID='S-94' TYPE='ITEM' AZ='OWN' > a modality <EQN/> , for each feature <EQN/> , </S>
+<S ID='S-95' TYPE='ITEM' AZ='OWN' > a synchronisation modality <EQN/> , </S>
+<S ID='S-96' TYPE='ITEM' AZ='OWN' > a path equality constructor <EQN/> , together with </S>
+<S ID='S-97' TYPE='ITEM' AZ='OWN' > the brackets `` ) '' and `` ( '' . </S>
+</P>
+<P>
+<S ID='S-98' AZ='OWN'> The basic well formed formulas ( basic wffs ) of are : <EQN/> , where Patheq is defined as follows . </S>
+<S ID='S-99' AZ='OWN'> Let t , t ' be finite ( possibly null ) sequences of the modalities <EQN/> and <EQN/> , and let f , f ' be finite ( possibly null ) sequences of feature modalities . </S>
+<S ID='S-100' AZ='OWN'> Then <EQN/> is in Patheq , and nothing else is . </S>
+</P>
+<P>
+<S ID='S-101' AZ='OWN'> The wffs of are defined as follows : </S>
+<S ID='S-102' TYPE='ITEM' AZ='OWN' > all basic wffs are wffs , </S>
+<S ID='S-103' TYPE='ITEM' AZ='OWN' > all Boolean combinations of wffs are wffs , </S>
+<S ID='S-104' TYPE='ITEM' AZ='OWN' > if <EQN/> is a wff then so is <EQN/> , where <EQN/> and </S>
+<S ID='S-105' TYPE='ITEM' AZ='OWN' > if n  >  0 , and <EQN/> are wffs , then so is <EQN/> . </S>
+<S ID='S-106' AZ='OWN'> Nothing else is a wff . </S>
+</P>
+<P>
+<S ID='S-107' AZ='OWN'> Now for the satisfaction definition . </S>
+<S ID='S-108' AZ='OWN'> We inductively define a three place relation <EQN/> which holds between models <EQN/> , nodes n and wffs <EQN/> . </S>
+<S ID='S-109' AZ='OWN'> Intuitively , <EQN/> means that the constraint <EQN/> holds at ( is true at , is satisfied at ) the node n in model <EQN/> . </S>
+<S ID='S-110' AZ='OWN'> The required inductive definition is as follows : </S>
+</P>
+<IMAGE ID='I-1'/>
+<P>
+<S ID='S-111' AZ='OWN'> For the most part the import of these clauses should be clear . </S>
+<S ID='S-112' AZ='OWN'> The constants true and false play their usual role , c-struct and f-struct give us ` labels ' for our two domains , while the elements of Cat and Atom enable us to talk about syntactic categories and atomic f-structure information respectively . </S>
+<S ID='S-113' AZ='OWN'> The clauses for <EQN/> and <EQN/> are the usual definitions of classical logic , thus we have all propositional calculus at our disposal ; as we shall see , this gives us the flexibility required to formulate non-trivial general constraints . </S>
+<S ID='S-114' AZ='OWN'> More interesting are the clauses for the modalities . </S>
+<S ID='S-115' AZ='OWN'> The unary modalities <EQN/> , <EQN/> , <EQN/> , and <EQN/> and the variable arity modality <EQN/> give us access to the binary relations important in formulating LFG grammars . </S>
+<S ID='S-116' AZ='OWN'> Incidentally , <EQN/> is essentially a piece of syntactic sugar ; it could be replaced by a collection of unary modalities <REF TYPE='P' SELF="YES">Blackburn and Meyer-Viol 1994</REF> . </S>
+<S ID='S-117' AZ='OWN'> However , as the <EQN/> operator is quite a convenient piece of syntax for capturing the effect of phrase structure rules , we have included it as a primitive in . </S>
+</P>
+<P>
+<S ID='S-118' AZ='OWN'> In fact , the only clause in the satisfaction definition which is at all complex is that for <EQN/> . </S>
+<S ID='S-119' AZ='OWN'> It can be glossed as follows . </S>
+<S ID='S-120' AZ='OWN'> Let <EQN/> and <EQN/> be the path sequences through the tree corresponding to t and t ' respectively , and let <EQN/> and <EQN/> be the path sequences through the feature structure corresponding to f and f ' respectively . </S>
+<S ID='S-121' AZ='OWN'> Then <EQN/> is satisfied at a tree node t iff there is a feature structure node w that can be reached from t by making both the transition sequence <EQN/> and the transition sequence <EQN/> . </S>
+<S ID='S-122' AZ='OWN'> Clearly , this construct is closely related to the <REFAUTHOR>Kasper</REFAUTHOR> <REFAUTHOR>Rounds</REFAUTHOR> path equality <REF TYPE='P'>Kasper and Rounds 1990</REF> ; the principle difference is that whereas the <REFAUTHOR>Kasper</REFAUTHOR> <REFAUTHOR>Rounds</REFAUTHOR> enforces path equalities within the domain of feature structures , the LFG path equality enforces equalities between the tree domain and the feature structure domain . </S>
+</P>
+<P>
+<S ID='S-123' AZ='OWN'> If <EQN/> then we say that <EQN/> is satisfied in <EQN/> at n . </S>
+<S ID='S-124' AZ='OWN'> If <EQN/> for all nodes n in then we say that <EQN/> is valid in <EQN/> and write <EQN/> . </S>
+<S ID='S-125' AZ='OWN'> Intuitively , to say that <EQN/> is valid in <EQN/> is to say that the constraint <EQN/> holds universally ; it is a completely general fact about <EQN/> . </S>
+<S ID='S-126' AZ='OWN'> As we shall see in the next section , the notion of validity has an important role to play in grammar specification . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-4'> Specifying Grammars </HEADER>
+<P>
+<S ID='S-127' AZ='OWN'> We will now illustrate how can be used to specify grammars . </S>
+<S ID='S-128' AZ='OWN'> The basic idea is as follows . </S>
+<S ID='S-129' AZ='OWN'> We write down a wff <EQN/> which expresses all our desired grammatical constraints . </S>
+<S ID='S-130' AZ='OWN'> That is , we state in which trees and feature structures are admissible , and how tree and feature based information is to be synchronised ; examples will be given shortly . </S>
+<S ID='S-131' AZ='OWN'> Now , a model is simply a mathematical embodiment of LFG sentence structure , thus those models <EQN/> in which <EQN/> is valid are precisely the sentence structures which embody all our grammatical principles . </S>
+</P>
+<P>
+<S ID='S-132' AZ='OWN'> Now for some examples . </S>
+<S ID='S-133' AZ='OWN'> Let 's first consider how to write specifications which capture the effect of schemata annotated grammar rules . </S>
+<S ID='S-134' AZ='OWN'> Suppose we want to capture the meaning of rule <CREF/> of Figure <CREF/> , repeated here for convenience : </S>
+</P>
+<IMAGE ID='I-2'/>
+<P>
+<S ID='S-135' AZ='OWN'> Recall that this annotated rule licenses structures consisting of a binary tree whose mother node m is labeled S and whose daughter nodes <EQN/> and <EQN/> are labeled NP and VP respectively ; and where , furthermore , the S and VP nodes ( that is , m and <EQN/> ) are related to the same f-structure node w ; while the NP node ( that is , <EQN/> ) is related to the node w ' in the f-structure that is reached by making a subj transition from w . </S>
+</P>
+<P>
+<S ID='S-136' AZ='OWN'> This is precisely the kind of structural constraint that is designed to specify . </S>
+<S ID='S-137' AZ='OWN'> We do so as follows : </S>
+</P>
+<IMAGE ID='I-3'/>
+<P>
+<S ID='S-138' AZ='OWN'> This formula is satisfied in a model at any node m iff m is labeled with the category S , has exactly two daughters <EQN/> and <EQN/> labeled with category NP and VP respectively . </S>
+<S ID='S-139' AZ='OWN'> Moreover , <EQN/> must be associated with an f-structure node w ' which can also be reached by making a <EQN/> transition from the f-structure node w associated with the mother node of m . </S>
+<S ID='S-140' AZ='OWN'> ( In other words , that part of the f-structure that is associated with the NP node is re-entrant with the value of the subj feature in the f-structure associated with the S node . </S>
+<S ID='S-141' AZ='OWN'> And finally , <EQN/> must be associated with that f-structure node w which m  . </S>
+<S ID='S-142' AZ='OWN'> ( In other words , the part of the f-structure that is associated with the VP node is re-entrant with that part of the f-structure which is associated with the S node . ) </S>
+<S ID='S-143' AZ='OWN'> In short , we have captured the effect of an annotated rule purely declaratively . </S>
+<S ID='S-144' AZ='OWN'> There is no appeal to any construction algorithm ; we have simply stated how we want the different pieces to fit together . </S>
+<S ID='S-145' AZ='OWN'> Note that <EQN/> specifies local tree admissibility ( thus obviating the need for rewrite rules ) , and <EQN/> , <EQN/> and <EQN/> work together to capture the effect of <EQN/> and <EQN/> . </S>
+</P>
+<P>
+<S ID='S-146' AZ='OWN'> In any realistic LFG grammar there will be several -- often many -- such annotated rules , and acceptable c-structures are those in which each non-terminal node is licensed by one of them . </S>
+<S ID='S-147' AZ='OWN'> We specify this as follows . </S>
+<S ID='S-148' AZ='OWN'> For each such rule we form the analogous wff <EQN/> ( just as we did in the previous example ) and then we form the disjunction <EQN/> of all such wffs . </S>
+<S ID='S-149' AZ='OWN'> Now , any non-terminal node in the c-structure should satisfy one of these disjunctions ( that is , each sub-tree of c-struct must be licensed by one of these conditions ) ; moreover the disjunction is irrelevant to the terminal nodes of c-struct and all the nodes in f-struct . </S>
+<S ID='S-150' AZ='OWN'> Thus we demand that the following conditional statement be valid : </S>
+</P>
+<IMAGE ID='I-4'/>
+<P>
+<S ID='S-151' AZ='OWN'> This says that if we are at a c-struct node which has at least one daughter ( that is , a non-terminal node ) then one of the subtree licensing disjuncts ( or ` rules ' ) must be satisfied there . </S>
+<S ID='S-152' AZ='OWN'> This picks precisely those models in which all the tree nodes are appropriately licensed . </S>
+<S ID='S-153' AZ='OWN'> Note that the statement is indeed valid in such models : it is true at all the non-terminal nodes , and is vacuously satisfied at terminal tree nodes and nodes of f-struct . </S>
+</P>
+<P>
+<S ID='S-154' AZ='OWN'> We now turn to the second main component of LFG , the well formedness conditions on f-structures . </S>
+</P>
+<P>
+<S ID='S-155' AZ='OWN'> Consider first the uniqueness principle . </S>
+<S ID='S-156' AZ='OWN'> In essence , this principle states that in a given f-structure , a particular attribute may have at most one value . </S>
+<S ID='S-157' AZ='OWN'> In this restriction is ` built in ' : it follows from the choices made concerning the mathematical objects composing models . </S>
+<S ID='S-158' AZ='OWN'> Essentially , the uniqueness principle is enforced by two choices . </S>
+<S ID='S-159' AZ='OWN'> First , <EQN/> associates atoms only with final nodes of f-structures ; and as <EQN/> is a function , the atom so associated is unique . </S>
+<S ID='S-160' AZ='OWN'> In effect , this hard-wires prohibitions against constant-compound and constant-constant clashes into the semantics of . </S>
+<S ID='S-161' AZ='OWN'> Second , we have modeled features as partial functions on the f-structure nodes - this ensures that any complex valued attribute is either undefined , or is associated with a unique sub-part of the current f-structure . </S>
+<S ID='S-162' AZ='OWN'> In short , as required , any attribute will have at most one value . </S>
+</P>
+<P>
+<S ID='S-163' AZ='OWN'> We turn to the completeness principle . </S>
+<S ID='S-164' AZ='OWN'> In LFG , this applies to a ( small ) finite number of attributes ( that is , transitions in the feature structure ) . </S>
+<S ID='S-165' AZ='OWN'> This collection includes the grammatical functions ( e.g. subj , obj , iobj ) together with some longer transitions such as obl ; obj and to ; obj . </S>
+<S ID='S-166' AZ='OWN'> Let GF be a metavariable over the modalities corresponding to the elements of this set , thus GF contains such items as <EQN/> , <EQN/> , <EQN/> , <EQN/> and <EQN/> . </S>
+<S ID='S-167' AZ='OWN'> Now , the completeness principle requires that any of these features appearing as an attribute in the value of the pred attribute must also appear as an attribute of the f-structure immediately containing this pred attribute , and this recursively . </S>
+<S ID='S-168' AZ='OWN'> The following wff is valid on precisely those models satisfying the completeness principle : </S>
+</P>
+<IMAGE ID='I-5'/>
+<P>
+<S ID='S-169' AZ='OWN'> Finally , consider the counterpart of the completeness principle , the coherence principle . </S>
+<S ID='S-170' AZ='OWN'> This applies to the same attributes as the completeness principle and requires that whenever they occur in an f-structure they must also occur in the f-structure associated with its pred attribute . </S>
+<S ID='S-171' AZ='OWN'> This is tantamount to demanding the validity of the following formula : </S>
+</P>
+<IMAGE ID='I-6'/>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-5'> Conclusion </HEADER>
+<P>
+<S ID='S-172' AZ='AIM'> The discussion so far should have given the reader some idea of how to specify LFG grammars using <EQN/> . </S>
+<S ID='S-173' AZ='OWN'> To conclude we would like to discuss <EQN/> definitions . </S>
+<S ID='S-174' AZ='OWN'> This topic bears on an important general issue : how are the ` dynamic ' ( or ` generative ' , or ` procedural ' ) aspects of grammar to be reconciled with the ` static ' , ( or ` declarative ' ) model theoretic world view . </S>
+</P>
+<P>
+<S ID='S-175' AZ='OWN'> The point is this . </S>
+<S ID='S-176' AZ='OTH'> Although the LFG equations discussed so far were defining equations , LFG also allows so-called constraining equations ( written <EQN/> ) . </S>
+<S ID='S-177' AZ='OTH'> <REFAUTHOR>Kaplan and Bresnan</REFAUTHOR> explain the difference as follows . </S>
+<S ID='S-178' AZ='OTH'> Defining equations allow a feature-value pair to be inserted into an f-structure providing no conflicting information is present . </S>
+<S ID='S-179' AZ='OTH'> That is , they add a feature value pair to any consistent f-structure . </S>
+<S ID='S-180' AZ='OTH'> In contrast , constraining equations are intended to constrain the value of an already existing feature-value pair . </S>
+<S ID='S-181' AZ='OTH'> The essential difference is that constraining equations require that the feature under consideration already has a value , whereas defining equations apply independently of the feature value instantiation level . </S>
+</P>
+<P>
+<S ID='S-182' AZ='OWN'> In short , constraining equations are essentially a global check on completed structures which require the presence of certain feature values . </S>
+<S ID='S-183' AZ='OWN'> They have an eminently procedural character , and there is no obvious way to handle this idea in the present set up . </S>
+<S ID='S-184' AZ='OWN'> The bulk of LFG involves stating constraints about a single model , and is well equipped for this task , but constraining equations involve looking at the structure of other possible parse trees . </S>
+<S ID='S-185' AZ='OWN'> ( In this respect they are reminiscent of the feature specification defaults of GPSG. ) </S>
+<S ID='S-186' AZ='OWN' TYPE='ITEM'> The approach of the present paper has been driven by the view that </S>
+<S ID='S-187' TYPE='ITEM' AZ='OWN' > models capture the essence of LFG ontology , and , </S>
+<S ID='S-188' TYPE='ITEM' AZ='OWN' > the task of the linguist is to explain , in terms of the relations that exist within a single model , what grammatical structure is . </S>
+<S ID='S-189' AZ='OWN'> Most of the discussion in <REF TYPE='A'>Kaplan and Bresnan 1982</REF> is conducted in such terms . </S>
+<S ID='S-190' AZ='OWN'> However constraining equations broaden the scope of the permitted discourse ; basically , they allow implicit appeal to possible derivational structure . </S>
+<S ID='S-191' AZ='OWN'> In short , in common with most of the grammatical formalisms with which we are familiar , LFG seems to have a dynamic residue that resists a purely declarative analysis . </S>
+<S ID='S-192' AZ='OWN'> What should be done ?</S>
+</P>
+<P>
+<S ID='S-193' AZ='OWN'> We see three possible responses . </S>
+<S ID='S-194' AZ='OWN'> Firstly , we note that the model theoretic approach can almost certainly be extended to cover constraining equations . </S>
+<S ID='S-195' AZ='OWN'> The move involved is analogous to the way first order logic ( a so-called ` extensional ' logic ) can be extended to cope with intensional notions such as belief and necessity . </S>
+<S ID='S-196' AZ='OWN'> The basic idea -- it 's the key idea underlying first order Kripke semantics -- is to move from dealing with a single model to dealing with a collection of models linked by an accessibility relation . </S>
+<S ID='S-197' AZ='OWN'> Just as quantification over possible states of affairs yields analyses of intensional phenomena , so quantification over related models could provide a ` denotational semantics ' for <EQN/> . </S>
+<S ID='S-198' AZ='OWN'> Preliminary work suggests that the required structures have formal similarities to the structures used in preferential semantics for default and non-monotonic reasoning . </S>
+<S ID='S-199' AZ='OWN'> This first response seems to be a very promising line of work : the requisite tools are there , and the approach would tackle a full blooded version of LFG head on . </S>
+<S ID='S-200' AZ='OWN'> The drawback is the complexity it introduces into an ( up till now ) quite simple story . </S>
+<S ID='S-201' AZ='OWN'> Is such additional complexity really needed . </S>
+</P>
+<P>
+<S ID='S-202' AZ='OWN'> A second response is to admit that there is a dynamic residue , but to deal with it in overtly computational terms . </S>
+<S ID='S-203' AZ='OWN'> In particular , it may be possible to augment our approach with an explicit operational semantics , perhaps the evolving algebra approach adopted by <REF TYPE='A'>Moss and Johnson 1994</REF> . </S>
+<S ID='S-204' AZ='OWN'> Their approach is attractive , because it permits a computational treatment of dynamism that abstracts from low level algorithmic details . </S>
+<S ID='S-205' AZ='OWN'> In short , the second strategy is a ` divide and conquer ' strategy : treat structural issues using model theoretic tools , and procedural issues with ( revealing ) computational tools . </S>
+<S ID='S-206' AZ='OWN'> It 's worth remarking that this second response is not incompatible with the first ; it is common to provide programming languages with both a denotational and an operational semantics . </S>
+</P>
+<P>
+<S ID='S-207' AZ='OWN'> The third strategy is both simpler and more speculative . </S>
+<S ID='S-208' AZ='OWN'> While it certainly seems to be the case that LFG ( and other ` declarative ' formalisms ) have procedural residues , it is far from clear that these residues are necessary . </S>
+<S ID='S-209' AZ='OWN'> One of the most striking features of LFG ( and indeed , GPSG ) is the way that purely structural ( that is , model theoretic ) argumentation dominates . </S>
+<S ID='S-210' AZ='OWN'> Perhaps the procedural aspects are there more or less by accident ? </S>
+<S ID='S-211' AZ='OWN'> After all , both LFG and GPSG drew on ( and developed ) a heterogeneous collection of traditional grammar specification tools , such as context free rules , equations , and features . </S>
+<S ID='S-212' AZ='OWN'> It could be the case such procedural residues as <EQN/> are simply an artifact of using the wrong tools for talking about models . </S>
+<S ID='S-213' AZ='OWN'> If this is the case , it might be highly misguided to attempt to capture <EQN/> using a logical specification language . </S>
+<S ID='S-214' AZ='OWN'> Better , perhaps , would be to draw on what is good in LFG and to explore the logical options that arise naturally when the model theoretic view is taken as primary . </S>
+<S ID='S-215' AZ='OWN'> Needless to say , the most important task that faces this third response is to get on with the business of writing grammars ; that , and nothing else , is the acid test . </S>
+</P>
+<P>
+<S ID='S-216' AZ='OWN'> It is perhaps worth adding that at present the authors simply do not know what the best response is . </S>
+<S ID='S-217' AZ='OWN'> If nothing else , the present work has made very clear to us that the interplay of static and dynamic ideas in generative grammar is a delicate and complex matter which only further work can resolve . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+  Patrick <SURNAME>Blackburn</SURNAME> and
+Wilfried <SURNAME>Meyer-Viol</SURNAME>.
+<DATE>1994</DATE>.
+Linguistics, Logic and Finite Trees.
+Bulletin of the IGPL, 2, pp. 3-29.
+Available by anonymous ftp from theory.doc.ic.ac.uk, directory
+theory/forum/igpl/Bulletin.
+</REFERENCE>
+<REFERENCE>
+   Wilfrid <SURNAME>Hodges</SURNAME>.
+<DATE>1993</DATE>.
+Model Theory.
+Cambridge University Press.
+</REFERENCE>
+<REFERENCE>
+   Ron <SURNAME>Kaplan</SURNAME> and Joan <SURNAME>Bresnan</SURNAME>.
+<DATE>1982</DATE>.
+Lexical-Functional Grammar: A
+formal system for grammatical representation.
+In The Mental Representation of Grammatical Relations,
+pp. 173 - 280, MIT Press.
+</REFERENCE>
+<REFERENCE>
+R. <SURNAME>Kasper</SURNAME> and W. <SURNAME>Rounds</SURNAME>.
+<DATE>1990</DATE>.
+The Logic of Unification in Grammar.
+Linguistics and Philosophy, 13, pp. 33-58.
+</REFERENCE>
+<REFERENCE>
+Lawrence <SURNAME>Moss</SURNAME> and David <SURNAME>Johnson</SURNAME>.
+<DATE>1994</DATE>.
+Dynamic Interpretations of Constraint-Based Grammar Formalisms.
+<DATE>To appear</DATE> in Journal of Logic, Language and Information.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

@@ -1,0 +1,381 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9502005</FILENO>
+<APPEARED><CONFERENCE>EACL</CONFERENCE><YEAR>1995</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.Gr.Fm  </CLASSIFICATION>
+</METADATA>
+<TITLE> Off-line Optimization for Earley-style HPSG Processing </TITLE>
+<AUTHORLIST>
+<AUTHOR>Guido Minnen</AUTHOR>
+<AUTHOR>Dale Gerdemann</AUTHOR>
+<AUTHOR>Thilo Goetz</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' DOCUMENTC='S-121' AZ='AIM'> A novel approach to HPSG based natural language processing is described that uses an off-line compiler to automatically prime a declarative grammar for generation or parsing , and inputs the primed grammar to an advanced Earley-style processor . </A-S>
+<A-S ID='A-1' AZ='OWN'> This way we provide an elegant solution to the problems with empty heads and efficient bidirectional processing which is illustrated for the special case of HPSG generation . </A-S>
+<A-S ID='A-2' DOCUMENTC='S-98' AZ='OWN'> Extensive testing with a large HPSG grammar revealed some important constraints on the form of the grammar . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> Bidirectionality of grammar is a research topic in natural language processing that is enjoying increasing attention <REF TYPE='P'>Strzalkowski 1993a</REF> . </S>
+<S ID='S-1' AZ='BKG'> This is mainly due to the clear theoretical and practical advantages of bidirectional grammar use <REF TYPE='P'>Appelt 1987</REF> . </S>
+<S ID='S-2' AZ='AIM'> We address this topic in describing a novel approach to HPSG <REF TYPE='P'>Pollard and Sag 1994</REF> based language processing that uses an off-line compiler to automatically prime a declarative grammar for generation or parsing , and hands the primed grammar to an advanced Earley processor . </S>
+<S ID='S-3' AZ='OWN'> The developed techniques are direction independent in the sense that they can be used for both generation and parsing with HPSG grammars . </S>
+<S ID='S-4' AZ='AIM'> In this paper , we focus on the application of the developed techniques in the context of the comparatively neglected area of HPSG generation . </S>
+</P>
+<P>
+<S ID='S-5' AZ='OTH'> <REF TYPE='A'>Shieber 1988</REF> gave the first use of <REFAUTHOR>Earley</REFAUTHOR> 's algorithm for generation , but this algorithm does not use the prediction step to restrict feature instantiations on the predicted phrases , and thus lacks goal-directedness . </S>
+<S ID='S-6' AZ='CTR'> Though <REF TYPE='A' SELF="YES">Gerdemann 1991</REF> showed how to modify the restriction function to make top-down information available for the bottom-up completion step , Earley generation with top-down prediction still has a problem in that generating the subparts of a construction in the wrong order might lead to massive nondeterminacy or even nontermination . </S>
+<S ID='S-7' AZ='OTH'> <REF TYPE='A' SELF="YES">Gerdemann 1991</REF> partly overcame this problem by incorporating a head-driven strategy into <REFAUTHOR>Earley</REFAUTHOR> 's algorithm . </S>
+<S ID='S-8' AZ='CTR'> However , evaluating the head of a construction prior to its dependent subparts still suffers from efficiency problems when the head of a construction is either missing , displaced or underspecified . </S>
+<S ID='S-9' AZ='CTR'> Furthermore , <REF TYPE='A'>Martinovic and Strzalkowski 1992</REF> and others have observed that a simple head-first reordering of the grammar rules may still make insufficient restricting information available for generation unless the form of the grammar is restricted to unary or binary rules . </S>
+</P>
+<P>
+<S ID='S-10' AZ='OTH'> <REFAUTHOR>Strzalkowski</REFAUTHOR> 's Essential Arguments Approach ( EAA ) <REF TYPE='P'>Strzalkowski 1993b</REF> is a top-down approach to generation and parsing with logic grammars that uses off-line compilation to automatically invert parser-oriented logic grammars . </S>
+<S ID='S-11' AZ='OTH'> The inversion process consists of both the automatic static reordering of nodes in the grammar , and the interchanging of arguments in rules with recursively defined heads . </S>
+<S ID='S-12' AZ='OTH'> It is based on the notion of essential arguments , arguments which must be instantiated to ensure the efficient and terminating execution of a node . </S>
+<S ID='S-13' AZ='CTR'> <REF TYPE='A' SELF="YES">Minnen et al. 1995</REF> observe that the EAA is computationally infeasible , because it demands the investigation of almost all possible permutations of a grammar . </S>
+<S ID='S-14' AZ='CTR'> Moreover , the interchanging of arguments in recursive procedures as proposed by <REFAUTHOR>Strzalkowski</REFAUTHOR> fails to guarantee that input and output grammars are semantically equivalent . </S>
+<S ID='S-15' AZ='OTH'> The Direct Inversion Approach ( DIA ) of <REF TYPE='A' SELF="YES">Minnen et al. 1995</REF> overcomes these problems by making the reordering process more goal-directed and developing a reformulation technique that allows the successful treatment of rules which exhibit head-recursion . </S>
+<S ID='S-16' AZ='OTH'> Both the EAA and the DIA were presented as approaches to the inversion of parser-oriented grammars into grammars suitable for generation . </S>
+<S ID='S-17' AZ='OTH'> However , both approaches can just as well take a declarative grammar specification as input to produce generator and / or parser-oriented grammars as in <REF TYPE='A'>Dymetman et al. 1990</REF> . </S>
+<S ID='S-18' AZ='BAS'> In this paper we adopt the latter theoretically more interesting perspective . </S>
+</P>
+<P>
+<S ID='S-19' AZ='AIM'> We developed a compiler for off-line optimization of phrase structure rule-based typed feature structure grammars which generalizes the techniques developed in the context of the DIA , and we advanced a typed extension of the Earley-style generator of <REF SELF="YES" TYPE='A'>Gerdemann 1991</REF> . </S>
+<S ID='S-20' AZ='TXT'> Off-line compilation ( section <CREF/> ) is used to produce grammars for the Earley-style generator ( section <CREF/> ) . </S>
+<S ID='S-21' AZ='OWN'> We show that our use of off-line grammar optimization overcomes problems with empty or displaced heads . </S>
+<S ID='S-22' AZ='OWN'> The developed techniques are extensively tested with a large HPSG grammar for partial VP topicalization in German <REF TYPE='A'>Hinrichs et al. 1994</REF> . </S>
+<S ID='S-23' AZ='TXT'> This uncovered some important constraints on the form of the phrase structure rules ( phrase structure rules ) in a grammar imposed by the compiler ( section <CREF/> ) . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Advanced Earley Generation </HEADER>
+<P>
+<S ID='S-24' AZ='CTR'> As <REF TYPE='A'>Shieber 1988</REF> noted , the main shortcoming of Earley generation is a lack of goal-directedness that results in a proliferation of edges . </S>
+<S ID='S-25' AZ='OTH'> <REF TYPE='A' SELF="YES">Gerdemann 1991</REF> tackled this shortcoming by modifying the restriction function to make top-down information available for the bottom-up completion step . </S>
+<S ID='S-26' AZ='OTH'> <REFAUTHOR SELF="YES">Gerdemann</REFAUTHOR> 's generator follows a head-driven strategy in order to avoid inefficient evaluation orders . </S>
+<S ID='S-27' AZ='OTH'> More specifically , the head of the right-hand side of each grammar rule is distinguished , and distinguished categories are scanned or predicted upon first . </S>
+<S ID='S-28' AZ='OTH'> The resulting evaluation strategy is similar to that of the head-corner approach <REF TYPE='P'>Shieber et al. 1990</REF> , <REF TYPE='P' SELF="YES">Gerdemann and Hinrichs in press</REF> : prediction follows the main flow of semantic information until a lexical pivot is reached , and only then are the head-dependent subparts of the construction built up in a bottom-up fashion . </S>
+<S ID='S-29' AZ='OTH'> This mixture of top-down and bottom-up information flow is crucial since the top-down semantic information from the goal category must be integrated with the bottom-up subcategorization information from the lexicon . </S>
+<S ID='S-30' AZ='OTH'> A strict top-down evaluation strategy suffers from what may be called head-recursion , i.e. the generation analog of left recursion in parsing . </S>
+<S ID='S-31' AZ='OTH'> <REF TYPE='A'>Shieber et al. 1990</REF> show that a top-down evaluation strategy will fail for rules such as VP <EQN/> VP X , irrespective of the order of evaluation of the right-hand side categories in the rule . </S>
+<S ID='S-32' AZ='CTR'> By combining the off-line optimization process with a mixed bottom-up / top-down evaluation strategy , we can refrain from a complete reformulation of the grammar as , for example , in <REF SELF="YES" TYPE='A'>Minnen et al. 1995</REF> . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-2'> Optimizations </HEADER>
+<P>
+<S ID='S-33' AZ='BAS'> We further improved a typed extension of <REFAUTHOR SELF="YES">Gerdemann</REFAUTHOR> 's Earley generator with a number of techniques that reduce the number of edges created during generation . </S>
+<S ID='S-34' AZ='OWN'> Three optimizations were especially helpful . </S>
+<S ID='S-35' AZ='OWN'> The first supplies each edge in the chart with two indices , a backward index pointing to the state in the chart that the edge is predicted from , and a forward index pointing to the states that are predicted from the edge . </S>
+<S ID='S-36' AZ='OWN'> By matching forward and backward indices , the edges that must be combined for completion can be located faster . </S>
+<S ID='S-37' AZ='BAS'> This indexing technique , as illustrated below , improves upon the more complex indices in <REF TYPE='A' SELF="YES">Gerdemann 1991</REF> and is closely related to OLDT-resolution <REF TYPE='P'>Tamaki and Sato 1986</REF> . </S>
+</P>
+<IMAGE ID='I-0'/>
+<P>
+<S ID='S-38' AZ='OWN'> Active edge 2 resulted from active edge 1 through prediction . </S>
+<S ID='S-39' AZ='OWN'> The backward index of edge 2 is therefore identified with the forward index of edge 1 . </S>
+<S ID='S-40' AZ='OWN'> Completion of an active edge results in an edge with identical backward index . </S>
+<S ID='S-41' AZ='OWN'> In the case of our example , this would be the steps from edge 2 to edge 3 and edge 3 to edge 4 . </S>
+<S ID='S-42' AZ='OWN'> As nothing gets predicted from a passive edge ( 4 ) , it does not have a forward index . </S>
+<S ID='S-43' AZ='OWN'> In order to use passive edge 4 for completion of an active edge , we only need to consider those edges which have a forward index identical to the backward index of 4 . </S>
+</P>
+<P>
+<S ID='S-44' AZ='OWN'> The second optimization creates a table of the categories which have been used to make predictions from . </S>
+<S ID='S-45' AZ='OWN'> As discussed in <REF TYPE='A' SELF="YES">Gerdemann 1991</REF> , such a table can be used to avoid redundant predictions without a full and expensive subsumption test . </S>
+<S ID='S-46' AZ='OWN'> The third indexes lexical entries which is necessary to obtain constant-time lexical access . </S>
+</P>
+<P>
+<S ID='S-47' AZ='OWN'> The optimizations of our Earley-generator lead to significant gains in efficiency . </S>
+<S ID='S-48' AZ='OWN'> However , despite these heuristic improvements , the problem of goal-directedness is not solved . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-3'> Empty Heads </HEADER>
+<P>
+<S ID='S-49' AZ='CTR'> Empty or displaced heads present the principal goal-directedness problem for any head-driven generation approach <REF TYPE='P'>Shieber et al. 1990</REF> , <REF TYPE='A'>Koenig 1994b</REF> , <REF TYPE='A' SELF="YES">Gerdemann and Hinrichs in press</REF> , where empty head refers not just to a construction in which the head has an empty phonology , but to any construction in which the head is partially unspecified . </S>
+<S ID='S-50' AZ='OWN'> Since phonology does not guide generation , the phonological realization of the head of a construction plays no part in the generation of that construction . </S>
+<S ID='S-51' AZ='OWN'> To better illustrate the problem that underspecified heads pose , consider the sentence : </S>
+</P>
+<EXAMPLE ID='E-0'>
+<EX-S> Hat Karl Marie gekt ? </EX-S>
+<EX-S> Has Karl Marie kissed ? </EX-S>
+<EX-S> `` Did Karl kiss Mary ? '' </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-52' AZ='BAS'> for which we adopt the argument composition analysis presented in <REF TYPE='A'>Hinrichs and Nakazawa 1989</REF> : the subcat list of the auxiliary verb is partially instantiated in the lexicon and only becomes fully instantiated upon its combination with its verbal complement , the main verb . </S>
+<S ID='S-53' AZ='OWN'> The phrase structure rule that describes this construction is </S>
+</P>
+<IMAGE ID='I-1'/>
+<P>
+<S ID='S-54' AZ='OWN'> Though a head-driven generator must generate first the head of the rule , nothing prescribes the order of generation of the complements of the head . </S>
+<S ID='S-55' AZ='OWN'> If the generator generates second the main verb then the subcat list of the main verb instantiates the subcat list of the head , and generation becomes a deterministic procedure in which complements are generated in sequence . </S>
+<S ID='S-56' AZ='OWN'> However , if the generator generates second some complement other than the main verb , then the subcat list of the head contains no restricting information to guide deterministic generation , and generation becomes a generate-and-test procedure in which complements are generated at random , only to be eliminated by further unifications . </S>
+<S ID='S-57' AZ='OWN'> Clearly then , the order of evaluation of the complements in a rule can profoundly influence the efficiency of generation , and an efficient head-driven generator must order the evaluation of the complements in a rule accordingly . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-4'> Off-line versus On-line </HEADER>
+<P>
+<S ID='S-58' AZ='OWN'> Dynamic , on-line reordering can solve the ordering problem discussed in the previous subsection , but is rather unattractive : interpreting grammar rules at run time creates much overhead , and locally determining the optimal evaluation order is often impossible . </S>
+<S ID='S-59' AZ='OWN'> Goal-freezing can also overcome the ordering problem , but is equally unappealing : goal-freezing is computationally expensive , it demands the procedural annotation of an otherwise declarative grammar specification , and it presupposes that a grammar writer possesses substantial computational processing expertise . </S>
+<S ID='S-60' AZ='OWN'> We chose instead to deal with the ordering problem by using off-line compilation to automatically optimize a grammar such that it can be used for generation , without additional provision for dealing with the evaluation order , by our Earley generator . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-5'> Off-line Grammar Optimization </HEADER>
+<P>
+<S ID='S-61' AZ='OWN'> Our off-line grammar optimization is based on a generalization of the dataflow analysis employed in the DIA to a dataflow analysis for typed feature structure grammars . </S>
+<S ID='S-62' AZ='OWN'> This dataflow analysis takes as input a specification of the paths of the start category that are considered fully instantiated . </S>
+<S ID='S-63' AZ='OWN'> In case of generation , this means that the user annotates the path specifying the logical form , i.e. , the path ( or some of its subpaths ) , as bound . </S>
+<S ID='S-64' AZ='OWN'> We use the type hierarchy and an extension of the unification and generalization operations such that path annotations are preserved , to determine the flow of ( semantic ) information between the rules and the lexical entries in a grammar . </S>
+<S ID='S-65' AZ='OWN'> Structure sharing determines the dataflow within the rules of the grammar . </S>
+</P>
+<P>
+<S ID='S-66' AZ='OWN'> The dataflow analysis is used to determine the relative efficiency of a particular evaluation order of the right-hand side categories in a phrase structure rule by computing the maximal degree of nondeterminacy introduced by the evaluation of each of these categories . </S>
+<S ID='S-67' AZ='OWN'> The maximal degree of nondeterminacy introduced by a right-hand side category equals the maximal number of rules and / or lexical entries with which this category unifies given its binding annotations . </S>
+<S ID='S-68' AZ='OWN'> The optimal evaluation order of the right-hand side categories is found by comparing the maximal degree of nondeterminacy introduced by the evaluation of the individual categories with the degree of nondeterminacy the grammar is allowed to introduce : if the degree of nondeterminacy introduced by the evaluation of one of the right-hand side categories in a rule exceeds the admissible degree of nondeterminacy the ordering at hand is rejected . </S>
+<S ID='S-69' AZ='OWN'> The degree of nondeterminacy the grammar is allowed to introduce is originally set to one and consecutively incremented until the optimal evaluation order for all rules in the grammar is found . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-6'> Example </HEADER>
+<P>
+<S ID='S-70' AZ='TXT'> The compilation process is illustrated on the basis of the phrase structure rule for argument composition discussed in <CREF/> . </S>
+<S ID='S-71' AZ='OWN'> Space limitations force us to abstract over the recursive optimization of the rules defining the right-hand side categories through considering only the defining lexical entries . </S>
+</P>
+<P>
+<S ID='S-72' AZ='OWN'> Unifying the user annotated start category with the left-hand side of this phrase structure rule leads to the annotation of the path specifying the logical form of the construction as bound ( see below ) . </S>
+<S ID='S-73' AZ='OWN'> As a result of the structure-sharing between the left-hand side of the rule and the auxiliary verb category , the - value of the auxiliary verb can be treated as bound , as well . </S>
+<S ID='S-74' AZ='OWN'> In addition , the paths with a value of a maximal specific type for which there are no appropriate features specified , for example , the path cat , can be considered bound : </S>
+</P>
+<IMAGE ID='I-2'/>
+<P>
+<S ID='S-75' AZ='OWN'> On the basis of this annotated rule , we investigate the lexical entries defining its right-hand side categories . </S>
+<S ID='S-76' AZ='OWN'> The auxiliary verb category is unified with its defining lexical entries ( under preservation of the binding annotations ) . </S>
+<S ID='S-77' AZ='OWN'> The following is an example of such a lexical entry . </S>
+<S ID='S-78' AZ='OWN'> ( Note that subpaths of a path marked as bound are considered bound too ) . </S>
+</P>
+<IMAGE ID='I-3'/>
+<P>
+<S ID='S-79' AZ='OWN'> The binding annotations of the lexical entries defining the auxiliary verb are used to determine with how many lexical entries the right-hand side category of the rule maximally unifies , i.e. , its maximal degree of nondeterminacy . </S>
+<S ID='S-80' AZ='OWN'> In this case , the maximal degree of nondeterminacy that the evaluation of the auxiliary verb introduces is very low as the logical form of the auxiliary verb is considered fully instantiated . </S>
+<S ID='S-81' AZ='OWN'> Now we mark the paths of the defining lexical entries whose instantiation can be deduced from the type hierarchy . </S>
+<S ID='S-82' AZ='OWN'> To mimic the evaluation of the auxiliary verb , we determine the information common to all defining lexical entries by taking their generalization , i.e. , the most specific feature structure subsuming all , and unify the result with the original right-hand side category in the phrase structure rule . </S>
+<S ID='S-83' AZ='OWN'> Because both the generalization and the unification operations preserve binding annotations , this leads ( via structure-sharing ) to the annotation that the logical form of the verbal complement can be considered instantiated . </S>
+<S ID='S-84' AZ='OWN'> Note that the nonverbal complements do not become further instantiated . </S>
+<S ID='S-85' AZ='OWN'> By subsequent investigation of the maximal degree of nondeterminacy introduced by the evaluation of the complements in various permutations , we find that the logical form of a sentence only restricts the evaluation of the nonverbal complements after the evaluation of the verbal complement . </S>
+<S ID='S-86' AZ='OWN'> This can be verified on the basis of a sample lexical entry for a main verb . </S>
+</P>
+<IMAGE ID='I-4'/>
+<P>
+<S ID='S-87' AZ='OWN'> The relative efficiency of this evaluation leads our compiler to choose </S>
+</P>
+<IMAGE ID='I-5'/>
+<P>
+<S ID='S-88' AZ='OWN'> as the optimal evaluation order of our phrase structure rule for argument composition . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-7'> Processing Head </HEADER>
+<P>
+<S ID='S-89' AZ='OWN'> The optimal evaluation order for a phrase structure rule need not necessarily be head-first . </S>
+<S ID='S-90' AZ='OWN'> Our dataflow analysis treats heads and complements alike , and includes the head in the calculation of the optimal evaluation order of a rule . </S>
+<S ID='S-91' AZ='OWN'> If the evaluation of the head of a rule introduces much nondeterminacy or provides insufficient restricting information for the evaluation of its complements , our dataflow analysis might not select the head as the first category to be evaluated , and choose instead  </S>
+</P>
+<IMAGE ID='I-6'/>
+<P>
+<S ID='S-92' AZ='OWN'> as the optimal evaluation order . </S>
+<S ID='S-93' AZ='OWN'> This clearly demonstrates an extremely important consequence of using our dataflow analysis to compile a declarative grammar into a grammar optimized for generation . </S>
+<S ID='S-94' AZ='OWN'> Empty or displaced heads pose us no problem , since the optimal evaluation order of the right-hand side of a rule is determined regardless of the head . </S>
+<S ID='S-95' AZ='OWN'> Our dataflow analysis ignores the grammatical head , but identifies instead the ` processing head ' , and ( no less importantly ) the ` first processing complement ' , the ` second processing complement ' , and so on . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-8'> Constraints on Grammar </HEADER>
+<IMAGE ID='I-7'/>
+<P>
+<S ID='S-96' AZ='OWN'> Our Earley generator and the described compiler for off-line grammar optimization have been extensively tested with a large HPSG grammar . </S>
+<S ID='S-97' AZ='BAS'> This test-grammar is based on the implementation of an analysis of partial VP topicalization in German <REF TYPE='P'>Hinrichs et al. 1994</REF> in the Troll system <REF SELF="YES" TYPE='P'>Gerdemann and King 1994</REF> . </S>
+<S ID='S-98' ABSTRACTC='A-2' AZ='OWN'> Testing the developed techniques uncovered important constraints on the form of the phrase structure rules in a grammar imposed by the compiler . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-9'> Complement Displacement </HEADER>
+<P>
+<S ID='S-99' AZ='OWN'> The compiler is not able to find an evaluation order such that the Earley generator has sufficient restricting information to generate all subparts of the construction efficiently in particular cases of complement displacement . </S>
+<S ID='S-100' AZ='OWN'> More specifically , this problem arises when a complement receives essential restricting information from the head of the construction from which it has been extracted , while , at the same time , it provides essential restricting information for the complements that stayed behind . </S>
+<S ID='S-101' AZ='OWN'> Such a case is represented schematically in figure <CREF/> ( see next page ) . </S>
+</P>
+<P>
+<S ID='S-102' AZ='OWN'> The first processing complement ( C1 ) of the head ( H ) has been displaced . </S>
+<S ID='S-103' AZ='OWN'> This is problematic in case C1 provides essential bindings for the successful evaluation of the complement C2 . </S>
+<S ID='S-104' AZ='OWN'> C1 can not be evaluated prior to the head and once H is evaluated it is no longer possible to evaluate C1 prior to C2 . </S>
+<S ID='S-105' AZ='OWN'> An example of problematic complement displacement taken from our test-grammar is given in figure <CREF/> ( see next page ) . </S>
+<S ID='S-106' AZ='OWN'> The topicalized partial VP `` Anna lieben '' receives its restricting semantic information from the auxiliary verb and upon its evaluation provides essential bindings not only for the direct object , but also for the subject that stayed behind in the Mittelfeld together with the auxiliary verb . </S>
+<S ID='S-107' AZ='OWN'> These mutual dependencies between the subconstituents of two different local trees lead either to the unrestricted generation of the partial VP , or to the unrestricted generation of the subject in the Mittelfeld . </S>
+<S ID='S-108' AZ='OWN'> We handled this problem by partial execution <REF TYPE='P'>Pereira and Shieber 1987</REF> of the filler-head rule . </S>
+<S ID='S-109' AZ='OWN'> This allows the evaluation of the filler right after the evaluation of the auxiliary verb , but prior to the subject . </S>
+<S ID='S-110' AZ='OWN'> A head-driven generator has to rely on a similar solution , as it will not be able to find a successful ordering for the local trees either , simply because it does not exist . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-10'> Generalization </HEADER>
+<P>
+<S ID='S-111' AZ='OWN'> A potential problem for our approach constitutes the requirement that the phrase structure rules in the grammar need to have a particular degree of specificity for the generalization operation to be used successfully to mimic its evaluation . </S>
+<S ID='S-112' AZ='OWN'> This is best illustrated on the basis of the following , more ` schematic ' , phrase structure rule : </S>
+</P>
+<IMAGE ID='I-8'/>
+<P>
+<S ID='S-113' AZ='OWN'> Underspecification of the head of the rule allows it to unify with both finite auxiliaries and finite ditransitive main verbs . </S>
+<S ID='S-114' AZ='OWN'> In combination with the underspecification of the complements , this allows the rule not only to be used for argument composition constructions , as discussed above , but also for constructions in which a finite main verb becomes saturated . </S>
+<S ID='S-115' AZ='OWN'> This means that the logical form of the nonverbal complements ( <EQN/> and <EQN/> ) becomes available either upon the evaluation of the complement tagged <EQN/> ( in case of argument composition ) , or upon the evaluation of the finite verb ( in case the head of the rule is a ditransitive main verb ) . </S>
+<S ID='S-116' AZ='OWN'> As a result , the use of generalization does not suffice to mimic the evaluation of the respective right-hand side categories . </S>
+<S ID='S-117' AZ='OWN'> Because both verbal categories have defining lexical entries which do not instantiate the logical form of the nonverbal arguments , the dataflow analysis leads to the conclusion that the logical form of the nonverbal complements never becomes instantiated . </S>
+<S ID='S-118' AZ='OWN'> This causes the rejection of all possible evaluation orders for this rule , as the evaluation of an unrestricted nonverbal complement clearly exceeds the allowed maximal degree of nondeterminacy of the grammar . </S>
+<S ID='S-119' AZ='OWN'> We are therefore forced to split this schematic phrase structure rule into two more specific rules at least during the optimization process . </S>
+<S ID='S-120' AZ='OWN'> It is important to note that this is a consequence of a general limitation of dataflow analysis <REF TYPE='P'>Mellish 1981</REF> . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-11'> Concluding Remarks </HEADER>
+<P>
+<S ID='S-121' ABSTRACTC='A-0' AZ='AIM'> An innovative approach to HPSG processing is described that uses an off-line compiler to automatically prime a declarative grammar for generation or parsing , and inputs the primed grammar to an advanced Earley processor . </S>
+<S ID='S-122' AZ='BAS'> Our off-line compiler extends the techniques developed in the context of the DIA in that it compiles typed feature structure grammars , rather than simple logic grammars . </S>
+<S ID='S-123' AZ='OWN'> The approach allows efficient bidirectional processing with similar generation and parsing times . </S>
+<S ID='S-124' AZ='CTR'> It is shown that combining off-line techniques with an advanced Earley-style generator provides an elegant solution to the general problem that empty or displaced heads pose for conventional head-driven generation . </S>
+</P>
+<P>
+<S ID='S-125' AZ='OWN'> The developed off-line compilation techniques make crucial use of the fundamental properties of the HPSG formalism . </S>
+<S ID='S-126' AZ='OWN'> The monostratal , uniform treatment of syntax , semantics and phonology supports dataflow analysis , which is used extensively to provide the information upon which off-line compilation is based . </S>
+<S ID='S-127' AZ='OWN'> Our compiler uses the type hierarchy to determine paths with a value of a minimal type without appropriate features as bound . </S>
+<S ID='S-128' AZ='OWN'> However , the equivalent of this kind of minimal types in untyped feature structure grammars are constants which can be used in a similar fashion for off-line optimization . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+<SURNAME>Appelt</SURNAME>, Douglas.
+<DATE>1987</DATE>.
+Bidirectional Grammars  and  the Design of Natural Language Generation
+Systems.
+In  Proceedings of TINLAP-3, Las Cruces, New Mexico, USA.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Dymetman</SURNAME>, Marc; Pierre <SURNAME>Isabelle</SURNAME> and Franois <SURNAME>Perrault</SURNAME>.
+<DATE>1990</DATE>.
+A Symmetrical Approach to Parsing and Generation.
+In Proceedings of COLING-90, Helsinki, Finland.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Gerdemann</SURNAME>, Dale.
+<DATE>1991</DATE>.
+Parsing and Generation of Unification Grammars.
+Doctoral  dissertation.  University of Illinois. Published as  Beckman
+Institute Cognitive  Science technical report,  number CS-91-06.
+Urbana-Champaign, Illinois, USA.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Gerdemann</SURNAME>, Dale and Erhard  <SURNAME>Hinrichs</SURNAME>.
+<DATE>in  press</DATE>.
+Some Open Problems in Head-driven Generation.
+In  Linguistics  and  Computation.   CSLI  Lecture Notes.
+Stanford, California, USA.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Gerdemann</SURNAME>, Dale and   Paul <SURNAME>King</SURNAME>.
+<DATE>1994</DATE>.
+The   Correct   and   Efficient   Implementation   of  Appropriateness
+Specifications for Typed Feature Structures.
+In Proceedings of COLING-94, Kyoto, Japan.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Hinrichs</SURNAME>, Erhard and Tsuneko <SURNAME>Nakazawa</SURNAME>.
+<DATE>1989</DATE>.
+Subcategorization and VP Structure in German.
+Paper  presented to the '3rd  Symposium  on  Germanic  Linguistics' at
+Purdue University.  Published  as  SFB 340  technical report.
+Tbingen, Germany.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Hinrichs</SURNAME>, Erhard; Detmar <SURNAME>Meurers</SURNAME> and Tsuneko  <SURNAME>Nakazawa</SURNAME>.
+<DATE>1994</DATE>.
+Partial VP  and  Split NP  Topicalization  in  German:  An
+HPSG Analysis and its Implementation.
+SFB 340 technical report nr. 58. Tbingen, Germany.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Knig</SURNAME>, Esther.
+<DATE>1994</DATE>.
+Syntactic-Head-Driven  Generation.
+In Proceedings of COLING-94.  Kyoto, Japan
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Martinovic</SURNAME>, Miroslav and Tomek <SURNAME>Strzalkowski</SURNAME>.
+<DATE>1992</DATE>.
+Comparing Two Grammar-based Generation Algorithms: A Case Study.
+In  Proceedings of   ACL-92, Newark, Delaware, USA.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Mellish</SURNAME>, Chris.
+<DATE>1981</DATE>.
+The Automatic Generation of Mode Declarations for Prolog Programs.
+In  Proceedings   of  the  Workshop  on  Logic  Programming  and
+Intelligent Systems, Los Angeles, California, USA.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Minnen</SURNAME>, Guido; Dale  <SURNAME>Gerdemann</SURNAME>  and Erhard   <SURNAME>Hinrichs</SURNAME>.
+<DATE>1995</DATE>.
+Direct Automated Inversion of Logic Grammars.
+In  New  Generation  Computing, volume 13, number 2.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Pereira</SURNAME>, Fernando and  Stuart <SURNAME>Shieber</SURNAME>.
+<DATE>1987</DATE>.
+Prolog and Natural Language Analysis.
+CSLI Lecture Notes, number 10.  Stanford, California, USA.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Pollard</SURNAME>, Carl and Ivan <SURNAME>Sag</SURNAME>.
+<DATE>1994</DATE>.
+Head-driven Phrase Structure Grammar.
+University of Chicago Press, Chicago, Illinois, USA.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Shieber</SURNAME>, Stuart.
+<DATE>1988</DATE>.
+A Uniform Architecture for Parsing and Generation.
+In Proceedings of COLING-88.  Budapest, Hungary.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Shieber</SURNAME>, Stuart; Gertjan van  <SURNAME>Noord</SURNAME>; Fernando <SURNAME>Pereira</SURNAME> and Robert <SURNAME>Moore</SURNAME>.
+<DATE>1990</DATE>.
+Semantic Head-Driven Generation.
+In Computational Linguistics, volume 16, number 1.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Strzalkowski</SURNAME>, Tomek (editor).
+<DATE>1993a</DATE>.
+Reversible  Grammar  in  Natural Language  Processing.
+Kluwer Academic Publishers, Dordrecht, The Netherlands.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Strzalkowski</SURNAME>, Tomek.
+<DATE>1993b</DATE>.
+A General Computational Method for Grammar Inversion.
+In  Strzalkowski <DATE>1993a</DATE>.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Tamaki</SURNAME>, Hisao and Taisuke <SURNAME>Sato</SURNAME>
+<DATE>1986</DATE>.
+OLD Resolution with Tabulation.
+In  Proceedings of the Third International  Conference on  Logic
+Programming. Berlin, Germany
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

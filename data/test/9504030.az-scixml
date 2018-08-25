@@ -1,0 +1,447 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9504030</FILENO>
+<APPEARED><CONFERENCE>ACL</CONFERENCE><YEAR>1995</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.St Lg.Pr.Gr.Ps </CLASSIFICATION>
+</METADATA>
+<TITLE> Statistical Decision-Tree Models for Parsing </TITLE>
+<AUTHORLIST>
+<AUTHOR>David M. Magerman</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' AZ='CTR'> Syntactic natural language parsers have shown themselves to be inadequate for processing highly-ambiguous large-vocabulary text , as is evidenced by their poor performance on domains like the Wall Street Journal , and by the movement away from parsing-based approaches to text-processing in general . </A-S>
+<A-S ID='A-1' AZ='AIM'> In this paper , I describe SPATTER , a statistical parser based on decision-tree learning techniques which constructs a complete parse for every sentence and achieves accuracy rates far better than any published result . </A-S>
+<A-S ID='A-2' AZ='OWN'> This work is based on the following premises : </A-S>
+<A-S ID='A-3' TYPE='ITEM' AZ='OWN'> grammars are too complex and detailed to develop manually for most interesting domains ; </A-S>
+<A-S ID='A-4' TYPE='ITEM' AZ='OWN'> parsing models must rely heavily on lexical and contextual information to analyze sentences accurately ; and </A-S>
+<A-S ID='A-5' TYPE='ITEM' AZ='OWN'> existing n-gram modeling techniques are inadequate for parsing models . </A-S>
+<A-S ID='A-6' DOCUMENTC='S-20' AZ='CTR'> In experiments comparing SPATTER with IBM 's computer manuals parser , SPATTER significantly outperforms the grammar-based parser . </A-S>
+<A-S ID='A-7' AZ='OWN'> Evaluating SPATTER against the Penn Treebank Wall Street Journal corpus using the PARSEVAL measures , SPATTER achieves 86 % precision , 86 % recall , and 1.3 crossing brackets per sentence for sentences of 40 words or less , and 91 % precision , 90 % recall , and 0.5 crossing brackets for sentences between 10 and 20 words in length . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> Parsing a natural language sentence can be viewed as making a sequence of disambiguation decisions : determining the part-of-speech of the words , choosing between possible constituent structures , and selecting labels for the constituents . </S>
+<S ID='S-1' AZ='OTH'> Traditionally , disambiguation problems in parsing have been addressed by enumerating possibilities and explicitly declaring knowledge which might aid the disambiguation process . </S>
+<S ID='S-2' AZ='CTR'> However , these approaches have proved too brittle for most interesting natural language problems . </S>
+</P>
+<P>
+<S ID='S-3' AZ='AIM'> This work addresses the problem of automatically discovering the disambiguation criteria for all of the decisions made during the parsing process , given the set of possible features which can act as disambiguators . </S>
+<S ID='S-4' AZ='OWN'> The candidate disambiguators are the words in the sentence , relationships among the words , and relationships among constituents already constructed in the parsing process . </S>
+</P>
+<P>
+<S ID='S-5' AZ='OWN'> Since most natural language rules are not absolute , the disambiguation criteria discovered in this work are never applied deterministically . </S>
+<S ID='S-6' AZ='OWN'> Instead , all decisions are pursued non-deterministically according to the probability of each choice . </S>
+<S ID='S-7' AZ='OWN'> These probabilities are estimated using statistical decision tree models . </S>
+<S ID='S-8' AZ='OWN'> The probability of a complete parse tree ( T ) of a sentence ( S ) is the product of each decision ( <EQN/> ) conditioned on all previous decisions : </S>
+</P>
+<IMAGE ID='I-0'/>
+<P>
+<S ID='S-9' AZ='OWN'> Each decision sequence constructs a unique parse , and the parser selects the parse whose decision sequence yields the highest cumulative probability . </S>
+<S ID='S-10' AZ='OWN'> By combining a stack decoder search with a breadth-first algorithm with probabilistic pruning , it is possible to identify the highest-probability parse for any sentence using a reasonable amount of memory and time . </S>
+</P>
+<P>
+<S ID='S-11' AZ='AIM'> The claim of this work is that statistics from a large corpus of parsed sentences combined with information-theoretic classification and training algorithms can produce an accurate natural language parser without the aid of a complicated knowledge base or grammar . </S>
+<S ID='S-12' AZ='AIM'> This claim is justified by constructing a parser , called SPATTER ( Statistical PATTErn Recognizer ) , based on very limited linguistic information , and comparing its performance to a state-of-the-art grammar-based parser on a common task . </S>
+<S ID='S-13' AZ='OWN'> It remains to be shown that an accurate broad-coverage parser can improve the performance of a text processing application . </S>
+<S ID='S-14' AZ='OWN'> This will be the subject of future experiments . </S>
+</P>
+<P>
+<S ID='S-15' AZ='CTR'> One of the important points of this work is that statistical models of natural language should not be restricted to simple , context-insensitive models . </S>
+<S ID='S-16' AZ='CTR'> In a problem like parsing , where long-distance lexical information is crucial to disambiguate interpretations accurately , local models like probabilistic context-free grammars are inadequate . </S>
+<S ID='S-17' AZ='BAS'> This work illustrates that existing decision-tree technology can be used to construct and estimate models which selectively choose elements of the context which contribute to disambiguation decisions , and which have few enough parameters to be trained using existing resources . </S>
+</P>
+<P>
+<S ID='S-18' AZ='TXT'> I begin by describing decision-tree modeling , showing that decision-tree models are equivalent to interpolated n-gram models . </S>
+<S ID='S-19' AZ='TXT'> Then I briefly describe the training and parsing procedures used in SPATTER . </S>
+<S ID='S-20' ABSTRACTC='A-6' AZ='TXT'> Finally , I present some results of experiments comparing SPATTER with a grammarian 's rule-based statistical parser , along with more recent results showing SPATTER applied to the Wall Street Journal domain . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Decision-Tree Modeling </HEADER>
+<P>
+<S ID='S-21' AZ='OWN'> Much of the work in this paper depends on replacing human decision-making skills with automatic decision-making algorithms . </S>
+<S ID='S-22' AZ='OWN'> The decisions under consideration involve identifying constituents and constituent labels in natural language sentences . </S>
+<S ID='S-23' AZ='BKG'> Grammarians , the human decision-makers in parsing , solve this problem by enumerating the features of a sentence which affect the disambiguation decisions and indicating which parse to select based on the feature values . </S>
+<S ID='S-24' AZ='BKG'> The grammarian is accomplishing two critical tasks : identifying the features which are relevant to each decision , and deciding which choice to select based on the values of the relevant features . </S>
+</P>
+<P>
+<S ID='S-25' AZ='OTH'> Decision-tree classification algorithms account for both of these tasks , and they also accomplish a third task which grammarians classically find difficult . </S>
+<S ID='S-26' AZ='OTH'> By assigning a probability distribution to the possible choices , decision trees provide a ranking system which not only specifies the order of preference for the possible choices , but also gives a measure of the relative likelihood that each choice is the one which should be selected . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-2'> What is a Decision Tree ?</HEADER>
+<P>
+<S ID='S-27' AZ='OTH'> A decision tree is a decision-making device which assigns a probability to each of the possible choices based on the context of the decision : <EQN/> , where f is an element of the future vocabulary ( the set of choices ) and h is a history ( the context of the decision ) . </S>
+<S ID='S-28' AZ='OTH'> This probability  <EQN/> is determined by asking a sequence of questions <EQN/> about the context , where the ith question asked is uniquely determined by the answers to the i - 1 previous questions . </S>
+</P>
+<P>
+<S ID='S-29' AZ='OTH'> For instance , consider the part-of-speech tagging problem . </S>
+<S ID='S-30' AZ='OTH'> The first question a decision tree might ask is : </S>
+</P>
+<P>
+<S ID='S-31' AZ='OTH'> What is the word being tagged ? </S>
+</P>
+<P>
+<S ID='S-32' AZ='OTH'> If the answer is the , then the decision tree needs to ask no more questions ; it is clear that the decision tree should assign the tag <EQN/> with probability 1 . </S>
+<S ID='S-33' AZ='OTH'> If , instead , the answer to question 1 is bear , the decision tree might next ask the question : 2 . </S>
+</P>
+<P>
+<S ID='S-34' AZ='OTH'> What is the tag of the previous word ? </S>
+</P>
+<P>
+<S ID='S-35' AZ='OTH'> If the answer to question 2 is determiner , the decision tree might stop asking questions and assign the tag <EQN/> with very high probability , and the tag <EQN/> with much lower probability . </S>
+<S ID='S-36' AZ='OTH'> However , if the answer to question 2 is noun , the decision tree would need to ask still more questions to get a good estimate of the probability of the tagging decision . </S>
+<S ID='S-37' AZ='OTH'> The decision tree described in this paragraph is shown in Figure <CREF/> . </S>
+<IMAGE ID='I-1'/>
+<S ID='S-38' AZ='OTH'> Each question asked by the decision tree is represented by a tree node ( an oval in the figure ) and the possible answers to this question are associated with branches emanating from the node . </S>
+<S ID='S-39' AZ='OTH'> Each node defines a probability distribution on the space of possible decisions . </S>
+<S ID='S-40' AZ='OTH'> A node at which the decision tree stops asking questions is a leaf node . </S>
+<S ID='S-41' AZ='OTH'> The leaf nodes represent the unique states in the decision-making problem , i.e. all contexts which lead to the same leaf node have the same probability distribution for the decision . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-3'> Decision Trees vs. n-grams </HEADER>
+<P>
+<S ID='S-42' AZ='OTH'> A decision-tree model is not really very different from an interpolated n-gram model . </S>
+<S ID='S-43' AZ='OTH'> In fact , they are equivalent in representational power . </S>
+<S ID='S-44' AZ='OTH'> The main differences between the two modeling techniques are how the models are parameterized and how the parameters are estimated . </S>
+</P>
+<DIV DEPTH='3'>
+<HEADER ID='H-4'> Model Parameterization </HEADER>
+<P>
+<S ID='S-45' AZ='OTH'> First , let 's be very clear on what we mean by an n-gram model . </S>
+<S ID='S-46' AZ='OTH'> Usually , an n-gram model refers to a Markov process where the probability of a particular token being generating is dependent on the values of the previous n - 1 tokens generated by the same process . </S>
+<S ID='S-47' AZ='OTH'> By this definition , an n-gram model has <EQN/> parameters , where | W | is the number of unique tokens generated by the process . </S>
+</P>
+<P>
+<S ID='S-48' AZ='OTH'> However , here let 's define an n-gram model more loosely as a model which defines a probability distribution on a random variable given the values of n - 1 random variables , <EQN/> There is no assumption in the definition that any of the random variables F or <EQN/> range over the same vocabulary . </S>
+<S ID='S-49' AZ='OTH'> The number of parameters in this n-gram model is <EQN/> . </S>
+</P>
+<P>
+<S ID='S-50' AZ='OTH'> Using this definition , an n-gram model can be represented by a decision-tree model with n - 1 questions . </S>
+<S ID='S-51' AZ='OTH'> For instance , the part-of-speech tagging model <EQN/> can be interpreted as a 4-gram model , where <EQN/> is the variable denoting the word being tagged , <EQN/> is the variable denoting the tag of the previous word , and <EQN/> is the variable denoting the tag of the word two words back . </S>
+<S ID='S-52' AZ='OTH'> Hence , this 4-gram tagging model is the same as a decision-tree model which always asks the sequence of 3 questions : </S>
+</P>
+<P>
+<S ID='S-53' TYPE='ITEM' AZ='OTH' > What is the word being tagged ? </S>
+<S ID='S-54' TYPE='ITEM' AZ='OTH' > What is the tag of the previous word ? </S>
+<S ID='S-55' TYPE='ITEM' AZ='OTH' > What is the tag of the word two words back ? </S>
+</P>
+<P>
+<S ID='S-56' AZ='OTH'> But can a decision-tree model be represented by an n-gram model ? </S>
+<S ID='S-57' AZ='OTH'> No , but it can be represented by an interpolated n-gram model . </S>
+<S ID='S-58' AZ='TXT'> The proof of this assertion is given in the next section . </S>
+</P>
+</DIV>
+<DIV DEPTH='3'>
+<HEADER ID='H-5'> Model Estimation </HEADER>
+<P>
+<S ID='S-59' AZ='OTH'> The standard approach to estimating an n-gram model is a two step process . </S>
+<S ID='S-60' AZ='OTH'> The first step is to count the number of occurrences of each n-gram from a training corpus . </S>
+<S ID='S-61' AZ='OTH'> This process determines the empirical distribution , </S>
+<IMAGE ID='I-2'/>
+</P>
+<P>
+<S ID='S-62' AZ='OTH'> The second step is smoothing the empirical distribution using a separate , held-out corpus . </S>
+<S ID='S-63' AZ='OTH'> This step improves the empirical distribution by finding statistically unreliable parameter estimates and adjusting them based on more reliable information . </S>
+</P>
+<P>
+<S ID='S-64' AZ='OTH'> A commonly-used technique for smoothing is deleted interpolation . </S>
+<S ID='S-65' AZ='OTH'> Deleted interpolation estimates a model <EQN/> by using a linear combination of empirical models <EQN/> where <EQN/> and <EQN/> for all <EQN/> </S>
+<S ID='S-66' AZ='OTH'> For example , a model <EQN/> might be interpolated as follows : </S>
+<IMAGE ID='I-3'/>
+</P>
+<P>
+<S ID='S-67' AZ='OTH'> where <EQN/> for all histories <EQN/> .</S>
+<S ID='S-68' AZ='OTH'> The optimal values for the <EQN/> functions can be estimated using the forward-backward algorithm <REF TYPE='P'>Baum 1972</REF> . </S>
+<S ID='S-69' AZ='OWN'> A decision-tree model can be represented by an interpolated n-gram model as follows . </S>
+<S ID='S-70' AZ='OWN'> A leaf node in a decision tree can be represented by the sequence of question answers , or history values , which leads the decision tree to that leaf . </S>
+<S ID='S-71' AZ='OWN'> Thus , a leaf node defines a probability distribution based on values of those questions : <EQN/> where <EQN/> and <EQN/> and where <EQN/> is the answer to one of the questions asked on the path from the root to the leaf . </S>
+<S ID='S-72' AZ='OWN'> But this is the same as one of the terms in the interpolated n-gram model . </S>
+<S ID='S-73' AZ='OWN'> So , a decision tree can be defined as an interpolated n-gram model where the <EQN/> function is defined as : </S>
+<IMAGE ID='I-4'/>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-6'> Decision-Tree Algorithms </HEADER>
+<P>
+<S ID='S-74' AZ='OWN'> The point of showing the equivalence between n-gram models and decision-tree models is to make clear that the power of decision-tree models is not in their expressiveness , but instead in how they can be automatically acquired for very large modeling problems . </S>
+<S ID='S-75' AZ='OTH'> As n grows , the parameter space for an n-gram model grows exponentially , and it quickly becomes computationally infeasible to estimate the smoothed model using deleted interpolation . </S>
+<S ID='S-76' AZ='OTH'> Also , as n grows large , the likelihood that the deleted interpolation process will converge to an optimal or even near-optimal parameter setting becomes vanishingly small . </S>
+</P>
+<P>
+<S ID='S-77' AZ='OTH'> On the other hand , the decision-tree learning algorithm increases the size of a model only as the training data allows . </S>
+<S ID='S-78' AZ='OTH'> Thus , it can consider very large history spaces , i.e. n-gram models with very large n. Regardless of the value of n , the number of parameters in the resulting model will remain relatively constant , depending mostly on the number of training examples . </S>
+</P>
+<P>
+<S ID='S-79' AZ='OTH'> The leaf distributions in decision trees are empirical estimates , i.e. relative-frequency counts from the training data . </S>
+<S ID='S-80' AZ='CTR'> Unfortunately , they assign probability zero to events which can possibly occur . </S>
+<S ID='S-81' AZ='OWN'> Therefore , just as it is necessary to smooth empirical n-gram models , it is also necessary to smooth empirical decision-tree models . </S>
+</P>
+<P>
+<S ID='S-82' AZ='BAS'> The decision-tree learning algorithms used in this work were developed over the past 15 years by the IBM Speech Recognition group <REF TYPE='P'>Bahl et al. 1989</REF> . </S>
+<S ID='S-83' AZ='BAS'> The growing algorithm is an adaptation of the CART algorithm in <REF TYPE='A'>Breiman et al. 1984</REF> . </S>
+<S ID='S-84' AZ='OTH'> For detailed descriptions and discussions of the decision-tree algorithms used in this work , see <REF SELF="YES" TYPE='A'>Magerman 1994</REF> . </S>
+</P>
+<P>
+<S ID='S-85' AZ='OWN'> An important point which has been omitted from this discussion of decision trees is the fact that only binary questions are used in these decision trees . </S>
+<S ID='S-86' AZ='OWN'> A question which has k values is decomposed into a sequence of binary questions using a classification tree on those k values . </S>
+<S ID='S-87' AZ='OWN'> For example , a question about a word is represented as 30 binary questions . </S>
+<S ID='S-88' AZ='BAS'> These 30 questions are determined by growing a classification tree on the word vocabulary as described in <REF TYPE='A'>Brown et al. 1992</REF> . </S>
+<S ID='S-89' AZ='OTH'> The 30 questions represent 30 different binary partitions of the word vocabulary , and these questions are defined such that it is possible to identify each word by asking all 30 questions . </S>
+<S ID='S-90' AZ='OTH'> For more discussion of the use of binary decision-tree questions , see <REF SELF="YES" TYPE='A'>Magerman 1994</REF> . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-7'> Spatter Parsing </HEADER>
+<P>
+<S ID='S-91' AZ='OWN'> The SPATTER parsing algorithm is based on interpreting parsing as a statistical pattern recognition process . </S>
+<S ID='S-92' AZ='OWN'> A parse tree for a sentence is constructed by starting with the sentence 's words as leaves of a tree structure , and labeling and extending nodes these nodes until a single-rooted , labeled tree is constructed . </S>
+<S ID='S-93' AZ='OWN'> This pattern recognition process is driven by the decision-tree models described in the previous section . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-8'> Spatter Representation </HEADER>
+<P>
+<S ID='S-94' AZ='OWN'> A parse tree can be viewed as an n-ary branching tree , with each node in a tree labeled by either a non-terminal label or a part-of-speech label . </S>
+<S ID='S-95' AZ='OWN'> If a parse tree is interpreted as a geometric pattern , a constituent is no more than a set of edges which meet at the same tree node . </S>
+<S ID='S-96' AZ='OWN'> For instance , the noun phrase , `` a brown cow , '' consists of an edge extending to the right from `` a , '' an edge extending to the left from `` cow , '' and an edge extending straight up from `` brown '' . </S>
+<IMAGE ID='I-5'/>
+</P>
+<P>
+<S ID='S-97' AZ='OWN'> In SPATTER , a parse tree is encoded in terms of four elementary components , or features : words , tags , labels , and extensions . </S>
+<S ID='S-98' AZ='OWN'> Each feature has a fixed vocabulary , with each element of a given feature vocabulary having a unique representation . </S>
+<S ID='S-99' AZ='OWN'> The word feature can take on any value of any word . </S>
+<S ID='S-100' AZ='OWN'> The tag feature can take on any value in the part-of-speech tag set . </S>
+<S ID='S-101' AZ='OWN'> The label feature can take on any value in the non-terminal set . </S>
+<S ID='S-102' AZ='OWN' TYPE='ITEM'> The extension can take on any of the following five values : </S>
+</P>
+<P>
+<S ID='S-103' TYPE='ITEM' AZ='OWN' > right - the node is the first child of a constituent ; </S>
+<S ID='S-104' TYPE='ITEM' AZ='OWN' > left - the node is the last child of a constituent ; </S>
+<S ID='S-105' TYPE='ITEM' AZ='OWN' > up - the node is neither the first nor the last child of a constituent ; </S>
+<S ID='S-106' TYPE='ITEM' AZ='OWN' > unary - the node is a child of a unary constituent ; </S>
+<S ID='S-107' TYPE='ITEM' AZ='OWN' > root - the node is the root of the tree . </S>
+</P>
+<P>
+<S ID='S-108' AZ='OWN'> For an n word sentence , a parse tree has n leaf nodes , where the word feature value of the ith leaf node is the ith word in the sentence . </S>
+<S ID='S-109' AZ='OWN'> The word feature value of the internal nodes is intended to contain the lexical head of the node 's constituent . </S>
+<S ID='S-110' AZ='OWN'> A deterministic lookup table based on the label of the internal node and the labels of the children is used to approximate this linguistic notion . </S>
+</P>
+<P>
+<S ID='S-111' AZ='OWN'> The SPATTER representation of the sentence </S>
+<IMAGE ID='I-6'/>
+</P>
+<P>
+<S ID='S-112' AZ='OWN'> is shown in Figure <CREF/> . </S>
+<S ID='S-113' AZ='OWN'> The nodes are constructed bottom-up from left-to-right , with the constraint that no constituent node is constructed until all of its children have been constructed . </S>
+<S ID='S-114' AZ='OWN'> The order in which the nodes of the example sentence are constructed is indicated in the figure . </S>
+<IMAGE ID='I-7'/>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-9'> Training SPATTER 's models </HEADER>
+<P>
+<S ID='S-115' AZ='OWN'> SPATTER consists of three main decision-tree models : a part-of-speech tagging model , a node-extension model , and a node-labeling model . </S>
+</P>
+<P>
+<S ID='S-116' AZ='OWN'> Each of these decision-tree models are grown using the following questions , where X is one of word , tag , label , or extension , and Y is either left and right : </S>
+</P>
+<P>
+<S ID='S-117' TYPE='ITEM' AZ='OWN' > What is the X at the current node ? </S>
+<S ID='S-118' TYPE='ITEM' AZ='OWN' > What is the X at the node to the Y ? </S>
+<S ID='S-119' TYPE='ITEM' AZ='OWN' > What is the X at the node two nodes to the Y ? </S>
+<S ID='S-120' TYPE='ITEM' AZ='OWN' > What is the X at the current node 's first child from the Y ? </S>
+<S ID='S-121' TYPE='ITEM' AZ='OWN' > What is the X at the current node 's second child from the Y ? </S>
+</P>
+<P>
+<S ID='S-122' AZ='OWN'> For each of the nodes listed above , the decision tree could also ask about the number of children and span of the node . </S>
+<S ID='S-123' AZ='OWN'> For the tagging model , the values of the previous two words and their tags are also asked , since they might differ from the head words of the previous two constituents . </S>
+</P>
+<P>
+<S ID='S-124' AZ='OWN'> The training algorithm proceeds as follows . </S>
+<S ID='S-125' AZ='OWN'> The training corpus is divided into two sets , approximately 90 % for tree growing and 10 % for tree smoothing . </S>
+<S ID='S-126' AZ='OWN'> For each parsed sentence in the tree growing corpus , the correct state sequence is traversed . </S>
+<S ID='S-127' AZ='OWN'> Each state transition from <EQN/> to <EQN/> is an event ; the history is made up of the answers to all of the questions at state <EQN/> and the future is the value of the action taken from state <EQN/> to state <EQN/> Each event is used as a training example for the decision-tree growing process for the appropriate feature 's tree ( e.g. each tagging event is used for growing the tagging tree , etc . </S>
+<S ID='S-128' AZ='OWN'> ) . </S>
+<S ID='S-129' AZ='BAS'> After the decision trees are grown , they are smoothed using the tree smoothing corpus using a variation of the deleted interpolation algorithm described in <REF SELF="YES" TYPE='A'>Magerman 1994</REF> . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-10'> Parsing with Spatter </HEADER>
+<P>
+<S ID='S-130' AZ='OWN'> The parsing procedure is a search for the highest probability parse tree . </S>
+<S ID='S-131' AZ='OWN'> The probability of a parse is just the product of the probability of each of the actions made in constructing the parse , according to the decision-tree models . </S>
+</P>
+<P>
+<S ID='S-132' AZ='OWN'> Because of the size of the search space , ( roughly <EQN/> where | T | is the number of part-of-speech tags , n is the number of words in the sentence , and | N | is the number of non-terminal labels ) , it is not possible to compute the probability of every parse . </S>
+<S ID='S-133' AZ='OWN'> However , the specific search algorithm used is not very important , so long as there are no search errors . </S>
+<S ID='S-134' AZ='OWN'> A search error occurs when the the highest probability parse found by the parser is not the highest probability parse in the space of all parses . </S>
+</P>
+<P>
+<S ID='S-135' AZ='OWN'> SPATTER 's search procedure uses a two phase approach to identify the highest probability parse of a sentence . </S>
+<S ID='S-136' AZ='OWN'> First , the parser uses a stack decoding algorithm to quickly find a complete parse for the sentence . </S>
+<S ID='S-137' AZ='OWN'> Once the stack decoder has found a complete parse of reasonable probability ( <EQN/> ) , it switches to a breadth-first mode to pursue all of the partial parses which have not been explored by the stack decoder . </S>
+<S ID='S-138' AZ='OWN'> In this second mode , it can safely discard any partial parse which has a probability lower than the probability of the highest probability completed parse . </S>
+<S ID='S-139' AZ='OWN'> Using these two search modes , SPATTER guarantees that it will find the highest probability parse . </S>
+<S ID='S-140' AZ='OWN'> The only limitation of this search technique is that , for sentences which are modeled poorly , the search might exhaust the available memory before completing both phases . </S>
+<S ID='S-141' AZ='OWN'> However , these search errors conveniently occur on sentences which SPATTER is likely to get wrong anyway , so there isn't much performance lossed due to the search errors . </S>
+<S ID='S-142' AZ='OWN'> Experimentally , the search algorithm guarantees the highest probability parse is found for over 96 % of the sentences parsed . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-11'> Experiment Results </HEADER>
+<P>
+<S ID='S-143' AZ='OWN'> In the absence of an NL system , SPATTER can be evaluated by comparing its top-ranking parse with the treebank analysis for each test sentence . </S>
+<S ID='S-144' AZ='OWN'> The parser was applied to two different domains , IBM Computer Manuals and the Wall Street Journal . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-12'> IBM Computer Manuals </HEADER>
+<P>
+<S ID='S-145' AZ='BAS'> The first experiment uses the IBM Computer Manuals domain , which consists of sentences extracted from IBM computer manuals . </S>
+<S ID='S-146' AZ='OTH'> The training and test sentences were annotated by the University of Lancaster . </S>
+<S ID='S-147' AZ='OTH'> The Lancaster treebank uses 195 part-of-speech tags and 19 non-terminal labels . </S>
+<S ID='S-148' AZ='OTH'> This treebank is described in great detail in <REF TYPE='A'>Black et al. 1993</REF> . </S>
+</P>
+<P>
+<S ID='S-149' AZ='OWN'> The main reason for applying SPATTER to this domain is that IBM had spent the previous ten years developing a rule-based , unification-style probabilistic context-free grammar for parsing this domain . </S>
+<S ID='S-150' AZ='OWN'> The purpose of the experiment was to estimate SPATTER 's ability to learn the syntax for this domain directly from a treebank , instead of depending on the interpretive expertise of a grammarian . </S>
+</P>
+<P>
+<S ID='S-151' AZ='OWN'> The parser was trained on the first 30,800 sentences from the Lancaster treebank . </S>
+<S ID='S-152' AZ='OWN'> The test set included 1,473 new sentences , whose lengths range from 3 to 30 words , with a mean length of 13.7 words . </S>
+<S ID='S-153' AZ='OWN'> These sentences are the same test sentences used in the experiments reported for IBM 's parser in <REF TYPE='A'>Black et al. 1993</REF> . </S>
+<S ID='S-154' AZ='OWN'> In <REF TYPE='A'>Black et al. 1993</REF> , IBM 's parser was evaluated using the 0-crossing - brackets measure , which represents the percentage of sentences for which none of the constituents in the parser 's parse violates the constituent boundaries of any constituent in the correct parse . </S>
+<S ID='S-155' AZ='CTR'> After over ten years of grammar development , the IBM parser achieved a 0-crossing - brackets score of 69 % . </S>
+<S ID='S-156' AZ='CTR'> On this same test set , SPATTER scored 76 % . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-13'> Wall Street Journal </HEADER>
+<P>
+<S ID='S-157' AZ='OWN'> The experiment is intended to illustrate SPATTER 's ability to accurately parse a highly-ambiguous , large-vocabulary domain . </S>
+<S ID='S-158' AZ='OWN'> These experiments use the Wall Street Journal domain , as annotated in the Penn Treebank , version 2 . </S>
+<S ID='S-159' AZ='OWN'> The Penn Treebank uses 46 part-of-speech tags and 27 non-terminal labels . </S>
+</P>
+<P>
+<S ID='S-160' AZ='OWN'> The WSJ portion of the Penn Treebank is divided into 25 sections , numbered 00 - 24 . </S>
+<S ID='S-161' AZ='OWN'> In these experiments , SPATTER was trained on sections 02 - 21 , which contains approximately 40,000 sentences . </S>
+<S ID='S-162' AZ='OWN'> The test results reported here are from section 00 , which contains 1920 sentences . </S>
+<S ID='S-163' AZ='OWN'> Sections 01 , 22 , 23 , and 24 will be used as test data in future experiments . </S>
+</P>
+<P>
+<S ID='S-164' AZ='OWN'> The Penn Treebank is already tokenized and sentence detected by human annotators , and thus the test results reported here reflect this . </S>
+<S ID='S-165' AZ='OWN'> SPATTER parses word sequences , not tag sequences . </S>
+<S ID='S-166' AZ='OWN'> Furthermore , SPATTER does not simply pre-tag the sentences and use only the best tag sequence in parsing . </S>
+<S ID='S-167' AZ='OWN'> Instead , it uses a probabilistic model to assign tags to the words , and considers all possible tag sequences according to the probability they are assigned by the model . </S>
+<S ID='S-168' AZ='OWN'> No information about the legal tags for a word are extracted from the test corpus . </S>
+<S ID='S-169' AZ='OWN'> In fact , no information other than the words is used from the test corpus . </S>
+</P>
+<P>
+<S ID='S-170' AZ='OWN'> For the sake of efficiency , only the sentences of 40 words or fewer are included in these experiments . </S>
+<S ID='S-171' AZ='OWN'> For this test set , SPATTER takes on average 12 seconds per sentence on an SGI R4400 with 160 megabytes of RAM . </S>
+</P>
+<P>
+<S ID='S-172' AZ='OWN'> To evaluate SPATTER 's performance on this domain , I am using the PARSEVAL measures , as defined in <REF TYPE='A'>Black et al. 1991</REF> . </S>
+</P>
+<P>
+<S ID='S-173' AZ='OWN'> Precision  </S>
+<IMAGE ID='I-8'/>
+</P>
+<P>
+<S ID='S-174' AZ='OWN'> Recall  </S>
+<IMAGE ID='I-9'/>
+</P>
+<P>
+<S ID='S-175' AZ='OWN'> Crossing Brackets </S>
+<S ID='S-176' AZ='OWN'> no . of constituents which violate constituent boundaries with a constituent in the treebank parse . </S>
+</P>
+<P>
+<S ID='S-177' AZ='OWN'> The precision and recall measures do not consider constituent labels in their evaluation of a parse , since the treebank label set will not necessarily coincide with the labels used by a given grammar . </S>
+<S ID='S-178' AZ='OWN'> Since SPATTER uses the same syntactic label set as the Penn Treebank , it makes sense to report labelled precision and labelled recall . </S>
+<S ID='S-179' AZ='OWN'> These measures are computed by considering a constituent to be correct if and only if it 's label matches the label in the treebank . </S>
+</P>
+<P>
+<S ID='S-180' AZ='OWN'> Table <CREF/> shows the results of SPATTER evaluated against the Penn Treebank on the Wall Street Journal section 00 . </S>
+<IMAGE ID='I-10'/>
+</P>
+<P>
+<S ID='S-181' AZ='OWN'> Figures <CREF/> , <CREF/> , and <CREF/> illustrate the performance of SPATTER as a function of sentence length . </S>
+<S ID='S-182' AZ='OWN'> SPATTER 's performance degrades slowly for sentences up to around 28 words , and performs more poorly and more erratically as sentences get longer . </S>
+<S ID='S-183' AZ='OWN'> Figure <CREF/> indicates the frequency of each sentence length in the test corpus . </S>
+<IMAGE ID='I-11'/>
+<IMAGE ID='I-12'/>
+<IMAGE ID='I-13'/>
+<IMAGE ID='I-14'/>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-14'> Conclusion </HEADER>
+<P>
+<S ID='S-184' AZ='OWN'> Regardless of what techniques are used for parsing disambiguation , one thing is clear : if a particular piece of information is necessary for solving a disambiguation problem , it must be made available to the disambiguation mechanism . </S>
+<S ID='S-185' AZ='OWN'> The words in the sentence are clearly necessary to make parsing decisions , and in some cases long-distance structural information is also needed . </S>
+<S ID='S-186' AZ='CTR'> Statistical models for parsing need to consider many more features of a sentence than can be managed by n-gram modeling techniques and many more examples than a human can keep track of . </S>
+<S ID='S-187' AZ='AIM'> The SPATTER parser illustrates how large amounts of contextual information can be incorporated into a statistical model for parsing by applying decision-tree learning algorithms to a large annotated corpus . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+L. R. <SURNAME>Bahl</SURNAME>, P. F. <SURNAME>Brown</SURNAME>, P. V. <SURNAME>deSouza</SURNAME>, and R. L. <SURNAME>Mercer</SURNAME>.
+<DATE>1989</DATE>.
+A tree-based statistical language model for natural language
+speech recognition.
+IEEE Transactions on Acoustics, Speech, and Signal
+Processing, Vol. 36, No. 7, pages <DATE>1001</DATE>-<DATE>1008</DATE>.
+</REFERENCE>
+<REFERENCE>
+L. E. <SURNAME>Baum</SURNAME>.
+<DATE>1972</DATE>.
+An inequality and associated maximization technique in
+statistical estimation of probabilistic functions of markov processes.
+Inequalities, Vol. 3, pages 1-8.
+</REFERENCE>
+<REFERENCE>
+E. <SURNAME>Black</SURNAME> and et al.
+<DATE>1991</DATE>.
+A procedure for quantitatively comparing the syntactic
+coverage of english grammars.
+Proceedings of the February <DATE>1991</DATE> DARPA Speech and
+Natural Language Workshop, pages 306-311.
+</REFERENCE>
+<REFERENCE>
+E. <SURNAME>Black</SURNAME>, R. <SURNAME>Garside</SURNAME>, and G. <SURNAME>Leech</SURNAME>.
+<DATE>1993</DATE>.
+Statistically-driven computer grammars of english: the
+ibm/lancaster approach.
+Rodopi, Atlanta, Georgia.
+</REFERENCE>
+<REFERENCE>
+L. <SURNAME>Breiman</SURNAME>, J. H. <SURNAME>Friedman</SURNAME>, R. A. <SURNAME>Olshen</SURNAME>, and C. J. <SURNAME>Stone</SURNAME>.
+<DATE>1984</DATE>.
+Classification and Regression Trees.
+Wadsworth and Brooks, Pacific Grove, California.
+</REFERENCE>
+<REFERENCE>
+P. F. <SURNAME>Brown</SURNAME>, V. Della <SURNAME>Pietra</SURNAME>, P. V. <SURNAME>deSouza</SURNAME>, J. C. <SURNAME>Lai</SURNAME>, and
+R. L. <SURNAME>Mercer</SURNAME>.
+<DATE>1992</DATE>.
+``Class-based n-gram models of natural language.''
+Computational Linguistics, 18(4), pages 467-479.
+</REFERENCE>
+<REFERENCE>
+D. M. <SURNAME>Magerman</SURNAME>.
+<DATE>1994</DATE>.
+Natural Language Parsing as Statistical Pattern Recognition.
+Doctoral dissertation.
+Stanford University, Stanford, California.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

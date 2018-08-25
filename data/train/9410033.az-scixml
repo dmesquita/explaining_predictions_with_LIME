@@ -1,0 +1,364 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9410033</FILENO>
+<APPEARED><CONFERENCE>COLING</CONFERENCE><YEAR>1994</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.Gr.Gn </CLASSIFICATION>
+</METADATA>
+<TITLE> Default Handling in Incremental Generation </TITLE>
+<AUTHORLIST>
+<AUTHOR>Karin Harbusch</AUTHOR>
+<AUTHOR>Gen-ichiro Kikui</AUTHOR>
+<AUTHOR>Anne Kilger</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' AZ='BKG'> Natural language generation must work with insufficient input . </A-S>
+<A-S ID='A-1' AZ='BKG'> Underspecifications can be caused by shortcomings of the component providing the input or by the preliminary state of incrementally given input . </A-S>
+<A-S ID='A-2' AZ='OWN'> The paper aims to escape from such dead-end situations by making assumptions . </A-S>
+<A-S ID='A-3' AZ='AIM'> We discuss global aspects of default handling . </A-S>
+<A-S ID='A-4' AZ='OWN'> Two problem classes for defaults in the incremental syntactic generator VM-GEN are presented to substantiate our discussion . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Motivation </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> Natural Language Generation , i.e. , the process of building an adequate utterance for some given content , is by nature a decision-making problem <REF TYPE='P'>Appelt 1985c</REF> . </S>
+<S ID='S-1' AZ='BKG'> Internal decisions are made on the basis of the specified input . </S>
+<S ID='S-2' AZ='BKG'> Unfortunately , input information can be insufficient in two respects : </S>
+</P>
+<P>
+<S ID='S-3' AZ='BKG'> If the input structure for generation is provided by another AI-system , global problems in producing sufficient input information for the generator may occur , e.g. , because of translation mismatches in machine translation <REF TYPE='P'>Kameyama 1991</REF> . </S>
+<S ID='S-4' AZ='BKG'> In this case , the generator either has to use a default or formulate a request for clarification in order to be able to continue its processing , i.e. , to produce an utterance . </S>
+<S ID='S-5' AZ='BKG'> During simultaneous interpretation requests are rather unusual . </S>
+<S ID='S-6' AZ='BKG'> Here defaults allow for a standalone handling of the problem . </S>
+<S ID='S-7' AZ='BKG'> For example , problems during speech recognition of automatic interpretation can lead to results like `` the ( man / men ) will come to the hotel tomorrow '' . </S>
+<S ID='S-8' AZ='BKG'> If the system is not able to give a preference for one of the alternatives , e.g. , by evaluating context information , the generator has to choose a probable number value on its own to complete verbalization . </S>
+<IMAGE ID='I-0'/>
+</P>
+<P>
+<S ID='S-9' AZ='BKG'> Furthermore , for incremental generation , the input information is produced and handed over step by step , so that it can be temporarily incomplete -- although as a whole it may become sufficient . </S>
+<S ID='S-10' AZ='BKG'> This behaviour of a generator is motivated by psycholinguistic observations which show that people start speaking before all necessary linguistic material has been chosen ( e.g. , articulating a noun phrase before the dominating verb is selected ) . </S>
+<S ID='S-11' AZ='BKG'> As a consequence of underspecification , incremental generation is essentially based on working with defaults . </S>
+<S ID='S-12' AZ='BKG'> Elements are uttered before the processing or input consumption has been finished . </S>
+<S ID='S-13' AZ='BKG'> <REF TYPE='A'>Kitano 1990</REF> gives an example for defaults in the context of simultaneous interpretation : In Japanese , negation is specified at the end of the sentence while in English , it has to be specified in front of the finite verb . </S>
+<S ID='S-14' AZ='BKG'> Therefore , during Japanese-English translation , where analysis , transfer , and generation are performed in a parallel and incremental way , the system has to commit , e.g. , positive value before knowing the actual polarity . </S>
+</P>
+<P>
+<S ID='S-15' AZ='BKG'> Generally speaking , default handling specifies how processing , i.e. , further decision-making , can continue without sufficient input information . </S>
+<S ID='S-16' AZ='BKG'> So , one can compare default handling with advice to the system . </S>
+<S ID='S-17' AZ='BKG'> For reasons of uncertainty of assumptions , incremental systems with this facility must be able to repair the default decision when the assumption turns out to be wrong by information given later . </S>
+<S ID='S-18' AZ='BKG'> Catching on to the above example , there can be a negation specifier given at the end of the Japanese input sentence which cannot be simply integrated into the output sentence because the finite verb has already been uttered . </S>
+<S ID='S-19' AZ='BKG'> In this case , the output has to be repaired , e.g. , by repeating parts of the utterance : `` I will be able to meet you ... oops ... I won't be able to meet you at the hotel this evening . ''  </S>
+</P>
+<P>
+<S ID='S-20' AZ='AIM'> In the following sections , we argue for the appropriateness of processing-conforming default handling . </S>
+<S ID='S-21' AZ='OWN'> Basically , the processing-conforming mode makes the overall system homogeneous because the combination of default-caused processing and input-licensed processing requires no specific description . </S>
+<S ID='S-22' AZ='OWN'> The homogeneity becomes especially helpful in the case where the input verifies the default assumption rendering unnecessary any recomputation . </S>
+<S ID='S-23' AZ='OWN'> For the opposite case where the default must be withdrawn we have to mark all defaults . </S>
+<S ID='S-24' AZ='OWN'> Even more homogeneity is introduced to an incremental system if the default descriptions are given in terms of input specifications . </S>
+<S ID='S-25' AZ='OWN'> This representation allows for easy checking the coincidence between a chosen default and input given later . </S>
+</P>
+<P>
+<S ID='S-26' AZ='TXT'> The content of this paper can be summarized as follows . </S>
+<S ID='S-27' AZ='TXT'> Section <CREF/> provides a general description for defaults in generation emphasizing the specific requirements in an incremental system . </S>
+<S ID='S-28' AZ='TXT'> After identifying the conditions under which defaults are triggered ( section <CREF/> ) , the application of a default ( section <CREF/> ) and the definition of its description ( section <CREF/> ) is outlined . </S>
+<S ID='S-29' AZ='TXT'> The crucial case of removing defaults not coinciding with newly arriving input in an incremental system is discussed in section <CREF/> . </S>
+</P>
+<P>
+<S ID='S-30' AZ='TXT'> In section <CREF/> , this mechanism is applied to the incremental sentence generator VM-GEN . </S>
+<S ID='S-31' AZ='TXT'> In the beginning of the section , the basic design of the system is outlined . </S>
+<S ID='S-32' AZ='TXT'> Later on , default handling is included and exemplified for two general cases . </S>
+</P>
+<P>
+<S ID='S-33' AZ='TXT'> In the final section we summarize the main results of the paper . </S>
+<S ID='S-34' AZ='TXT'> Furthermore , we discuss how default handling can be adapted to multilingual generation , as required by the speech-to-speech translation system VERBMOBIL <REF TYPE='P'>Block et al. 1992</REF> . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> General Discussion of Defaults </HEADER>
+<P>
+<S ID='S-35' AZ='CTR'> In the literature of non-incremental generation , the need for defaults is hardly ever taken into account . </S>
+<S ID='S-36' AZ='OTH'> The common point of view restricts the input to be sufficient for generation ( see , e.g. , the Text Structure by <REF TYPE='A'>Meteer 1990</REF> for a syntactic generator ) . </S>
+<S ID='S-37' AZ='OTH'> In incremental generation , most authors agree on the necessity of using defaults <REF TYPE='P'>De Smedt 1990</REF> , <REF TYPE='P'>Kitano 1990</REF> , <REF TYPE='P'>Ward 1991</REF> . </S>
+<S ID='S-38' AZ='CTR'> Nevertheless , they do not in sufficient depth answer the question of how to guide the processes of default handling and repair within a generator . </S>
+<S ID='S-39' AZ='OWN'> This problem is the starting-point for the following considerations . </S>
+</P>
+<P>
+<S ID='S-40' AZ='OWN'> We assume that generation is a decision-making process with the aim of producing a plausible utterance based on given information . </S>
+<S ID='S-41' AZ='OWN'> As mentioned in section <CREF/> , there are cases where this process stops ( caused by underspecification of the input ) before finishing its output . </S>
+</P>
+<P>
+<S ID='S-42' AZ='OWN'> We define a module named default handler which tries to resume the process by giving advice to it , i.e. , by making assumptions about the missing input specification . </S>
+<S ID='S-43' AZ='TXT'> With respect to this task it is discussed </S>
+</P>
+<P>
+<S ID='S-44' TYPE='ITEM' AZ='TXT'> in which situations defaults are applied ( see section <CREF/> ) ,</S>
+<S ID='S-45' TYPE='ITEM' AZ='TXT'> how default handling is integrated into a system ( see section <CREF/> ) , </S>
+<S ID='S-46' TYPE='ITEM' AZ='TXT'> how the knowledge for default handling is described ( see section <CREF/> ) , and </S>
+<S ID='S-47' TYPE='ITEM' AZ='TXT'> how assumptions are cancelled when they turn out to be inconsistent with newly arriving input ( see section <CREF/> ) . </S>
+</P>
+<P>
+<S ID='S-48' AZ='OWN'> In incremental generation , as mentioned in section <CREF/> , interleaved input consumption and output production causes specific default situations . </S>
+<S ID='S-49' AZ='OWN'> An incremental processing scheme allows for an increase of efficiency and flexibility , e.g. , by making the analysis and generation processes of a system for simultaneous interpretation overlap in time . </S>
+<S ID='S-50' AZ='OWN'> There are two competing goals of incremental generation for spoken output , that must be taken into account when estimating the usefulness of defaults : </S>
+</P>
+<P>
+<S ID='S-51' AZ='OWN'> Fluency : </S>
+<S ID='S-52' AZ='OWN'> Long hesitations should be avoided during the production of an utterance , in order to be acceptable to the hearer . </S>
+</P>
+<P>
+<S ID='S-53' AZ='OWN'> Reliability : </S>
+<S ID='S-54' AZ='OWN'> Errors in an utterance may cause misunderstanding . </S>
+<S ID='S-55' AZ='OWN'> In most cases , errors should be recovered by appropriate self-corrections . </S>
+<S ID='S-56' AZ='OWN'> Excessive use of self-corrections or erroneous expressions should beavoided because they decrease intelligibility of the utterance . </S>
+</P>
+<P>
+<S ID='S-57' AZ='OWN'> Obviously there is a trade-off between fluency and reliability : maximal reliability requires ` secure ' decisions and therefore leads to output delay . </S>
+<S ID='S-58' AZ='OWN'> On the other hand , maximal fluency necessitates the use of assumptions and repair , respectively . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-2'> When to Trigger Default Handling </HEADER>
+<P>
+<S ID='S-59' AZ='OWN'> We define as default situation the situation where a generation system has not yet finished the utterance but at the same time has consumed all given input and is not able to continue processing . </S>
+<S ID='S-60' AZ='OWN'> In non-incremental generation , this corresponds to the fact that the input lacks necessary information , because the entire input is assumed to be given at one time ( e.g. , the undecidable number value of the example described in section <CREF/> ) . </S>
+<S ID='S-61' AZ='OWN'> Thus , default handling should be triggered immediately . </S>
+</P>
+<P>
+<S ID='S-62' AZ='OWN'> In incremental generation , however , the system may get a new piece of information later on that enables it to continue processing ( e.g. , the specification of a negation value + as outlined in the example in section <CREF/> ) . </S>
+<S ID='S-63' AZ='OWN'> Therefore , possible alternatives are either to wait for the next input or to trigger default handling . </S>
+<S ID='S-64' AZ='OWN'> The former violates the fluency goal , the latter may violate the reliability goal . </S>
+<S ID='S-65' AZ='OWN'> We propose the explicit use of time-limits for delay intervals . </S>
+</P>
+<P>
+<S ID='S-66' AZ='OWN'> Furthermore , the certainty of a default is described by a value . </S>
+<S ID='S-67' AZ='OWN'> As soon as a default situation is identified , the certainty of the default is checked to see whether it exceeds a predefined threshold that determines the degree of fluency / reliability . </S>
+</P>
+<P>
+<S ID='S-68' AZ='OWN'> Each application of a default decreases the global certainty of the system 's state . </S>
+<S ID='S-69' AZ='OWN'> Consequently , there should be a limit for the maximal number of defaults applicable to the same sentence . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-3'> How to Integrate Default Handling </HEADER>
+<P>
+<S ID='S-70' AZ='OWN'> Basically , there are two strategies to integrate default handling into ongoing processing . </S>
+</P>
+<P>
+<S ID='S-71' AZ='OWN'> Defaults may be handled in a way that differs from the ` normal ' processing of the system , e.g. , as short-cuts . </S>
+<S ID='S-72' AZ='OWN'> One advantage can be an efficient handling of defaults . </S>
+<S ID='S-73' AZ='OWN'> Furthermore , the designer of the default component is completely free in deciding about the realization of defaults in the system . </S>
+<S ID='S-74' AZ='OWN'> A disadvantage is the difficulty of providing consistency between default-caused and input-licensed processing . </S>
+</P>
+<P>
+<S ID='S-75' AZ='OWN'> Alternatively , the ongoing processing can deal with the default values in an ordinary manner ( processing-conforming default handling ) . </S>
+<S ID='S-76' AZ='OWN'> This may be less efficient but guarantees consistency during processing , especially in case of a replacement by an input-licensed value . </S>
+<S ID='S-77' AZ='OWN'> For incremental generation , the system has to provide repair facilities in any case . </S>
+<S ID='S-78' AZ='OWN'> So , they can also be used for non-monotonic modifications of default-caused results . </S>
+<S ID='S-79' AZ='OWN'> We take this option in order to make the overall system homogeneous . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-4'> How to Describe Defaults </HEADER>
+<P>
+<S ID='S-80' AZ='OWN'> The knowledge source that is used for default handling should provide the most plausible actions for a default situation . </S>
+<S ID='S-81' AZ='OWN'> We represent the knowledge as a set of heuristic rules called default descriptions . </S>
+<S ID='S-82' AZ='OWN'> A default description defines a set of operations that should be carried out in a certain situation where the generation process can not be continued . </S>
+<S ID='S-83' AZ='OWN'> A default description has the following form : </S>
+<IMAGE ID='I-1'/>
+</P>
+<P>
+<S ID='S-84' AZ='OWN'> The set of default preconditions defines tests that are applied to the given situation in order to find out whether the corresponding default body can be activated . </S>
+<S ID='S-85' AZ='OWN'> They include tests for the existence of particular information , tests for the structure under creation and tests for the state of processing . </S>
+</P>
+<P>
+<S ID='S-86' AZ='OWN'> The default body describes how to continue processing with defaults in an adequate way . </S>
+<S ID='S-87' AZ='OWN'> For incremental systems , we propose to express the body as a specification of input increments . </S>
+<S ID='S-88' AZ='OWN'> An important prerequisite is that the size of increments is defined flexibly enough to cope with varying amounts of information . </S>
+<S ID='S-89' AZ='OWN'> Obviously , an important advantage of this approach is homogeneity of the overall system . </S>
+<S ID='S-90' AZ='OWN'> Especially , the homogeneous representation of default-caused and input-licensed structures is the easiest and most direct way to test coincidences or contradictions between default-specified and input-caused values . </S>
+<S ID='S-91' AZ='TXT'> In section <CREF/> , this approach is outlined by different examples . </S>
+<S ID='S-92' AZ='OWN'> For non-incremental systems , an operational approach is preferable since there is no way to consume additional input increments , presupposing that the input has been considered as a whole before a default situation occurs . </S>
+</P>
+<P>
+<S ID='S-93' AZ='OWN'> If several default preconditions are applicable , the certainty values for default descriptions are examined to find which provides the system with the most plausible action . </S>
+</P>
+<P>
+<S ID='S-94' AZ='OWN'> The individual default descriptions should take into account the global constraints for processing stated in the knowledge sources of the system . </S>
+<S ID='S-95' AZ='OWN'> For example , the assumption of nominative case for a German NP complement can regularly be made only once for the same verb . </S>
+<S ID='S-96' AZ='OWN'> For reasons of homogeneity , the default description should at least be compatible with the specifications of the knowledge used for basic processing . </S>
+<S ID='S-97' AZ='OWN'> In order to guarantee consistency , default descriptions should merely contain what is orthogonal to the basic knowledge sources . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-5'> How to Cancel Defaults </HEADER>
+<P>
+<S ID='S-98' AZ='OWN'> The repair of false assumptions is a crucial point of default handling in the context of incremental processing because the default information does not remain locally but can cause further decisions of the system . </S>
+<S ID='S-99' AZ='OWN'> Contrarily , for non-incremental input there will be no value given that can contradict default values . </S>
+</P>
+<P>
+<S ID='S-100' AZ='OWN'> As a first step of repair , inconsistencies between input-provided and default-caused values are identified by simply matching the values . </S>
+<S ID='S-101' AZ='OWN'> Then effects of the respective defaults are withdrawn introducing the input-provided values into the system . </S>
+<S ID='S-102' AZ='OWN'> Generally , a decision during generation influences other decisions all over the system . </S>
+<S ID='S-103' AZ='OWN'> Thus the effect of a default body may be propagated through the entire system ( e.g. , choosing a construction of main clause with causal subordinate clause influences the choice of syntactic realizations ) . </S>
+</P>
+<P>
+<S ID='S-104' AZ='OWN'> Roughly speaking , withdrawing a default assumption can be realized by backtracking to the earlier state of the system where the default had been introduced or by non-monotonic changes to the current state of the system . </S>
+<S ID='S-105' AZ='OWN'> The disadvantage of backtracking is that partial results are thrown away which could be reused during further processing . </S>
+<S ID='S-106' AZ='OWN'> Non-monotonic changes preserve these results . </S>
+<S ID='S-107' AZ='OWN'> In this framework , cancelling defaults requires the system to identify which results are caused by default handling . </S>
+<S ID='S-108' AZ='OWN'> Dependency links between the immediate result of a default body and results of the influenced decisions allow for this identification . </S>
+<S ID='S-109' AZ='OWN'> The disadvantage of non-monotonic changes is the complexity of computation , e.g. , supported by a truth maintenance system . </S>
+<S ID='S-110' AZ='OWN'> When designing an incremental system , simple backtracking is ruled out because the part of the sentence uttered cannot be withdrawn after it has been perceived by the addressee of the message . </S>
+</P>
+<P>
+<S ID='S-111' AZ='OWN'> So , we end up with a processing-conforming default handler for generation realizing repair by non-monotonic changes . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-6'> Examples of Defaults in Vm-Gen </HEADER>
+<P>
+<S ID='S-112' AZ='OWN'> The adaptation of our general discussion of default handling to the system VM-GEN not only provides concrete examples for the reader but also shows that a homogeneous combination of default handling , regular processing , and utterance repair is possible . </S>
+</P>
+<P>
+<S ID='S-113' AZ='BAS'> The syntactic generator VM-GEN is a further development of TAG-GEN <REF TYPE='P' SELF="YES">Kilger 1994</REF> within the framework of VERBMOBIL , aspeech-to-speech translation system . </S>
+<S ID='S-114' AZ='OWN'> Its usefulness for simultaneous interpretation results from its incremental and parallel style of processing . </S>
+<S ID='S-115' AZ='OWN'> VM-GEN is able to consume input increments of varying size . </S>
+<S ID='S-116' AZ='OWN'> These increments describe lexical items or semantic relations between them . </S>
+<S ID='S-117' AZ='OWN'> Single input increments are handed over to objects of a distributed parallel system , each of which tries to verbalize the structure that results from the corresponding input increment . </S>
+<S ID='S-118' AZ='BAS'> VM-GEN uses an extension of Tree Adjoining Grammars ( TAGs ) <REF TYPE='P'>Joshi 1985</REF> ) as its syntactic representation formalism that is not only adequate for the description of natural language but also supports incremental generation <REF SELF="YES" TYPE='P'>Kilger and Finkler 1994</REF> . </S>
+</P>
+<P>
+<S ID='S-119' AZ='TXT'> In the following , we introduce examples for default processing triggered during the German inflection process in VM-GEN to substantiate the global statements made in section <CREF/> . </S>
+<S ID='S-120' AZ='OWN'> Inflection uses some syntactic properties of an element to compute its morphological form . </S>
+<S ID='S-121' AZ='OWN'> This information has partly to be specified in the input ( e.g. , the number for a noun ) and is partly inherited from other elements ( e.g. , the number for a verb or the case for a noun ) . </S>
+<S ID='S-122' AZ='OWN'> The two reasons for missing information necessitate different methods of treatment which nevertheless both can uniformly be integrated into regular processing . </S>
+</P>
+<P>
+<S ID='S-123' AZ='OWN'> If information of the first type is missing ( e.g. , because of problems during analysis , see section <CREF/> ) , an assumption can be made locally by simulating the respective part of the input . </S>
+<S ID='S-124' AZ='OWN'> The default for missing number information in VM-GEN would look as follows : </S>
+<IMAGE ID='I-2'/>
+</P>
+<P>
+<S ID='S-125' AZ='OWN'> The set of default preconditions is applied to all objects ( OBJ ) of VM-GEN in order to test the kind of underspecification ( ` number ' in the example ) . </S>
+<S ID='S-126' AZ='OWN'> The default body introduces a new value ( sg ) by creating an input increment as a default . </S>
+<S ID='S-127' AZ='OWN'> The test for coincidence with the input-licensed value is realized by a comparison in the objects of VM-GEN . </S>
+<S ID='S-128' AZ='OWN'> There is a unique association of input increments and objects of VM-GEN ( OBJ is used as identifier ) that allows for translating an input modification into a modification of the state of the respective object . </S>
+<S ID='S-129' AZ='OWN'> In case of contradictions the default and all default-caused decisions are revised ( see below ) . </S>
+</P>
+<P>
+<S ID='S-130' AZ='OWN'> Making an assumption can be influenced by global constraints . </S>
+<S ID='S-131' AZ='OWN'> An example , which is well studied in psycholinguistics , is the utterance of a noun before the verb has been chosen . </S>
+<S ID='S-132' AZ='OWN'> If , e.g. , the noun `` Besucher '' ( English : `` visitor '' ) is known to be the agent of an action , it may be uttered as subject in the first position of the sentence by default . </S>
+<S ID='S-133' AZ='OWN'> This treatment presupposes the choice of a ` dummy ' verb , which at least subcategorizes a subject and has active voice . </S>
+<S ID='S-134' AZ='OWN'> The use of a dummy verb and an underspecified verbal structure the NP is integrated into allows for a simple global test that rules out the same case value assignment to different NP complements as it is required for most of the German verbs . </S>
+<S ID='S-135' AZ='OWN'> This rule is represented in the grammar as a part of the description of subcategorization frames for verbs . </S>
+<S ID='S-136' AZ='OWN'> For reasons of homogeneity we use the information stored in the syntactic knowledge sources of VM-GEN for expressing syntactic constraints during default handling as well . </S>
+<S ID='S-137' AZ='OWN'> The advantage of this approach is , that processing is continued in a consistent way , which eases the introduction of the input-licensed value . </S>
+<S ID='S-138' AZ='OWN'> One default for choosing a missing case-value is specified as follows : </S>
+<IMAGE ID='I-3'/>
+</P>
+<P>
+<S ID='S-139' AZ='OWN'> The default preconditions of the rule characterize a situation where an object ( ) contains no information about the case but identifies the input category as ` N ' for noun . </S>
+<S ID='S-140' AZ='OWN'> Furthermore , the semantic function of the object is specified as ` agent ' but no verb defined yet <EQN/> in the head object . </S>
+<S ID='S-141' AZ='OWN'> That is why , the N-object cannot inherit a case value and also does not know whether it is allowed to occupy the front position in the utterance . </S>
+</P>
+<P>
+<S ID='S-142' AZ='OWN'> Evaluating the default body , the system creates a V-object OBJ ' . </S>
+<S ID='S-143' AZ='OWN'> On the basis of the input information in ( ENTITY OBJ ' ... ) it chooses a minimal syntactic structure from the inheritance net of the grammar , that just desribes a verb category without concrete filler ( a dummy verb ) plus a subject complement and active voice for the verbal phrase . </S>
+<S ID='S-144' AZ='OWN'> Now , the N-structure is combined with the V-structure of the introduced V-object as during normal processing . </S>
+<S ID='S-145' AZ='OWN'> Therefore , the case value can be inherited . </S>
+<S ID='S-146' AZ='OWN'> Additionally , the first position can be assigned to the subject which can be uttered now . </S>
+</P>
+<P>
+<S ID='S-147' AZ='OWN'> The basic VM-GEN module provides repair strategies in order to allow for the specification of additions , modifications and deletions of input increments , i.e. , to model a flexible input interface . </S>
+<S ID='S-148' AZ='OWN'> Three features of the system are basically used for repair : First , input increments are uniquely associated with objects of VM-GEN , so that input modifications can be translated into modifications of the objects ' states . </S>
+<S ID='S-149' AZ='OWN'> Second , each modification of an object 's state makes it compare new and old information . </S>
+<S ID='S-150' AZ='OWN'> In case of a difference , the modified parts are sent to all concerned objects . </S>
+<S ID='S-151' AZ='OWN'> Third , the dependency relations that determine the communication links between objects allow for a hierarchical organization of the objects , which is the basis for synchronizing repair . </S>
+</P>
+<P>
+<S ID='S-152' AZ='OWN'> A repair must be triggered in the example described above if , e.g. , a verb with voice passive is actually specified . </S>
+<S ID='S-153' AZ='OWN'> In this case , the mapping of the semantic role ` agent ' to the syntactic function ` subject ' is revised . </S>
+<S ID='S-154' AZ='OWN'> The agent now has to be realized as part of a `` von '' - phrase , e.g . </S>
+<EXAMPLE ID='E-0'>
+<EX-S> `` dieser Termin wird von dem Besucher gewnscht . ''</EX-S>
+<EX-S> ( word-for-word : `` this date is whished by the visitor ( dative object ) '' ) . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-155' AZ='OWN'> Furthermore , the object checks whether the previously uttered part of the sentence includes some of the revised material ( i.e. , whether the object itself has participated in uttering ) . </S>
+<S ID='S-156' AZ='OWN'> If this is the case , it sends an error message up to the uppermost object of the hierarchy that actually is engaged in uttering . </S>
+<S ID='S-157' AZ='OWN'> This object is able to synchronize global repair . </S>
+<S ID='S-158' AZ='OWN'> Up to now , we just realized a simple repair strategy that consists of repeating the concerned parts of the utterance , e.g. `` der Besucher ... h ... dieser Termin wird von dem Besucher gewnscht '' . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-7'> Discussion </HEADER>
+<P>
+<S ID='S-159' AZ='AIM'> This paper proposes a processing-conforming default handler for generation realizing repair by non-monotonic changes . </S>
+<S ID='S-160' AZ='OWN'> We provide the system with default descriptions . </S>
+<S ID='S-161' AZ='OWN'> The set of default preconditions expresses possible reasons for dead-end situations . </S>
+<S ID='S-162' AZ='OWN'> A default is triggered , if the preconditions match the current situation and the certainty value of the default exceeds the predefined threshold . </S>
+<S ID='S-163' AZ='OWN'> The default body is expressed in terms of the missing input specification in order to make the system work homogeneously . </S>
+<S ID='S-164' AZ='OWN'> We have verified the advantages of processing-conforming default handling by implementing a default handler for VM-GEN . </S>
+</P>
+<P>
+<S ID='S-165' AZ='OWN'> As future work , we will extend the default preconditions towards handling complex contextual information . </S>
+<S ID='S-166' AZ='OWN'> We will apply default handling to microplanning and lexical choice within VERBMOBIL . </S>
+<S ID='S-167' AZ='OWN'> With respect to a sophisticated output , we aim to combine VM-GEN with a flexible repair component . </S>
+</P>
+<P>
+<S ID='S-168' AZ='OWN'> The system VM-GEN is used in the VERBMOBIL scenario for multilingual generation ( English , German , and Japanese ) . </S>
+<S ID='S-169' AZ='OWN'> We mean by multilinguality that the same processing is applied for different languages . </S>
+<S ID='S-170' AZ='OWN'> In the underlying knowledge sources language-specific constraints are defined . </S>
+<S ID='S-171' AZ='OWN'> Default handling can be easily adapted to the requirements of multilingual generation by using language-specific default-descriptions . </S>
+</P>
+<P>
+<S ID='S-172' AZ='OWN'> For all knowledge sources the question arises how knowledge can be shared . </S>
+<S ID='S-173' AZ='OWN'> We intend to use core knowledge sources for representing common phenomena . </S>
+<S ID='S-174' AZ='OWN'> The core set of default descriptions for English and German , e.g. , contains the description of a reaction to a missing number value for a noun . </S>
+<S ID='S-175' AZ='OWN'> We aim to develop an efficient storing mechanism using a hierarchy of locally intersecting core descriptions . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+<SURNAME>Appelt</SURNAME>, D. (<DATE>1985</DATE>). Planning English Sentences. Cambridge, MA: Cambridge University Press.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Block</SURNAME>, H.-U., Bosch, P., Engelkamp, J., v. Hahn, W., Hauenschild, C., Hoege, H., Rohrer, C., Tillmann, H., Wahlster, W., Waibel, A. (<DATE>1992</DATE>). Wissenschaftliche Ziele und Netzplaene fuer das VERBMOBIL-Projekt. Technical Report, German Research Center for Artificial Intelligence (DFKI GmbH), Saarbruecken, Germany, <DATE>1992</DATE>.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Bock</SURNAME>, J. and <SURNAME>Warren</SURNAME>, R. (<DATE>1985</DATE>). Conceptual accessibility and syntactic structure in sentence formulation. Cognition, 21, 47-67.
+</REFERENCE>
+<REFERENCE>
+De <SURNAME>Smedt</SURNAME>, K. (<DATE>1990</DATE>). Incremental Sentence Generation: a Computer Model of Grammatical Encoding. PhD thesis, Nijmegen Institute for Cognition Research and Information Technology, Nijmegen, NICI TR No 90-01.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Finkler</SURNAME>, W. (<DATE>1994</DATE>). Performing Self-Corrections During Incremental Natural Language Generation. Document, German Research Center for Artificial Intelligence (DFKI GmbH), Saarbruecken, Germany, <DATE>1994</DATE>. <DATE>to appear</DATE>.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Joshi</SURNAME>, A. (<DATE>1985</DATE>). An Introduction to TAGs. Technical Report MS-CIS-86-64, LINC-LAB-31, Department of Computer and Information Science, Moore School, University of Pennsylvania.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Kamayema</SURNAME>, M. <SURNAME>Ochitani</SURNAME>, R. and Peters, S. (<DATE>1991</DATE>). Resolving Translation Mismatches with Information Flow. 29th Annual Meeting of the Association for Computational Linguistics, Berkeley, CA, pp. 193-200.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Kameyama</SURNAME>, M. <SURNAME>Ochitani</SURNAME>, R. and Peters, S. (<DATE>1991</DATE>). Resolving Translation Mismatches with Information Flow. 29th Annual Meeting of the Association for Computational Linguistics, Berkeley, CA, pp. 193-200.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Kilger</SURNAME>, A. and <SURNAME>Finkler</SURNAME>, W. (<DATE>1994</DATE>). TAG-based Incremenal Generation. Technical report, German Research Center for Artificial Intelligence (DFKI GmbH), Saarbruecken, Germany, <DATE>to appear</DATE>. 
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Kilger</SURNAME>, A. (<DATE>1994</DATE>). Using UTAGs for Incremental and Parallel Generation. Computational Intelligence, <DATE>to appear</DATE>. 
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Kitano</SURNAME>, H. (<DATE>1990</DATE>). The "Generation Gap": the problem of expressibility in Text Planning. Department of Computer and Information Sciences, University of Massachusetts, Amherst, MA, BBN Report No. 7347.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Ward</SURNAME>, N. (<DATE>1991</DATE>). A Flexible, Parallel Model of Natural Language Generation. PhD thesis, Computer Science Division (EECS), University of California, Berkeley, CA, Report No. UCB/CSD 91/629.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

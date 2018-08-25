@@ -1,0 +1,488 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9504017</FILENO>
+<APPEARED><CONFERENCE>ACL</CONFERENCE><YEAR>1995</YEAR></APPEARED>
+<CLASSIFICATION> Lo.Gi Lg.Pr.Sm </CLASSIFICATION>
+</METADATA>
+<TITLE> A Uniform Treatment of Pragmatic Inferences in Simple and Complex Utterances and Sequences of Utterances </TITLE>
+<AUTHORLIST>
+<AUTHOR>Daniel Marcu</AUTHOR>
+<AUTHOR>Graeme Hirst</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' DOCUMENTC='S-27' AZ='BKG'> Drawing appropriate defeasible inferences has been proven to be one of the most pervasive puzzles of natural language processing and a recurrent problem in pragmatics . </A-S>
+<A-S ID='A-1' AZ='AIM'> This paper provides a theoretical framework , called stratified logic , that can accommodate defeasible pragmatic inferences . </A-S>
+<A-S ID='A-2' AZ='OWN'> The framework yields an algorithm that computes the conversational , conventional , scalar , clausal , and normal state implicatures ; and the presuppositions that are associated with utterances . </A-S>
+<A-S ID='A-3' DOCUMENTC='S-130' AZ='OWN'> The algorithm applies equally to simple and complex utterances and sequences of utterances . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Pragmatics and Defeasibility </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> It is widely acknowledged that a full account of natural language utterances cannot be given in terms of only syntactic or semantic phenomena . </S>
+<S ID='S-1' AZ='BKG'> For example , <REF TYPE='A'>Hirschberg 1985</REF> has shown that in order to understand a scalar implicature , one must analyze the conversants ' beliefs and intentions . </S>
+<S ID='S-2' AZ='BKG'> To recognize normal state implicatures one must consider mutual beliefs and plans <REF TYPE='P'>Green 1990</REF> . </S>
+<S ID='S-3' AZ='BKG'> To understand conversational implicatures associated with indirect replies one must consider discourse expectations , discourse plans , and discourse relations <REF  TYPE='P'>Green 1992</REF>, <REF  TYPE='P'>Green and Carberry 1994</REF> . </S>
+<S ID='S-4' AZ='BKG'> Some presuppositions are inferrable when certain lexical constructs ( factives , aspectuals , etc ) or syntactic constructs ( cleft and pseudo-cleft sentences ) are used . </S>
+<S ID='S-5' AZ='BKG'> Despite all the complexities that individualize the recognition stage for each of these inferences , all of them can be defeated by context , by knowledge , beliefs , or plans of the agents that constitute part of the context , or by other pragmatic rules . </S>
+</P>
+<P>
+<S ID='S-6' AZ='BKG'> Defeasibility is a notion that is tricky to deal with , and scholars in logics and pragmatics have learned to circumvent it or live with it . </S>
+<S ID='S-7' AZ='OTH'> The first observers of the phenomenon preferred to keep defeasibility outside the mathematical world . </S>
+<S ID='S-8' AZ='OTH'> For <REF TYPE='A'>Frege 1892</REF> , <REF TYPE='A'>Russell 1905</REF> , and <REF TYPE='A'>Quine 1949</REF> `` everything exists '' ; therefore , in their logical systems , it is impossible to formalize the cancellation of the presupposition that definite referents exist <REF  SELF="YES" TYPE='P'>Hirst 1991</REF>, <REF  SELF="YES" TYPE='P'>Marcu and Hirst 1994</REF> . </S>
+<S ID='S-9' AZ='OWN'> We can taxonomize previous approaches to defeasible pragmatic inferences into three categories ( we omit here work on defeasibility related to linguistic phenomena such as discourse , anaphora , or speech acts ) . </S>
+</P>
+<P>
+<S ID='S-10' AZ='OTH'> Most linguistic approaches account for the defeasibility of pragmatic inferences by analyzing them in a context that consists of all or some of the previous utterances , including the current one . </S>
+<S ID='S-11' AZ='OTH'> Context <REF TYPE='P'>Karttunen 1974</REF> , <REF TYPE='P'>Kay 1992</REF> , procedural rules <REF TYPE='P'>Gazdar 1979</REF> , <REF TYPE='P'>Karttunen and Peters 1979</REF> , lexical and syntactic structure <REF TYPE='P'>Weischedel 1979</REF> , intentions <REF TYPE='P'>Hirschberg 1985</REF> , or anaphoric constraints <REF TYPE='P'>Sandt 1992</REF> , <REF TYPE='P'>Zeevat 1992</REF> decide what presuppositions or implicatures are projected as pragmatic inferences for the utterance that is analyzed . </S>
+<S ID='S-12' AZ='CTR'> The problem with these approaches is that they assign a dual life to pragmatic inferences : in the initial stage , as members of a simple or complex utterance , they are defeasible . </S>
+<S ID='S-13' AZ='CTR'> However , after that utterance is analyzed , there is no possibility left of cancelling that inference . </S>
+<S ID='S-14' AZ='CTR'> But it is natural to have implicatures and presuppositions that are inferred and cancelled as a sequence of utterances proceeds : research in conversation repairs <REF TYPE='P' SELF="YES">Hirst et al. 1994</REF> abounds in such examples . </S>
+<S ID='S-15' AZ='TXT'> We address this issue in more detail in section <CREF/> . </S>
+</P>
+<P>
+<S ID='S-16' AZ='OTH'> One way of accounting for cancellations that occur later in the analyzed text is simply to extend the boundaries within which pragmatic inferences are evaluated , i.e. , to look ahead a few utterances . </S>
+<S ID='S-17' AZ='CTR'> <REF TYPE='A'>Green 1992</REF> assumes that implicatures are connected to discourse entities and not to utterances , but her approach still does not allow cancellations across discourse units . </S>
+</P>
+<P>
+<S ID='S-18' AZ='OTH'> Another way of allowing pragmatic inferences to be cancelled is to assign them the status of defeasible information . </S>
+<S ID='S-19' AZ='CTR'> <REF TYPE='A'>Mercer 1987</REF> formalizes presuppositions in a logical framework that handles defaults <REF TYPE='P'>Reiter 1980</REF> , but this approach is not tractable and it treats natural disjunction as an exclusive-or and implication as logical equivalence . </S>
+</P>
+<P>
+<S ID='S-20' AZ='CTR'> Computational approaches fail to account for the cancellation of pragmatic inferences : once presuppositions <REF TYPE='P'>Weischedel 1979</REF> or implicatures <REF TYPE='P'>Hirschberg 1985</REF> , <REF TYPE='P'>Green 1992</REF> are generated , they can never be cancelled . </S>
+<S ID='S-21' AZ='CTR'> We are not aware of any formalism or computational approach that offers a unified explanation for the cancellability of pragmatic inferences in general , and of no approach that handles cancellations that occur in sequences of utterances . </S>
+</P>
+<P>
+<S ID='S-22' AZ='AIM'> It is our aim to provide such an approach here . </S>
+<S ID='S-23' AZ='OWN'> In doing this , we assume the existence , for each type of pragmatic inference , of a set of necessary conditions that must be true in order for that inference to be triggered . </S>
+<S ID='S-24' AZ='OWN'> Once such a set of conditions is met , the corresponding inference is drawn , but it is assigned a defeasible status . </S>
+<S ID='S-25' AZ='OWN'> It is the role of context and knowledge of the conversants to `` decide '' whether that inference will survive or not as a pragmatic inference of the structure . </S>
+<S ID='S-26' AZ='OWN'> We put no boundaries upon the time when such a cancellation can occur , and we offer a unified explanation for pragmatic inferences that are inferable when simple utterances , complex utterances , or sequences of utterances are considered . </S>
+</P>
+<P>
+<S ID='S-27' ABSTRACTC='A-0' AZ='AIM'> We propose a new formalism , called `` stratified logic '' , that correctly handles the pragmatic inferences , and we start by giving a very brief introduction to the main ideas that underlie it . </S>
+<S ID='S-28' AZ='TXT'> We give the main steps of the algorithm that is defined on the backbone of stratified logic . </S>
+<S ID='S-29' AZ='TXT'> We then show how different classes of pragmatic inferences can be captured using this formalism , and how our algorithm computes the expected results for a representative class of pragmatic inferences . </S>
+<S ID='S-30' AZ='BAS'> The results we report here are obtained using an implementation written in Common Lisp that uses Screamer <REF TYPE='P'>Siskind and McAllester 1993</REF> , a macro package that provides nondeterministic constructs . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Stratified Logic </HEADER>
+<DIV DEPTH='2'>
+<HEADER ID='H-2'> Theoretical Foundations </HEADER>
+<P>
+<S ID='S-31' AZ='OWN'> We can offer here only a brief overview of stratified logic . </S>
+<S ID='S-32' AZ='BAS'> The reader is referred to <REF TYPE='A' SELF="YES">Marcu 1994</REF> for a comprehensive study . </S>
+<S ID='S-33' AZ='OWN'> Stratified logic supports one type of indefeasible information and two types of defeasible information , namely , infelicitously defeasible and felicitously defeasible . </S>
+<S ID='S-34' AZ='BKG'> The notion of infelicitously defeasible information is meant to capture inferences that are anomalous to cancel , as in : </S>
+<EXAMPLE ID='E-0'>
+<EX-S> * John regrets that Mary came to the party but she did not come . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-35' AZ='BKG'> The notion of felicitously defeasible information is meant to capture the inferences that can be cancelled without any abnormality , as in : </S>
+<EXAMPLE ID='E-1'>
+<EX-S> John does not regret that Mary came to the party because she did not come . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-36' AZ='OWN'> The lattice in figure <CREF/> underlies the semantics of stratified logic . </S>
+<S ID='S-37' AZ='OWN'> The lattice depicts the three levels of strength that seem to account for the inferences that pertain to natural language semantics and pragmatics : indefeasible information belongs to the u layer , infelicitously defeasible information belongs to the i layer , and felicitously defeasible information belongs to the d layer . </S>
+<S ID='S-38' AZ='OWN'> Each layer is partitioned according to its polarity in truth , <EQN/> , and falsity , <EQN/> . </S>
+<S ID='S-39' AZ='OWN'> The lattice shows a partial order that is defined over the different levels of truth . </S>
+<S ID='S-40' AZ='OWN'> For example , something that is indefeasibly false , <EQN/> , is stronger ( in a sense to be defined below ) than something that is infelicitously defeasibly true , <EQN/> , or felicitously defeasibly false , <EQN/> . </S>
+<S ID='S-41' AZ='OWN'> Formally , we say that the u level is stronger than the i level , which is stronger than the d level : <EQN/> . </S>
+<IMAGE ID='I-0'/>
+</P>
+<P>
+<S ID='S-42' AZ='OWN'> At the syntactic level , we allow atomic formulas to be labelled according to the same underlying lattice . </S>
+<S ID='S-43' AZ='OWN'> Compound formulas are obtained in the usual way . </S>
+<S ID='S-44' AZ='OWN'> This will give us formulas such as <EQN/> , or <EQN/> . </S>
+<S ID='S-45' AZ='OWN'> The satisfaction relation is split according to the three levels of truth into u-satisfaction , i-satisfaction , and d-satisfaction : </S>
+<IMAGE ID='I-1'/>
+</P>
+<P>
+<S ID='S-46' AZ='OWN'> Definition <CREF/> extends in a natural way to negated and compound formulas . </S>
+<S ID='S-47' AZ='OWN'> Having a satisfaction definition associated with each level of strength provides a high degree of flexibility . </S>
+<S ID='S-48' AZ='OWN'> The same theory can be interpreted from a perspective that allows more freedom ( u-satisfaction ) , or from a perspective that is tighter and that signals when some defeasible information has been cancelled ( i - and d-satisfaction ) . </S>
+</P>
+<P>
+<S ID='S-49' AZ='OWN'> Possible interpretations of a given set of utterances with respect to a knowledge base are computed using an extension of the semantic tableau method . </S>
+<S ID='S-50' AZ='BAS'> This extension has been proved to be both sound and complete <REF SELF="YES" TYPE='P'>Marcu 1994</REF> . </S>
+<S ID='S-51' AZ='OWN'> A partial ordering , <EQN/> , determines the set of optimistic interpretations for a theory . </S>
+<S ID='S-52' AZ='OWN'> An interpretation <EQN/> is preferred to , or is more optimistic than , an interpretation <EQN/> ( <EQN/> ) if it contains more information and that information can be more easily updated in the future . </S>
+<S ID='S-53' AZ='OWN'> That means that if an interpretation <EQN/> makes an utterance true by assigning to a relation R a defeasible status , while another interpretation <EQN/> makes the same utterance true by assigning the same relation R a stronger status , <EQN/> will be the preferred or optimistic one , because it is as informative as <EQN/> and it allows more options in the future ( R can be defeated ) . </S>
+</P>
+<P>
+<S ID='S-54' AZ='OWN'> Pragmatic inferences are triggered by utterances . </S>
+<S ID='S-55' AZ='OWN'> To differentiate between them and semantic inferences , we introduce a new quantifier , <EQN/> , whose semantics is defined such that a pragmatic inference of the form <EQN/> is instantiated only for those objects <EQN/> from the universe of discourse that pertain to an utterance having the form <EQN/> . </S>
+<S ID='S-56' AZ='OWN'> Hence , only if the antecedent of a pragmatic rule has been uttered can that rule be applied . </S>
+<S ID='S-57' AZ='OWN'> A meta-logical construct uttered applies to the logical translation of utterances . </S>
+<S ID='S-58' AZ='OWN'> This theory yields the following definition : </S>
+<IMAGE ID='I-2'/>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-3'> The Algorithm </HEADER>
+<P>
+<S ID='S-59' AZ='BAS'> Our algorithm , described in detail by <REF TYPE='A' SELF="YES">Marcu 1994</REF> , takes as input a set of first-order stratified formulas <EQN/> that represents an adequate knowledge base that expresses semantic knowledge and the necessary conditions for triggering pragmatic inferences , and the translation of an utterance or set of utterances uttered ( u ) . </S>
+<S ID='S-60' AZ='OWN'> The algorithm builds the set of all possible interpretations for a given utterance , using a generalization of the semantic tableau technique . </S>
+<S ID='S-61' AZ='OWN'> The model-ordering relation filters the optimistic interpretations . </S>
+<S ID='S-62' AZ='OWN'> Among them , the defeasible inferences that have been triggered on pragmatic grounds are checked to see whether or not they are cancelled in any optimistic interpretation . </S>
+<S ID='S-63' AZ='OWN'> Those that are not cancelled are labelled as pragmatic inferences for the given utterance or set of utterances . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-4'> A set of examples </HEADER>
+<P>
+<S ID='S-64' AZ='OWN'> We present a set of examples that covers a representative group of pragmatic inferences . </S>
+<S ID='S-65' AZ='CTR'> In contrast with most other approaches , we provide a consistent methodology for computing these inferences and for determining whether they are cancelled or not for all possible configurations : simple and complex utterances and sequences of utterances . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-5'> Simple pragmatic inferences </HEADER>
+<DIV DEPTH='3'>
+<HEADER ID='H-6'> Lexical pragmatic inferences </HEADER>
+<P>
+<S ID='S-66' AZ='OWN'> A factive such as the verb regret presupposes its complement , but as we have seen , in positive environments , the presupposition is stronger : it is acceptable to defeat a presupposition triggered in a negative environment <CREF/> , but is infelicitous to defeat one that belongs to a positive environment <CREF/> . </S>
+<S ID='S-67' AZ='OWN'> Therefore , an appropriate formalization of utterance <CREF/> and the requisite pragmatic knowledge will be as shown in <CREF/> . </S>
+<EXAMPLE ID='E-2'>
+<EX-S> John does not regret that Mary came to the party . </EX-S>
+</EXAMPLE>
+<IMAGE ID='I-3'/>
+</P>
+<P>
+<S ID='S-68' AZ='OWN'> The stratified semantic tableau that corresponds to theory <CREF/> is given in figure <CREF/> . </S>
+<S ID='S-69' AZ='OWN'> The tableau yields two model schemata ( see figure <CREF/> ) ; in both of them , it is defeasibly inferred that Mary came to the party . </S>
+<S ID='S-70' AZ='OWN'> The model-ordering relation <EQN/> establishes <EQN/> as the optimistic model for the theory because it contains as much information as <EQN/> and is easier to defeat . </S>
+<S ID='S-71' AZ='OWN'> Model <EQN/> explains why Mary came to the party is a presupposition for utterance <CREF/> . </S>
+</P>
+</DIV>
+<DIV DEPTH='3'>
+<HEADER ID='H-7'> Scalar Implicatures </HEADER>
+<P>
+<S ID='S-72' AZ='OWN'> Consider utterance <CREF/> , and its implicatures <CREF/> . </S>
+<EXAMPLE ID='E-3'>
+<EX-S> John says that some of the boys went to the theatre . </EX-S>
+<EX-S> Not { many / most / all } of the boys went to the theatre . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-73' AZ='OWN'> An appropriate formalization is given in <CREF/> , where the second formula captures the defeasible scalar implicatures and the third formula reflects the relevant semantic information for all . </S>
+<IMAGE ID='I-4'/>
+</P>
+<P>
+<S ID='S-74' AZ='OWN'> The theory provides one optimistic model schema ( figure <CREF/> ) that reflects the expected pragmatic inferences , i.e. , ( Not most / Not many / Not all ) of the boys went to the theatre . </S>
+</P>
+</DIV>
+<DIV DEPTH='3'>
+<HEADER ID='H-8'> Simple Cancellation </HEADER>
+<P>
+<S ID='S-75' AZ='OWN'> Assume now , that after a moment of thought , the same person utters : </S>
+<EXAMPLE ID='E-4'>
+<EX-S> John says that some of the boys went to the theatre . </EX-S>
+<EX-S> In fact all of them went to the theatre . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-76' AZ='OWN'> By adding the extra utterance to the initial theory <CREF/> , uttered ( went ( all ( boys ) , theatre ) ) , one would obtain one optimistic model schema in which the conventional implicatures have been cancelled ( see figure <CREF/> ) . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-9'> Complex Utterances </HEADER>
+<P>
+<S ID='S-77' AZ='CTR'> The Achilles heel for most theories of presupposition has been their vulnerability to the projection problem . </S>
+<S ID='S-78' AZ='OWN'> Our solution for the projection problem does not differ from a solution for individual utterances . </S>
+<S ID='S-79' AZ='OWN'> Consider the following utterances and some of their associated presuppositions <CREF/> ( the symbol <EQN/> precedes an inference drawn on pragmatic grounds ) : </S>
+<EXAMPLE ID='E-5'>
+<EX-S> Either Chris is not a bachelor or he regrets that Mary came to the party . </EX-S>
+<EX-S> Chris is a bachelor or a spinster . </EX-S>
+<EX-S> <EQN/> Chris is a ( male ) adult . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-80' AZ='OWN'> Chris is not a bachelor presupposes that Chris is a male adult ; Chris regrets that Mary came to the party presupposes that Mary came to the party . </S>
+<S ID='S-81' AZ='OWN'> There is no contradiction between these two presuppositions , so one would expect a conversant to infer both of them if she hears an utterance such as <CREF/> . </S>
+<S ID='S-82' AZ='OWN'> However , when one examines utterance <CREF/> , one observes immediately that there is a contradiction between the presuppositions carried by the individual components . </S>
+<S ID='S-83' AZ='OWN'> Being a bachelor presupposes that Chris is a male , while being a spinster presupposes that Chris is a female . </S>
+<S ID='S-84' AZ='OWN'> Normally , we would expect a conversant to notice this contradiction and to drop each of these elementary presuppositions when she interprets <CREF/> . </S>
+</P>
+<P>
+<S ID='S-85' AZ='TXT'> We now study how stratified logic and the model-ordering relation capture one 's intuitions . </S>
+</P>
+<DIV DEPTH='3'>
+<HEADER ID='H-10'> Or - non-cancellation </HEADER>
+<P>
+<S ID='S-86' AZ='OWN'> An appropriate formalization for utterance <CREF/> and the necessary semantic and pragmatic knowledge is given in <CREF/> . </S>
+<IMAGE ID='I-5'/>
+</P>
+<P>
+<S ID='S-87' AZ='OWN'> Besides the translation of the utterance , the initial theory contains a formalization of the defeasible implicature that natural disjunction is used as an exclusive or , the knowledge that Mary is not a name for males , the lexical semantics for the word bachelor , and the lexical pragmatics for bachelor and regret . </S>
+<S ID='S-88' AZ='OWN'> The stratified semantic tableau generates 12 model schemata . </S>
+<S ID='S-89' AZ='OWN'> Only four of them are kept as optimistic models for the utterance . </S>
+<S ID='S-90' AZ='OWN'> The models yield Mary came to the party ; Chris is a male ; and Chris is an adult as pragmatic inferences of utterance <CREF/> . </S>
+</P>
+</DIV>
+<DIV DEPTH='3'>
+<HEADER ID='H-11'> Or - cancellation </HEADER>
+<P>
+<S ID='S-91' AZ='OWN'> Consider now utterance <CREF/> . </S>
+<S ID='S-92' AZ='OWN'> The stratified semantic tableau that corresponds to its logical theory yields 16 models , but only Chris is an adult satisfies definition <CREF/> and is projected as presupposition for the utterance . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-12'> Pragmatic inferences in sequences of utterances </HEADER>
+<P>
+<S ID='S-93' AZ='OWN'> We have already mentioned that speech repairs constitute a good benchmark for studying the generation and cancellation of pragmatic inferences along sequences of utterances <REF SELF="YES" TYPE='P'>McRoy and Hirst 1993</REF> . </S>
+<S ID='S-94' AZ='OWN'> Suppose , for example , that Jane has two friends -- John Smith and John Pevler -- and that her roommate Mary has met only John Smith , a married fellow . </S>
+<S ID='S-95' AZ='OWN'> Assume now that Jane has a conversation with Mary in which Jane mentions only the name John because she is not aware that Mary does not know about the other John , who is a five-year-old boy . </S>
+<S ID='S-96' AZ='OWN'> In this context , it is natural for Mary to become confused and to come to wrong conclusions . </S>
+<S ID='S-97' AZ='OWN'> For example , Mary may reply that John is not a bachelor . </S>
+<S ID='S-98' AZ='OWN'> Although this is true for both Johns , it is more appropriate for the married fellow than for the five-year-old boy . </S>
+<S ID='S-99' AZ='OWN'> Mary knows that John Smith is a married male , so the utterance makes sense for her . </S>
+<S ID='S-100' AZ='OWN'> At this point Jane realizes that Mary misunderstands her : all the time Jane was talking about John Pevler , the five-year-old boy . </S>
+<S ID='S-101' AZ='OWN'> The utterances in <CREF/> constitute a possible answer that Jane may give to Mary in order to clarify the problem . </S>
+<EXAMPLE ID='E-6'>
+<EX-S> No , John is not a bachelor . </EX-S>
+<EX-S> I regret that you have misunderstood me . </EX-S>
+<EX-S> He is only five years old . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-102' AZ='OWN'> The first utterance in the sequence presupposes <CREF/> . </S>
+<EXAMPLE ID='E-7'>
+<EX-S> <EQN/> John is a male adult . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-103' AZ='OWN'> Utterance <CREF/> warns Mary that is very likely she misunderstood a previous utterance <CREF/> . </S>
+<S ID='S-104' AZ='OWN'> The warning is conveyed by implicature . </S>
+<EXAMPLE ID='E-8'>
+<EX-S> <EQN/> The hearer misunderstood the speaker . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-105' AZ='OWN'> At this point , the hearer , Mary , starts to believe that one of her previous utterances has been elaborated on a false assumption , but she does not know which one . </S>
+<S ID='S-106' AZ='OWN'> The third utterance <CREF/> comes to clarify the issue . </S>
+<S ID='S-107' AZ='OWN'> It explicitly expresses that John is not an adult . </S>
+<S ID='S-108' AZ='OWN'> Therefore , it cancels the early presupposition <CREF/> : </S>
+<EXAMPLE ID='E-9'>
+<EX-S> <EQN/> John is an adult . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-109' AZ='OWN'> Note that there is a gap of one statement between the generation and the cancellation of this presupposition . </S>
+<S ID='S-110' AZ='OWN'> The behavior described is mirrored both by our theory and our program . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-13'> Conversational implicatures in indirect replies </HEADER>
+<P>
+<S ID='S-111' AZ='OTH'> The same methodology can be applied to modeling conversational implicatures in indirect replies <REF TYPE='P'>Green 1992</REF> . </S>
+<S ID='S-112' AZ='OTH'> <REFAUTHOR>Green</REFAUTHOR> 's algorithm makes use of discourse expectations , discourse plans , and discourse relations . </S>
+<S ID='S-113' AZ='OTH'> The following dialog is considered <REF TYPE='P'>Green 1992</REF> : </S>
+<EXAMPLE ID='E-10'>
+<EX-S> Q : Did you go shopping ? </EX-S>
+<EX-S> A : a. My car 's not running . </EX-S>
+<EX-S> b. The timing belt broke . </EX-S>
+<EX-S> c. ( So ) I had to take the bus . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-114' AZ='OTH'> Answer <CREF/> conveys a `` yes '' , but a reply consisting only of <CREF/> would implicate a `` no '' . </S>
+<S ID='S-115' AZ='OTH'> As <REFAUTHOR>Green</REFAUTHOR> notices , in previous models of implicatures <REF TYPE='P'>Gazdar 1979</REF> , <REF TYPE='P'>Hirschberg 1985</REF> , processing ( <CREF/> will block the implicature generated by <CREF/> . </S>
+<S ID='S-116' AZ='OTH'> <REFAUTHOR>Green</REFAUTHOR> solves the problem by extending the boundaries of the analysis to discourse units . </S>
+<S ID='S-117' AZ='CTR'> Our approach does not exhibit these constraints . </S>
+<S ID='S-118' AZ='OWN'> As in the previous example , the one dealing with a sequence of utterances , we obtain a different interpretation after each step . </S>
+<S ID='S-119' AZ='OWN'> When the question is asked , there is no conversational implicature . </S>
+<S ID='S-120' AZ='OWN'> Answer <CREF/> makes the necessary conditions for implicating `` no '' true , and the implication is computed . </S>
+<S ID='S-121' AZ='OWN'> Answer <CREF/> reinforces a previous condition . </S>
+<S ID='S-122' AZ='OWN'> Answer <CREF/> makes the preconditions for implicating a `` no '' false , and the preconditions for implicating a `` yes '' true . </S>
+<S ID='S-123' AZ='OWN'> Therefore , the implicature at the end of the dialogue is that the conversant who answered went shopping . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-14'> Conclusions </HEADER>
+<P>
+<S ID='S-124' AZ='CTR'> Unlike most research in pragmatics that focuses on certain types of presuppositions or implicatures , we provide a global framework in which one can express all these types of pragmatic inferences . </S>
+<S ID='S-125' AZ='OWN'> Each pragmatic inference is associated with a set of necessary conditions that may trigger that inference . </S>
+<S ID='S-126' AZ='OWN'> When such a set of conditions is met , that inference is drawn , but it is assigned a defeasible status . </S>
+<S ID='S-127' AZ='OWN'> An extended definition of satisfaction and a notion of `` optimism '' with respect to different interpretations yield the preferred interpretations for an utterance or sequences of utterances . </S>
+<S ID='S-128' AZ='OWN'> These interpretations contain the pragmatic inferences that have not been cancelled by context or conversant 's knowledge , plans , or intentions . </S>
+<S ID='S-129' AZ='OWN'> The formalism yields an algorithm that has been implemented in Common Lisp with Screamer . </S>
+<S ID='S-130' ABSTRACTC='A-3' AZ='OWN'> This algorithm computes uniformly pragmatic inferences that are associated with simple and complex utterances and sequences of utterances , and allows cancellations of pragmatic inferences to occur at any time in the discourse . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-15'> Acknowledgements </HEADER>
+<P>
+<S ID='S-131' AZ='OWN'> This research was supported in part by a grant from the Natural Sciences and Engineering Research Council of Canada . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+G. <SURNAME>Frege</SURNAME>.
+<DATE>1892</DATE>.
+ber sinn und bedeutung.
+Zeitschrift fr Philos. und Philos. Kritik, 100:373-394.
+reprinted as: On Sense and Nominatum, In Feigl H. and Sellars W.,
+  editors, Readings in Philosophical Analysis, pages 85-102,
+  Appleton-Century-Croft, New York, <DATE>1947</DATE>.
+</REFERENCE>
+<REFERENCE>
+G.J.M. <SURNAME>Gazdar</SURNAME>.
+<DATE>1979</DATE>.
+Pragmatics: Implicature, Presupposition, and Logical Form.
+Academic Press.
+</REFERENCE>
+<REFERENCE>
+N. <SURNAME>Green</SURNAME> and S. <SURNAME>Carberry</SURNAME>.
+<DATE>1994</DATE>.
+A hybrid reasoning model for indirect answers.
+In Proceedings 32nd Annual Meeting of the Association for
+  Computational Linguistics, pages 58-65.
+</REFERENCE>
+<REFERENCE>
+N. <SURNAME>Green</SURNAME>.
+<DATE>1990</DATE>.
+Normal state implicature.
+In Proceedings 28th Annual Meeting of the Association for
+  Computational Linguistics, pages 89-96.
+</REFERENCE>
+<REFERENCE>
+N. <SURNAME>Green</SURNAME>.
+<DATE>1992</DATE>.
+Conversational implicatures in indirect replies.
+In Proceedings 30th Annual Meeting of the Association for
+  Computational Linguistics, pages 64-71.
+</REFERENCE>
+<REFERENCE>
+J.B. <SURNAME>Hirschberg</SURNAME>.
+<DATE>1985</DATE>.
+A theory of scalar implicature.
+Technical Report MS-CIS-85-56, Department of Computer and Information
+  Science, University of Pennsylvania.
+Also published by Garland Publishing Inc., <DATE>1991</DATE>.
+</REFERENCE>
+<REFERENCE>
+G. <SURNAME>Hirst</SURNAME>, S. <SURNAME>McRoy</SURNAME>, P. <SURNAME>Heeman</SURNAME>, P. <SURNAME>Edmonds</SURNAME>, and D. <SURNAME>Horton</SURNAME>.
+<DATE>1994</DATE>.
+Repairing conversational misunderstandings and non-understandings.
+Speech Communication, 15:213-229.
+</REFERENCE>
+<REFERENCE>
+G. <SURNAME>Hirst</SURNAME>.
+<DATE>1991</DATE>.
+Existence assumptions in knowledge representation.
+Artificial Intelligence, 49:199-242.
+</REFERENCE>
+<REFERENCE>
+L. <SURNAME>Karttunen</SURNAME> and S. <SURNAME>Peters</SURNAME>.
+<DATE>1979</DATE>.
+Conventional implicature.
+In Oh C.K. and Dinneen D.A, editors, Syntax and Semantics,
+  Presupposition, volume 11, pages 1-56. Academic Press.
+</REFERENCE>
+<REFERENCE>
+L. <SURNAME>Karttunen</SURNAME>.
+<DATE>1974</DATE>.
+Presupposition and linguistic context.
+Theoretical Linguistics, 1:3-44.
+</REFERENCE>
+<REFERENCE>
+P. <SURNAME>Kay</SURNAME>.
+<DATE>1992</DATE>.
+The inheritance of presuppositions.
+Linguistics amp; Philosophy, 15:333-379.
+</REFERENCE>
+<REFERENCE>
+D. <SURNAME>Marcu</SURNAME>.
+<DATE>1994</DATE>.
+A formalism and an algorithm for computing pragmatic inferences and
+  detecting infelicities.
+Master's thesis, Dept. of Computer Science, University of Toronto,
+  September.
+Also published as Technical Report CSRI-309, Computer Systems
+  Research Institute, University of Toronto.
+</REFERENCE>
+<REFERENCE>
+D. <SURNAME>Marcu</SURNAME> and G. <SURNAME>Hirst</SURNAME>.
+<DATE>1994</DATE>.
+An implemented formalism for computing linguistic presuppositions and
+  existential commitments.
+In H. Bunt, R. Muskens, and G. Rentier, editors, International
+  Workshop on Computational Semantics, pages 141-150, December.
+</REFERENCE>
+<REFERENCE>
+S. <SURNAME>McRoy</SURNAME> and G. <SURNAME>Hirst</SURNAME>.
+<DATE>1993</DATE>.
+Abductive explanation of dialogue misunderstandings.
+In Proceedings, 6th Conference of the European Chapter of the
+  Association for Computational Linguistics, pages 277-286, April.
+</REFERENCE>
+<REFERENCE>
+R.E. <SURNAME>Mercer</SURNAME>.
+<DATE>1987</DATE>.
+A Default Logic Approach to the Derivation of Natural Language
+  Presuppositions.
+Ph.D. thesis, Department of Computer Science, University of British
+  Columbia.
+</REFERENCE>
+<REFERENCE>
+W.V.O. <SURNAME>Quine</SURNAME>.
+<DATE>1949</DATE>.
+Designation and existence.
+In Feigl H. and Sellars W., editors, Readings in Philosophical
+  Analysis, pages 44-51. Appleton-Century-Croft, New York.
+</REFERENCE>
+<REFERENCE>
+R. <SURNAME>Reiter</SURNAME>.
+<DATE>1980</DATE>.
+A logic for default reasoning.
+Artificial Intelligence, 13:81-132.
+</REFERENCE>
+<REFERENCE>
+B. <SURNAME>Russell</SURNAME>.
+<DATE>1905</DATE>.
+On denoting.
+Mind n.s., 14:479-493.
+reprinted in: Feigl H. and Sellars W. editors, Readings in
+  Philosophical Analysis, pages 103-115. Appleton-Century-Croft, New York,
+  <DATE>1949</DATE>.
+</REFERENCE>
+<REFERENCE>
+R.<SURNAME>A</SURNAME>. van der Sandt.
+<DATE>1992</DATE>.
+Presupposition projection as anaphora resolution.
+Journal of Semantics, 9:333-377.
+</REFERENCE>
+<REFERENCE>
+J.M. <SURNAME>Siskind</SURNAME> and D.A. <SURNAME>McAllester</SURNAME>.
+<DATE>1993</DATE>.
+Screamer: A portable efficient implementation of nondeterministic
+  Common Lisp.
+Technical Report IRCS-93-03, University of Pennsylvania, Institute
+  for Research in Cognitive Science, July 1.
+</REFERENCE>
+<REFERENCE>
+R.M. <SURNAME>Weischedel</SURNAME>.
+<DATE>1979</DATE>.
+A new semantic computation while parsing: Presupposition and
+  entailment.
+In Oh C.K. and Dinneen D.A, editors, Syntax and Semantics,
+  Presupposition, volume 11, pages 155-182. Academic Press.
+</REFERENCE>
+<REFERENCE>
+H. <SURNAME>Zeevat</SURNAME>.
+<DATE>1992</DATE>.
+Presupposition and accommodation in update semantics.
+Journal of Semantics, 9:379-412.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

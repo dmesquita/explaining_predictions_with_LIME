@@ -1,0 +1,421 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9506004</FILENO>
+<APPEARED><CONFERENCE>ACL</CONFERENCE><YEAR>1995</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.Sm Lo.Pr </CLASSIFICATION>
+</METADATA>
+<TITLE> Using Higher-Order Logic Programming for Semantic Interpretation of Coordinate Constructs </TITLE>
+<AUTHORLIST>
+<AUTHOR>Seth Kulick</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' DOCUMENTC='S-0' AZ='OTH'> Many theories of semantic interpretation use <EQN/> - term manipulation to compositionally compute the meaning of a sentence . </A-S>
+<A-S ID='A-1' AZ='OTH'> These theories are usually implemented in a language such as Prolog that can simulate <EQN/> - term operations with first-order unification . </A-S>
+<A-S ID='A-2' DOCUMENTC='S-2' AZ='CTR'> However , for some interesting cases , such as a Combinatory Categorial Grammar account of coordination constructs , this can only be done by obscuring the underlying linguistic theory with the `` tricks '' needed for implementation . </A-S>
+<A-S ID='A-3' DOCUMENTC='S-122' AZ='AIM'> This paper shows how the use of abstract syntax permitted by higher-order logic programming allows an elegant implementation of the semantics of Combinatory Categorial Grammar , including its handling of coordination constructs . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' ABSTRACTC='A-0' AZ='OTH'> Many theories of semantic interpretation use <EQN/> - term manipulation to compositionally compute the meaning of a sentence . </S>
+<S ID='S-1' AZ='OTH'> These theories are usually implemented in a language such as Prolog that can simulate <EQN/> - term operations with first-order unification . </S>
+<S ID='S-2' ABSTRACTC='A-2' AZ='CTR'> However , there are cases in which this can only be done by obscuring the underlying linguistic theory with the `` tricks '' needed for implementation . </S>
+<S ID='S-3' AZ='OTH'> For example , Combinatory Categorial Grammar ( CCG ) <REF TYPE='P'>Steedman 1990</REF> is a theory of syntax and semantic interpretation that has the attractive characteristic of handling many coordination constructs that other theories cannot . </S>
+<S ID='S-4' AZ='CTR'> While many aspects of CCG semantics can be reasonably simulated in first-order unification , the simulation breaks down on some of the most interesting cases that CCG can theoretically handle . </S>
+<S ID='S-5' AZ='CTR'> The problem in general , and for CCG in particular , is that the implementation language does not have sufficient expressive power to allow a more direct encoding . </S>
+<S ID='S-6' AZ='AIM'> The solution given in this paper is to show how advances in logic programming allow the implementation of semantic theories in a very direct and natural way , using CCG as a case study . </S>
+</P>
+<P>
+<S ID='S-7' AZ='CTR'> We begin by briefly illustrating why first-order unification is inadequate for some coordination constructs , and then review two proposed solutions . </S>
+<S ID='S-8' AZ='BKG'> The sentence in <CREF/> usually has the logical form ( LF ) in <CREF/> . </S>
+</P>
+<IMAGE ID='I-0'/>
+<P>
+<S ID='S-9' AZ='OTH'> CCG is one of several theories in which <CREF/> gets derived by raising John to be the LF <EQN/> , where P is a predicate that takes a NP as an argument to return a sentence . </S>
+<S ID='S-10' AZ='OTH'> Likewise , Bill gets the LF <EQN/> , and coordination results in the following LF for John and Bill : </S>
+</P>
+<IMAGE ID='I-1'/>
+<P>
+<S ID='S-11' AZ='OTH'> When <CREF/> is applied to the predicate , <CREF/> will result after <EQN/> - reduction . </S>
+<S ID='S-12' AZ='CTR'> However , under first-order unification , this needs to simulated by having the variable x in <EQN/> unify both with Bill and John , and this is not possible . </S>
+<S ID='S-13' AZ='OTH'> See <REF TYPE='A'>Jowsey 1990</REF> and <REF TYPE='A'>Moore 1989</REF> for a thorough discussion . </S>
+</P>
+<P>
+<S ID='S-14' AZ='OTH'> <REF TYPE='A'>Moore 1989</REF> suggests that the way to overcome this problem is to use explicit <EQN/> - terms and encode <EQN/> - reduction to perform the needed reduction . </S>
+<S ID='S-15' AZ='OTH'> For example , the logical form in <CREF/> would be produced , where <EQN/> is the representation of <EQN/> . </S>
+</P>
+<IMAGE ID='I-2'/>
+<P>
+<S ID='S-16' AZ='OTH'> This would then be reduced by the clauses for apply to result in <CREF/> . </S>
+<S ID='S-17' AZ='OTH'> For this small example , writing such an apply predicate is not difficult . </S>
+<S ID='S-18' AZ='CTR'> However , as the semantic terms become more complex , it is no trivial matter to write <EQN/> - reduction that will correctly handle variable capture . </S>
+<S ID='S-19' AZ='CTR'> Also , if at some point it was desired to determine if the semantic forms of two different sentences were the same , a predicate would be needed to compare two lambda forms for <EQN/> - equivalence , which again is not a simple task . </S>
+<S ID='S-20' AZ='CTR'> Essentially , the logic variable X is meant to be interpreted as a bound variable , which requires an additional layer of programming . </S>
+</P>
+<P>
+<S ID='S-21' AZ='OTH'> <REF TYPE='A'>Park 1992</REF> proposes a solution within first-order unification that can handle not only sentence <CREF/> , but also more complex examples with determiners . </S>
+<S ID='S-22' AZ='OTH'> The method used is to introduce spurious bindings that subsequently get removed . </S>
+<S ID='S-23' AZ='OTH'> For example , the semantics of <CREF/> would be <CREF/> , which would then get simplified to <CREF/> . </S>
+</P>
+<IMAGE ID='I-3'/>
+<P>
+<S ID='S-24' AZ='CTR'> While this pushes first-order unification beyond what it had been previously shown capable of , there are two disadvantages to this technique : </S>
+<S ID='S-25' TYPE='ITEM' AZ='CTR' > For every possible category that can be conjoined , a separate lexical entry for and is required , and </S>
+<S ID='S-26' TYPE='ITEM' AZ='CTR' > As the conjoinable categories become more complex , the and entries become correspondingly more complex and greatly obscure the theoretical background of the grammar formalism . </S>
+</P>
+<P>
+<S ID='S-27' AZ='CTR'> The fundamental problem in both cases is that the concept of free and bound occurrences of variables is not supported by Prolog , but instead needs to be implemented by additional programming . </S>
+<S ID='S-28' AZ='CTR'> While theoretically possible , it becomes quite problematic to actually implement . </S>
+<S ID='S-29' AZ='BAS'> The solution given in this paper is to use a higher-order logic programming language , <EQN/>-Prolog , that already implements these concepts , called `` abstract syntax '' in <REF TYPE='A'>Miller 1991</REF> and `` higher-order abstract syntax '' in <REF TYPE='A'>Pfenning and Elliot 1988</REF> . </S>
+<S ID='S-30' AZ='OWN'> This allows a natural and elegant implementation of the grammatical theory , with only one lexical entry for and . </S>
+<S ID='S-31' AZ='BKG'> This paper is meant to be viewed as furthering the exploration of the utility of higher-order logic programming for computational linguistics <REF TYPE='P'>Miller and Nadathur 1986</REF> , <REF TYPE='P'>Pareschi 1989</REF> , <REF TYPE='P'>Pereira 1990</REF> . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> CCG </HEADER>
+<P>
+<S ID='S-32' AZ='OTH'> CCG is a grammatical formalism in which there is a one-to-one correspondence between the rules of composition at the level of syntax and logical form . </S>
+<S ID='S-33' AZ='OTH'> Each word is ( perhaps ambiguously ) assigned a category and LF , and when the syntactical operations assign a new category to a constituent , the corresponding semantic operations produce a new LF for that constituent as well . </S>
+<S ID='S-34' AZ='OTH'> The CCG rules <EQN/> shown in Figure <CREF/> are implemented in the system described in this paper . </S>
+<S ID='S-35' AZ='OTH'> Each of the three operations have both a forward and backward variant . </S>
+</P>
+<P>
+<S ID='S-36' AZ='OTH'> As an illustration of how the semantic rules can be simulated in first-order unification , consider the derivation of the constituent harry found , where harry has the category np with LF harry ' and found is a transitive verb of category <EQN/> with LF </S>
+</P>
+<IMAGE ID='I-4'/>
+<P>
+<S ID='S-37' AZ='OTH'> In the CCG formalism , the derivation is as follows : harry gets raised with the # GT T rule , and then forward composed by the # GT B rule with found , and the result is a category of type s / np with LF <EQN/> . </S>
+<S ID='S-38' AZ='TXT'> In section <CREF/> it will be seen how the use of abstract syntax allows this to be expressed directly . </S>
+<S ID='S-39' AZ='OTH'> In first-order unification , it is simulated as shown in Figure <CREF/> . </S>
+</P>
+<P>
+<S ID='S-40' AZ='OTH'> The final CCG rule to be considered is the coordination rule that specifies that only like categories can coordinate : </S>
+</P>
+<IMAGE ID='I-5'/>
+<P>
+<S ID='S-41' AZ='OTH'> This is actually a schema for a family of rules , collectively called `` generalized coordination '' , since the semantic rule is different for each case . </S>
+<S ID='S-42' AZ='OTH'> For example , if X is a unary function , then the semantic rule is <CREF/> , and if the functions have two arguments , then the rule is <CREF/> . </S>
+</P>
+<IMAGE ID='I-6'/>
+<P>
+<S ID='S-43' AZ='OTH'> For example , when processing <CREF/> , rule <CREF/> would be used with : </S>
+</P>
+<IMAGE ID='I-7'/>
+<P>
+<S ID='S-44' AZ='OTH'> with the result </S>
+</P>
+<IMAGE ID='I-8'/>
+<P>
+<S ID='S-45' AZ='OTH'> which is <EQN/> - equivalent to <CREF/> . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-2'> <EQN/>-PROLOG and Abstract Syntax </HEADER>
+<P>
+<S ID='S-46' AZ='OTH'> <EQN/>-Prolog is a logic programming language based on higher-order hereditary Harrop formulae <REF TYPE='P'>Miller et al. 1991</REF> . </S>
+<S ID='S-47' AZ='OTH'> It differs from Prolog in that first-order terms and unification are replaced with simply-typed <EQN/> - terms and higher-order unification , respectively . </S>
+<S ID='S-48' AZ='OTH'> It also permits universal quantification and implication in the goals of clauses . </S>
+<S ID='S-49' AZ='BAS'> The crucial aspect for this paper is that together these features permits the usage of abstract syntax to express the logical forms terms computed by CCG . </S>
+<S ID='S-50' AZ='BAS'> The built-in <EQN/> - term manipulation is used as a `` meta-language '' in which the `` object-language '' of CCG logical forms is expressed , and variables in the object-language are mapped to variables in the meta-language . </S>
+</P>
+<IMAGE ID='I-9'/>
+<P>
+<S ID='S-51' AZ='OWN'> The <EQN/>-Prolog code fragment shown in Figure <CREF/> declares how the CCG logical forms are represented . </S>
+<S ID='S-52' AZ='OWN'> Each CCG LF is represented as an untyped <EQN/> - term , namely type tm. abs represents object-level abstraction <EQN/> by the meta-level expression ( abs N ) , where N is a meta-level function of type <EQN/> . </S>
+<S ID='S-53' AZ='OWN'> A meta-level <EQN/> - abstraction <EQN/> is written <EQN/> . </S>
+</P>
+<P>
+<S ID='S-54' AZ='OWN'> Thus , if walked ' has type <EQN/> , then <EQN/> is a <EQN/>-Prolog ( meta-level ) function with type <EQN/> , and <EQN/> is the object-level representation , with type tm . </S>
+<S ID='S-55' AZ='OWN'> The LF for found shown in <CREF/> would be represented as <EQN/> . </S>
+<S ID='S-56' AZ='OWN'> app encodes application , and so in the derivation of harry found , the type-raised harry has the <EQN/>-Prolog value <EQN/> . </S>
+</P>
+<P>
+<S ID='S-57' AZ='OWN'> The second part of Figure <CREF/> shows declares how quantifiers are represented , which are required since the sentences to be processed may have determiners . </S>
+<S ID='S-58' AZ='OWN'> forall and exists are encoded similarly to abstraction , in that they take a functional argument and so object-level binding of variables by quantifiers is handled by meta-level <EQN/> - abstraction . </S>
+<S ID='S-59' AZ='OWN'> <EQN/> and <EQN/> are simple constructors for implication and conjunction , to be used with forall and exists respectively , in the typical manner <REF TYPE='P'>Pereira and Shieber 1987</REF> . </S>
+<S ID='S-60' AZ='OWN'> For example , the sentence `` every man found a bone '' has as a possible LF <CREF/> , with the <EQN/>-Prolog representation <CREF/> : </S>
+</P>
+<IMAGE ID='I-10'/>
+<P>
+<S ID='S-61' AZ='OWN'> Figure <CREF/> illustrates how directly the CCG operations can be encoded . </S>
+<S ID='S-62' AZ='OWN'> o is the type of a meta-level proposition , and so the intended usage of apply is to take three arguments of type tm , where the first should be an object-level <EQN/> - abstraction , and set the third equal to the application of the first to the second . </S>
+<S ID='S-63' AZ='OWN'> Thus , for the query </S>
+</P>
+<IMAGE ID='I-11'/>
+<P>
+<S ID='S-64' AZ='OWN'> R unifies with the <EQN/> function <EQN/> , S with harry ' and M with ( R S ) , the meta-level application of R to S , which by the built-in <EQN/> - reduction is <EQN/> . </S>
+<S ID='S-65' AZ='OWN'> In other words , object-level function application is handled simply by the meta-level function application . </S>
+</P>
+<P>
+<S ID='S-66' AZ='OWN'> Function composition is similar . </S>
+<S ID='S-67' AZ='OWN'> Consider again the derivation of harry found by type-raising and forward composition . </S>
+<S ID='S-68' AZ='OWN'> harry would get type-raised by the raise clause to produce <EQN/> , and then composed with found , with the result shown in the following query : </S>
+</P>
+<IMAGE ID='I-12'/>
+<P>
+<S ID='S-69' AZ='OWN'> At this point a further <EQN/> - reduction is needed . </S>
+<S ID='S-70' AZ='OWN'> Note however this is not at all the same problem of writing a <EQN/> - reducer in Prolog . </S>
+<S ID='S-71' AZ='OWN'> Instead it is a simple matter of using the meta-level <EQN/> - reduction to eliminate <EQN/> - redexes to produce the final result <EQN/> . </S>
+<S ID='S-72' AZ='OWN'> We won't show the complete declaration of the <EQN/> - reducer , but the key clause is simply : </S>
+</P>
+<IMAGE ID='I-13'/>
+<P>
+<S ID='S-73' AZ='OWN'> Thus , using the abstract syntax capabilities of <EQN/>-Prolog , we can have a direct implementation of the underlying linguistic formalism , in stark contrast to the first-order simulation shown in Figure <CREF/> . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-3'> Implementation of Coordination </HEADER>
+<P>
+<S ID='S-74' AZ='OWN'> A primary goal of abstract-syntax is to support recursion through abstractions with bound variables . </S>
+<S ID='S-75' AZ='OWN'> This leads to the interpretation of a bound variable as a `` scoped constant '' - it acts like a constant that is not visible from the top of the term , but which becomes visible during the descent through the abstraction . </S>
+<S ID='S-76' AZ='OWN'> See <REF TYPE='A'>Miller 1991</REF> for a discussion of how this may be used for evaluation of functional programs by `` pushing '' the evaluation through abstractions to reduce redexes that are not at the top-level . </S>
+<S ID='S-77' AZ='OWN'> This technique is also used in the <EQN/> - reducer briefly mentioned at the end of the previous section , and a similar technique will be used here to implement coordination by recursively descending through the two arguments to be coordinated . </S>
+</P>
+<IMAGE ID='I-14'/>
+<IMAGE ID='I-15'/>
+<P>
+<S ID='S-78' AZ='TXT'> Before describing the implementation of coordination , it is first necessary to mention how CCG categories are represented in the <EQN/>-Prolog code . </S>
+<S ID='S-79' AZ='OWN'> As shown in Figure <CREF/> , cat is declared to be a primitive type , and np , s , conj , noun are the categories used in this implementation . </S>
+<S ID='S-80' AZ='OWN'> fs and bs are declared to be constructors for forward and backward slash . </S>
+<S ID='S-81' AZ='OWN'> For example , the CCG category for a transitive verb <EQN/> would be represented as <EQN/> . </S>
+<S ID='S-82' AZ='OWN'> Also , the predicate atomic-type is declared to be true for the four atomic categories . </S>
+<S ID='S-83' AZ='OWN'> This will be used in the implementation of coordination as a test for termination of the recursion . </S>
+</P>
+<P>
+<S ID='S-84' AZ='OWN'> The implementation of coordination crucially uses the capability of <EQN/>-Prolog for universal quantification in the goal of a clause . </S>
+<S ID='S-85' AZ='OWN'> pi is the meta-level operator for <EQN/> , and <EQN/> is written as <EQN/> . </S>
+<S ID='S-86' AZ='OWN'> The operational semantics for <EQN/>-Prolog state that <EQN/> is provable if and only if [ c / x ] G is provable , where c is a new variable of the same type as x that does not otherwise occur in the current signature . </S>
+<S ID='S-87' AZ='OWN'> In other words , c is a scoped constant and the current signature gets expanded with c for the proof of [ c / x ] G. Since c is meant to be treated as a generic placeholder for any arbitrary x of the proper type , c must not appear in any terms instantiated for logic variables during the proof of [ c / x ] G . </S>
+<S ID='S-88' AZ='OWN'> The significance of this restriction will be illustrated shortly . </S>
+</P>
+<P>
+<S ID='S-89' AZ='OWN'> The code for coordination is shown in Figure <CREF/> . </S>
+<S ID='S-90' AZ='OWN'> The four arguments to coord are a category and three terms that are the object-level LF representations of constituents of that category . </S>
+<S ID='S-91' AZ='OWN'> The last argument will result from the coordination of the second and third arguments . </S>
+<S ID='S-92' AZ='OWN'> Consider again the earlier problematic example <CREF/> of coordination . </S>
+<S ID='S-93' AZ='OWN'> Recall that after john is type-raised , its LF will be <EQN/> and similarly for bill . </S>
+<S ID='S-94' AZ='OWN'> They will both have the category <EQN/> . </S>
+<S ID='S-95' AZ='OWN'> Thus , to obtain the LF for John and Bill , the following query would be made : </S>
+</P>
+<IMAGE ID='I-16'/>
+<P>
+<S ID='S-96' AZ='OWN' TYPE='ITEM'> This will match with the first clause for coord , with </S>
+</P>
+<P>
+<S ID='S-97' TYPE='ITEM' AZ='OWN' > A instantiated to ( bs np s ) </S>
+<S ID='S-98' TYPE='ITEM' AZ='OWN' > B to s </S>
+<S ID='S-99' TYPE='ITEM' AZ='OWN' > R to <EQN/> </S>
+<S ID='S-100' TYPE='ITEM' AZ='OWN' > S to <EQN/> </S>
+<S ID='S-101' TYPE='ITEM' AZ='OWN' > and T a logic variable waiting instantiation . </S>
+</P>
+<P>
+<S ID='S-102' AZ='OWN'> Then , after the meta-level <EQN/> - reduction using the new scoped constant c , the following goal is called : </S>
+</P>
+<IMAGE ID='I-17'/>
+<P>
+<S ID='S-103' AZ='OWN'> where N = ( T c ) . </S>
+<S ID='S-104' AZ='OWN' TYPE='ITEM'> Since s is an atomic type , the third coord clause matches with </S>
+</P>
+<P>
+<S ID='S-105' TYPE='ITEM' AZ='OWN' > B instantiated to s </S>
+<S ID='S-106' TYPE='ITEM' AZ='OWN' > R to <EQN/> </S>
+<S ID='S-107' TYPE='ITEM' AZ='OWN' > S to <EQN/></S>
+<S ID='S-108' TYPE='ITEM' AZ='OWN' > N to <EQN/> </S>
+</P>
+<P>
+<S ID='S-109' AZ='OWN'> Since N = ( T c ) , higher-order unification is used by <EQN/>-Prolog to instantiate T by extracting c from N with the result . </S>
+</P>
+<IMAGE ID='I-18'/>
+<P>
+<S ID='S-110' AZ='OWN'> and so M from the original query is </S>
+</P>
+<IMAGE ID='I-19'/>
+<P>
+<S ID='S-111' AZ='OWN'> Note that since c is a scoped constant arising from the proof of an universal quantification , the instantiation  </S>
+</P>
+<IMAGE ID='I-20'/>
+<P>
+<S ID='S-112' AZ='OWN'> is prohibited , along with the other extractions that do not remove c from the body of the abstraction . </S>
+</P>
+<P>
+<S ID='S-113' AZ='OWN'> This use of universal quantification to extract out c from a term containing c in this case gives the same result as a direct implementation of the rule for cooordination of unary functions <CREF/> would . </S>
+<S ID='S-114' AZ='OWN'> However , this same process of recursive descent via scoped constants will work for any member of the conj rule family . </S>
+<S ID='S-115' AZ='OWN'> For example , the following query </S>
+</P>
+<IMAGE ID='I-21'/>
+<P>
+<S ID='S-116' AZ='OWN'> corresponds to rule <CREF/> . </S>
+<S ID='S-117' AZ='OWN'> Note also that the use of the same bound variable names obj and sub causes no difficulty since the use of scoped-constants , meta-level <EQN/> - reduction , and higher-order unification is used to access and manipulate the inner terms . </S>
+<S ID='S-118' AZ='OWN'> Also , whereas <REF TYPE='A'>Park 1992</REF> requires careful consideration of handling of determiners with coordination , here such sentences are handled just like any others . </S>
+<S ID='S-119' AZ='OWN'> For example , the sentence `` Mary gave every dog a bone and some policeman a flower '' results in the LF : </S>
+</P>
+<IMAGE ID='I-22'/>
+<P>
+<S ID='S-120' AZ='OWN'> Thus , `` generalized coordination '' , instead of being a family of separate rules , can be expressed as a single rule on recursive descent through logical forms . </S>
+<S ID='S-121' AZ='OWN'> <REF TYPE='A'>Steedman 1990</REF> also discusses `` generalized composition '' , and it may well be that a similar implementation is possible for that family of rules as well . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-4'> Conclusion </HEADER>
+<P>
+<S ID='S-122' ABSTRACTC='A-3' AZ='AIM'> We have shown how higher-order logic programming can be used to elegantly implement the semantic theory of CCG , including the previously difficult case of its handling of coordination constructs . </S>
+<S ID='S-123' AZ='OWN'> The techniques used here should allow similar advantages for a variety of such theories . </S>
+</P>
+<P>
+<S ID='S-124' AZ='OWN'> An argument can be made that the approach taken here relies on a formalism that entails implementation issues that are more difficult than for the other solutions and inherently not as efficient . </S>
+<S ID='S-125' AZ='OWN'> However , the implementation issues , although more complex , are also well-understood and it can be expected that future work will bring further improvements . </S>
+<S ID='S-126' AZ='OWN'> For example , it is a straightforward matter to transform the <EQN/>-Prolog code into a logic called <EQN/> <REF TYPE='P'>Miller 1990</REF> which requires only a restricted form of unification that is decidable in linear time and space . </S>
+<S ID='S-127' AZ='OWN'> Also , the declarative nature of <EQN/>-Prolog programs opens up the possibility for applications of program transformations such as partial evaluation . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-5'> Acknowledgments </HEADER>
+<P>
+<S ID='S-128' AZ='OWN'> This work is supported by ARO grant DAAL03 - 89 - 0031 , DARPA grant N00014 - 90-J - 1863 , and ARO grant DAAH04 - 94-G - 0426 . </S>
+<S ID='S-129' AZ='OWN'> I would like to thank Aravind Joshi , Dale Miller , Jong Park , and Mark Steedman for valuable discussions and comments on earlier drafts . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+David <SURNAME>Dowty</SURNAME>.
+<DATE>1988</DATE>.
+Type raising, functional composition, and non-constituent
+conjunction.
+In Richard T. Oehrle, Emmon Bach, and Deirdre Wheeler, editors,
+Categorial Grammars and Natural Language Structures.  Reidel,
+Dordrecht, pages 153-198.
+</REFERENCE>
+<REFERENCE>
+Gerald <SURNAME>Gazdar</SURNAME>.
+<DATE>1988</DATE>.
+Applicability of indexed grammars to natural languages.
+In U. Reyle and C. Rohrer, editors,
+Natural language parsing and linguistic theories.  Reidel,
+Dordrecht, pages 69-94.
+</REFERENCE>
+<REFERENCE>
+Jerry R. <SURNAME>Hobbs</SURNAME> and Stuart M. <SURNAME>Shieber</SURNAME>.
+<DATE>1987</DATE>.
+An algorithm for generating quantifier scopings.
+Computational Linguistics, 13:47-63.
+</REFERENCE>
+<REFERENCE>
+Einar <SURNAME>Jowsey</SURNAME>.
+<DATE>1990</DATE>.
+Constraining Montague Grammar for Computational Applications.
+PhD thesis, University of Edinburgh.
+</REFERENCE>
+<REFERENCE>
+Dale <SURNAME>Miller</SURNAME>.
+<DATE>1990</DATE>.
+A logic programming language with lambda abstraction, function
+variables and simple unification.
+In P. Schroeder-Heister, editor, Extensions of Logic
+Programming, Lecture Notes in Artifical Intelligence, Springer-Verlag, <DATE>1990</DATE>.
+</REFERENCE>
+<REFERENCE>
+Dale <SURNAME>Miller</SURNAME>.
+<DATE>1991</DATE>.
+Abstract syntax and logic programming.
+In Proceedings of the Second Russian Conference on Logic
+Programming, September <DATE>1991</DATE>.
+</REFERENCE>
+<REFERENCE>
+Dale <SURNAME>Miller</SURNAME> and Gopalan <SURNAME>Nadathur</SURNAME>.
+<DATE>1986</DATE>.
+Some uses of higher-order logic in computational linguistics.
+In 24th Annual Meeting of the Association for Computational
+  Linguistics, pages 247-255.
+</REFERENCE>
+<REFERENCE>
+Dale <SURNAME>Miller</SURNAME>, Gopalan <SURNAME>Nadathur</SURNAME>, Frank <SURNAME>Pfenning</SURNAME>, Andre <SURNAME>Scedrov</SURNAME>.
+<DATE>1991</DATE>.
+Uniform proofs as a foundation for logic programming.
+In Annals of Pure and Applied Logic, 51:125-157.
+</REFERENCE>
+<REFERENCE>
+Robert C. <SURNAME>Moore</SURNAME>.
+<DATE>1989</DATE>.
+Unification-based semantic interpretation.
+In 27th Annual Meeting of the Association for Computational
+  Linguistics, pages 33-41.
+</REFERENCE>
+<REFERENCE>
+Remo <SURNAME>Pareschi</SURNAME>.
+<DATE>1989</DATE>.
+Type-Driven Natural Language Aanalysis.
+PhD thesis, University of Edinburgh.
+</REFERENCE>
+<REFERENCE>
+Jong C. <SURNAME>Park</SURNAME>.
+<DATE>1992</DATE>.
+A unification-based semantic interpretation for
+coordinate constructs.
+In 30th Annual Meeting of the Association for Computational
+  Linguistics, pages 209-215.
+</REFERENCE>
+<REFERENCE>
+Jong C. <SURNAME>Park</SURNAME>.
+<DATE>1995</DATE>.
+Quantifier scope and constituency.
+In 33rd Annual Meeting of the Association for Computational
+  Linguistics (this volume).
+</REFERENCE>
+<REFERENCE>
+Barbara <SURNAME>Partee</SURNAME> and Mats <SURNAME>Rooth</SURNAME>.
+<DATE>1983</DATE>.
+Generalized conjunction and type ambiguity.
+In Rainer Bauerle, Christoph Schwarze, and Arnim von Stechow,
+editors,
+Meaning, Use, and Interpretation of Language. W. de Gruyter, Berlin,
+pages 361-383.
+</REFERENCE>
+<REFERENCE>
+Fernando C. <SURNAME>Pereira</SURNAME>.
+<DATE>1990</DATE>.
+Semantic interpretation as higher-order deduction.
+In Jan van Eijck, editor, Logics in AI: European Workshop
+JELIA'90, Lecture Notes in Artificial Intelligence number 478,
+pages 78-96.  Springer-Verlag, Berlin, Germany.
+</REFERENCE>
+<REFERENCE>
+Fernando C. <SURNAME>Pereira</SURNAME> and Stuart M. <SURNAME>Shieber</SURNAME>.
+<DATE>1987</DATE>.
+Prolog and Natural-Language Analysis.
+Number 10 in CSLI Lecture Notes.  Center for the Study of Language
+and Information, Stanford, California, <DATE>1985</DATE>.  Distributed by the
+University of Chicago Press.
+</REFERENCE>
+<REFERENCE>
+Frank <SURNAME>Pfenning</SURNAME> and Conal <SURNAME>Elliot</SURNAME>.
+<DATE>1988</DATE>.
+Higher-order abstract syntax.
+In Proceedings of the ACM-SIGPLAN Conference on Programming
+Language Design and Implementation, <DATE>1988</DATE>.
+</REFERENCE>
+<REFERENCE>
+Mark J. <SURNAME>Steedman</SURNAME>.
+<DATE>1990</DATE>.
+Gapping as constituent coordination.
+In Linguistics and Philosophy 13, pages 207-263
+</REFERENCE>
+<REFERENCE>
+David <SURNAME>Weir</SURNAME>.
+<DATE>1988</DATE>.
+Characterizing Mildly Context-sensitive Grammar Formalism.
+CIS-88-74, PhD thesis, University of Pennsylvania.
+</REFERENCE>
+<REFERENCE>
+David <SURNAME>Weir</SURNAME> and Aravind <SURNAME>Joshi</SURNAME>.
+<DATE>1988</DATE>.
+Combinatory categorial grammars: generative power and
+relation to linear CF rewriting systems.
+In 26th Annual Meeting of the Association for Computational
+  Linguistics, pages 278-285.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

@@ -1,0 +1,595 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9502014</FILENO>
+<APPEARED><CONFERENCE>EACL</CONFERENCE><YEAR>1995</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.Sm Lg.Th.Li.Sm  </CLASSIFICATION>
+</METADATA>
+<TITLE> Ellipsis and Quantification : A Substitutional Approach </TITLE>
+<AUTHORLIST>
+<AUTHOR>Richard Crouch</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' AZ='AIM'> The paper describes a substitutional approach to ellipsis resolution giving comparable results to <REF TYPE='A'>Dalrymple et al. 1991</REF> , but without the need for order-sensitive interleaving of quantifier scoping and ellipsis resolution . </A-S>
+<A-S ID='A-1' AZ='OTH'> It is argued that the order-independence results from viewing semantic interpretation as building a description of a semantic composition , instead of the more common view of interpretation as actually performing the composition . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='OTH'> <REF TYPE='A'>Dalrymple et al. 1991</REF> ( henceforth , <REFAUTHOR>DSP</REFAUTHOR> ) give an equational treatment of ellipsis via higher-order unification which , amongst other things , provides an insightful analysis of the interactions between ellipsis and quantification . </S>
+<S ID='S-1' AZ='CTR'> But it suffers a number of drawbacks , especially when viewed from a computational perspective . </S>
+</P>
+<P>
+<S ID='S-2' AZ='CTR'> First , the precise order in which quantifiers are scoped and ellipses resolved determines the final interpretation of elliptical sentences . </S>
+<S ID='S-3' AZ='CTR'> It is hard to see how <REFAUTHOR>Dalrymple et al.</REFAUTHOR> 's analysis could be implemented within a system employing a pipelined architecture that , say , separates quantifier scoping out from other reference resolution operations -- this would seem to preclude the generation of some legitimate readings . </S>
+<S ID='S-4' AZ='CTR'> Yet many systems , for good practical reasons , employ this kind of architecture . </S>
+</P>
+<P>
+<S ID='S-5' AZ='CTR'> Second , without additional constraints , <REFAUTHOR>Dalrymple et al.</REFAUTHOR> slightly overgenerate readings for sentences like </S>
+</P>
+<IMAGE ID='I-0'/>
+<P>
+<S ID='S-6' AZ='CTR'> <REF TYPE='A'>Kehler 1993a</REF> has convincingly argued that this problem arises because <REFAUTHOR>Dalrymple et al.</REFAUTHOR> do not distinguish between merely co-referential and co-indexed ( in his terminology , role-linked ) expressions . </S>
+</P>
+<P>
+<S ID='S-7' AZ='CTR'> Third , though perhaps less importantly , higher-order unification going beyond second-order matching is required for resolving ellipses involving quantification . </S>
+<S ID='S-8' AZ='CTR'> This increases the computational complexity of the ellipsis resolution task . </S>
+</P>
+<P>
+<S ID='S-9' AZ='AIM'> This paper presents a treatment of ellipsis which avoids these difficulties , while having essentially the same coverage as <REFAUTHOR>Dalrymple et al.</REFAUTHOR> . </S>
+<S ID='S-10' AZ='BAS'> The treatment is easily implementable , and forms the basis of the ellipsis resolution component currently used within the Core Language Engine <REF SELF="YES" TYPE='P'>Alshawi et al. 1992</REF> . </S>
+</P>
+<P>
+<S ID='S-11' AZ='OWN'> Ellipsis interpretations are represented as simple sets of substitutions on semantic representations of the antecedent . </S>
+<S ID='S-12' AZ='OWN'> The substitutions can be built up in an order-independent way ( i.e. before , after or during scoping ) , and without recourse to higher-order unification . </S>
+<S ID='S-13' AZ='BAS'> The treatment is similar to the discourse copying analysis of <REF TYPE='A'>Kehler 1993a</REF> , and to the substitutional treatment suggested by <REFAUTHOR>Kamp</REFAUTHOR> within Discourse Representation Theory , described in <REF TYPE='A'>Gawron and Peters 1990</REF> . </S>
+<S ID='S-14' AZ='CTR'> However , we extend the notion of strict and sloppy identity to deal with more than just pronouns . </S>
+<S ID='S-15' AZ='OWN'> In doing so , we readily deal with phenomena like scope parallelism . </S>
+</P>
+<P>
+<S ID='S-16' AZ='OWN'> While the treatment of ellipsis is hopefully of some value in its own right , a more general conclusion can be drawn concerning the requirements for a computational theory of semantics . </S>
+<S ID='S-17' AZ='OTH'> Briefly , the standard view within formal semantics , which <REFAUTHOR>Dalrymple et al.</REFAUTHOR> inherit , identifies semantic interpretation with composition : interpretation is the process of taking the meanings of various constituents and composing them together to form the meaning of the whole . </S>
+<S ID='S-18' AZ='OTH'> This makes semantic interpretation a highly order-dependent affair ; e.g. the order in which a functor is composed with its arguments can substantially affect the resulting meaning . </S>
+<S ID='S-19' AZ='OTH'> This is reflected in the order-sensitive interleaving of scope and ellipsis resolution in <REFAUTHOR>Dalrymple et al.</REFAUTHOR> 's account . </S>
+<S ID='S-20' AZ='OTH'> In addition , composition is only sensitive to the meanings of its components . </S>
+<S ID='S-21' AZ='OTH'> Typically there is a many-one mapping from compositions onto meanings . </S>
+<S ID='S-22' AZ='CTR'> So , for example , whether two terms with identical meanings are merely co-referential or are co-indexed is the kind of information that may get lost : the difference amounts to two ways of composing the same meaning . </S>
+</P>
+<P>
+<S ID='S-23' AZ='OWN'> The alternative proposed here is to view semantic interpretation as a process of building a ( possibly partial ) description of the intended semantic composition ; i.e. ( partial ) descriptions of what the meanings of various constituents are , and how they should be composed together . </S>
+<S ID='S-24' AZ='OWN'> While the order in which composition operations are performed can radically affect the outcome , the order in which descriptions are built up is unimportant . </S>
+<S ID='S-25' AZ='OWN' TYPE='ITEM'> In the case of ellipsis , this extra layer of descriptive indirection permits an equational treatment of ellipsis that </S>
+<S ID='S-26' TYPE='ITEM' AZ='OWN'> is order-independent , </S>
+<S ID='S-27' TYPE='ITEM' AZ='OWN'> can take account compositional distinctions that do not result in meaning differences , and also </S>
+<S ID='S-28' TYPE='ITEM' AZ='OWN'> does not require the use of higher-order unification for dealing with quantifiers . </S>
+</P>
+<P>
+<S ID='S-29' AZ='TXT'> The paper is organised as follows . </S>
+<S ID='S-30' AZ='TXT'> Section <CREF/> describes the substitutional treatment of ellipsis by way of a few examples presented in a simplified version of Quasi Logical Form ( QLF ) <REF  SELF="YES" TYPE='P'>Alshawi and Crouch 1992</REF>, <REF  SELF="YES" TYPE='P'>Alshawi et al. 1992</REF> . </S>
+<S ID='S-31' AZ='TXT'> Section <CREF/> gives the semantics for the notation , and argues that QLF is best understood as providing descriptions of semantic compositions . </S>
+<S ID='S-32' AZ='TXT'> Section <CREF/> raises some open questions concerning the determination of parallelism between ellipsis and antecedent , and other issues . </S>
+<S ID='S-33' AZ='TXT'> Section <CREF/> concludes . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Ellipsis Substitutions </HEADER>
+<P>
+<S ID='S-34' AZ='TXT'> This section illustrates the substitutional treatment of ellipsis through a small number of examples . </S>
+<S ID='S-35' AZ='OWN'> For presentation purposes we only sketch the intended semantics of the simplified QLF notation used , and a more detailed discussion is deferred until section <CREF/> . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-2'> Simple VP Ellipsis </HEADER>
+<P>
+<S ID='S-36' AZ='BKG'> A simple , uninteresting example to fix some notation : </S>
+</P>
+<IMAGE ID='I-1'/>
+<P>
+<S ID='S-37' AZ='OWN'> We represent the first sentence , ignoring tense , as a ( resolved ) QLF </S>
+</P>
+<IMAGE ID='I-2'/>
+<P>
+<S ID='S-38' AZ='OWN'> The noun phrase John gives rise to an existentially quantified term , uniquely identified by the index <EQN/> . </S>
+<S ID='S-39' AZ='OWN'> The <EQN/> expression has four arguments : an index , a determiner / quantifier , an explicit restriction , and an additional contextually derived restriction . </S>
+<S ID='S-40' AZ='OWN'> In this case , the quantifier ranges over objects that are named ` John ' and are further restricted to be identical to some ( contextually salient ) individual , denoted by j _ smith . </S>
+<S ID='S-41' AZ='OWN'> Prior to reference resolution , the contextual restriction on the term would be an uninstantiated meta-variable ; resolution consists of instantiating meta-variables to contextually appropriate values . </S>
+<S ID='S-42' AZ='OWN'> The scope of the term is indicated by the scope node <EQN/> prefixing the formula <EQN/> . </S>
+<S ID='S-43' AZ='OWN'> Again , prior to resolution this scope node would be an uninstantiated meta-variable . </S>
+</P>
+<P>
+<S ID='S-44' AZ='OWN'> A generalized quantifier representation equivalent to the above is </S>
+</P>
+<IMAGE ID='I-3'/>
+<P>
+<S ID='S-45' AZ='OWN'> The index in the scope node means that to semantically evaluate the QLF , you get hold of the quantifier , restriction and contextual restriction of the corresponding term . </S>
+<S ID='S-46' AZ='OWN'> This forms a ( generalized ) quantifier expression , whose body is obtained by discharging all occurrences of the term and it index to a variable , and abstracting over the variable . </S>
+<S ID='S-47' AZ='OWN'> Terms and indices not dischargeable in this manner lead to uninterpretable QLFs <REF SELF="YES" TYPE='P'>Alshawi and Crouch 1992</REF> . </S>
+</P>
+<P>
+<S ID='S-48' AZ='OWN'> We represent the elliptical sentence , again abbreviated , as a ( partially resolved ) QLF : </S>
+</P>
+<IMAGE ID='I-4'/>
+<P>
+<S ID='S-49' AZ='OWN'> <EQN/> is an unresolved meta-variable . </S>
+<S ID='S-50' AZ='OWN'> To resolve the ellipsis , it needs to be instantiated to some contextually salient predicate . </S>
+</P>
+<P>
+<S ID='S-51' AZ='OWN'> Along similar lines to <REFAUTHOR>Dalrymple et al.</REFAUTHOR> , we can set up an equation to determine possible values for <EQN/> : </S>
+</P>
+<IMAGE ID='I-5'/>
+<P>
+<S ID='S-52' AZ='OWN'> That is , we are looking for a predicate that when applied to the subject term of the ellipsis antecedent returns the antecedent . </S>
+<S ID='S-53' AZ='OWN'> The interpretation of the ellipsis is then given by applying this predicate to the subject of the ellipsis . </S>
+</P>
+<P>
+<S ID='S-54' AZ='OWN'> The equation <CREF/> is solved by setting <EQN/> to something that takes a term T as an argument and substitutes T for <EQN/> and the index of T for <EQN/> throughout the ellipsis antecedent ( the RHS of <CREF/> ) : </S>
+</P>
+<IMAGE ID='I-6'/>
+<P>
+<S ID='S-55' AZ='OWN'> Here <EQN/> is a form of abstraction ; for now it will do no harm view it as a form of <EQN/> - abstraction , though this is not strictly accurate . </S>
+<S ID='S-56' AZ='OWN'> The substitutions are represented using the notation ` <EQN/> ' . </S>
+</P>
+<P>
+<S ID='S-57' AZ='OWN'> Applying this value for <EQN/> in the ellipsis <CREF/> , we get  </S>
+</P>
+<IMAGE ID='I-7'/>
+<P>
+<S ID='S-58' AZ='OWN'> Ellipsis resolution thus amounts to selecting an antecedent and determining a set of substitutions to apply to it . </S>
+<S ID='S-59' AZ='OWN'> For reasons that will be explained shortly , it is important that resolution does not actually carry out the application of the substitutions . </S>
+<S ID='S-60' AZ='OWN'> However , were we to do this in this particular case , where the antecedent <CREF/> is fully resolved , we would successfully capture the intended interpretation of the ellipsis , namely : </S>
+</P>
+<IMAGE ID='I-8'/>
+<P>
+<S ID='S-61' AZ='OWN'> Note that the substitutions are not applied in the conventional order ; viz. first replace <EQN/> by <EQN/> throughout <CREF/> and then replace <EQN/> by <EQN/> . </S>
+<S ID='S-62' AZ='OWN'> The first substitution would ensure that there was no <EQN/> for the second substitution to replace . </S>
+<S ID='S-63' AZ='OWN'> The order in which substitutions apply instead depends on the order in which the expressions occur when making a top down pass through <CREF/> , such as one would do when applying semantic evaluation rules to the formula . </S>
+</P>
+<P>
+<S ID='S-64' AZ='OWN'> Note also that the term index substitution applies to the scope node , so that <EQN/> is replaced by <EQN/> . </S>
+<S ID='S-65' AZ='OWN'> This ensures that the term for Mary in the ellipsis gets a parallel scope to the term for John in the antecedent . </S>
+<S ID='S-66' AZ='OWN'> Scope parallelism may not be significant where proper names are concerned , but is important when it comes to more obviously quantificational terms ( section <CREF/> ) . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-3'> Evaluative Substitutions </HEADER>
+<P>
+<S ID='S-67' AZ='OWN'> The meaning of an ellipsis is composed in essentially the same way , and from the same components , as the meaning of its antecedent . </S>
+<S ID='S-68' AZ='OWN'> However , some changes need to be made in order to accommodate new material introduced by the ellipsis . </S>
+<S ID='S-69' AZ='OWN'> The substitutions specify what these changes are . </S>
+<S ID='S-70' AZ='OWN'> In the example discussed above , the meaning of the ellipsis is built up in the same way as for the antecedent , except that whenever you encounter a term corresponding to ` John ' or something dependent / co-indexed with it , you it is treated as though it were the term for ` Mary ' or dependent / co-indexed with it . </S>
+</P>
+<P>
+<S ID='S-71' AZ='OWN'> This means that the substitutions act as directives controlling the way in which QLF expressions within their scope are evaluated . </S>
+<S ID='S-72' AZ='OWN'> They are not syntactic operations on QLF expressions -- they are part of the QLF object language . </S>
+</P>
+<P>
+<S ID='S-73' AZ='OWN'> The reason that substitutions are not ` applied ' immediately upon ellipsis resolution is as follows . </S>
+<S ID='S-74' AZ='OWN'> At the time of deciding on the ellipsis substitutions , the precise composition of the antecedent may not yet have been determined . </S>
+<S ID='S-75' AZ='OWN'> ( For instance the scopes of quantifiers or the contextual restrictions on pronouns in the antecedent may not have been resolved ; this will correspond to the presence of uninstantiated meta-variables in the antecedent QLF. ) </S>
+<S ID='S-76' AZ='OWN'> The ellipsis should follow , modulo the substitutions , the same composition as the antecedent , whatever that composition is eventually determined to be . </S>
+<S ID='S-77' AZ='OWN'> It makes no sense to apply the substitutions before the antecedent is fully resolved , though it does make sense to decide what the appropriate substitutions should be . </S>
+</P>
+<P>
+<S ID='S-78' AZ='OWN'> In practical terms what this amounts to is exploiting re-entrancy in QLFs . </S>
+<S ID='S-79' AZ='OWN'> The elliptical QLF will contain a predicate formed from the antecedent QLF plus substitutions . </S>
+<S ID='S-80' AZ='OWN'> Any uninstantiated meta-variables in the antecedent are thus re-entrant in the ellipsis . </S>
+<S ID='S-81' AZ='OWN'> Consequently , any further resolutions to the antecedent are automatically imposed on the ellipsis . </S>
+<S ID='S-82' AZ='OWN'> This would not be the case if the substitutions were treated as syntactic operations on QLF to be applied immediately : some re-entrant meta-variables would be substituted out of the ellipsis , and those remaining would not be subject to the substitutions ( which would have already been applied ) when they were eventually instantiated . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-4'> Scope Parallelism </HEADER>
+<P>
+<S ID='S-83' AZ='BKG'> It was noted above that substitutions on term indices in scope nodes ensures scope parallelism . </S>
+<S ID='S-84' AZ='BKG'> This is now illustrated with a more interesting example ( adapted from <REFAUTHOR>Hirshbhler</REFAUTHOR> as cited by <REFAUTHOR>Dalrymple et al.</REFAUTHOR> ) . </S>
+</P>
+<IMAGE ID='I-9'/>
+<P>
+<S ID='S-85' AZ='BKG'> The antecedent has two possible scopings : a single Canadian flag in front of all the houses , or each house with its own flag . </S>
+<S ID='S-86' AZ='BKG'> Whichever scoping is given to the antecedent , a parallel scoping should be given to the ellipsis . </S>
+</P>
+<P>
+<S ID='S-87' AZ='OWN'> A simplified QLF for <CREF/> is </S>
+</P>
+<IMAGE ID='I-10'/>
+<P>
+<S ID='S-88' AZ='OWN'> where the indices <EQN/> , <EQN/> and <EQN/> are mnemonic for Canadian flag , American flag and house . </S>
+<S ID='S-89' AZ='OWN'> Taking the first conjunct as the antecedent , we can set up an equation </S>
+</P>
+<IMAGE ID='I-11'/>
+<P>
+<S ID='S-90' AZ='OWN'> the solution to which is </S>
+</P>
+<IMAGE ID='I-12'/>
+<P>
+<S ID='S-91' AZ='OWN'> This make the elliptical conjunct equivalent to  </S>
+</P>
+<IMAGE ID='I-13'/>
+<P>
+<S ID='S-92' AZ='OWN'> The scope node , <EQN/> can be resolved to <EQN/> ( ` every house ' takes wide scope ) , or <EQN/> ( ` a Canadian flag ' takes wide scope ) . </S>
+<S ID='S-93' AZ='OWN'> Whichever resolution is made , the substitution of <EQN/> for <EQN/> ensures parallel scoping in the ellipsis for ` an American flag ' . </S>
+<S ID='S-94' AZ='OWN'> Cashing out the substitutions for the first case , we have  </S>
+</P>
+<IMAGE ID='I-14'/>
+<P>
+<S ID='S-95' AZ='OWN'> There is another scoping option which instantiates <EQN/> to <EQN/> , i.e. gives ` every house ' wide scope over both antecedent and ellipsis . </S>
+<S ID='S-96' AZ='OWN'> In this case the two terms , <EQN/> in ellipsis and antecedent are both discharged ( i.e. bound ) at the scope node <EQN/> , rather than being separately bound at the two copies of <EQN/> . </S>
+</P>
+<IMAGE ID='I-15'/>
+<P>
+<S ID='S-97' AZ='OWN'> ( This has equivalent truth-conditions to <CREF/> ) . </S>
+</P>
+<P>
+<S ID='S-98' AZ='CTR'> Besides illustrating scope parallelism , this is an example where <REFAUTHOR>Dalrymple et al.</REFAUTHOR> have to resort to higher-order unification beyond second-order matching . </S>
+<S ID='S-99' AZ='OWN'> But no such increase in complexity is required under the present treatment . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-5'> Strict and Sloppy Identity </HEADER>
+<P>
+<S ID='S-100' AZ='BKG'> The notion of strict and sloppy identity is usually confined to pronominal items occurring in antecedents and ( implicitly ) in ellipses . </S>
+<S ID='S-101' AZ='BKG'> A standard example is </S>
+</P>
+<IMAGE ID='I-16'/>
+<P>
+<S ID='S-102' AZ='BKG'> On the strict reading , Simon and John both love John 's mother . </S>
+<S ID='S-103' AZ='BKG'> The implicit pronoun has been strictly identified with the pronoun in the antecedent to pick out the same referent , John . </S>
+<S ID='S-104' AZ='BKG'> On the sloppy reading Simon loves Simon 's mother . </S>
+<S ID='S-105' AZ='BKG'> The implicit pronoun has been sloppily identified with its antecedent to refer to something matching a similar description , i.e. the subject or agent of the loving relation , Simon . </S>
+</P>
+<P>
+<S ID='S-106' AZ='BKG'> The sentence  </S>
+</P>
+<IMAGE ID='I-17'/>
+<P>
+<S ID='S-107' AZ='BKG'> has three readings : John and Simon read the same book ; John and Simon both read a book belonging to John , though not necessarily the same one ; John reads one of John 's books and Simon reads one of Simon 's books . </S>
+</P>
+<P>
+<S ID='S-108' AZ='BKG'> Intuitively , the first reading arises from strictly identifying the elliptical book with the antecedent book . </S>
+<S ID='S-109' AZ='BKG'> The second arises from strictly identifying the pronouns , while sloppily identifying the books . </S>
+<S ID='S-110' AZ='BKG'> The third from sloppily identifying both the books and the pronouns . </S>
+<S ID='S-111' AZ='BKG'> In the literature , the first reading would not be viewed as a case of strict identity . </S>
+<S ID='S-112' AZ='OWN'> But this view emerges naturally from our treatment of substitutions , and is arguably a more natural characterisation of the phenomena . </S>
+</P>
+<P>
+<S ID='S-113' AZ='OWN'> We need to distinguish between parallel and non-parallel terms in ellipsis antecedents . </S>
+<S ID='S-114' AZ='OWN'> Parallel terms , like John in the example above , are those that correspond terms appearing explicitly in the ellipsis . </S>
+<S ID='S-115' AZ='OWN'> Non-parallel terms are those that do not have an explicit parallel in the ellipsis . </S>
+<S ID='S-116' AZ='OWN'> ( Determining which terms are parallel / non-parallel is touched on in section <CREF/> . )  </S>
+</P>
+<P>
+<S ID='S-117' AZ='OWN'> For parallel terms , we have no choice about the ellipsis substitution . </S>
+<S ID='S-118' AZ='OWN'> We replace both the term and its index by the corresponding term and index from the ellipsis . </S>
+<S ID='S-119' AZ='OWN'> But for all non-parallel terms we have a choice between a strict or a sloppy substitution . </S>
+</P>
+<P>
+<S ID='S-120' AZ='OWN'> A sloppy substitution involves substituting a new term index for the old one . </S>
+<S ID='S-121' AZ='OWN'> This has the effect of reindexing the version of the term occurring in the ellipsis , so that it refers to the same kind of thing as the antecedent term but is not otherwise linked to it . </S>
+</P>
+<P>
+<S ID='S-122' AZ='OWN'> A strict substitution substitutes the term by its index . </S>
+<S ID='S-123' AZ='OWN'> In this way , the version of the term occurring in the ellipsis is directly linked to antecedent term . </S>
+</P>
+<P>
+<S ID='S-124' AZ='OWN'> To illustrate , an abbreviated QLF for the antecedent ` John read a book he owned ' is  </S>
+</P>
+<IMAGE ID='I-18'/>
+<P>
+<S ID='S-125' AZ='OWN'> Here , we have left the scope node as an uninstantiated meta-variable <EQN/> . </S>
+<S ID='S-126' AZ='OWN'> The pronominal term <EQN/> occurs in the restriction of the book term <EQN/> . </S>
+<S ID='S-127' AZ='OWN'> The pronoun has been resolved to have a contextual restriction , <EQN/> , that co-indexes it with the subject term . </S>
+<S ID='S-128' AZ='OWN'> Here , ` <EQN/> ' is a function that when applied to an entity-denoting expression ( e.g. a variable or constant ) returns the property of being identical to that entity ; when it applies to a term index , it returns an E-type property contextually linked to the term . </S>
+</P>
+<P>
+<S ID='S-129' AZ='OWN'> The ellipsis can be represented as </S>
+</P>
+<IMAGE ID='I-19'/>
+<P>
+<S ID='S-130' AZ='OWN'> which is conjoined with the antecedent . </S>
+</P>
+<P>
+<S ID='S-131' AZ='OWN'> The three readings of book are illustrated below , listing substitutions to be applied to the antecedent and cashing out the results of their application , though omitting scope . </S>
+</P>
+<IMAGE ID='I-20'/>
+<P>
+<S ID='S-132' TYPE='ITEM' AZ='OWN'> Since all reference to the term <EQN/> is removed by the strict substitution on the term in which it occurs , it makes no difference whether the pronoun is given a strict or a sloppy substitution . </S>
+<S ID='S-133' TYPE='ITEM' AZ='OWN'> Strict substitution for the book leaves behind an occurrence of the index <EQN/> in the ellipsis . </S>
+<S ID='S-134' AZ='OWN'> For the QLF to be interpretable , it is necessary to give the antecedent book term wide scope over the ellipsis in order to discharge the index . </S>
+</P>
+<IMAGE ID='I-21'/>
+<P>
+<S ID='S-135' AZ='OWN'> As above , the antecedent pronoun is constrained to be given wide scope over the ellipsis , on pain of the index h being undischargeable . </S>
+<S ID='S-136' AZ='OWN'> ( Pronouns , like proper names , are treated as contextually restricted quantifiers , where the contextual restriction may limit the domain of quantification to one individual . )  </S>
+</P>
+<IMAGE ID='I-22'/>
+<P>
+<S ID='S-137' AZ='OWN'> The index substitution from the primary term re-indexes the contextual restriction of the pronoun . </S>
+<S ID='S-138' AZ='OWN'> It becomes coindexed with <EQN/> instead of <EQN/> . </S>
+</P>
+<P>
+<S ID='S-139' AZ='OTH'> <REFAUTHOR>Dalrymple et al.</REFAUTHOR> 's account of the first reading of <CREF/> is significantly different from their account of the last two readings . </S>
+<S ID='S-140' AZ='OTH'> The first reading involves scoping the book quantifier before ellipsis resolution . </S>
+<S ID='S-141' AZ='OTH'> The other two readings only scope the quantifier after resolution , and differ in giving the pronoun a strict or a sloppy interpretation . </S>
+<S ID='S-142' AZ='OWN'> In our account the choice of strict or sloppy substitutions for secondary terms can constrain permissible quantifier scopings . </S>
+<S ID='S-143' AZ='OWN'> But the making of these choices does not have to be interleaved in a precise order with the scoping of quantifiers . </S>
+</P>
+<P>
+<S ID='S-144' AZ='OWN'> Moreover , the difference between strict and sloppy readings does not depend on somehow being able to distinguish between primary and secondary occurrences of terms with the same meaning . </S>
+<S ID='S-145' AZ='OTH'> In <REFAUTHOR>Dalrymple et al.</REFAUTHOR> 's representation of the antecedent of <CREF/> , both NPs ` John ' and ` he ' give rise to two occurrences of the same term ( a constant , j ) . </S>
+<S ID='S-146' AZ='OTH'> The QLF representation is able to distinguish between the primary and the secondary , pronominal , reference to John . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-6'> Other Phenomena </HEADER>
+<P>
+<S ID='S-147' AZ='BAS'> Space precludes illustrating the substitutional approach through further examples , though more are discussed in <REF  SELF="YES" TYPE='A'>Alshawi et al. 1992</REF>, <REF  SELF="YES" TYPE='A'>Cooper et al. 1994b</REF> . </S>
+<S ID='S-148' AZ='OWN'> The coverage is basically the same as <REFAUTHOR>Dalrymple et al.</REFAUTHOR> 's : </S>
+</P>
+<P>
+<S ID='S-149' AZ='OWN'> Antecedent Contained Deletion : </S>
+<S ID='S-150' AZ='OWN'> A sloppy substitution for every person that Simon did in the sentence John greeted every person that Simon did results in re-introducing the ellipsis in its own resolution . </S>
+<S ID='S-151' AZ='CTR'> This leads to an uninterpretable cyclic QLF in much the same way that <REFAUTHOR>Dalrymple et al.</REFAUTHOR> obtain a violation of the occurs check on sound unification . </S>
+</P>
+<P>
+<S ID='S-152' AZ='OTH'> Cascaded Ellipsis : </S>
+<S ID='S-153' AZ='OTH'> The number of readings obtained for ` John revised his paper before the teacher did , and then Simon did ' was used as a benchmark by <REFAUTHOR>Dalrymple et al.</REFAUTHOR> . </S>
+<S ID='S-154' AZ='OWN'> The approach here gets the four readings identified by them as most plausible . </S>
+<S ID='S-155' AZ='OWN'> With slight modification , it gets a fifth reading of marginal plausibility . </S>
+<S ID='S-156' AZ='OWN'> The modification is to allow ( strict ) substitutions on terms not explicitly appearing in the ellipsis antecedent -- i.e. the implicit his paper in the second ellipsis when resolving the third ellipsis . </S>
+<S ID='S-157' AZ='OWN'> We do not get a sixth , implausible reading , provided that in the first clause his is resolved as being coindexed with the for John ; i.e. that John and his do not both independently refer to the same individual . </S>
+<S ID='S-158' AZ='OTH'> <REFAUTHOR>Kehler</REFAUTHOR> blocks this reading in a similar manner . </S>
+<S ID='S-159' AZ='CTR'> <REFAUTHOR>Dalrymple et al.</REFAUTHOR> block the reading by a more artificial restriction on the depth of embedding of expressions in logical forms ; they lack the means for distinguishing between coindexed and merely co-referential expressions . </S>
+</P>
+<P>
+<S ID='S-160' AZ='OWN'> Multiple VP Ellipsis </S>
+<S ID='S-161' AZ='OWN'> Multiple VP ellipsis <REF TYPE='P'>Gardent 1993</REF> poses problems at the level of determining which VP is the antecedent of which ellipsis . </S>
+<S ID='S-162' AZ='OWN'> But at the level of incorporating elliptical material once the antecedents have been determined , it appears to offer no special problems . </S>
+</P>
+<P>
+<S ID='S-163' AZ='OWN'> Other Forms of Ellipsis : </S>
+<S ID='S-164' AZ='OWN'> Other forms of ellipsis , besides VP-ellipsis can be handled substitutionally . </S>
+<S ID='S-165' AZ='OWN'> For example , NP-ellipsis ( e.g. Who slept ? John . ) is straightforwardly accommodated . </S>
+<S ID='S-166' AZ='OWN'> PP-ellipsis ( e.g. Who left on Tuesday ? And on Wednesday ? ) requires substitutions for constructions in QLF ( not described here ) representing prepositional phrases . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-7'> Comparisons </HEADER>
+<P>
+<S ID='S-167' AZ='BAS'> The use of terms and indices has parallels to proposals due to <REFAUTHOR>Kehler and Kamp</REFAUTHOR> <REF  TYPE='P'>Kehler 1993a</REF>, <REF  TYPE='P'>Gawron and Peters 1990</REF> . </S>
+<S ID='S-168' AZ='OTH'> <REFAUTHOR>Kehler</REFAUTHOR> adopts an analysis where ( referential ) arguments to verbs are represented as related to a Davidsonian event via thematic role functions , e.g. <EQN/> . </S>
+<S ID='S-169' AZ='OTH'> Pronouns typically refer to these functions , e.g. <EQN/> . </S>
+<S ID='S-170' AZ='OTH'> In VP ellipsis , strict identity corresponds to copying the entire role assignment from the antecedent . </S>
+<S ID='S-171' AZ='OTH'> Sloppy identity corresponds to copying the function , but applying it to the event of the ellided clause . </S>
+</P>
+<P>
+<S ID='S-172' AZ='OTH'> For <REFAUTHOR>Kamp</REFAUTHOR> , strict identity involves copying the discourse referent of the antecedent and identifying it with that of the ellided pronoun . </S>
+<S ID='S-173' AZ='OTH'> Sloppy identity copies the conditions on the antecedent discourse referent , and applies them to the discourse referent of the ellided pronoun . </S>
+</P>
+<P>
+<S ID='S-174' AZ='CTR'> Neither <REFAUTHOR>Kamp</REFAUTHOR> nor <REFAUTHOR>Kehler</REFAUTHOR> extend their copying / substitution mechanism to anything besides pronouns , as we have done . </S>
+<S ID='S-175' AZ='CTR'> In <REFAUTHOR>Kehler</REFAUTHOR> 's case , it is hard to see how his role assignment functions can be extended to deal with non-referential terms in the desired manner . </S>
+<S ID='S-176' AZ='OTH'> DRT 's use of discourse referents to indicate scope suggests that <REFAUTHOR>Kamp</REFAUTHOR> 's treatment may be more readily extended in this manner ; lists of discourse referents at the top of DRS boxes are highly reminiscent of the index lists in scope nodes . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-8'> Semantic Evaluation </HEADER>
+<P>
+<S ID='S-177' AZ='OWN'> Figure <CREF/> defines a valuation relation for the QLF fragment used above , derived from <REF  SELF="YES" TYPE='A'>Alshawi and Crouch 1992</REF>, <REF  SELF="YES" TYPE='A'>Cooper et al. 1994a</REF> . </S>
+<IMAGE ID='I-23'/>
+</P>
+<P>
+<S ID='S-178' AZ='OWN'> If a QLF expression contains uninstantiated meta-variables , the valuation relation can associate more than one value with the expression . </S>
+<S ID='S-179' AZ='OWN'> In the case of formulas , they may be given both the values true and false , corresponding to the formula being true under one possible resolution and false under another . </S>
+<S ID='S-180' AZ='OWN'> A subsumption ordering over QLFS , <EQN/> , is employed in the evaluation rules , in effect to propose possible instantiations for meta-variables ( the rule fragment only allows for scope meta-variables , but <REF TYPE='A' SELF="YES">Cooper et al. 1994a</REF> describes the more general case where other kinds of meta-variable are permitted ) . </S>
+<S ID='S-181' AZ='OWN'> A partially instantiated QLF therefore effectively specifies a set of possible evaluations ( or semantic compositions ) . </S>
+<S ID='S-182' AZ='OWN'> As the QLF becomes more instantiated , the set of possible evaluations narrows towards a singleton . </S>
+</P>
+<P>
+<S ID='S-183' AZ='OWN'> It is also possible for a QLF to be uninterpretable ; to specify no possible evaluation . </S>
+<S ID='S-184' AZ='OWN'> Thus , no rules are given for evaluating terms or their indices in isolation . </S>
+<S ID='S-185' AZ='OWN'> They must first be discharged by the scoping rule , which substitutes the terms and indices by <EQN/> - bound variables . </S>
+<S ID='S-186' AZ='OWN'> Inappropriate scoping may leave undischarged and hence uninterpretable terms and indices ( which accounts for the so-called free-variable and vacuous quantification constraints on scope <REF TYPE='P' SELF="YES">Alshawi and Crouch 1992</REF> ) . </S>
+</P>
+<P>
+<S ID='S-187' AZ='OWN'> The non-deterministic nature of evaluation and the role of substitutions draws us to conclude that ellipsis substitutions operate on ( descriptions of ) the semantic compositions , not the results of such compositions . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-9'> Parallelism and Inference </HEADER>
+<P>
+<S ID='S-188' AZ='OWN'> Selecting ellipsis antecedents and parallel elements within them is an open problem <REF TYPE='P'>Pruest 1992</REF> , <REF TYPE='P'>Pruest et al. 1994</REF> , <REF  TYPE='P'>Kehler 1993b</REF>, <REF  TYPE='P'>Grover et al. 1994</REF> . </S>
+<S ID='S-189' AZ='OWN'> Our approach to parallelism is perhaps heavy-handed , but in the absence of a clear solutions , possibly more flexible . </S>
+<S ID='S-190' AZ='OWN'> The QLFs shown above omitted category information present in terms and forms . </S>
+<S ID='S-191' AZ='OWN'> Categories are sets of feature value equations containing syntactic information relevant to determining how uninstantiated meta-variables can be resolved . </S>
+</P>
+<P>
+<S ID='S-192' AZ='OWN'> Tense in VP-ellipsis illustrates how categories can be put to work  </S>
+<S ID='S-193' AZ='OWN'> In </S>
+<IMAGE ID='I-24'/>
+</P>
+<P>
+<S ID='S-194' AZ='OWN'> the ellipsis is contained within a form expression whose category is  </S>
+<IMAGE ID='I-25'/>
+</P>
+<P>
+<S ID='S-195' AZ='OWN'> This states the syntactic tense , aspect and polarity marked on the ellipsis ( underscores indicate lack of specification ) . </S>
+<S ID='S-196' AZ='OWN'> The category constrains resolution to look for verb phrase / sentence sources , which come wrapped in with categories like </S>
+<IMAGE ID='I-26'/>
+</P>
+<P>
+<S ID='S-197' AZ='OWN'> Heuristics similar to those described by <REF TYPE='A'>Hardt 1992</REF> may be used for this . </S>
+<S ID='S-198' AZ='OWN'> The category also says that , for this kind of VP match , the term in the antecedent whose category identifies it as being the subject should be treated as parallel to the explicit term in the ellipsis . </S>
+</P>
+<P>
+<S ID='S-199' AZ='OWN'> As this example illustrates , tense and aspect on ellipsis and antecedent do not have to agree . </S>
+<S ID='S-200' AZ='OWN'> When this is so , the antecedent and ellipsis categories are both used to determine what should be substituted for the antecedent . </S>
+<S ID='S-201' AZ='OWN'> This comprises the restriction of the antecedent and a new category constructed by taking the features of the antecedent category , unless overridden by those on the ellipsis -- a kind of ( monotonic ) priority union <REF TYPE='P'>Grover et al. 1994</REF> except using skeptical as opposed to credulous default unification <REF TYPE='P'>Carpenter 1993</REF> . </S>
+<S ID='S-202' AZ='OWN'> When a new category is constructed for the antecedent , any tense resolutions also need to be undone , since the original ones may no longer be appropriate for the revised category . </S>
+<S ID='S-203' AZ='OWN'> One thus merges the category information from source and antecedent to determine what verb phrase form should be substituted for the original . </S>
+<S ID='S-204' AZ='OWN'> In this case , it will have a category . </S>
+<IMAGE ID='I-27'/>
+</P>
+<P>
+<S ID='S-205' AZ='OWN'> A more general question is whether all ellipses involve recompositions , with variants , of linguistic antecedents . </S>
+<S ID='S-206' AZ='OWN'> There are cases where a degree of inference seems to be required : </S>
+<IMAGE ID='I-28'/>
+</P>
+<P>
+<S ID='S-207' AZ='OWN'> ( one must apply the knowledge that Austrians speak German to correctly interpret the ellipsis ) . </S>
+<S ID='S-208' AZ='OTH'> <REF TYPE='A'>Pulman 1994</REF> 's equational treatment of context-dependency suggests one method of dealing with such cases . </S>
+<S ID='S-209' AZ='OWN'> But it remains to be seen how readily the equations used for ellipsis here can be integrated into <REFAUTHOR>Pulman</REFAUTHOR> 's framework . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-10'> Conclusions : Interpretation as Description </HEADER>
+<P>
+<S ID='S-210' AZ='AIM' TYPE='ITEM'> The substitutional treatment of ellipsis presented here has broadly the same coverage as <REFAUTHOR>Dalrymple et al.</REFAUTHOR> 's higher-order unification treatment , but has the computational advantages of </S>
+<S ID='S-211' TYPE='ITEM' AZ='AIM' > not requiring order-sensitive interleaving of different resolution operations , and </S>
+<S ID='S-212' TYPE='ITEM' AZ='AIM' > not requiring greater than second-order matching for dealing with quantifiers . </S>
+<S ID='S-213' AZ='CTR'> In addition , it cures a slight overgeneration problem in <REFAUTHOR>Dalrymple et al.</REFAUTHOR> 's account . </S>
+</P>
+<P>
+<S ID='S-214' AZ='OWN'> It has been claimed that these advantages arise from viewing semantic interpretation as a process of building descriptions of semantic compositions . </S>
+<S ID='S-215' AZ='OWN'> To conclude , a few further arguments for this view , that are independent of any particular proposals for dealing with ellipsis . </S>
+</P>
+<P>
+<S ID='S-216' AZ='OWN'> Order-Independence : </S>
+<S ID='S-217' AZ='OWN'> One of the reasons for the computational success of unification-based syntactic formalisms is the order-independence of parser / generator operations they permit . </S>
+<S ID='S-218' AZ='OWN'> If one looks at the order-sensitive nature of the operations of semantic compositions , they provide a poor starting point for a treatment of semantics enjoying similar computational success . </S>
+<S ID='S-219' AZ='OWN'> But semantic interpretation , viewed as building a description of the intended composition , is a better prospect . </S>
+</P>
+<P>
+<S ID='S-220' AZ='OWN'> Context-Sensitivity : </S>
+<S ID='S-221' AZ='OWN'> The truth values of many ( all ? ) sentences undeniably depend on context . </S>
+<S ID='S-222' AZ='OWN'> Context-dependence may enter either at the interpretive mapping from sentence to meaning and / or the evaluative mapping from meaning ( and the world ) to truth-values . </S>
+<IMAGE ID='I-29'/>
+<S ID='S-223' AZ='OWN'> The more that context-dependence enters into the interpretive mapping ( so that meanings are correspondingly more context-independent ) , the harder it is to maintain a principle of strict compositionality in interpretation . </S>
+<S ID='S-224' AZ='OWN'> The syntactic structure underspecifies the intended composition , so that the meanings of some constituents ( e.g. pronouns ) and the mode of combination of other ( e.g. quantifiers ) are not fully specified . </S>
+<S ID='S-225' AZ='OWN'> Further contextual information is required to fill the gaps . </S>
+<S ID='S-226' AZ='OWN'> Again , interpretation seen as description building sits easily with this . </S>
+</P>
+<P>
+<S ID='S-227' AZ='OWN'> Preserving Information : </S>
+<S ID='S-228' AZ='OWN'> Focusing exclusively on the results of semantic composition , i.e. meanings , can ignore differences in how those meanings were derived that can be linguistically significant ( e.g. co-referential vs co-indexed terms ) . </S>
+<S ID='S-229' AZ='OWN'> If this information is not to be lost , some way of referring to the structure of the compositions , as well as to their results , seems to be required . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+Hiyan <SURNAME>Alshawi</SURNAME> and Richard <SURNAME>Crouch</SURNAME>.
+<DATE>1992</DATE>.
+Monotonic semantic interpretation.
+In Proceedings 30th Annual Meeting of the Association for
+  Computational Linguistics, pages 32-38.
+</REFERENCE>
+<REFERENCE>
+Hiyan <SURNAME>Alshawi</SURNAME>, David <SURNAME>Carter</SURNAME>, Richard <SURNAME>Crouch</SURNAME>, Stephen <SURNAME>Pulman</SURNAME> , Manny <SURNAME>Rayner</SURNAME>, and
+  Arnold <SURNAME>Smith</SURNAME>.
+<DATE>1992</DATE>.
+Clare: A contextual reasoning and cooperative response framework for
+  the core language engine.
+Technical Report CRC-028, SRI International, Cambridge Computer
+  Science Research Centre.
+Available by anonymous ftp from ftp.ai.sri.com,
+  pub/sri-cam/reports/crc028.ps.Z; also cmp-lg.
+</REFERENCE>
+<REFERENCE>
+Bob <SURNAME>Carpenter</SURNAME>.
+<DATE>1993</DATE>.
+Skeptical and credulous default unification with applications to
+  templates and inheritance.
+In E. Briscoe, V. de Paiva, and A. Copestake, editors, 
+  Inheritance, Defaults and the Lexicon, pages 13-37. Cambridge University
+  Press.
+</REFERENCE>
+<REFERENCE>
+Robin <SURNAME>Cooper</SURNAME>, Richard <SURNAME>Crouch</SURNAME>, Jan van <SURNAME>Eijck</SURNAME>, Chris <SURNAME>Fox</SURNAME>, Josef van <SURNAME>Genabith</SURNAME>, Jan
+  <SURNAME>Jaspars</SURNAME>, Hans <SURNAME>Kamp</SURNAME>, Manfred <SURNAME>Pinkal</SURNAME>, Massimo <SURNAME>Poesio</SURNAME>, and Stephen <SURNAME>Pulman</SURNAME>.
+<DATE>1994a</DATE>.
+Describing the approaches.
+FraCaS deliverable, D8. Available by anonymous ftp from
+  ftp.cogsci.ed.ac.uk, pub/FRACAS/del8.ps.gz.
+</REFERENCE>
+<REFERENCE>
+Robin <SURNAME>Cooper</SURNAME> et al.
+<DATE>1994b</DATE>.
+Evaluating the descriptive capabilities of semantic theories.
+FraCaS deliverable, D9. Available by anonymous ftp from
+  ftp.cogsci.ed.ac.uk, pub/FRACAS/del9.ps.gz.
+</REFERENCE>
+<REFERENCE>
+Mary <SURNAME>Dalrymple</SURNAME>, Stuart M. <SURNAME>Shieber</SURNAME>, and Fernando C. <SURNAME>N</SURNAME>. Pereira.
+<DATE>1991</DATE>.
+Ellipsis and higher-order unification.
+Linguistics and Philosophy, 14:399-452.
+</REFERENCE>
+<REFERENCE>
+Claire <SURNAME>Gardent</SURNAME>.
+<DATE>1993</DATE>.
+A unification-based approach to multiple vp ellipsis resolution.
+In Proceedings 6th European ACL, pages 139-148.
+</REFERENCE>
+<REFERENCE>
+Mark <SURNAME>Gawron</SURNAME> and Stanley <SURNAME>Peters</SURNAME>.
+<DATE>1990</DATE>.
+Anaphora and Quantification in Situation Semantics.
+Number 19 in CSLI Lecture Notes. CSLI, Stanford, CA.
+</REFERENCE>
+<REFERENCE>
+Claire <SURNAME>Grover</SURNAME>, Chris <SURNAME>Brew</SURNAME>, Suresh <SURNAME>Manandhar</SURNAME>, and Marc <SURNAME>Moens</SURNAME>.
+<DATE>1994</DATE>.
+Priority union and generalization in discourse grammars.
+In Proceedings 32nd Annual Meeting of the Association for
+  Computational Linguistics, pages 17-24.
+</REFERENCE>
+<REFERENCE>
+Daniel <SURNAME>Hardt</SURNAME>.
+<DATE>1992</DATE>.
+An algorithm for vp ellipsis.
+In Proceedings 30th Annual Meeting of the Association for
+  Computational Linguistics, pages 9-14.
+</REFERENCE>
+<REFERENCE>
+Andrew <SURNAME>Kehler</SURNAME>.
+<DATE>1993a</DATE>.
+A discourse copying algorithm for ellipsis and anaphora resolution.
+In Proceedings 6th European ACL, pages 203-212.
+</REFERENCE>
+<REFERENCE>
+Andrew <SURNAME>Kehler</SURNAME>.
+<DATE>1993b</DATE>.
+The effect of establishing coherence in ellipsis and anaphora
+  resolution.
+In Proceedings 31st Annual Meeting of the Association for
+  Computational Linguistics, pages 62-69.
+</REFERENCE>
+<REFERENCE>
+John <SURNAME>Nerbonne</SURNAME>.
+<DATE>1991</DATE>.
+Constraint-based semantics.
+In Proceedings 8th Amsterdam Colloquium, pages 425-443.
+</REFERENCE>
+<REFERENCE>
+Hub <SURNAME>Prst</SURNAME>, Remko <SURNAME>Scha</SURNAME>, and Martin van den Berg.
+<DATE>1994</DATE>.
+Discourse grammar and verb phrase anaphora.
+Linguistics and Philosophy, 17:261-327.
+</REFERENCE>
+<REFERENCE>
+Hub <SURNAME>Prst</SURNAME>.
+<DATE>1992</DATE>.
+On Discourse Structure, VP Anaphora and Gapping.
+Ph.D. thesis, University of Amsterdam.
+</REFERENCE>
+<REFERENCE>
+Stephen <SURNAME>Pulman</SURNAME>.
+<DATE>1994</DATE>.
+A computational theory of context dependency.
+In Proceedings of the International Workshop on Computational
+  Semantics, pages 161-171, Tilburg.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

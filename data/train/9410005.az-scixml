@@ -1,0 +1,270 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9410005</FILENO>
+<APPEARED><CONFERENCE>ACL</CONFERENCE><YEAR>1987</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.Sm </CLASSIFICATION>
+</METADATA>
+<TITLE> A Centering Approach to Pronouns </TITLE>
+<AUTHORLIST>
+<AUTHOR>Susan E. Brennan</AUTHOR>
+<AUTHOR>Marilyn Walker Friedman</AUTHOR>
+<AUTHOR>Carl J. Pollard</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' AZ='AIM'> In this paper we present a formalization of the centering approach to modeling attentional structure in discourse and use it as the basis for an algorithm to track discourse context and bind pronouns . </A-S>
+<A-S ID='A-1' AZ='OTH'> As described in <REF TYPE='A'>Grosz et al. 1986</REF> , the process of centering attention on entities in the discourse gives rise to the intersentential transitional states of continuing , retaining and shifting . </A-S>
+<A-S ID='A-2' DOCUMENTC='S-55' AZ='AIM'> We propose an extension to these states which handles some additional cases of multiple ambiguous pronouns . </A-S>
+<A-S ID='A-3' AZ='OWN'> The algorithm has been implemented in an HPSG natural language system which serves as the interface to a database query application . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='OTH'> In the approach to discourse structure developed in <REF TYPE='A'>Sidner 1983</REF> and <REF TYPE='A'>Grosz et al. 1986</REF> , a discourse exhibits both global and local coherence . </S>
+<S ID='S-1' AZ='OTH'> On this view , a key element of local coherence is centering , a system of rules and constraints that govern the relationship between what the discourse is about and some of the linguistic choices made by the discourse participants , e.g. choice of grammatical function , syntactic structure , and type of referring expression ( proper noun , definite or indefinite description , reflexive or personal pronoun , etc . ) </S>
+<S ID='S-2' AZ='OTH'> Pronominalization in particular serves to focus attention on what is being talked about ; inappropriate use or failure to use pronouns causes communication to be less fluent . </S>
+<S ID='S-3' AZ='OTH'> For instance , it takes longer for hearers to process a pronominalized noun phrase that is not in focus than one that is , while it takes longer to process a non-pronominalized noun phrase that is in focus than one that is not <REF TYPE='P'>Guindon 1985</REF> . </S>
+</P>
+<P>
+<S ID='S-4' AZ='OTH'> The <REF TYPE='A'>Grosz et al. 1986</REF> centering model is based on the following assumptions . </S>
+<S ID='S-5' AZ='OTH'> A discourse segment consists of a sequence of utterances <EQN/> . </S>
+<S ID='S-6' AZ='OTH'> With each utterance <EQN/> is associated a list of forward-looking centers , <EQN/> , consisting of those discourse entities that are directly realized or realized by linguistic expressions in the utterance . </S>
+<S ID='S-7' AZ='OTH'> Ranking of an entity on this list corresponds roughly to the likelihood that it will be the primary focus of subsequent discourse ; the first entity on this list is the preferred center , <EQN/> . </S>
+<S ID='S-8' AZ='OTH'> <EQN/> actually centers , or is `` about '' , only one entity at a time , the backward-looking center , <EQN/> . </S>
+<S ID='S-9' AZ='OTH'> The backward center is a confirmation of an entity that has already been introduced into the discourse ; more specifically , it must be realized in the immediately preceding utterance , <EQN/> . </S>
+<S ID='S-10' AZ='OTH'> There are several distinct types of transitions from one utterance to the next . </S>
+<S ID='S-11' AZ='OTH'> The typology of transitions is based on two factors : whether or not the center of attention , Cb , is the same from <EQN/> to <EQN/> , and whether or not this entity coincides with the preferred center of <EQN/> . </S>
+<S ID='S-12' AZ='OTH'> Definitions of these transition types appear in figure <CREF/> . </S>
+</P>
+<IMAGE ID='I-0'/>
+<P>
+<S ID='S-13' AZ='OTH'> These transitions describe how utterances are linked together in a coherent local segment of discourse . </S>
+<S ID='S-14' AZ='OTH'> If a speaker has a number of propositions to express , one very simple way to do this coherently is to express all the propositions about a given entity ( continuing ) before introducing a related entity ( retaining ) and then shifting the center to this new entity . </S>
+<S ID='S-15' AZ='OTH'> See figure <CREF/> . </S>
+<S ID='S-16' AZ='OTH'> Retaining may be a way to signal an intention to shift . </S>
+<S ID='S-17' AZ='OTH'> While we do not claim that speakers really behave in such an orderly fashion , an algorithm that expects this kind of behavior is more successful than those which depend solely on recency or parallelism of grammatical function . </S>
+<S ID='S-18' AZ='OTH'> The interaction of centering with global focusing mechanisms and with other factors such as intentional structure , semantic selectional restrictions , verb tense and aspect , modality , intonation and pitch accent are topics for further research . </S>
+</P>
+<P>
+<S ID='S-19' AZ='OTH'> Note that these transitions are more specific than focus movement as described in <REF TYPE='P'>Sidner 1983</REF> . </S>
+<S ID='S-20' AZ='AIM'> The extension we propose makes them more specific still . </S>
+<S ID='S-21' AZ='OTH'> Note also that the Cb of <REF TYPE='A'>Grosz et al. 1986</REF> corresponds roughly to <REFAUTHOR>Sidner</REFAUTHOR> 's discourse focus and the Cf to her potential foci . </S>
+</P>
+<P>
+<S ID='S-22' AZ='BAS'> The formal system of constraints and rules for centering , as we have interpreted them from <REF TYPE='A'>Grosz et al. 1986</REF> , are as follows . </S>
+<S ID='S-23' AZ='OTH'> For each <EQN/> in <EQN/> : </S>
+</P>
+<P>
+<S ID='S-24' AZ='OTH'> CONSTRAINTS </S>
+<S ID='S-25' TYPE='ITEM' AZ='OTH'> There is precisely one Cb . </S>
+<S ID='S-26' TYPE='ITEM' AZ='OTH'> Every element of <EQN/> must be realized in <EQN/> . </S>
+<S ID='S-27' TYPE='ITEM' AZ='OTH'> <EQN/> is the highest-ranked element of <EQN/> that is realized in <EQN/> . </S>
+</P>
+<P>
+<S ID='S-28' AZ='OTH'> RULES </S>
+<S ID='S-29' TYPE='ITEM' AZ='OTH'> If some element of <EQN/> is realized as a pronoun in <EQN/> , then so is <EQN/> . </S>
+<S ID='S-30' TYPE='ITEM' AZ='OTH'> Continuing is preferred over retaining which is preferred over shifting . </S>
+</P>
+<P>
+<S ID='S-31' AZ='OTH'> As is evident in constraint <CREF/> , ranking of the items on the forward center list , Cf , is crucial . </S>
+<S ID='S-32' AZ='OTH'> We rank the items in Cf by obliqueness of grammatical relation of the subcategorized functions of the main verb : that is , first the subject , object , and object 2 , followed by other subcategorized functions , and finally , adjuncts . </S>
+<S ID='S-33' AZ='OTH'> This captures the idea in <REF TYPE='A'>Grosz et al. 1986</REF> that subjecthood contributes strongly to the priority of an item on the Cf list . </S>
+<IMAGE ID='I-1'/>
+</P>
+<P>
+<S ID='S-34' AZ='OWN'> We are aware that this ranking usually coincides with surface constituent order in English . </S>
+<S ID='S-35' AZ='OWN'> It would be of interest to examine data from languages with relatively freer constituent order ( e.g. German ) to determine the influence of constituent order upon centering when the grammatical functions are held constant . </S>
+<S ID='S-36' AZ='OWN'> In addition , languages that provide an identifiable topic function ( e.g. Japanese ) suggest that topic takes precedence over subject . </S>
+<IMAGE ID='I-2'/>
+</P>
+<P>
+<S ID='S-37' AZ='OTH'> The part of the HPSG system that uses the centering algorithm for pronoun binding is called the pragmatics processor . </S>
+<S ID='S-38' AZ='OTH'> It interacts with another module called the semantics processor , which computes representations of intrasentential anaphoric relations , ( among other things ) . </S>
+<S ID='S-39' AZ='OTH'> The semantics processor has access to information such as the surface syntactic structure of the utterance . </S>
+<S ID='S-40' AZ='OTH'> It provides the pragmatics processor with representations which include of a set of reference markers . </S>
+<S ID='S-41' AZ='OTH'> Each reference marker is contraindexed with expressions with which it cannot co-specify . </S>
+<S ID='S-42' AZ='OTH'> Reference markers also carry information about agreement and grammatical function . </S>
+<S ID='S-43' AZ='OTH'> Each pronominal reference marker has a unique index from <EQN/> and is displayed in the figures in the form <EQN/> , where POLLARD is the semantic representation of the co-specifier . </S>
+<S ID='S-44' AZ='OTH'> For non-pronominal reference markers the surface string is used as the index . </S>
+<S ID='S-45' AZ='OTH'> Indices for indefinites are generated from <EQN/> . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Extension </HEADER>
+<P>
+<S ID='S-46' AZ='CTR'> The constraints proposed by <REF TYPE='A'>Grosz et al. 1986</REF> fail in certain examples like the following ( read with pronouns destressed ) : </S>
+<EXAMPLE ID='E-0'>
+<EX-S> Brennan drives an Alfa Romeo . </EX-S>
+<EX-S> She drives too fast . </EX-S>
+<EX-S> Friedman races her on weekends . </EX-S>
+<EX-S> She often beats her . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-47' AZ='BKG'> This example is characterized by its multiple ambiguous pronouns and by the fact that the final utterance achieves a shift ( see figure <CREF/> ) . </S>
+<S ID='S-48' AZ='BKG'> A shift is inevitable because of constraint 3 , which states that the <EQN/> must equal the <EQN/> ( since the <EQN/> is directly realized by the subject of <EQN/> , `` Friedman '' ) . </S>
+<S ID='S-49' AZ='CTR'> However the constraints and rules from <REF TYPE='A'>Grosz et al. 1986</REF> would fail to make a choice here between the co-specification possibilities for the pronouns in <EQN/> . </S>
+<S ID='S-50' AZ='OWN'> Given that the transition is a shift , there seem to be more and less coherent ways to shift . </S>
+<S ID='S-51' AZ='OWN'> Note that the three items being examined in order to characterize the transition between each pair of anchors are the Cb of <EQN/> , the Cb of <EQN/> , and the Cp of <EQN/> . </S>
+<S ID='S-52' AZ='OTH'> By <REF TYPE='A'>Grosz et al. 1986</REF> a shift occurs whenever successive Cb 's are not the same . </S>
+<S ID='S-53' AZ='OTH'> This definition of shifting does not consider whether the Cb of <EQN/> and the Cp of <EQN/> are equal . </S>
+<S ID='S-54' AZ='OWN'> It seems that the status of the Cp of <EQN/> should be as important in this case as it is in determining the retaining / chontinuing distinction . </S>
+</P>
+<P>
+<S ID='S-55' ABSTRACTC='A-2' AZ='AIM'> Therefore , we propose the following extension which handles some additional cases containing multiple ambiguous pronouns : we have extended rule 2 so that there are two kinds of shifts . </S>
+<S ID='S-56' AZ='OWN'> A transition for <EQN/> is ranked more highly if <EQN/> ; this state we call shifting - 1 and it represents a more coherent way to shift . </S>
+<S ID='S-57' AZ='OWN'> The preferred ranking is <EQN/> shifting - 1 <EQN/> ( see figure <CREF/> ) . </S>
+<S ID='S-58' AZ='OWN'> This extension enables us to successfully bind the `` she '' in the final utterance of the example in figure <CREF/> to `` Friedman . '' </S>
+<S ID='S-59' AZ='TXT'> The appendix illustrates the application of the algorithm to figure <CREF/> . </S>
+<IMAGE ID='I-3'/>
+</P>
+<P>
+<S ID='S-60' AZ='OTH'> <REF TYPE='A'>Kameyama 1986</REF> has proposed another extension to the <REF TYPE='A'>Grosz et al. 1986</REF> theory - a property-sharing constraint which attempts to enforce a parallellism between entities in successive utterances . </S>
+<S ID='S-61' AZ='OTH'> She considers two properties : SUBJ and IDENT . </S>
+<S ID='S-62' AZ='OTH'> With her extension , subject pronouns prefer subject antecedents and non-subject pronouns prefer non-subject antecedents . </S>
+<S ID='S-63' AZ='CTR'> However , structural parallelism is a consequence of our ordering the Cf list by grammatical function and the preference for continuing over retaining . </S>
+<S ID='S-64' AZ='CTR'> Furthermore , the constraints suggested in <REF TYPE='A'>Grosz et al. 1986</REF> succeed in many cases without invoking an independent structural parallelism constraint , due to the distinction between continuing and retaining , which <REFAUTHOR>Kameyama</REFAUTHOR> fails to consider . </S>
+<S ID='S-65' AZ='OWN'> Her example which we reproduce in figure <CREF/> can also be accounted for using the continuing / retaining distinction . </S>
+<S ID='S-66' AZ='OWN'> The third utterance in this example has two interpretations which are both consistent with the centering rules and constraints . </S>
+<S ID='S-67' AZ='OWN'> Because of rule 2 , the interpretation in figure <CREF/> is preferred over the one in figure <CREF/> . </S>
+<IMAGE ID='I-4'/>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-2'> Algorithm for centering and pronoun binding </HEADER>
+<IMAGE ID='I-5'/>
+<P>
+<S ID='S-68' AZ='OWN'> There are three basic phases to this algorithm . </S>
+<S ID='S-69' AZ='OWN'> First the proposed anchors are constructed , then they are filtered , and finally , they are classified and ranked . </S>
+<S ID='S-70' AZ='OWN'> The proposed anchors represent all the co-specification relationships available for this utterance . </S>
+<IMAGE ID='I-6'/>
+</P>
+<P>
+<S ID='S-71' AZ='OWN'> Each step is discussed and illustrated in figure <CREF/> . </S>
+<S ID='S-72' AZ='OWN'> It would be possible to classify and rank the proposed anchors before filtering them without any other changes to the algorithm . </S>
+<S ID='S-73' AZ='OWN'> In fact , using this strategy one could see if the highest ranked proposal passed all the filters , or if the next highest did , etc . </S>
+<S ID='S-74' AZ='OWN'> The three filters in the filtering phase may be done in parallel . </S>
+<S ID='S-75' AZ='OWN'> The example we use to illustrate the algorithm is in figure <CREF/> . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-3'> Discussion </HEADER>
+<DIV DEPTH='2'>
+<HEADER ID='H-4'> Discussion of the algorithm </HEADER>
+<P>
+<S ID='S-76' AZ='OWN'> The goal of the current algorithm design was conceptual clarity rather than efficiency . </S>
+<S ID='S-77' AZ='OWN'> The hope is that the structure provided will allow easy addition of further constraints and preferences . </S>
+<S ID='S-78' AZ='OWN'> It would be simple to change the control structure of the algorithm so that it first proposed all the continuing or retaining anchors and then the shifting ones , thus avoiding a precomputation of all possible anchors . </S>
+</P>
+<P>
+<S ID='S-79' AZ='OTH'> <REF TYPE='A'>Grosz et al. 1986</REF> states that a realization may contribute more than one entity to the Cf(U) . </S>
+<S ID='S-80' AZ='OTH'> This is true in cases when a partially specified semantic description is consistent with more than one interpretation . </S>
+<S ID='S-81' AZ='OTH'> There is no need to enumerate explicitly all the possible interpretations when constructing possible Cf(U)'s , as long as the associated semantic theory allows partially specified interpretations . </S>
+<S ID='S-82' AZ='OTH'> This also holds for entities not directly realized in an utterance . </S>
+<S ID='S-83' AZ='OWN'> On our view , after referring to `` a house '' in <EQN/> , a reference to `` the door '' in <EQN/> might be gotten via inference from the representation for `` a house '' in <EQN/> . </S>
+<S ID='S-84' AZ='OWN'> Thus when the proposed anchors are constructed there is no possibility of having an infinite number of potential Cf 's for an utterance of finite length . </S>
+</P>
+<P>
+<S ID='S-85' AZ='OWN'> Another question is whether the preference ordering of transitions in constraint 3 should always be the same . </S>
+<S ID='S-86' AZ='OWN'> For some examples , particularly where <EQN/> contains a single pronoun and <EQN/> is a retention , some informants seem to have a preference for shifting , whereas the centering algorithm chooses a continuation ( see figure <CREF/> ) . </S>
+<S ID='S-87' AZ='OWN'> Many of our informants have no strong preference as to the co-specification of the unstressed `` She '' in <EQN/> . </S>
+<S ID='S-88' AZ='OWN'> Speakers can avoid ambiguity by stressing a pronoun with respect to its phonological environment . </S>
+<S ID='S-89' AZ='OWN'> A computational system for understanding may need to explicitly acknowledge this ambiguity . </S>
+<IMAGE ID='I-7'/>
+</P>
+<P>
+<S ID='S-90' AZ='OWN'> A computational system for generation would try to plan a retention as a signal of an impending shift , so that after a retention , a shift would be preferred rather than a continuation . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-5'> Future Research </HEADER>
+<P>
+<S ID='S-91' AZ='OWN'> Of course the local approach described here does not provide all the necessary information for interpreting pronouns ; constraints are also imposed by world knowledge , pragmatics , semantics and phonology . </S>
+</P>
+<P>
+<S ID='S-92' AZ='OWN'> There are other interesting questions concerning the centering algorithm . </S>
+<S ID='S-93' AZ='OWN'> How should the centering algorithm interact with an inferencing mechanism ? </S>
+<S ID='S-94' AZ='OWN'> Should it make choices when there is more than one proposed anchor with the same ranking ? </S>
+<S ID='S-95' AZ='OWN'> In a database query system , how should answers be incorporated into the discourse model ? </S>
+<S ID='S-96' AZ='OWN'> How does centering interact with a treatment of definite / indefinite NP 's and quantifiers ? </S>
+</P>
+<P>
+<S ID='S-97' AZ='OWN'> We are exploring ideas for these and other extensions to the centering approach for modeling reference in local discourse . </S>
+</P>
+</DIV>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+Emmon <SURNAME>Bach</SURNAME> and Barbara H. <SURNAME>Partee</SURNAME>.
+Anaphora and semantic structure.
+In J. Kreiman and A. Ojeda, editors, Papers from the Parasession
+  on Pronouns and Anaphora, pages 1-28. CLS, Chicago, IL, <DATE>1980</DATE>.
+</REFERENCE>
+<REFERENCE>
+Noam <SURNAME>Chomsky</SURNAME>.
+On binding.
+Linguistic Inquiry, 11:1-46, <DATE>1980</DATE>.
+</REFERENCE>
+<REFERENCE>
+Barbara J. <SURNAME>Grosz</SURNAME>, Aravind K. <SURNAME>Joshi</SURNAME>, and Scott <SURNAME>Weinstein</SURNAME>.
+Providing a unified account of definite noun phrases in discourse.
+In Proc. 21st Annual Meeting of the ACL, Association of
+  Computational Linguistics, pages 44-50, <DATE>1983</DATE>.
+</REFERENCE>
+<REFERENCE>
+Barbara J. <SURNAME>Grosz</SURNAME>, Aravind K. <SURNAME>Joshi</SURNAME>, and Scott <SURNAME>Weinstein</SURNAME>.
+Towards a computational theory of discourse interpretation.
+Unpublished Manuscript, <DATE>1986</DATE>.
+</REFERENCE>
+<REFERENCE>
+Barbara J. <SURNAME>Grosz</SURNAME> and Candace L. <SURNAME>Sidner</SURNAME>.
+Attentions, intentions and the structure of discourse.
+Computational Linguistics, 12:175-204, <DATE>1986</DATE>.
+</REFERENCE>
+<REFERENCE>
+Raymonde <SURNAME>Guindon</SURNAME>.
+Anaphora resolution: Short term memory and focusing.
+In Proc. 23st Annual Meeting of the ACL, Association of
+  Computational Linguistics, pages 218-227, Chicago, IL, <DATE>1985</DATE>.
+</REFERENCE>
+<REFERENCE>
+Aravind K. <SURNAME>Joshi</SURNAME> and Scott <SURNAME>Weinstein</SURNAME>.
+Control of inference: Role of some aspects of discourse structure -
+  centering.
+In Proc. International Joint Conference on Artificial
+  Intelligence, pages 385-387, <DATE>1981</DATE>.
+</REFERENCE>
+<REFERENCE>
+Megumi <SURNAME>Kameyama</SURNAME>.
+A property-sharing constraint in centering.
+In Proc. 24th Annual Meeting of the ACL, Association of
+  Computational Linguistics, pages 200-206, New York, NY, <DATE>1986</DATE>.
+</REFERENCE>
+<REFERENCE>
+Peter <SURNAME>Sells</SURNAME>.
+Coreference and bound anaphora: A restatement of the facts.
+In Choe Berman and McDonough, editors, Proceedings of NELS 16,
+  University of Massachusetts, <DATE>1985</DATE>. GLSA.
+</REFERENCE>
+<REFERENCE>
+Ivan <SURNAME>Sag</SURNAME> and Jorge <SURNAME>Hankamer</SURNAME>.
+Towards a theory of anaphoric processing.
+Linguistics and Philosophy, 7:325-345, <DATE>1984</DATE>.
+</REFERENCE>
+<REFERENCE>
+Candace L. <SURNAME>Sidner</SURNAME>.
+Focusing for interpretation of pronouns.
+American Journal of Computational Linguistics, 7(4):217-231,
+  <DATE>1981</DATE>.
+</REFERENCE>
+<REFERENCE>
+Candace L. <SURNAME>Sidner</SURNAME>.
+Focusing in the comprehension of definite anaphora.
+In M. Brady and R.C. Berwick, editors, Computational Models of
+  Discourse. MIT Press, <DATE>1983</DATE>.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

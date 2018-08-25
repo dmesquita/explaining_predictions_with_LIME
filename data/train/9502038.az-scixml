@@ -1,0 +1,382 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9502038</FILENO>
+<REFLABEL>Feldweg 1995b</REFLABEL>
+<APPEARED><CONFERENCE TYPE='Workshop'>EACL</CONFERENCE><YEAR>1995</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.St  Lg.Pr.Cl </CLASSIFICATION>
+</METADATA>
+<TITLE> Implementation and evaluation of a German HMM for POS disambiguation </TITLE>
+<AUTHORLIST>
+<AUTHOR>Helmut Feldweg</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' AZ='AIM'> A German language model for the Xerox HMM tagger is presented . </A-S>
+<A-S ID='A-1' AZ='CTR'> This model 's performance is compared with two other German taggers with partial parameter re-estimation and full adaption of parameters from pre-tagged corpora . </A-S>
+<A-S ID='A-2' DOCUMENTC='S-99' AZ='OWN'> The ambiguity types resolved by this model are analysed and compared to ambiguity types of English and French . </A-S>
+<A-S ID='A-3' AZ='OWN'> Finally , the model 's error types are described . </A-S>
+<A-S ID='A-4' AZ='OWN'> I argue that although the overall performance of these models for German is comparable to results for English and French , a more exact analysis demonstrates important differences in the types of disambiguation involved for German . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Background </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> Since the late ' 80 s part-of-speech ( POS ) disambiguation using Hidden Markov Models ( HMM ) has been a widespread method for tagging texts . </S>
+<S ID='S-1' AZ='OTH'> Despite this fact , little work has been done so far toward employing this technology for the disambiguation of German texts <REF TYPE='P'>Wothke et al. 1993</REF> , <REF TYPE='P'>Schmid and Kempe 1995</REF> . </S>
+<S ID='S-2' AZ='OTH'> Earlier work of the author <REF TYPE='P' SELF="YES">Feldweg 1993</REF> and <REF TYPE='P' SELF="YES">Feldweg 1995a</REF> within the framework of a project on corpus based development of lexical knowledge bases ( ELWIS ) has produced LIKELY , a straightforward implementation of the Viterbi algorithm employing an HMM whose parameters were obtained from a pre-tagged text corpus . </S>
+<S ID='S-3' AZ='OTH'> Since then the original tag set was redefined , making the tagged corpus used to train the LIKELY tagger obsolete . </S>
+</P>
+<P>
+<S ID='S-4' AZ='AIM'> Within a current project on adapting bilingual dictionaries for online comprehension assistance ( COMPASS , LRE 62 - 080 ) , the need arose for a POS-disambiguator to facilitate a context sensitive dictionary look-up system . </S>
+<S ID='S-5' AZ='BAS'> As the COMPASS project makes ample use of Xerox technology for its core look-up engine and for POS disambiguation for languages other than German , the obvious thing to do was to develop a German language model for the Xerox tagger . </S>
+</P>
+<P>
+<S ID='S-6' AZ='TXT'> The following section describes the implementation of this new model . </S>
+<S ID='S-7' AZ='TXT'> In section <CREF/> the results obtained using the new model are compared with the results from previous models . </S>
+<S ID='S-8' AZ='TXT'> An analysis of the types of disambiguation involved in these models is presented in section <CREF/> . </S>
+<S ID='S-9' AZ='TXT'> The model 's error types are analysed in section <CREF/> , and conclusions are drawn in section <CREF/> . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Implementation of the German language model </HEADER>
+<P>
+<S ID='S-10' AZ='BAS'> The version of the Xerox tagger used for the implementation described here is the DDS Tagger version 1.1 <REF TYPE='P'>Kupiec and Wilkens 1994</REF> . </S>
+<S ID='S-11' AZ='OTH'> This version differs from the current version ( 1.2 ) of the Xerox Tagger as described in <REF TYPE='A'>Cutting et al. 1992</REF> in that the DDS Tagger accommodates lexicons and class guessers in the form of external finite-state transducers . </S>
+<S ID='S-12' AZ='OWN' TYPE='ITEM'> Implementing a new language model for this tagger involves supplying : </S>
+</P>
+<P>
+<S ID='S-13' TYPE='ITEM' AZ='OWN' > a definition of the tag set to be used by the HMM , </S>
+<S ID='S-14' TYPE='ITEM' AZ='OWN' > a lexicon listing word forms with their equivalence classes , that is the list of POS tags that can be assigned to the word form , </S>
+<S ID='S-15' TYPE='ITEM' AZ='OWN' > a class guesser that assigns equivalence classes to words not covered by the lexicon , </S>
+<S ID='S-16' TYPE='ITEM' AZ='OWN' > a set of initial transition biases , </S>
+<S ID='S-17' TYPE='ITEM' AZ='OWN' > a set of initial symbol biases , </S>
+<S ID='S-18' TYPE='ITEM' AZ='OWN' > a sufficiently large text for training the HMM , </S>
+<S ID='S-19' TYPE='ITEM' AZ='OWN' > a reference text with correctly assigned POS tags , </S>
+<S ID='S-20' TYPE='ITEM' AZ='OWN' > a tokenizer that recognizes words in free text . </S>
+</P>
+<P>
+<S ID='S-21' AZ='TXT'> The following paragraphs describe these components in more detail . </S>
+</P>
+<P>
+<S ID='S-22' AZ='OWN'> The tag set used in the implementation is the smaller version of the two tag sets developed jointly by the Universities of Stuttgart and Tbingen , referred to as the ELWIS tag set  <REF TYPE='P'>Thielen 1994</REF> , <REF TYPE='P'>Thielen and Schiller 1995</REF> . </S>
+<S ID='S-23' AZ='OWN'> It consists of a total of 42 POS tags plus three tags for punctuation and a special tag for truncated words . </S>
+<S ID='S-24' AZ='OWN'> The tags used in the ELWIS tag set are given in table <CREF/> . </S>
+<IMAGE ID='I-0'/>
+<S ID='S-25' AZ='OWN'> Detailed guidelines on the use of the individual tags are available in <REF TYPE='A'>Thielen and Sailer 1994</REF> . </S>
+</P>
+<P>
+<S ID='S-26' AZ='OWN'> For each word form the lexicon gives the set of POS tags that can be assigned to that word . </S>
+<S ID='S-27' AZ='OWN'> This set may consist of one ( for unambiguous words ) or more tags and is referred to as the word 's equivalence class . </S>
+<S ID='S-28' AZ='OWN'> The lexicon used in this implementation was derived from Lingsoft 's GERTWOL morphological analyzer , which uses finite state transducers , by mapping the morpho-syntactic labels generated by GERTWOL onto the ELWIS tag set . </S>
+<S ID='S-29' AZ='OWN'> The lexicon is realized as a finite state transducer for the DDS Tagger . </S>
+<S ID='S-30' AZ='OWN'> Alternative mapping rules were developed to generate a lexicon with ELWIS tags from the German lexical database of the Centre for Lexical Information <REF TYPE='P'>CELEX 1993</REF> . </S>
+</P>
+<P>
+<S ID='S-31' AZ='OWN'> Class guessers for the Xerox tagger assign potential POS tags to unknown words according to a surface analysis of the word form . </S>
+<S ID='S-32' AZ='OWN'> In addition to the common practice of mapping POS tags according to the words ' suffixes , this implementation makes use of the case of the initial letter of a word -- which is highly significant for POS assignment in German . </S>
+<S ID='S-33' AZ='OWN'> The class guesser also takes care of POS-assignment for abbreviations , special symbol sequences and language external material in the text . </S>
+<S ID='S-34' AZ='OWN'> The class guesser , like the lexicon , is a finite state transducer . </S>
+</P>
+<P>
+<S ID='S-35' AZ='OWN'> The model is trained using a set of initial transition biases , including both positive and negative constraints on tag sequences . </S>
+<S ID='S-36' AZ='OWN'> Although the model can be trained without initial biases , the performance of the resulting model increases significantly if appropriate initial biases are used . </S>
+<S ID='S-37' AZ='OWN'> The biases in the model consisted for the most part in specifications of the most plausible successor tags for each tag in the tag set . </S>
+<S ID='S-38' AZ='OWN'> They were constructed manually and refined in a series of subsequent training and evaluation runs . </S>
+</P>
+<P>
+<S ID='S-39' AZ='OWN'> Initial symbol biases are an additional set of biases used to define preferences for tag assignment given a particular equivalence class . </S>
+<S ID='S-40' AZ='OWN'> Only a very few symbol biases were defined before evaluation of the first training runs , mainly to reflect biases towards equivalence classes used in the class guesser . </S>
+<S ID='S-41' AZ='OWN'> The majority of symbol biases were added to correct misguided biases chosen during the training processes . </S>
+</P>
+<P>
+<S ID='S-42' AZ='OWN'> The two texts used for training the HMM were selected from the German data contained on the <REFAUTHOR>ECI</REFAUTHOR> 's Multilingual CD-ROM <REF TYPE='P'>ECI 1994</REF> : a 200,000 and 2,000,000 word sample from Summer 1992 issues of the German newspaper Frankfurter Rundschau . </S>
+</P>
+<P>
+<S ID='S-43' AZ='OWN'> The reference texts were also taken from the Frankfurter Rundschau , but do not overlap with the training texts . </S>
+<S ID='S-44' AZ='OWN'> The reference texts amount to a total of approximately 20,000 running words , which were manually tagged and checked . </S>
+</P>
+<P>
+<S ID='S-45' AZ='OWN'> The current version of the implementation uses a straightforward tokenizer accepting one line per token . </S>
+<S ID='S-46' AZ='OWN'> Training texts are pretokenized using an external tokenizer written in lex . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-2'> Performance </HEADER>
+<P>
+<S ID='S-47' AZ='OWN'> The best results of this implementation were obtained running 20 iterations of training over the 200,000 word training text , using a total of 50 transition and 17 symbol biases . </S>
+<S ID='S-48' AZ='OWN'> With this configuration of training parameters , the resulting HMM assigned <EQN/> incorrect tags when run on the reference texts and compared with the manually assigned tags . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-3'> Comparison with other German models </HEADER>
+<P>
+<S ID='S-49' AZ='OTH'> The main advantage of the Xerox tagger when compared with earlier implementations of HMM taggers is that it can be trained using untagged text . </S>
+<S ID='S-50' AZ='CTR'> However , the performance of the resulting HMM is very poor if no initial biases are used to help the training process find suitable parameters . </S>
+</P>
+<P>
+<S ID='S-51' AZ='OTH'> For comparison , the evaluation procedure used to evaluate the implementation of the HMM tagger described in the preceding section was repeated without using any of the initial biases . </S>
+<S ID='S-52' AZ='OTH'> The result was a poor performance of the resulting HMM with an error rate of <EQN/> . </S>
+</P>
+<P>
+<S ID='S-53' AZ='CTR'> Choosing initial biases to help train a model is a subtle task in that it not only requires sound knowledge of the tag set used and the target language the model is aiming at , but it also requires a `` feel '' for how the initial biases may be modified during a given number of training iterations . </S>
+<S ID='S-54' AZ='CTR'> It is also sometimes frustrating that the linguistic knowledge used to create the initial biases gets `` optimized '' or `` trained '' away in subsequent iterations of training . </S>
+</P>
+<P>
+<S ID='S-55' AZ='OTH'> To overcome these disadvantages , hybrid technologies have been developed that combine free text training methods with parameter estimation from pre-tagged texts . </S>
+<S ID='S-56' AZ='OTH'> In such a setting , initial transition and symbol biases are replaced by frequencies of tag sequences and tag instantiation from a relatively small pre-tagged corpus . </S>
+<S ID='S-57' AZ='OTH'> The counted frequencies are taken as an approximation to the model 's probabilities and get smoothed in a small number of training iterations . </S>
+</P>
+<P>
+<S ID='S-58' AZ='BAS'> In order to see what could be gained for a German language model by such a hybrid technology , I used extensions to the Xerox tagger developed at the University of Stuttgart that facilitate initialization of an HMM with values obtained from a pre-tagged corpus <REF TYPE='P'>Schmid and Kempe 1995</REF> . </S>
+<S ID='S-59' AZ='OWN'> Initial parameters were obtained by counting transition and symbol frequencies in a manually tagged 24,000 word corpus taken from the newspaper Stuttgarter Zeitung , that was kindly made available by the University of Stuttgart . </S>
+<S ID='S-60' AZ='OWN'> These initial parameters were adjusted in a single training iteration using Xerox 's Baum-Welch implementation for parameter re-estimation . </S>
+<S ID='S-61' AZ='OWN'> The texts used for training and as a reference for evaluation were the same as the ones used in the implementation described in section <CREF/> . </S>
+<S ID='S-62' AZ='OWN'> The resulting HMM had an error rate of 3.14 % . </S>
+<S ID='S-63' AZ='OWN'> The superior performance of this model confirms results presented by <REF TYPE='A'>Briscoe et al. 1994</REF> , <REF TYPE='A'>Merialdo 1994</REF> , and <REF TYPE='A'>Elworthy 1994</REF> for English : empirically obtained initial values for transition and output probabilities with a small number of training iterations lead to significantly better results than intuitively generated biases do . </S>
+</P>
+<P>
+<S ID='S-64' AZ='OTH'> On the other end of the scale of parameter production for HMM POS disambiguators is the extraction of parameters exclusively on the basis of ( larger ) pre-tagged text corpora , with no Baum-Welch re-estimation involved . </S>
+<S ID='S-65' AZ='OTH'> Such an implementation is described in earlier work of the author <REF TYPE='P' SELF="YES">Feldweg 1993</REF> , <REF TYPE='P' SELF="YES">Feldweg 1995a</REF> . </S>
+<S ID='S-66' AZ='OTH'> For this model error rates of <EQN/> ( depending on the coverage of the underlying lexicon ) were reported . </S>
+<S ID='S-67' AZ='CTR'> These results , however , are not directly comparable to the implementations described in this paper , since the tag sets employed differ to some extent . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-4'> Assessment of ambiguity types </HEADER>
+<P>
+<S ID='S-68' AZ='OWN'> In the preceding sections the evaluation of the model was purely quantitative . </S>
+<S ID='S-69' AZ='OWN'> Performance was measured as the percent of mismatches between the output generated by the HMM and the tags assigned by manual tagging . </S>
+<S ID='S-70' AZ='OWN'> Although this error rate is an appropriate measure for the performance of an HMM given a particular reference text , it says little about the amount of disambiguation done by the tagger , and nothing about the ambiguity types that were involved in the disambiguation process . </S>
+</P>
+<P>
+<S ID='S-71' AZ='OWN'> The difficulty of disambiguation can be quantified by the ambiguity rate : the number of possible tag assignments divided by the number of words in a given text . </S>
+<S ID='S-72' AZ='OWN'> The test text used to evaluate the German model described in section <CREF/> has an ambiguity rate of 1.51 , this is , the lexicon provides an average of 1.51 tags for each word in the text . </S>
+<IMAGE ID='I-1'/>
+</P>
+<P>
+<S ID='S-73' AZ='OWN'> In an effort to compare the German model with what is reported for other languages , English and French tagged texts were analysed . </S>
+<S ID='S-74' AZ='OWN'> Both texts contained approximately 10,000 words and were tagged using an English resp . </S>
+<S ID='S-75' AZ='OWN'> French language model for the Xerox tagger . </S>
+</P>
+<P>
+<S ID='S-76' AZ='OWN'> The tag set used to annotate the English text is a slightly modified version of the Brown tag set , consisting of a total of 72 tags . </S>
+<S ID='S-77' AZ='OWN'> The ambiguity rate for this text is 1.41 . </S>
+<S ID='S-78' AZ='OWN'> For the French text the tag set described in <REF TYPE='A'>Chanod and Tapanainen 1994</REF> with 37 different tags is used . </S>
+<S ID='S-79' AZ='OWN'> Here the ambiguity rate is 1.52 . </S>
+<S ID='S-80' AZ='OWN'> In terms of ambiguity rates , the English , French , and German texts are thus quite comparable . </S>
+</P>
+<P>
+<S ID='S-81' AZ='OWN'> In order to compare the types of ambiguities that had to be resolved by the different language models for the HMM tagger , relative frequency tables of equivalence classes were computed for each of the three texts . </S>
+<S ID='S-82' AZ='OWN'> The top most frequent equivalence classes for the three languages are listed in table <CREF/> together with their relative frequencies . </S>
+</P>
+<P>
+<S ID='S-83' AZ='OWN'> If the table is viewed in terms of the major word classes of noun , verb , adjective , adverb , and closed-class forms , the following predominant ambiguity classes for English can be distinguished : </S>
+</P>
+<P>
+<S ID='S-84' TYPE='ITEM' AZ='OWN' > noun vs. verb ( share , offer , plan ) , </S>
+<S ID='S-85' TYPE='ITEM' AZ='OWN' > adjective vs. noun ( public , million , high ) , </S>
+<S ID='S-86' TYPE='ITEM' AZ='OWN' > closed-class vs. noun ( a ) , </S>
+<S ID='S-87' TYPE='ITEM' AZ='OWN' > adjective vs. noun vs. verb ( return , field ) , </S>
+<S ID='S-88' TYPE='ITEM' AZ='OWN' > closed-class vs. adverb ( by , about , below ) , </S>
+<S ID='S-89' TYPE='ITEM' AZ='OWN' > and closed-class vs. adjective vs. adverb ( round , next ) , </S>
+</P>
+<P>
+<S ID='S-90' AZ='OWN'> For French the major ambiguity types are : </S>
+</P>
+<P>
+<S ID='S-91' TYPE='ITEM' AZ='OWN' > noun vs. verb ( affaire , bout , place ) , </S>
+<S ID='S-92' TYPE='ITEM' AZ='OWN' > adjective vs. noun ( demi , moyen , responsable , </S>
+<S ID='S-93' TYPE='ITEM' AZ='OWN' > adjective vs. verb ( appliqu , devenu , fabriqu ) , </S>
+<S ID='S-94' TYPE='ITEM' AZ='OWN' > closed-class vs. adjective ( numeral un ) . </S>
+</P>
+<P>
+<S ID='S-95' AZ='OWN'> The elements of the most frequent ambiguity types for German , however , belong to the same major word classes , with only a few exception such as : </S>
+</P>
+<P>
+<S ID='S-96' TYPE='ITEM' AZ='OWN' > closed-class vs. adjective ( numeral einen , einer ) , </S>
+<S ID='S-97' TYPE='ITEM' AZ='OWN' > and verb vs. adjective ( fehlgeschlagen , bekannt ) , </S>
+</P>
+<P>
+<S ID='S-98' AZ='OWN'> with the latter reflecting a subtle distinction in the German tag set ( VPP vs. ADJD : participle as modifier vs. non-attributive adjectives ) . </S>
+<S ID='S-99' ABSTRACTC='A-2' AZ='OWN'> The comparison of the most frequent ambiguity types shows a significant difference between the German model on the one hand and the English and French models on the other . </S>
+<S ID='S-100' AZ='OWN'> In German most of the effort is going into subclassification within major word classes , while in English and French a good deal of disambiguation work is devoted to separate major word classes . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-5'> Assessment of error types </HEADER>
+<P>
+<S ID='S-101' AZ='OWN'> The differences in ambiguity types of the models also have effects on the types of errors produced by the German model . </S>
+<S ID='S-102' AZ='OWN'> Again , errors mainly affect the assignment of words to subclasses within one major word class . </S>
+</P>
+<P>
+<S ID='S-103' AZ='OWN'> Table <CREF/> shows the most common errors produced by the German model . </S>
+<S ID='S-104' AZ='OWN'> The entries are sorted by decreasing frequencies relative to the total number of mismatches between the manually and automatically tagged texts . </S>
+<S ID='S-105' AZ='OWN'> The first column gives the relative frequenciy and the second column lists the tag chosen by the German HMM tagger . </S>
+<S ID='S-106' AZ='OWN'> In the second column , the number following the slash indicates the number of elements in the equivalence class from which the model had to choose . </S>
+<S ID='S-107' AZ='OWN'> A missing number indicates that there was only one choice in the lexicon . </S>
+<S ID='S-108' AZ='OWN'> The third column show the `` correct '' tag , as chosen by the human tagger . </S>
+<IMAGE ID='I-2'/>
+</P>
+<P>
+<S ID='S-109' AZ='OWN'> The most common ( accumulated ) error is the confusion of proper nouns and common nouns -- a result of the fact that both proper nouns and common nouns are both capitalized in German . </S>
+<S ID='S-110' AZ='OWN'> The fourth line of table <CREF/> represents a special case of this error for which the HMM model can not be held responsible : no ambiguity was indicated in the lexicon , so the model had nothing to choose from . </S>
+<S ID='S-111' AZ='OWN'> This occurs most frequently when common nouns are used as proper nouns ( e.g. in die gehobene Mittelklasse plaziert Renault ab 6. Mrz den Safrane ) , where one would not expect to add a tag `` proper noun '' for every noun in the lexicon . </S>
+</P>
+<P>
+<S ID='S-112' AZ='OWN'> The second most frequent error type involves confusion of infinitives and 1 st and 3rd pers. pl. finite present tense forms . </S>
+<S ID='S-113' AZ='OWN'> These are homographs in German that are notoriously hard to disambiguate within a narrow context . </S>
+</P>
+<P>
+<S ID='S-114' AZ='OWN'> The difficulty of distinguishing between non-attributive , adjectival usage of participles ( i.e. er ist geladen ) and participles proper ( i.e. er hat den Wagen geladen ) was mentioned in the preceding section . </S>
+<S ID='S-115' AZ='OWN'> In addition a number of these forms may also be used as finite verbs ( i.e. erhalten , gehrt ) , and this is a further source of errors . </S>
+</P>
+<P>
+<S ID='S-116' AZ='OWN'> Almost all of the remaining errors are misassignments within closed classes , including well-known errors due to long distance phenomena , such as those resulting from the confusion of relative pronouns , demonstrative pronouns and articles in sentences like : die einmal fr die Buchproduktion erfaten Texte or : doch der wollte nicht , das falle auf . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-6'> Conclusion </HEADER>
+<P>
+<S ID='S-117' AZ='OWN'> Despite the hypothesis that the free word order of German leads to poor performance of low order HMM taggers when compared with a language like English , the overall results for German are very much along the lines of comparable implementations for English , if not better . </S>
+<S ID='S-118' AZ='OWN'> It can be argued that the disadvantage of free word order for HMM taggers is compensated for by richer morphology and the additional disambiguation cue of having upper and lower case initial letters to distinguish POS membership . </S>
+<S ID='S-119' AZ='OWN'> The latter , however , greatly hinders the recognition of proper nouns , the most common type of error , responsible for approximately <EQN/> of the model 's <EQN/> mistakes . </S>
+</P>
+<P>
+<S ID='S-120' AZ='OWN'> It is important to notice that the types of disambiguation carried out by the tagger for German are significantly different from the disambiguation work for English and French . </S>
+<S ID='S-121' AZ='OWN'> While in English and French a fair number of disambiguations involve separating major POS classes such as verb , noun , and adjective , most of the work performed in the German model involves disambiguation between subclasses of one main category , such as finite vs. infinitive verb , noun vs. proper noun , different sub-categories of pronouns , etc . </S>
+</P>
+<P>
+<S ID='S-122' AZ='OWN'> This finding has consequences for the COMPASS project , where POS disambiguation is employed as one means of disambiguating word senses to facilitate precise dictionary look-up . </S>
+<S ID='S-123' AZ='OWN'> While this technique helps to confine word senses for English and French , it is of little help for word sense disambiguation in German . </S>
+</P>
+<P>
+<S ID='S-124' AZ='OWN'> However , the German model was useful for the project because a tagged reference corpus was required for lexicographic work in order to adapt existing bilingual dictionaries . </S>
+<S ID='S-125' AZ='OWN'> The tagger was used to annotate all of the 50 million word German corpora contained on the ECI Multilingual Corpus 1 CD-ROM . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-7'> Acknowledgements </HEADER>
+<P>
+<S ID='S-126' AZ='OWN'> I would like to thank Helmut Schmid of the University of Stuttgart for providing extensions of parameter initialization for the Xerox Tagger and Jean-Pierre Chanod and Lauri Kartunnen of the Rank Xerox Research Laboratory Grenoble for making available the French and English tagged texts and lexicons . </S>
+<S ID='S-127' AZ='OWN'> I would also like to acknowledge valuable advice from Tracy Holloway King and Steven Abney , who commented on earlier versions of this paper . </S>
+</P>
+<P>
+<S ID='S-128' AZ='OWN'> This work has been supported in part by the Ministry for Science and Research of the Land Baden-Wrttemberg under the project `` Corpus Based Development of Lexical Knowledge Bases ( ELWIS ) '' and by the Commission of the European Community under the LRE project `` Adapting Bilingual Dictionaries for Online Assistance ( COMPASS , LRE 62 - 080 ) '' . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+Ted <SURNAME>Briscoe</SURNAME>, Greg <SURNAME>Grefenstette</SURNAME>, Llus <SURNAME>Padr</SURNAME>, and Iskander <SURNAME>Serail</SURNAME>.
+<DATE>1994</DATE>.
+Hybrid techniques for training HMM part-of-speech taggers.
+Acquilex II working paper 45.
+</REFERENCE>
+<REFERENCE>
+CELEX.
+<DATE>1993</DATE>.
+The CELEX Lexical Database. Dutch, English, German.
+Max-Planck-Institute for Psycholinguistics, Centre for Lexical
+  Information, Nijmegen.
+CD-ROM.
+</REFERENCE>
+<REFERENCE>
+Jeanpierre <SURNAME>Chanod</SURNAME> and Pasi <SURNAME>Tapanainen</SURNAME>.
+<DATE>1994</DATE>.
+Statistical and constraint-based taggers for French.
+Technical Report MLTT - 016, Rank Xerox Research Centre, Grenoble
+  Laboratory, Grenoble.
+</REFERENCE>
+<REFERENCE>
+Doung <SURNAME>Cutting</SURNAME>, Julian <SURNAME>Kupiec</SURNAME>, Jan <SURNAME>Pedersen</SURNAME>, and Penelope <SURNAME>Sibun</SURNAME>.
+<DATE>1992</DATE>.
+A practical part-of-speech tagger.
+In Proceedings of the Third Conference on Applied Natural
+  Language Processing, Trento.
+</REFERENCE>
+<REFERENCE>
+ECI.
+<DATE>1994</DATE>.
+Multilingual Corpus 1.
+Association for Computational Linguistics, European Corpus
+  Intitiative.
+CD-ROM.
+</REFERENCE>
+<REFERENCE>
+David <SURNAME>Elworthy</SURNAME>.
+<DATE>1994</DATE>.
+Does Baum-Welch re-estimation help taggers?
+In Proceedings of the Fourth Conference on Applied Natural
+  Language Processing, Stuttgart, pages 53-58.
+</REFERENCE>
+<REFERENCE>
+Helmut <SURNAME>Feldweg</SURNAME>.
+<DATE>1993</DATE>.
+Stochastische Wortartendisambiguierung fr das Deutsche:
+  Untersuchungen mit dem robusten System LIKELY.
+Technical report, Universitt Tbingen, Seminar fr
+  Sprachwissenschaft.
+</REFERENCE>
+<REFERENCE>
+Helmut <SURNAME>Feldweg</SURNAME>.
+<DATE>1995</DATE>.
+Stochastische Wortartendisambiguierung des Deutschen.
+In Lexikon amp; Text, pages 241-254, Tbingen. Max Niemeyer.
+<DATE>forthcoming</DATE>.
+</REFERENCE>
+<REFERENCE>
+Julian <SURNAME>Kupiec</SURNAME> and Mike <SURNAME>Wilkens</SURNAME>.
+<DATE>1994</DATE>.
+The DDS tagger guide version 1.1.
+Xerox Palo Alto Research Center, unpublished manuscript.
+</REFERENCE>
+<REFERENCE>
+Bernard <SURNAME>Merialdo</SURNAME>.
+<DATE>1994</DATE>.
+Tagging English text with a probabilistic model.
+Computational Linguistics, 20(2):155-171.
+</REFERENCE>
+<REFERENCE>
+Helmut <SURNAME>Schmid</SURNAME> and Andr <SURNAME>Kempe</SURNAME>.
+<DATE>1995</DATE>.
+Tagging von Korpora mit HMM, Entscheidungsbumen und
+  neuronalen Netzen.
+In Helmut Feldweg and Erhard Hinrichs, editors, Lexikon amp;
+  Text, Tbingen. Max Niemeyer.
+<DATE>forthcoming</DATE>.
+</REFERENCE>
+<REFERENCE>
+Christine <SURNAME>Thielen</SURNAME> and Manfred <SURNAME>Sailer</SURNAME>.
+<DATE>1994</DATE>.
+Ein Tagset frs Deutsche. Richtlinien fr die manuelle
+  Wortarten-Annotierung von Textkorpora.
+Seminar fr Sprachwissenschaft, Universitt Tbingen,
+  unpublished Manuscript.
+</REFERENCE>
+<REFERENCE>
+Christine <SURNAME>Thielen</SURNAME> and Anne <SURNAME>Schiller</SURNAME>.
+<DATE>1995</DATE>.
+Ein kleines und erweitertes Tagset frs Deutsche.
+In Helmut Feldweg and Erhard Hinrichs, editors, Lexikon amp;
+  Text, pages 215-226. Max Niemeyer, Tbingen.
+<DATE>forthcoming</DATE>.
+</REFERENCE>
+<REFERENCE>
+Christine <SURNAME>Thielen</SURNAME>.
+<DATE>1994</DATE>.
+Ein Tagset fr die Wortartenklassifizierung des Deutschen.
+In Harald Trost, editor, KONVENS '94. sterreichische
+  Gesellschaft fr Artificial Intelligence, Wien.
+</REFERENCE>
+<REFERENCE>
+Klaus <SURNAME>Wothke</SURNAME>, Ilona <SURNAME>Weck-Ulm</SURNAME>, Johannes <SURNAME>Heinecke</SURNAME>, Oliver <SURNAME>Mertineit</SURNAME>, and Thomas
+  <SURNAME>Pachunke</SURNAME>.
+<DATE>1993</DATE>.
+Statistically based automatic tagging of German text corpora with
+  parts-of-speech -- some experiments.
+Technical report, IBM Germany, Heidelberg Scientific Center,
+  Heidelberg.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

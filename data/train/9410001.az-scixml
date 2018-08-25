@@ -1,0 +1,372 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9410001</FILENO>
+<APPEARED><CONFERENCE>ANLP</CONFERENCE><YEAR>1994</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.St </CLASSIFICATION>
+</METADATA>
+<TITLE> Improving Language Models by Clustering Training Sentences </TITLE>
+<AUTHORLIST>
+<AUTHOR>David Carter</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' AZ='CTR'> Many of the kinds of language model used in speech understanding suffer from imperfect modeling of intra-sentential contextual influences . </A-S>
+<A-S ID='A-1' AZ='AIM'> I argue that this problem can be addressed by clustering the sentences in a training corpus automatically into subcorpora on the criterion of entropy reduction , and calculating separate language model parameters for each cluster . </A-S>
+<A-S ID='A-2' AZ='AIM'> This kind of clustering offers a way to represent important contextual effects and can therefore significantly improve the performance of a model . </A-S>
+<A-S ID='A-3' AZ='AIM'> It also offers a reasonably automatic means to gather evidence on whether a more complex , context-sensitive model using the same general kind of linguistic information is likely to reward the effort that would be required to develop it : if clustering improves the performance of a model , this proves the existence of further context dependencies , not exploited by the unclustered model . </A-S>
+<A-S ID='A-4' AZ='OWN'> As evidence for these claims , I present results showing that clustering improves some models but not others for the ATIS domain . </A-S>
+<A-S ID='A-5' AZ='OWN'> These results are consistent with other findings for such models , suggesting that the existence or otherwise of an improvement brought about by clustering is indeed a good pointer to whether it is worth developing further the unclustered model . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> In speech recognition and understanding systems , many kinds of language model may be used to choose between the word and sentence hypotheses for which there is evidence in the acoustic data . </S>
+<S ID='S-1' AZ='BKG'> Some words , word sequences , syntactic constructions and semantic structures are more likely to occur than others , and the presence of more likely objects in a sentence hypothesis is evidence for the correctness of that hypothesis . </S>
+<S ID='S-2' AZ='BKG'> Evidence from different knowledge sources can be combined in an attempt to optimize the selection of correct hypotheses <REF TYPE='P' SELF="YES">Alshawi and Carter 1994</REF> , <REF TYPE='P' SELF="YES">Rayner et al. 1994</REF> , <REF TYPE='P'>Rosenfeld 1994</REF> . </S>
+</P>
+<P>
+<S ID='S-3' AZ='BKG'> Many of the knowledge sources used for this purpose score a sentence hypothesis by calculating a simple , typically linear , combination of scores associated with objects , such as N-grams and grammar rules , that characterize the hypothesis or its preferred linguistic analysis . </S>
+<S ID='S-4' AZ='BKG'> When these scores are viewed as log probabilities , taking a linear sum corresponds to making an independence assumption that is known to be at best only approximately true , and that may give rise to inaccuracies that reduce the effectiveness of the knowledge source . </S>
+</P>
+<P>
+<S ID='S-5' AZ='OTH'> The most obvious way to make a knowledge source more accurate is to increase the amount of structure or context that it takes account of . </S>
+<S ID='S-6' AZ='OTH'> For example , a bigram model may be replaced by a trigram one , and the fact that dependencies exist among the likelihoods of occurrence of grammar rules at different locations in a parse tree can be modeled by associating probabilities with states in a parsing table rather than simply with the rules themselves <REF TYPE='P'>Briscoe and Carroll 1993</REF> . </S>
+</P>
+<P>
+<S ID='S-7' AZ='CTR'> However , such remedies have their drawbacks . </S>
+<S ID='S-8' AZ='CTR'> Firstly , even when the context is extended , some important influences may still not be modeled . </S>
+<S ID='S-9' AZ='CTR'> For example , dependencies between words exist at separations greater than those allowed for by trigrams ( for which long-distance N-grams <REF TYPE='P'>Jelinek et al. 1991</REF> are a partial remedy ) , and associating scores with parsing table states may not model all the important correlations between grammar rules . </S>
+<S ID='S-10' AZ='CTR'> Secondly , extending the model may greatly increase the amount of training data required if sparseness problems are to be kept under control , and additional data may be unavailable or expensive to collect . </S>
+<S ID='S-11' AZ='CTR'> Thirdly , one cannot always know in advance of doing the work whether extending a model in a particular direction will , in practice , improve results . </S>
+<S ID='S-12' AZ='CTR'> If it turns out not to , considerable ingenuity and effort may have been wasted . </S>
+</P>
+<P>
+<S ID='S-13' AZ='AIM'> In this paper , I argue for a general method for extending the context-sensitivity of any knowledge source that calculates sentence hypothesis scores as linear combinations of scores for objects . </S>
+<S ID='S-14' AZ='BAS'> The method , which is related to that of <REF TYPE='A'>Iyer et al. 1994</REF> , involves clustering the sentences in the training corpus into a number of subcorpora , each predicting a different probability distribution for linguistic objects . </S>
+<S ID='S-15' AZ='OWN'> An utterance hypothesis encountered at run time is then treated as if it had been selected from the subpopulation of sentences represented by one of these subcorpora . </S>
+<S ID='S-16' AZ='OWN'> This technique addresses as follows the three drawbacks just alluded to . </S>
+<S ID='S-17' AZ='OWN'> Firstly , it is able to capture the most important sentence-internal contextual effects regardless of the complexity of the probabilistic dependencies between the objects involved . </S>
+<S ID='S-18' AZ='OWN'> Secondly , it makes only modest additional demands on training data . </S>
+<S ID='S-19' AZ='OWN'> Thirdly , it can be applied in a standard way across knowledge sources for very different kinds of object , and if it does improve on the unclustered model this constitutes proof that additional , as yet unexploited relationships exist between linguistic objects of the type the model is based on , and that therefore it is worth looking for a more specific , more powerful way to model them . </S>
+</P>
+<P>
+<S ID='S-20' AZ='BKG'> The use of corpus clustering often does not boost the power of the knowledge source as much as a specific hand-coded extension . </S>
+<S ID='S-21' AZ='BKG'> For example , a clustered bigram model will probably not be as powerful as a trigram model . </S>
+<S ID='S-22' AZ='OWN'> However , clustering can have two important uses . </S>
+<S ID='S-23' AZ='OWN'> One is that it can provide some improvement to a model even in the absence of the additional ( human or computational ) resources required by a hand-coded extension . </S>
+<S ID='S-24' AZ='OWN'> The other use is that the existence or otherwise of an improvement brought about by clustering can be a good indicator of whether additional performance can in fact be gained by extending the model by hand without further data collection , with the possibly considerable additional effort that extension would entail . </S>
+<S ID='S-25' AZ='OWN'> And , of course , there is no reason why clustering should not , where it gives an advantage , also be used in conjunction with extension by hand to produce yet further improvements . </S>
+</P>
+<P>
+<S ID='S-26' AZ='OWN'> As evidence for these claims , I present experimental results showing how , for a particular task and training corpus , clustering produces a sizeable improvement in unigram - and bigram-based models , but not in trigram-based ones ; this is consistent with experience in the speech understanding community that while moving from bigrams to trigrams usually produces a definite payoff , a move from trigrams to 4-grams yields less clear benefits for the domain in question . </S>
+<S ID='S-27' AZ='OWN'> I also show that , for the same task and corpus , clustering produces improvements when sentences are assessed not according to the words they contain but according to the syntax rules used in their best parse . </S>
+<S ID='S-28' AZ='CTR'> This work thus goes beyond that of <REFAUTHOR>Iyer et al.</REFAUTHOR> by focusing on the methodological importance of corpus clustering , rather than just its usefulness in improving overall system performance , and by exploring in detail the way its effectiveness varies along the dimensions of language model type , language model complexity , and number of clusters used . </S>
+<S ID='S-29' AZ='CTR'> It also differs from <REFAUTHOR>Iyer et al.</REFAUTHOR> 's work by clustering at the utterance rather than the paragraph level , and by using a training corpus of thousands , rather than millions , of sentences ; in many speech applications , available training data is likely to be quite limited , and may not always be chunked into paragraphs . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Cluster-based Language Modeling </HEADER>
+<P>
+<S ID='S-30' AZ='OTH'> Most other work on clustering for language modeling <REF TYPE='P'>Pereira et al. 1993</REF> , <REF TYPE='P'>Net et al. 1994</REF> has addressed the problem of data sparseness by clustering words into classes which are then used to predict smoothed probabilities of occurrence for events which may seldom or never have been observed during training . </S>
+<S ID='S-31' AZ='OTH'> Thus conceptually at least , their processes are agglomerative : a large initial set of words is clumped into a smaller number of clusters . </S>
+<S ID='S-32' AZ='CTR'> The approach described here is quite different . </S>
+<S ID='S-33' AZ='CTR'> Firstly , it involves clustering whole sentences , not words . </S>
+<S ID='S-34' AZ='AIM'> Secondly , its aim is not to tackle data sparseness by grouping a large number of objects into a smaller number of classes , but to increase the precision of the model by dividing a single object ( the training corpus ) into some larger number of sub-objects ( the clusters of sentences ) . </S>
+<S ID='S-35' AZ='OWN'> There is no reason why clustering sentences for prediction should not be combined with clustering words to reduce sparseness ; the two operations are orthogonal . </S>
+</P>
+<P>
+<S ID='S-36' AZ='OWN'> Our type of clustering , then , is based on the assumption that the utterances to be modeled , as sampled in a training corpus , fall more or less naturally into some number of clusters so that words or other objects associated with utterances have probability distributions that differ between clusters . </S>
+<S ID='S-37' AZ='OWN'> Thus rather than estimating the relative likelihood of an utterance interpretation simply by combining fixed probabilities associated with its various characteristics , we view these probabilities as conditioned by the initial choice of a cluster or subpopulation from which the utterance is to be drawn . </S>
+<S ID='S-38' AZ='OWN'> In both cases , many independence assumptions that are known to be at best reasonable approximations will have to be made . </S>
+<S ID='S-39' AZ='OWN'> However , if the clustering reflects significant dependencies , some of the worst inaccuracies of these assumptions may be reduced , and system performance may improve as a result . </S>
+</P>
+<P>
+<S ID='S-40' AZ='OWN'> Some domains and tasks lend themselves more obviously to a clustering approach than others . </S>
+<S ID='S-41' AZ='OWN'> An obvious and trivial case where clustering is likely to be useful is a speech understander for use by travelers in an international airport ; here , an utterance will typically consist of words from one , and only one , natural language , and clusters for different languages will be totally dissimilar . </S>
+<S ID='S-42' AZ='OWN'> However , clustering may also give us significant leverage in monolingual cases . </S>
+<S ID='S-43' AZ='OWN'> If the dialogue handling capabilities of a system are relatively rigid , the system may only ask the user a small number of different questions ( modulo the filling of slots with different values ) . </S>
+<S ID='S-44' AZ='OTH'> For example , the CLARE interface to the Autoroute PC package <REF TYPE='P' SELF="YES">Lewin et al. 1993</REF> has a fairly simple dialogue model which allows it to ask only a dozen or so different types of question of the user . </S>
+<S ID='S-45' AZ='OTH'> A Wizard of Oz exercise , carried out to collect data for this task , was conducted in a similarly rigid way ; thus it is straightforward to divide the training corpus into clusters , one cluster for utterances immediately following each kind of system query . </S>
+<S ID='S-46' AZ='OTH'> Other corpora , such as Wall Street Journal articles , might also be expected to fall naturally into clusters for different subject areas , and indeed <REF TYPE='A'>Iyer et al. 1994</REF> report positive results from corpus clustering here .</S>
+</P>
+<P>
+<S ID='S-47' AZ='CTR'> For some applications , though , there is no obvious extrinsic basis for dividing the training corpus into clusters . </S>
+<S ID='S-48' AZ='CTR'> The ARPA air travel information ( ATIS ) domain is an example . </S>
+<S ID='S-49' AZ='OTH'> Questions can mention concepts such as places , times , dates , fares , meals , airlines , plane types and ground transportation , but most utterances mention several of these , and there are few obvious restrictions on which of them can occur in the same utterance . </S>
+<S ID='S-50' AZ='OTH'> Dialogues between a human and an ATIS database access system are therefore likely to be less clearly structured than in the Autoroute case . </S>
+</P>
+<P>
+<S ID='S-51' AZ='OWN'> However , there is no reason why automatic clustering should not be attempted even when there are no grounds to expect clearly distinct underlying subpopulations to exist . </S>
+<S ID='S-52' AZ='OWN'> Even a clustering that only partly reflects the underlying variability of the data may give us more accurate predictions of utterance likelihoods . </S>
+<S ID='S-53' AZ='OWN'> Obviously , the more clusters are assumed , the more likely it is that the increase in the number of parameters to be estimated will lead to worsened rather than improved performance . </S>
+<S ID='S-54' AZ='OWN'> But this trade-off , and the effectiveness of different clustering algorithms , can be monitored and optimized by applying the resulting cluster-based language models to unseen test data . </S>
+<S ID='S-55' AZ='TXT'> In Section <CREF/> below , I report results of such experiments with ATIS data , which , for the reasons given above , would at first sight seem relatively unlikely to yield useful results from a clustering approach . </S>
+<S ID='S-56' AZ='TXT'> Since , as we will see , clustering does yield benefits in this domain , it seems very plausible that it will also do so for other , more naturally clustered domains . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-2'> Clustering Algorithms </HEADER>
+<P>
+<S ID='S-57' AZ='OTH'> There are many different criteria for quantifying the ( dis ) similarity between ( analyses of ) two sentences or between two clusters of sentences ; <REF TYPE='A'>Everitt 1993</REF> provides a good overview . </S>
+<S ID='S-58' AZ='CTR'> Unfortunately , whatever the criterion selected , it is in general impractical to find the optimal clustering of the data ; instead , one of a variety of algorithms must be used to find a locally optimal solution . </S>
+</P>
+<P>
+<S ID='S-59' AZ='BKG'> Let us for the moment consider the case where the language model consists only of a unigram probability distribution for the words in the vocabulary , with no N-gram ( for N  >  1 ) or fuller linguistic constraints considered . </S>
+<S ID='S-60' AZ='OTH'> Perhaps the most obvious measure of the similarity between two sentences or clusters is then Jaccard 's coefficient  <REF TYPE='P'>Everitt 1993</REF>  , the ratio of the number of words occurring in both sentences to the number occurring in either or both . </S>
+<S ID='S-61' AZ='OTH'> Another possibility would be Euclidean distance , with each word in the vocabulary defining a dimension in a vector space . </S>
+<S ID='S-62' AZ='CTR'> However , it makes sense to choose as a similarity measure the quantity we would like the final clustering arrangement to minimize : the expected entropy ( or , equivalently , perplexity ) of sentences from the domain . </S>
+<S ID='S-63' AZ='OWN'> This goal is analogous to that used in the work described earlier on finding word classes by clustering . </S>
+</P>
+<P>
+<S ID='S-64' AZ='OWN'> For our simple unigram language model without clustering , the training corpus perplexity is minimized ( and its likelihood is maximized ) by assigning each word <EQN/> a probability <EQN/> , where <EQN/> is the frequency of <EQN/> and N is the total size of the corpus . </S>
+<S ID='S-65' AZ='OWN'> The corpus likelihood is then <EQN/> , and the per-word entropy , <EQN/> , is thus minimized . </S>
+<S ID='S-66' AZ='BAS'> ( See e.g. <REF TYPE='A'>Cover and Thomas 1991</REF> , chapter 2 for the reasoning behind this ) . </S>
+</P>
+<P>
+<S ID='S-67' AZ='OWN'> If now we model the language as consisting of sentences drawn at random from K different subpopulations , each with its own unigram probability distribution for words , then the estimated corpus probability is  </S>
+</P>
+<IMAGE ID='I-0'/>
+<P>
+<S ID='S-68' AZ='OWN'> where the iterations are over each utterance <EQN/> in the corpus , each cluster <EQN/> from which <EQN/> might arise , and each word <EQN/> in utterance <EQN/> . </S>
+<S ID='S-69' AZ='OWN'> <EQN/> is the likelihood of an utterance arising from cluster ( or subpopulation ) <EQN/> , and <EQN/> is the likelihood assigned to word <EQN/> by cluster k , i.e. its relative frequency in that cluster . </S>
+</P>
+<P>
+<S ID='S-70' AZ='OWN'> Our ideal , then , is the set of clusters that maximizes the cluster-dependent corpus likelihood <EQN/> . </S>
+<S ID='S-71' AZ='OWN'> As with nearly all clustering problems , finding a global maximum is impractical . </S>
+<S ID='S-72' AZ='OWN'> To derive a good approximation to it , therefore , we adopt the following algorithm . </S>
+</P>
+<P>
+<S ID='S-73' AZ='OWN'> Select a random ordering of the training corpus , and initialize each cluster <EQN/> , to contain just the kth sentence in the ordering . </S>
+</P>
+<P>
+<S ID='S-74' AZ='OWN'> Present each remaining training corpus sentence in turn , initially creating an additional singleton cluster <EQN/> for it . </S>
+<S ID='S-75' AZ='OWN'> Merge that pair of clusters <EQN/> that entails the least additional cost , i.e. the smallest reduction in the value of <EQN/> for the subcorpus seen so far . </S>
+</P>
+<P>
+<S ID='S-76' AZ='OWN'> When all training utterances have been incorporated , find all the triples <EQN/> <EQN/> , such that <EQN/> but the probability of u is maximized by <EQN/> . </S>
+<S ID='S-77' AZ='OWN'> Move all such u 's ( in parallel ) between clusters . </S>
+<S ID='S-78' AZ='OWN'> Repeat until no further movements are required . </S>
+</P>
+<P>
+<S ID='S-79' AZ='OWN'> In practice , we keep track not of <EQN/> but of the overall corpus entropy <EQN/> . </S>
+<S ID='S-80' AZ='OWN'> We record the contribution each cluster <EQN/> makes to <EQN/> as  </S>
+<IMAGE ID='I-1'/>
+</P>
+<P>
+<S ID='S-81' AZ='OWN'> where <EQN/> is the frequency of <EQN/> in <EQN/> and <EQN/> = <EQN/> , and find the value of this quantity for all possible merged clusters . </S>
+<S ID='S-82' AZ='OWN'> The merge in the second step of the algorithm is chosen to be the one minimizing the increase in entropy between the unmerged and the merged clusters . </S>
+</P>
+<P>
+<S ID='S-83' AZ='OWN'> The adjustment process in the third step of the algorithm does not attempt directly to decrease entropy but to achieve a clustering with the obviously desirable property that each training sentence is best predicted by the cluster it belongs to rather than by another cluster . </S>
+<S ID='S-84' AZ='OWN'> This heightens the similarities within clusters and the differences between them . </S>
+<S ID='S-85' AZ='OWN'> It also reduces the arbitrariness introduced into the clustering process by the order in which the training sentences are presented . </S>
+<S ID='S-86' AZ='OWN'> The approach is applicable with only a minor modification to N-grams for N  >  1 : the probability of a word within a cluster is conditioned on the occurrence of the N - 1 words preceding it , and the entropy calculations take this into account . </S>
+<S ID='S-87' AZ='OWN'> Other cases of context dependence modeled by a knowledge source can be handled similarly . </S>
+<S ID='S-88' AZ='OWN'> And there is no reason why the items characterizing the sentence have to be ( sequences of ) words ; occurrences of grammar rules , either without any context or in the context of , say , the rules occurring just above them in the parse tree , can be treated in just the same way . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-3'> Experimental Results </HEADER>
+<P>
+<S ID='S-89' AZ='OWN'> Experiments were carried out to assess the effectiveness of clustering , and therefore the existence of unexploited contextual dependencies , for instances of two general types of language model . </S>
+<S ID='S-90' AZ='OWN'> In the first experiment , sentence hypotheses were evaluated on the N-grams of words and word classes they contained . </S>
+<S ID='S-91' AZ='OWN'> In the second experiment , evaluation was on the basis of grammar rules used rather than word occurrences . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-4'> N-Gram Experiment </HEADER>
+<P>
+<S ID='S-92' AZ='OWN'> In the first experiment , reference versions of a set of 5,873 domain-relevant ( classes A and D ) ATIS - 2 sentences were allocated to K clusters for K = 2 , 3 , 5 , 6 , 10 and 20 for the unigram , bigram and trigram conditions and , for unigrams and bigrams only , K = 40 and 100 as well . </S>
+<S ID='S-93' AZ='OWN'> Each run was repeated for ten different random orders for presentation of the training data . </S>
+<S ID='S-94' AZ='OWN'> The unclustered ( K = 1 ) version of each language model was also evaluated . </S>
+<S ID='S-95' AZ='OWN'> Some words , and some sequences of words such as `` San Francisco '' , were replaced by class names to improve performance . </S>
+<S ID='S-96' AZ='OWN'> The per-item entropy of the training set ( i.e. the per-word entropy , but ignoring the need to distinguish different words in the same class ) was 6.04 for a unigram language model , 2.96 for bigrams , and 1.97 for trigrams , giving perplexities of 65.7 , 7.76 and 3.92 respectively . </S>
+<S ID='S-97' AZ='OWN'> The greater the value of K , the more a clustering reduced the apparent training set per-item entropy ( which , of course , is not the same thing as reducing test set entropy ) . </S>
+<S ID='S-98' AZ='OWN'> The reductions for K = 20 were around 20 % for unigrams , 40 % for bigrams and 50 % for trigrams , with very little variation ( typically 1 % or less ) between different runs for the same condition . </S>
+</P>
+<P>
+<S ID='S-99' AZ='OWN'> The improvement ( if any ) due to clustering was measured by using the various language models to make selections from N-best sentence hypothesis lists ; this choice of test was made for convenience rather than out of any commitment to the N-best paradigm , and the techniques described here could equally well be used with other forms of speech-language interface . </S>
+</P>
+<P>
+<S ID='S-100' AZ='OWN'> Specifically , each clustering was tested against 1,354 hypothesis lists output by a version of the DECIPHER ( TM ) speech recognizer <REF TYPE='P'>Murveit et al. 1993</REF> that itself used a ( rather simpler ) bigram model . </S>
+<S ID='S-101' AZ='OWN'> Where more then ten hypothesis were output for a sentence , only the top ten were considered . </S>
+<S ID='S-102' AZ='OWN'> These 1,354 lists were the subset of two 1,000 sentence sets ( the February and November 1992 ATIS evaluation sets ) for which the reference sentence itself occurred in the top ten hypotheses . </S>
+<S ID='S-103' AZ='OWN'> The clustered language model was used to select the most likely hypothesis from the list without paying any attention either to the score that DECIPHER assigned to each hypothesis on the basis of acoustic information or its own bigram model , or to the ordering of the list . </S>
+<S ID='S-104' AZ='OWN'> In a real system , the DECIPHER scores would of course be taken into account , but they were ignored here in order to maximize the discriminatory power of the test in the presence of only a few thousand test utterances . </S>
+</P>
+<P>
+<S ID='S-105' AZ='OWN'> To avoid penalizing longer hypotheses , the probabilities assigned to hypotheses were normalized by sentence length . </S>
+<S ID='S-106' AZ='OWN'> The probability assigned by a cluster to an N-gram was taken to be the simple maximum likelihood ( relative frequency ) value where this was non-zero . </S>
+<S ID='S-107' AZ='OWN'> When an N-gram in the test data had not been observed at all in the training sentences assigned to a given cluster , a `` failure '' , representing a vanishingly small probability , was assigned . </S>
+<S ID='S-108' AZ='CTR'> A number of backoff schemes of various degrees of sophistication , including that of <REF TYPE='A'>Katz 1987</REF> , were tried , but none produced any improvement in performance , and several actually worsened it . </S>
+</P>
+<P>
+<S ID='S-109' AZ='OWN'> The average percentages of sentences correctly identified by clusterings for each condition were as given in Table <CREF/> . </S>
+<S ID='S-110' AZ='OWN'> The maximum possible score was 100 % ; the baseline score , that expected from a random choice of a sentence from each list , was 11.4 . </S>
+<IMAGE ID='I-2'/>
+</P>
+<P>
+<S ID='S-111' AZ='OWN'> The unigram and bigram scores show a steady and , in fact , statistically significant increase with the number of clusters . </S>
+<S ID='S-112' AZ='OWN'> Using twenty clusters for bigrams ( score 43.9 % ) in fact gives more than half the advantage over unclustered bigrams that is given by moving from unclustered bigrams to unclustered trigrams . </S>
+<S ID='S-113' AZ='OWN'> However , clustering trigrams produces no improvement in score ; in fact , it gives a small but statistically significant deterioration , presumably due to the increase in the number of parameters that need to be calculated . </S>
+</P>
+<P>
+<S ID='S-114' AZ='OWN'> The random choice of a presentation order for the data meant that different clusterings were arrived at on each run for a given condition ( ( N , K ) for N-grams and K clusters ) . </S>
+<S ID='S-115' AZ='OWN'> There was some limited evidence that some clusterings for the same condition were significantly better than others , rather than just happening to perform better on the particular test data used . </S>
+<S ID='S-116' AZ='OWN'> More trials would be needed to establish whether presentation order does in general make a genuine difference to the quality of a clustering . </S>
+<S ID='S-117' AZ='OWN'> If there is one , however , it would appear to be fairly small compared to the improvements available ( in the unigram and bigram cases ) from increasing the numbers of clusters . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-5'> Grammar Rule Experiment </HEADER>
+<P>
+<S ID='S-118' AZ='BAS'> In the second experiment , each training sentence and each test sentence hypothesis was analysed by the Core Language Engine <REF TYPE='P'>Alshawi 1992</REF> trained on the ATIS domain <REF TYPE='P'>Agns et al. 1994</REF> . </S>
+<S ID='S-119' AZ='OWN'> Unanalysable sentences were discarded , as were sentences of over 15 words in length ( the ATIS adaptation had concentrated on sentences of 15 words or under , and analysis of longer sentences was less reliable and slower ) . </S>
+<S ID='S-120' AZ='BAS'> When a sentence was analysed successfully , several semantic analyses were , in general , created , and a selection was made from among these on the basis of trained preference functions <REF SELF="YES" TYPE='P'>Alshawi and Carter 1994</REF> . </S>
+<S ID='S-121' AZ='OWN'> For the purpose of the experiment , clustering and hypothesis selection were performed on the basis not of the words in a sentence but of the grammar rules used to construct its most preferred analysis . </S>
+</P>
+<P>
+<S ID='S-122' AZ='OWN'> The simplest condition , hereafter referred to as `` 1-rule '' , was analogous to the unigram case for word-based evaluation . </S>
+<S ID='S-123' AZ='OWN'> A sentence was modeled simply as a bag of rules , and no attempt ( other than the clustering itself ) was made to account for dependencies between rules . </S>
+</P>
+<P>
+<S ID='S-124' AZ='OWN'> Another condition , henceforth `` 2-rule '' because of its analogy to bigrams , was also tried . </S>
+<S ID='S-125' AZ='OWN'> Here , each rule occurrence was represented not in isolation but in the context of the rule immediately above it in the parse tree ( its `` predecessor '' if the tree is traversed top-down ) . </S>
+<S ID='S-126' AZ='OWN'> This choice was made on the assumption that the immediately dominating rule would be one important influence on the likelihood of occurrence of a particular rule . </S>
+<S ID='S-127' AZ='OTH'> Other choices , involving sister rules and / or rules in less closely related positions , or the compilation of rules into common combinations <REF TYPE='P'>Samuelsson and Rayner 1991</REF> might have worked as well or better ; our purpose here is simply to illustrate and assess ways in which explicit context modeling can be combined with clustering . </S>
+</P>
+<P>
+<S ID='S-128' AZ='OWN'> The training corpus consisted of the 4,279 sentences in the 5,873 - sentence set that were analysable and consisted of fifteen words or less . </S>
+<S ID='S-129' AZ='OWN'> The test corpus consisted of 1,106 hypothesis lists , selected in the same way ( on the basis of length and analysability of their reference sentences ) from the 1,354 used in the first experiment . </S>
+<S ID='S-130' AZ='OWN'> The `` baseline '' score for this test corpus , expected from a random choice of ( analysable ) hypothesis , was 23.2 % . </S>
+<S ID='S-131' AZ='OWN'> This was rather higher than the 11.4 % for word-based selection because the hypothesis lists used were in general shorter , unanalysable hypotheses having been excluded . </S>
+</P>
+<P>
+<S ID='S-132' AZ='OWN'> The average percentages of correct hypotheses ( actual word strings , not just the rules used to represent them ) selected by the 1-rule and 2-rule conditions were as given in Table <CREF/> . </S>
+<IMAGE ID='I-3'/>
+</P>
+<P>
+<S ID='S-133' AZ='OWN'> These results show that clustering gives a significant advantage for both the 1-rule and the 2-rule types of model , and that the more clusters are created , the larger the advantage is , at least up to K = 20 clusters . </S>
+<S ID='S-134' AZ='OWN'> As with the N-gram experiment , there is weak evidence that some clusterings are genuinely better than others for the same condition . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-6'> Conclusions </HEADER>
+<P>
+<S ID='S-135' AZ='AIM'> I have suggested that training corpus clustering can be used both to extend the effectiveness of a very general class of language models , and to provide evidence of whether a particular language model could benefit from extending it by hand to allow it to take better account of context . </S>
+<S ID='S-136' AZ='OWN'> Clustering can be useful even when there is no reason to believe the training corpus naturally divides into any particular number of clusters on any extrinsic grounds . </S>
+</P>
+<P>
+<S ID='S-137' AZ='OWN'> The experimental results presented show that clustering increases the ( absolute ) success rate of unigram and bigram language modeling for a particular ATIS task by up to about 12 % , and that performance improves steadily as the number of clusters climbs towards 100 ( probably a reasonable upper limit , given that there are only a few thousand training sentences ) . </S>
+<S ID='S-138' AZ='OWN'> However , clusters do not improve trigram modeling at all . </S>
+<S ID='S-139' AZ='OWN'> This is consistent with experience <REF TYPE='P' SELF="YES">Rayner et al. 1994</REF> that , for the ATIS domain , trigrams model inter-word effects much better than bigrams do , but that extending the N-gram model beyond N = 3 is much less beneficial . </S>
+</P>
+<P>
+<S ID='S-140' AZ='OWN'> For N-rule modeling , clustering increases the success rate for both N = 1 and N = 2 , although only by about half as much as for N-grams . </S>
+<S ID='S-141' AZ='OWN'> This suggests that conditioning the occurrence of a grammar rule on the identity of its mother ( as in the 2-rule case ) accounts for some , but not all , of the contextual influences that operate . </S>
+<S ID='S-142' AZ='OWN'> From this it is sensible to conclude , consistently with the results of <REF TYPE='A'>Briscoe and Carroll 1993</REF> , that a more complex model of grammar rule interaction might yield better results . </S>
+<S ID='S-143' AZ='OWN'> Either conditioning on other parts of the parse tree than the mother node could be included , or a rather different scheme such as Briscoe and Carroll 's could be used . </S>
+</P>
+<P>
+<S ID='S-144' AZ='OWN'> Neither the observation that trigrams may represent the limit of usefulness for N-gram modeling in ATIS , nor that non-trivial contextual influences exist between occurrences of grammar rules , is very novel or remarkable in its own right . </S>
+<S ID='S-145' AZ='OWN'> Rather , what is of interest is that the improvement ( or otherwise ) in particular language models from the application of clustering is consistent with those observations . </S>
+<S ID='S-146' AZ='OWN'> This is important evidence for the main hypothesis of this paper : that enhancing a language model with clustering , which once the software is in place can be done largely automatically , can give us important clues about whether it is worth expending research , programming , data-collection and machine resources on hand-coded improvements to the way in which the language model in question models context , or whether those resources are best devoted to different , additional kinds of language model . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-7'> Acknowledgements </HEADER>
+<P>
+<S ID='S-147' AZ='OWN'> I am grateful to Manny Rayner and Ian Lewin for useful comments on earlier versions of this paper . </S>
+<S ID='S-148' AZ='OWN'> Responsibility for any remaining errors or unclarities rests in the customary place . </S>
+</P>
+<P>
+<S ID='S-149' AZ='OWN'> A shorter version of this paper appears in the Proceedings of the ACL Conference on Applied Natural Language Processing , Stuttgart , October 1994 , and is Association for Computational Linguistics . </S>
+<IMAGE ID='I-4'/>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+<SURNAME>Agns</SURNAME>, M-S., et al (<DATE>1994</DATE>). Spoken Language Translator
+First Year Report.  SRI International Cambridge Technical Report
+CRC-043.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Alshawi</SURNAME>, H., and D.M. <SURNAME>Carter</SURNAME> (<DATE>1994</DATE>). ``Training and Scaling Preference
+Functions for Disambiguation''. Computational Linguistics (<DATE>to
+appear</DATE>).
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Briscoe</SURNAME>, T., and J. <SURNAME>Carroll</SURNAME> (<DATE>1993</DATE>). ``Generalized Probabilistic LR
+Parsing of Natural Language (Corpora) with Unification-Based
+Grammars'', Computational Linguistics, Vol 19:1, 25-60.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Cover</SURNAME>, T.M., and J.A. <SURNAME>Thomas</SURNAME> (<DATE>1991</DATE>). Elements of Information
+Theory. New York: Wiley.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Everitt</SURNAME>, B.S. (<DATE>1993</DATE>). Cluster Analysis, Third Edition. London:
+Edward Arnold.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Iyer</SURNAME>, R., M. <SURNAME>Ostendorf</SURNAME> and J.R. <SURNAME>Rohlicek</SURNAME> (<DATE>1994</DATE>). ``Language Modeling
+with Sentence-Level Mixtures''. Proceedings of the ARPA Workshop
+on Human Language Technology.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Jelinek</SURNAME>, F., B. <SURNAME>Merialdo</SURNAME>, S. <SURNAME>Roukos</SURNAME> and M. <SURNAME>Strauss</SURNAME> (<DATE>1991</DATE>). ``A Dynamic
+Language Model for Speech Recognition'', Proceedings of the
+Speech and Natural Language DARPA Workshop, Feb <DATE>1991</DATE>, 293-295.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Katz</SURNAME>, S.M. (<DATE>1987</DATE>). ``Estimation of Probabilities from Sparse Data for
+the Language Model Component of a Speech Recognizer'', IEEE
+Transactions on Acoustics, Speech and Signal Processing, Vol
+ASSP-35:3.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Lewin</SURNAME>, I., D.M. <SURNAME>Carter</SURNAME>, S. <SURNAME>Pulman</SURNAME>, S. <SURNAME>Browning</SURNAME>, K. <SURNAME>Ponting</SURNAME> and
+M. <SURNAME>Russell</SURNAME> (<DATE>1993</DATE>). ``A Speech-Based Route Enquiry System Built From
+General-Purpose Components'', Proceedings of Eurospeech-93.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Murveit</SURNAME>, H., J. <SURNAME>Butzberger</SURNAME>, V. <SURNAME>Digalakis</SURNAME> and M. <SURNAME>Weintraub</SURNAME> (<DATE>1993</DATE>).
+``Large Vocabulary Dictation using SRI's DECIPHER(TM)
+Speech Recognition System: Progressive Search Techniques'',
+Proceedings of the International Conference on
+Acoustics, Speech and Signal Processing, Minneapolis, Minnesota.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Ney</SURNAME>, H., U. <SURNAME>Essen</SURNAME> and R. <SURNAME>Kneser</SURNAME> (<DATE>1994</DATE>). ``On Structuring Probabilistic
+Dependencies in Stochastic Language Modeling''. Computer Speech
+and Language, vol 8:1, 1-38.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Pereira</SURNAME>, F., N. <SURNAME>Tishby</SURNAME> and L. <SURNAME>Lee</SURNAME> (<DATE>1993</DATE>). ``Distributional Clustering
+of English Words''. Proceedings of ACL-93, 183-190.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Rayner</SURNAME>, M., D. <SURNAME>Carter</SURNAME>, V. <SURNAME>Digalakis</SURNAME> and P. <SURNAME>Price</SURNAME> (<DATE>1994</DATE>).  ``Combining
+Knowledge Sources to Reorder N-best Speech Hypothesis Lists''. 
+Proceedings of the ARPA Workshop on Human Language Technology.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Rosenfeld</SURNAME>, R. (<DATE>1994</DATE>). ``A Hybrid Approach to Adaptive Statistical
+Language Modeling''. Proceedings of the ARPA Workshop on Human
+Language Technology.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Samuelsson</SURNAME>, C., and M. <SURNAME>Rayner</SURNAME> (<DATE>1991</DATE>). ``Quantitative Evaluation of
+Explanation-Based Learning as a Tuning Tool for a Large-Scale Natural
+Language System''.  Proceedings of 12th International Joint
+Conference on Artificial Intelligence.  Sydney, Australia.
+</REFERENCE>
+<REFERENCE>
+<SURNAME>Siegel</SURNAME>, S., and N.J. <SURNAME>Castellan</SURNAME> (<DATE>1988</DATE>). Nonparametric Statistics,
+Second Edition. New York: McGraw-Hill.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

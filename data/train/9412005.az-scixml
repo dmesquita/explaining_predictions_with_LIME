@@ -1,0 +1,512 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9412005</FILENO>
+<APPEARED><CONFERENCE TYPE='SpecialInterest'>ACL</CONFERENCE><YEAR>1994</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Th.Li.Aq Lg.Pr.Ap.Sp </CLASSIFICATION>
+</METADATA>
+<TITLE> Segmenting Speech without a Lexicon : the Roles of Phonotactics and Speech Source </TITLE>
+<AUTHORLIST>
+<AUTHOR>Timothy Andrew Cartwright</AUTHOR>
+<AUTHOR>Michael R. Brent</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' AZ='BKG'> Infants face the difficult problem of segmenting continuous speech into words without the benefit of a fully developed lexicon . </A-S>
+<A-S ID='A-1' AZ='BKG'> Several sources of information in speech might help infants solve this problem , including prosody , semantic correlations and phonotactics . </A-S>
+<A-S ID='A-2' DOCUMENTC='S-165' AZ='CTR'> Research to date has focused on determining to which of these sources infants might be sensitive , but little work has been done to determine the potential usefulness of each source . </A-S>
+<A-S ID='A-3' DOCUMENTC='S-3' AZ='AIM'> The computer simulations reported here are a first attempt to measure the usefulness of distributional and phonotactic information in segmenting phoneme sequences . </A-S>
+<A-S ID='A-4' AZ='OWN'> The algorithms hypothesize different segmentations of the input into words and select the best hypothesis according to the Minimum Description Length principle . </A-S>
+<A-S ID='A-5' DOCUMENTC='S-4' AZ='OWN'> Our results indicate that while there is some useful information in both phoneme distributions and phonotactic rules , the combination of both sources is most useful . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> Infants must learn to recognize certain sound sequences as being words ; this is a difficult problem because normal speech contains no obvious acoustic divisions between words . </S>
+<S ID='S-1' AZ='BKG'> Two sources of information that might aid speech segmentation are : distribution -- the phoneme sequence in cat appears frequently in several contexts including thecat , cats and catnap , whereas the sequence in catn is rare and appears in restricted contexts ; and phonotactics -- cat is an acceptable syllable in English , whereas pcat is not . </S>
+<S ID='S-2' AZ='CTR'> While evidence exists that infants are sensitive to these information sources , we know of no measurements of their usefulness . </S>
+<S ID='S-3' ABSTRACTC='A-3' AZ='AIM'> In this paper , we attempt to quantify the usefulness of distribution and phonotactics in segmenting speech . </S>
+<S ID='S-4' ABSTRACTC='A-5' AZ='OWN'> We found that each source provided some useful information for speech segmentation , but the combination of sources provided substantial information . </S>
+<S ID='S-5' AZ='OWN'> We also found that child-directed speech was much easier to segment than adult-directed speech when using both sources . </S>
+</P>
+<P>
+<S ID='S-6' AZ='OTH'> To date , psychologists have focused on two aspects of the speech segmentation problem . </S>
+<S ID='S-7' AZ='OTH'> The first is the problem of parsing continuous speech into words given a developed lexicon to which incoming sounds can be matched ; both psychologists <REF TYPE='P'>Cutler and Carter 1987</REF> , <REF TYPE='P'>Cutler and Butterfield 1992</REF> and designers of speech-recognition systems <REF TYPE='P'>Church 1987</REF> have examined this problem . </S>
+<S ID='S-8' AZ='CTR'> However , the problem we examined is different -- we want to know how infants segment speech before knowing which phonemic sequences form words . </S>
+<S ID='S-9' AZ='OTH'> The second aspect psychologists have focused on is the problem of determining the information sources to which infants are sensitive . </S>
+<S ID='S-10' AZ='OTH'> Primarily , two sources have been examined : prosody and word stress . </S>
+<S ID='S-11' AZ='OTH'> Results suggest that parents exaggerate prosody in child-directed speech to highlight important words <REF TYPE='P'>Fernald and Mazzie 1991</REF> , <REF TYPE='P'>Aslin et al. in press</REF> and that infants are sensitive to prosody <REF TYPE='P'>Hirsh-Pasek et al. 1987</REF> . </S>
+<S ID='S-12' AZ='OTH'> Word stress in English fairly accurately predicts the location of word beginnings <REF TYPE='P'>Cutler and Norris 1988</REF> , <REF TYPE='P'>Cutler and Butterfield 1992</REF> ; <REF TYPE='A'>Jusczyk et al. 1993a</REF> demonstrated that 9-month - olds ( but not 6-month - olds ) are sensitive to the common strong / weak word stress pattern in English . </S>
+<S ID='S-13' AZ='OTH'> Sensitivity to native-language phonotactics in 9-month - olds was recently reported by <REF TYPE='A'>Jusczyk et al. 1993a</REF> . </S>
+<S ID='S-14' AZ='CTR'> These studies demonstrated infants ' perceptive abilities without demonstrating the usefulness of infants ' perceptions . </S>
+</P>
+<P>
+<S ID='S-15' AZ='AIM'> How do children combine the information they perceive from different sources ? </S>
+<S ID='S-16' AZ='OTH'> <REFAUTHOR>Aslin et al.</REFAUTHOR> speculate that infants first learn words heard in isolation , then use distribution and prosody to refine and expand their vocabulary ; however , <REF TYPE='A'>Jusczyk 1993</REF> suggests that sound sequences learned in isolation differ too greatly from those in context to be useful . </S>
+<S ID='S-17' AZ='OTH'> He goes on to say , `` just how far information in the sound structure of the input can bootstrap the acquisition of other levels [ of linguistic organization ] remains to be determined . '' </S>
+</P>
+<P>
+<S ID='S-18' AZ='AIM'> In this paper , we measure the potential roles of distribution , phonotactics and their combination using a computer-simulated learning algorithm ; the simulation is based on a bootstrapping model in which phonotactic knowledge is used to constrain the distributional analysis of speech samples . </S>
+</P>
+<P>
+<S ID='S-19' AZ='BAS'> While our work is in part motivated by the above research , other developmental research supports certain assumptions we make . </S>
+<S ID='S-20' AZ='BAS'> The input to our system is represented as a sequence of phonemes , so we implicitly assume that infants are able to convert from acoustic input to phoneme sequences ; research by <REF TYPE='A'>Grieser and Kuhl 1989</REF> suggests that this assumption is reasonable . </S>
+<S ID='S-21' AZ='BAS'> Since sentence boundaries provide information about word boundaries ( the end of a sentence is also the end of a word ) , our input contains sentence boundaries ; several studies <REF TYPE='P'>Bernstein-Ratner 1985</REF> , <REF TYPE='P'>Hirsh-Pasek et al. 1987</REF> , <REF TYPE='P'>Kemler et al. 1989</REF> , <REF TYPE='P'>Jusczyk et al. 1992</REF>  have shown that infants can perceive sentence boundaries using prosodic cues . </S>
+<S ID='S-22' AZ='CTR'> However , <REF TYPE='A'>Fisher and Tokura in press</REF> found no evidence that prosody can accurately predict word boundaries , so the task of finding words remains . </S>
+<S ID='S-23' AZ='BAS'> Finally , one might question whether infants have the ability we are trying to model -- that is , whether they can identify words embedded in sentences ; <REF TYPE='A'>Jusczyk and Aslin submitted</REF> found that 7 1/2-month - olds can do so . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-1'> The Model </HEADER>
+<P>
+<S ID='S-24' AZ='BKG'> To gain an intuitive understanding of our model , consider the following speech sample ( transcription is in IPA ) : </S>
+</P>
+<IMAGE ID='I-0'/>
+<P>
+<S ID='S-25' AZ='BKG'> There are many different ways to break this sample into putative words ( each particular segmentation is called a segmentation hypothesis ) . </S>
+<S ID='S-26' AZ='BKG'> Two such hypotheses are : </S>
+</P>
+<IMAGE ID='I-1'/>
+<P>
+<S ID='S-27' AZ='BKG'> Listing the words used by each segmentation hypothesis yields the following two lexicons : </S>
+</P>
+<IMAGE ID='I-2'/>
+<P>
+<S ID='S-28' AZ='OWN'> Note that Segmentation <CREF/> , the correct hypothesis , yields a compact lexicon of frequent words whereas Segmentation <CREF/> yields a much larger lexicon of infrequent words . </S>
+<S ID='S-29' AZ='OWN'> Also note that a lexicon contains only the words used in the sample -- no words are known to the system a priori , nor are any carried over from one hypothesis to the next . </S>
+<S ID='S-30' AZ='OWN'> Given a lexicon , the sample can be encoded by replacing words with their respective indices into the lexicon : </S>
+</P>
+<IMAGE ID='I-3'/>
+<P>
+<S ID='S-31' AZ='BAS'> Our simulation attempts to find the hypothesis that minimizes the combined sizes of the lexicon and encoded sample . </S>
+<S ID='S-32' AZ='BAS'> This approach is called the Minimum Description Length ( MDL ) paradigm and has been used recently in other domains to analyze distributional information <REF TYPE='P'>Li and Vitnyi 1993</REF> , <REF TYPE='P'>Rissanen 1978</REF> , <REF TYPE='P'>Ellison 1992</REF> , <REF TYPE='P'>Ellison 1994</REF> , <REF TYPE='P' SELF="YES">Brent 1993</REF> ) . </S>
+<S ID='S-33' AZ='OWN'> For reasons explained in the next section , the system converts these character-based representations to compact binary representations , using the number of bits in the binary string as a measure of size . </S>
+</P>
+<P>
+<S ID='S-34' AZ='OWN'> Phonotactic rules can be used to restrict the segmentation hypothesis space by preventing word boundaries at certain places ; for instance , /ktspz/ ( `` cat 's paws '' ) has six internal segmentation points ( k tspz , k tspz , etc ) , only two of which are phonotactically allowed ( kt spz and kts pz ) . </S>
+<S ID='S-35' AZ='OWN'> To evaluate the usefulness of phonotactic knowledge , we compared results between phonotactically constrained and unconstrained simulations . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-2'> Simulation Details </HEADER>
+<P>
+<S ID='S-36' AZ='OWN'> To use the MDL principle , as introduced above , we search for the smallest-sized hypothesis . </S>
+<S ID='S-37' AZ='OWN'> We must have some well-defined method of measuring hypothesis sizes for this method to work . </S>
+<S ID='S-38' AZ='OTH'> A simple , intuitive way of measuing the size of a hypothesis is to count the number of characters used to represent it . </S>
+<S ID='S-39' AZ='OTH'> For example , counting the characters ( excluding spaces ) in the introductory examples , we see that Hypothesis 1 uses 48 characters and Hypothesis 2 uses 75 . </S>
+<S ID='S-40' AZ='CTR'> However , this simplistic method is inefficient ; for instance , the length of lexical indices are arbitrary with respect to properties of the words themselves ( e.g. , in Hypothesis 2 , there is no reason why /jul/ was assigned the index ` 10 ' -- length two -- instead of ` 9 ' -- length one ) . </S>
+<S ID='S-41' AZ='OWN'> Our system improves upon this simple size metric by computing sizes based on a compact representation motivated by information theory . </S>
+</P>
+<P>
+<S ID='S-42' AZ='OWN'> We imagine hypotheses represented as a string of ones and zeros . </S>
+<S ID='S-43' AZ='OWN'> This binary string must represent not only the lexical entries , their indices ( called code words ) and the coded sample , but also overhead information specifying the number of items coded and their arrangement in the string ( information implicitly given by spacing and spatial placement in the introductory examples ) . </S>
+<S ID='S-44' AZ='OWN'> Furthermore , the string and its components must be self-delimiting , so that a decoder could identify the endpoints of components by itself . </S>
+<S ID='S-45' AZ='TXT'> The next section describes the binary representation and the length formul derived from it in detail ; readers satisfied with the intuitive descriptions presented so far should skip ahead to the Phonotactics sub-section . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-3'> Representation and Length Formulae </HEADER>
+<P>
+<S ID='S-46' AZ='BAS'> The representation scheme described below is based on information theory ( for more examples of coding systems , see, e.g. <REF TYPE='A'>Li and Vitnyi 1993</REF> and <REF TYPE='A'>Quinlan and Rivest 1989</REF> ) . </S>
+<S ID='S-47' AZ='OWN'> From this representation , we can derive a formula describing its length in bits . </S>
+<S ID='S-48' AZ='OWN'> However , the discrete form of the formula would not work well in practice for our simulations . </S>
+<S ID='S-49' AZ='OWN'> Instead , we use a continuous approximation of the discrete formula ; this approximation typically involves dropping the ceiling function from length computations . </S>
+<S ID='S-50' AZ='OWN'> For example , we sometimes use a self-delimiting representation for integers ( as described in <REFAUTHOR>Li and Vitnyi</REFAUTHOR> , pp. 74 - 75 ) . </S>
+<S ID='S-51' AZ='OWN'> In this representation , the number of bits needed to code an integer x is given by  </S>
+</P>
+<IMAGE ID='I-4'/>
+<P>
+<S ID='S-52' AZ='OWN'> However , we use the following approximation : </S>
+</P>
+<IMAGE ID='I-5'/>
+<P>
+<S ID='S-53' AZ='OWN'> Using the discrete formula , the difference between <EQN/> and <EQN/> is zero , while the difference between <EQN/> and <EQN/> is one bit ; using the continuous formula , the difference between <EQN/> and <EQN/> is 0.0156 , while the difference between <EQN/> and <EQN/> is 0.0155 . </S>
+<S ID='S-54' AZ='OWN'> We found it easier to interpret the results using a continuous function , so in the following discussion , we will only present the approximate formulae . </S>
+</P>
+<P>
+<S ID='S-55' AZ='OWN'> The lexicon lists words ( represented as phoneme sequences ) paired with their code words . </S>
+<S ID='S-56' AZ='OWN'> For example : </S>
+</P>
+<IMAGE ID='I-6'/>
+<P>
+<S ID='S-57' AZ='OWN'> In the binary representation , the two columns are represented separately , one after the other ; the first column is called the word inventory column ; the second column is called the code word inventory column . </S>
+</P>
+<P>
+<S ID='S-58' AZ='OWN'> In the word inventory column ( see Figure <CREF/> for a schematic ) , the list of lexical items is represented as a continuous string of phonemes , without separators between words ( e.g. , ktktisi . ) </S>
+<S ID='S-59' AZ='OWN'> To mark the boundaries between lexical items , the phoneme string is preceded by a list of integers representing the lengths ( in phonemes ) of each word . </S>
+<S ID='S-60' AZ='OWN'> Each length is represented as a fixed-length , zero-padded binary number . </S>
+<S ID='S-61' AZ='OWN'> Preceding this list is a single integer denoting the length of each length field ; this integer is represented in unary , so that its length need not be known in advance . </S>
+<S ID='S-62' AZ='OWN'> Preceding the entire column is the number of lexical entries n coded as a self-delimiting integer . </S>
+</P>
+<IMAGE ID='I-7'/>
+<P>
+<S ID='S-63' AZ='OWN'> The length of the representation of the integer n is given by the function </S>
+</P>
+<IMAGE ID='I-8'/>
+<P>
+<S ID='S-64' AZ='OWN'> We define <EQN/> to be the number of phonemes in word <EQN/> . </S>
+<S ID='S-65' AZ='OWN'> If there are p total unique phonemes used in the sample , then we represent each phoneme as a fixed-length bit string of length <EQN/> . </S>
+<S ID='S-66' AZ='OWN'> So , the length of the representation of a word <EQN/> in the lexicon is the number of phonemes in the word times the length of a phoneme : <EQN/> . </S>
+<S ID='S-67' AZ='OWN'> The total length of all the words in the lexicon is the sum of this formula over all lexical items : </S>
+</P>
+<IMAGE ID='I-9'/>
+<P>
+<S ID='S-68' AZ='OWN'> As stated above , the length fields used to divide the phoneme string are fixed-length . </S>
+<S ID='S-69' AZ='OWN'> In each field is an integer between one and the number of phonemes in the longest word . </S>
+<S ID='S-70' AZ='OWN'> Since representing integers between one and x takes <EQN/> bits , the length of each field is : </S>
+</P>
+<IMAGE ID='I-10'/>
+<P>
+<S ID='S-71' AZ='OWN'> To be fully self-delimiting , the width of a field must be represented in a self-delimiting way ; we use a unary representation -- i.e. , write an extra field consisting of only ` 1 ' bits followed by a terminating ` 0 ' . </S>
+<S ID='S-72' AZ='OWN'> There are n fields ( one for each word ) , plus the unary prefix , so the combined length of the fields plus prefix ( plus terminating zero ) is : </S>
+</P>
+<P>
+<S ID='S-73' AZ='OWN'> <EQN/> </S>
+<S ID='S-74' AZ='OWN'> The total length of the word inventory column representation is the sum of the terms in <CREF/> , <CREF/> and <CREF/> . </S>
+</P>
+<P>
+<S ID='S-75' AZ='OWN'> The code word inventory column of the lexicon ( see Figure <CREF/> for a schematic ) has a nearly identical representation as the previous column except that code words are listed instead of phonemic words -- the length fields and unary prefix serve the same purpose of marking the divisions between code words . </S>
+</P>
+<P>
+<S ID='S-76' AZ='OWN'> The sample can be represented most compactly by assigning short code words to frequent words , reserving longer code words for infrequent words . </S>
+<S ID='S-77' AZ='OWN'> To satisfy this property , code words are assigned so that their lengths are frequency-based ; the length of the code word for a word of frequency f(w) will not be greater than : </S>
+</P>
+<IMAGE ID='I-11'/>
+<P>
+<S ID='S-78' AZ='OWN'> The total length of the code word list is the sum of the code word lengths over all lexical entries : </S>
+</P>
+<IMAGE ID='I-12'/>
+<P>
+<S ID='S-79' AZ='OWN'> As in the word inventory column ( described above ) , the length of each code word is represented in a fixed-length field . </S>
+<S ID='S-80' AZ='OWN'> Since the least frequent word will have the longest code word ( a property of the formula for <EQN/> ) , the longest possible code word comes from a word of frequency one : </S>
+</P>
+<IMAGE ID='I-13'/>
+<P>
+<S ID='S-81' AZ='OWN'> Since the fields contains integers between one and this number , we define the length of a field to be : </S>
+</P>
+<IMAGE ID='I-14'/>
+<P>
+<S ID='S-82' AZ='OWN'> As above , we represent the width of a field in unary , so there are a total of n + 1 elements of this size ( n fields plus the unary representation of the field width ) . </S>
+<S ID='S-83' AZ='OWN'> The combined length of the fields plus prefix ( and terminating zero ) is : </S>
+</P>
+<IMAGE ID='I-15'/>
+<P>
+<S ID='S-84' AZ='OWN'> The total length of the code word inventory column representation is the sum of the terms in <CREF/> and <CREF/> . </S>
+</P>
+<P>
+<S ID='S-85' AZ='OWN'> Finally , the sequence of words which form the sample ( see Figure <CREF/> for a schematic ) is represented as the number of words in the sample ( m ) followed by the list of code words . </S>
+<S ID='S-86' AZ='OWN'> Since code words are used as compact indices into the lexicon , the original sample could be reconstructed completely by looking up each code word in this list and replacing it with its phoneme sequence from the lexicon . </S>
+<S ID='S-87' AZ='OWN'> The code words we assigned to lexical items are self-delimiting ( once the set of codes is known ) , so there is no need to represent the boundaries between code words . </S>
+</P>
+<P>
+<S ID='S-88' AZ='OWN'> The length of the representation of the integer m is given by the function  </S>
+</P>
+<IMAGE ID='I-16'/>
+<P>
+<S ID='S-89' AZ='OWN'> The length of the representation of the sample is computed by summing the lengths of the code words used to represent the sample . </S>
+<S ID='S-90' AZ='OWN'> We can simplify this description by noting that the combined length of all occurrences of a particular code word <EQN/> is <EQN/> since there are <EQN/> occurrences of the code word in the sample . </S>
+<S ID='S-91' AZ='OWN'> So , the length of the encoded sample is the sum of this formula over all words in the lexicon : </S>
+</P>
+<IMAGE ID='I-17'/>
+<P>
+<S ID='S-92' AZ='OWN'> The total length of the sample is given by adding the terms in <CREF/> and <CREF/> . </S>
+<S ID='S-93' AZ='OWN'> The total length of the representation of the entire hypothesis is the sum of the representation lengths of the word inventory column , the code word inventory column and the sample . </S>
+</P>
+<P>
+<S ID='S-94' AZ='OWN'> This system of computing hypothesis sizes is efficient in the sense that elements are thought of as being represented compactly and that code words are assigned based on the relative frequencies of words . </S>
+<S ID='S-95' AZ='OWN'> The final evaluation given to a hypothesis is an estimate of the minimal number of bits required to transmit that hypothesis . </S>
+<S ID='S-96' AZ='OWN'> As such , it permits direct comparison between competing hypotheses ; that is , the shorter the representation of some hypothesis , the more distributional information can be extracted and , therefore , the better the hypothesis . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-4'> Phonotactics </HEADER>
+<P>
+<S ID='S-97' AZ='OWN'> Phonotactic knowledge was given to the system as a list of licit initial and final consonant clusters of English words ; this list was checked against all six samples so that the list was maximally permissive ( e.g. , the underlined consonant cluster in explore could be divided as ek-splore or eks-plore ) . </S>
+<S ID='S-98' AZ='OWN'> In those simulations which used the phonotactic knowledge , a word boundary could not be inserted when doing so would create a word initial or final consonant cluster not on the list or would create a word without a vowel . </S>
+<S ID='S-99' AZ='OWN'> For example ( from an actual sample -- corresponds to the utterance , `` Want me to help baby ? '' ) : </S>
+</P>
+<IMAGE ID='I-18'/>
+<P>
+<S ID='S-100' AZ='OWN'> In the second line , those word boundaries that are phonotactically legal are marked with dots . </S>
+<S ID='S-101' AZ='OWN'> The boundary between /w/ and /a/ is illegal because /w/ by itself is not a legal word in English ; the boundary between /a/ and /n/ is illegal because /ntm/ is not a valid word initial consonant cluster ; the boundary between /m/ and /i/ is illegal because /ntm/ is also not a valid word final consonant cluster ; the boundary between /p/ and /b/ is legal because /lp/ is a valid word final cluster and /b/ is a valid word initial cluster . </S>
+<S ID='S-102' AZ='OWN'> Note that using the phonotactic constraints reduces the number of potential word boundaries from fifteen to six in this example . </S>
+</P>
+<P>
+<S ID='S-103' AZ='OWN'> After the system inserts a new word boundary , it updates the list of remaining valid insertion points -- adding a point may cause nearby points to become unusable due to the restriction that every word must have a vowel . </S>
+<S ID='S-104' AZ='OWN'> For example ( corresponding to the utterance `` green and '' ) : </S>
+</P>
+<IMAGE ID='I-19'/>
+<P>
+<S ID='S-105' AZ='OWN'> After the segmentation of /grin/ and /nd/ , the potential boundary between /i/ and /n/ becomes invalid because inserting a word boundary there would produce a word with no vowel ( /n/ ) . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-5'> Inputs and Simulations </HEADER>
+<P>
+<S ID='S-106' AZ='OWN'> Two speech samples from each of three subjects were used in the simulations ; in one sample a mother was speaking to her daughter and in the other , the same mother was speaking to the researcher . </S>
+<S ID='S-107' AZ='BAS'> The samples were taken from the CHILDES database <REF TYPE='P'>MacWhinney and Snow 1990</REF> from studies reported in <REF TYPE='A'>Bernstein 1982</REF> . </S>
+<S ID='S-108' AZ='OWN'> Each sample was checked for consistent word spellings ( e.g. , 'ts was changed to its ) , then was transcribed into an ASCII-based phonemic representation . </S>
+<S ID='S-109' AZ='OWN'> The transcription system was based on IPA and used one character for each consonant or vowel ; diphthongs , r-colored vowels and syllabic consonants were each represented as one character . </S>
+<S ID='S-110' AZ='OWN'> For example , `` boy '' was written as b7 , `` bird '' as bRd and `` label '' as lebL . </S>
+<S ID='S-111' AZ='OWN'> For purposes of phonotactic constraints , syllabic consonants were treated as vowels . </S>
+<S ID='S-112' AZ='OWN'> Sample lengths were selected to make the number of available segmentation points nearly equal ( about 1,350 ) when no phonotactic constraints were applied ; child-directed samples had 498 - 536 tokens and 153 - 166 types , adult-directed samples had 443 - 484 tokens and 196 - 205 types . </S>
+<S ID='S-113' AZ='OWN'> Finally , before the samples were fed to the simulations , divisions between words ( but not between sentences ) were removed . </S>
+</P>
+<P>
+<S ID='S-114' AZ='OWN'> The space of possible hypotheses is vast , so some method of finding a minimum-length hypothesis without considering all hypotheses is necessary . </S>
+<S ID='S-115' AZ='OWN'> We used the following method : first , evaluate the input sample with no segmentation points added ; then evaluate all hypotheses obtained by adding one or two segmentation points ; take the shortest hypothesis found in the previous step and evaluate all hypotheses obtained by adding one or two more segmentation points ; continue this way until the sample has been segmented into the smallest possible units and report the shortest hypothesis ever found . </S>
+<S ID='S-116' AZ='OWN' TYPE='ITEM'> Two variants of this simulation were used : </S>
+<S ID='S-117' TYPE='ITEM' AZ='OWN'> DIST-FREE was free of any phonotactic restrictions on the hypotheses it could form ( DIST refers to the measurement of distributional information ) , whereas </S>
+<S ID='S-118' TYPE='ITEM' AZ='OWN'> DIST-PHONO used the phonotactic restrictions described above . </S>
+<S ID='S-119' AZ='OWN'> Each simulation was run on each sample , for a total of twelve DIST runs . </S>
+</P>
+<P>
+<S ID='S-120' AZ='OWN' TYPE='ITEM'> Finally , two other simulations were run on each sample to measure chance performance : </S>
+<S ID='S-121' TYPE='ITEM' AZ='OWN'> RAND-FREE inserted random segmentation points and reported the resulting hypothesis , </S>
+<S ID='S-122' TYPE='ITEM' AZ='OWN'> RAND-PHONO inserted random segmentation points where permitted by the phonotactic constraints . </S>
+<S ID='S-123' AZ='OWN'> Since the RAND simulations were given the number of segmentation points to add ( equal to the number of segmentation points needed to produce the natural English segmentation ) , their performance is an upper bound on chance performance . </S>
+<S ID='S-124' AZ='OWN'> In contrast , the DIST simulations must determine the number of segmentation points to add using MDL evaluations . </S>
+<S ID='S-125' AZ='OWN'> The results for each RAND simulation are averages over 1,000 trials on each input sample . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-6'> Results </HEADER>
+<P>
+<S ID='S-126' AZ='OWN'> Each simulation was scored for the number of correct segmentation points inserted , as compared to the natural English segmentation . </S>
+<S ID='S-127' AZ='OWN' TYPE='ITEM'> From this scoring , two values were computed : </S>
+<S ID='S-128' TYPE='ITEM' AZ='OWN'> recall , the percent of all correct segmentation points that were actually found ; and </S>
+<S ID='S-129' TYPE='ITEM' AZ='OWN'> accuracy , the percent of the hypothesized segmentation points that were actually correct . </S>
+<S ID='S-130' AZ='OWN'> In terms of hits , false alarms and misses , we have : </S>
+</P>
+<IMAGE ID='I-20'/>
+<P>
+<S ID='S-131' AZ='OWN'> Results are given in Table <CREF/> . </S>
+<S ID='S-132' AZ='OWN'> Note that there is a trade-off between recall and accuracy -- if all possible segmentation points were added , recall would be 100 % but accuracy would be low ; likewise , if only one segmentation point was added between two words , accuracy would be 100 % but recall would be low . </S>
+<S ID='S-133' AZ='OWN'> Since our goal is to correctly segment speech , accuracy is more important than finding every correct segmentation . </S>
+<S ID='S-134' AZ='OWN'> For example , deciding ` littlekitty ' is a word is less disastrous than deciding ` li ' , ` tle ' , ` ki ' and ` ty ' are all words , because assigning meaning to ` littlekitty ' is a reasonable first try at learning word-meaning pairs , whereas trying to assign separate meanings to ` li ' and ` tle ' is problematic . </S>
+</P>
+<P>
+<S ID='S-135' AZ='OWN'> The performance of DIST-PHONO on child-directed speech shows that this system goes a long way toward solving the segmentation problem . </S>
+<S ID='S-136' AZ='OWN'> However , comparing the average performances of simulations is also useful . </S>
+<S ID='S-137' AZ='OWN'> The effect of phonotactic information can be seen by comparing the average performances of RAND-FREE and RAND-PHONO , since the only difference between them is the addition of phonotactic constraints on segmentations in the latter . </S>
+<S ID='S-138' AZ='OWN'> Clearly phonotactic constraints are useful , as both recall and accuracy improve . </S>
+<S ID='S-139' AZ='OWN'> A similar comparison between RAND-FREE and DIST-FREE shows that distributional information alone also improves performance . </S>
+<S ID='S-140' AZ='OWN'> Note in all the results of DIST-FREE that using distributional information alone favors recall over accuracy ; in fact , the segmentation hypotheses produced by DIST-FREE have most words broken into single phoneme units with only a handful of words remaining intact . </S>
+<S ID='S-141' AZ='OWN'> Two comparisons are needed to show that the combination of distributional and phonotactic information performs better than either source alone : DIST-PHONO compared to RAND-PHONO , to see the effect of adding distributional analysis to phonotactic constraints , and DIST-PHONO compared to DIST-FREE , to see the effect of adding phonotactic constraints to distributional analysis . </S>
+<S ID='S-142' AZ='OWN'> The former comparison shows that the sources combined are more useful than phonotactic information alone . </S>
+<S ID='S-143' AZ='OWN'> The latter comparison is less obvious -- the trade-off between recall and accuracy seems to have reversed , with no clear winner . </S>
+<S ID='S-144' AZ='OWN'> Data on discovered word types helps make this comparison : DIST-FREE found 12 % of the words with 30 % accuracy and DIST-PHONO found 33 % of the words with 50 % accuracy . </S>
+<S ID='S-145' AZ='OWN'> Whereas the segmentation point data are inconclusive , word type data demonstrate that combining information sources is more useful than using distributional information alone . </S>
+</P>
+<P>
+<S ID='S-146' AZ='OWN'> There is no obvious difference in performance between child - and adult-directed speech , except in DIST-PHONO ( combined information sources ) in which the difference is striking : accuracy remains high and recall rate more than triples for child-directed speech . </S>
+<S ID='S-147' AZ='OWN'> This difference is again supported by word type data : 14 % recall with 30 % accuracy for adult-directed speech , 56 % recall with 65 % accuracy for child-directed speech . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-7'> Discussion </HEADER>
+<P>
+<S ID='S-148' AZ='AIM'> Our technique segments continuous speech into words using only distributional and phonotactic information more effectively than one might expect -- up to 66 % recall of segmentation points with 92 % accuracy on one sample , which yields 58 % recall of word types with 67 % accuracy ( the relatively low type accuracy is mitigated by the fact that most incorrect words are meaningful concatenations of correct words -- e.g. , ` thekitty ' ) . </S>
+<S ID='S-149' AZ='BAS'> This finding confirms the idea that distribution and phonotactics are useful sources of information that infants might use in discovering words <REF TYPE='P'>Jusczyk et al. 1993b</REF> . </S>
+<S ID='S-150' AZ='OWN'> In fact , it helps explain infants ' ability to learn words from parental speech : these two sources alone are useful and infants have several others , like prosody and word stress patterns , available as well . </S>
+<S ID='S-151' AZ='OWN'> It also suggests that semantics and isolated words need not play as central a role as one might think ( e.g., <REF TYPE='A'>Jusczyk 1993</REF>  downplayed the utility of words in isolation ) . </S>
+<S ID='S-152' AZ='OWN'> It is difficult , if not impossible given currently available methods , to determine which sources of information are necessary for infants to segment speech and learn words ; only this sort of indirect evidence is available to us . </S>
+</P>
+<P>
+<S ID='S-153' AZ='OWN'> The results show a difference between adult - and child-directed speech , in that the latter is easier to segment given both distribution and phonotactics . </S>
+<S ID='S-154' AZ='BAS'> This lends quantitative support to research which suggests that motherese differs from normal adult speech in ways possibly useful to the language-learning infant <REFAUTHOR>Aslin et al.</REFAUTHOR> . </S>
+<S ID='S-155' AZ='OWN'> In fact , the factors making motherese more learnable might be elucidated using this technique : compare the results of several different models , each containing a different factor or combination of factors , looking for those in which a substantial performance difference exists between child - and adult-directed speech . </S>
+</P>
+<P>
+<S ID='S-156' AZ='OWN'> Our model uses phonotactic constraints as absolute requirements on the structure of individual words ; this implies that phonotactics have been learned prior to attempts at segmentation . </S>
+<S ID='S-157' AZ='OWN'> We must therefore show that phonotactics can indeed be learned without access to a lexicon -- without such a demonstration , we are trapped in circular reasoning . </S>
+<S ID='S-158' AZ='OWN'> <REF TYPE='A' SELF="YES">Gafos and Brent 1994</REF> demonstrate that phonotactics can be learned with high accuracy from the same unsegmented utterances we used in our simulations . </S>
+<S ID='S-159' AZ='OWN'> In general , two methods exist for combining information sources in the MDL paradigm : one is to have absolute requirements on plausible hypotheses ( like our phonotactic constraints ) -- these requirements must be independently learnable ; the other method of combination is to include an information source in the internal representation of hypotheses ( like our distributional information ) -- all components of the representation are learned simultaneously ( see <REF TYPE='A'>Ellison 1992</REF> , for an example of multiple components in a representation ) . </S>
+</P>
+<P>
+<S ID='S-160' AZ='OWN'> We would like to extend the system by using a more detailed transcription system . </S>
+<S ID='S-161' AZ='OWN'> We expect that this would help the system find word boundaries for reasons detailed in <REF TYPE='A'>Church 1987</REF> -- in brief , that allophonic variation may be quite useful in predicting word boundaries . </S>
+<S ID='S-162' AZ='OWN'> Another simpler extension of this research will be to increase the length of the speech samples used . </S>
+<S ID='S-163' AZ='OWN'> Finally , we will try the current system on samples from other languages , to make sure this method generalizes appropriately . </S>
+</P>
+<P>
+<S ID='S-164' AZ='OWN'> This research program will provide complementary evidence supporting hypotheses about the sources of information infants use in learning their native languages . </S>
+<S ID='S-165' ABSTRACTC='A-2' AZ='AIM'> Until now , research has focused on demonstrations of infants ' sensitivity to various sources ; we have begun to provide quantitative measures of the usefulness of those sources . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+Richard N. <SURNAME>Aslin</SURNAME>, Julide Z. <SURNAME>Woodward</SURNAME>, Nicholas P. <SURNAME>LaMendola</SURNAME>, and
+Thomas G. <SURNAME>Bever</SURNAME>.
+<DATE>In press</DATE>.
+Models of word segmentation in fluent maternal speech to infants.
+In Morgan amp; Demuth (Eds.), Signal to Syntax: Bootstrapping from
+  Speech to Syntax in Early Acquisition. Erlbaum, Hillsdale, NJ.
+</REFERENCE>
+<REFERENCE>
+Nan <SURNAME>Bernstein</SURNAME>.
+<DATE>1982</DATE>.
+Acoustic study of mothers' speech to language-learning children:
+  An analysis of vowel articulatory characteristics.
+Unpublished doctoral dissertation, Boston University.
+</REFERENCE>
+<REFERENCE>
+Nan <SURNAME>Bernstein-Ratner</SURNAME>.
+<DATE>1985</DATE>.
+Cues which mark clause-boundaries in mother-child speech.
+Paper presented at the meeting of the American Speech-Language
+  Hearing Association, Washington DC.
+</REFERENCE>
+<REFERENCE>
+Michael R. <SURNAME>Brent</SURNAME>
+<DATE>1993</DATE>.
+Minimal generative explanations: A middle ground between neurons and
+  triggers.
+In Proceedings of the 15th Annual Conference of the Cognitive
+  Science Society, pages 28-36, Boulder, Colorado.
+</REFERENCE>
+<REFERENCE>
+Kenneth <SURNAME>Church</SURNAME>.
+<DATE>1987</DATE>.
+Phonological parsing and lexical retrieval.
+Cognition, 25:53-69.
+</REFERENCE>
+<REFERENCE>
+Anne <SURNAME>Cutler</SURNAME>, and Sally <SURNAME>Butterfield</SURNAME>.
+<DATE>1992</DATE>.
+Rhythmic cues to speech segmentation: Evidence from juncture
+  misperception.
+Journal of Memory amp; Language, 31:218-236.
+</REFERENCE>
+<REFERENCE>
+Anne <SURNAME>Cutler</SURNAME>, and David M. <SURNAME>Carter</SURNAME>.
+<DATE>1987</DATE>.
+The predominance of strong initial syllables in the English
+  vocabulary.
+Computer Speech and Language, 2:133-142.
+</REFERENCE>
+<REFERENCE>
+Anne <SURNAME>Cutler</SURNAME>, and D. G. <SURNAME>Norris</SURNAME>.
+<DATE>1988</DATE>.
+The role of strong syllables in segmentation for lexical access.
+Journal of Experimental Psychology: Humen Perception and
+  Performance, 14:113-121.
+</REFERENCE>
+<REFERENCE>
+T. Mark <SURNAME>Ellison</SURNAME>.
+<DATE>1992</DATE>.
+The Machine Learning of Phonological Structure.
+Unpublished doctoral dissertation, University of Western Australia.
+</REFERENCE>
+<REFERENCE>
+T. Mark <SURNAME>Ellison</SURNAME>.
+<DATE>In press</DATE>.
+The iterative learning of phonological rules.
+Computational Linguistics.
+</REFERENCE>
+<REFERENCE>
+Anne <SURNAME>Fernald</SURNAME>, and Claudia <SURNAME>Mazzie</SURNAME>.
+<DATE>1991</DATE>.
+Prosody and focus in speech to infants and adults.
+Developmental Psychology, 27:209-221.
+</REFERENCE>
+<REFERENCE>
+Cindy <SURNAME>Fisher</SURNAME>, H. <SURNAME>Tokura</SURNAME>.
+<DATE>In press</DATE>.
+Acoustic cues to clause boundaries in speech to infants:
+  Cross-linguistic evidence.
+In Morgan amp; Demuth (Eds.), Signal to Syntax: Bootstrapping from
+  Speech to Syntax in Early Acquisition, Erlbaum, Hillsdale, NJ.
+</REFERENCE>
+<REFERENCE>
+Adamantios <SURNAME>Gafos</SURNAME>, and Michael R. <SURNAME>Brent</SURNAME>.
+<DATE>1994</DATE>.
+Learning syllable structure without word boundaries.
+Paper presented at the <DATE>1994</DATE> Stanford Child Language Research Forum,
+  Stanford, CA.
+</REFERENCE>
+<REFERENCE>
+Dianne <SURNAME>Grieser</SURNAME>, and Patricia K. <SURNAME>Kuhl</SURNAME>.
+<DATE>1989</DATE>.
+The categorization of speech by infants: Support for speech-sound
+  prototypes.
+Developmental Psychology, 25:577-588.
+</REFERENCE>
+<REFERENCE>
+Kathy <SURNAME>Hirsh-Pasek</SURNAME>, Deborah G. <SURNAME>Kemler</SURNAME> <SURNAME>Nelson</SURNAME>, Peter W. <SURNAME>Jusczyk</SURNAME>, K.
+  Wright <SURNAME>Cassidy</SURNAME>, B. Druss, and L. <SURNAME>Kennedy</SURNAME>.
+<DATE>1987</DATE>.
+Clauses are perceptual units for young infants.
+Cognition, 26:269-286.
+</REFERENCE>
+<REFERENCE>
+Peter W. <SURNAME>Jusczyk</SURNAME>.
+<DATE>1993</DATE>.
+Discovering sound patterns in the native language.
+In Proceedings of the 15th Annual Conference of the Cognitive
+  Science Society, pages 49-60, Boulder, Colorado.
+</REFERENCE>
+<REFERENCE>
+Peter W. <SURNAME>Jusczyk</SURNAME>, and Richard N. <SURNAME>Aslin</SURNAME>.
+Submitted for publication.
+Recognition of familiar patterns in fluent speech by 7 1/2-month-old
+  infants.
+</REFERENCE>
+<REFERENCE>
+Peter W. <SURNAME>Jusczyk</SURNAME>, Anne <SURNAME>Cutler</SURNAME>, and Nancy J. <SURNAME>Redanz</SURNAME>.
+<DATE>1993</DATE>.
+Infants' preference for the predominant stress patterns of English
+  words.
+Child Development, 64:675-687.
+</REFERENCE>
+<REFERENCE>
+Peter W. <SURNAME>Jusczyk</SURNAME>, Angela D. <SURNAME>Friederici</SURNAME>, Jeanine M. <SURNAME>Wessels</SURNAME>, Vigdis Y.
+  <SURNAME>Svenkerud</SURNAME>, and A. M. <SURNAME>Jusczyk</SURNAME>.
+<DATE>1993</DATE>.
+Infants' sensitivity to the sound patterns of native language words.
+Journal of Memory amp; Language, 32:402-420.
+</REFERENCE>
+<REFERENCE>
+Peter W. <SURNAME>Jusczyk</SURNAME>, Kathy <SURNAME>Hirsh-Pasek</SURNAME>, Deborah G. <SURNAME>Kemler</SURNAME> <SURNAME>Nelson</SURNAME>, Lori J. <SURNAME>Kennedy</SURNAME>,
+  Amanda Woodward, and Julie Piwoz.
+<DATE>1992</DATE>.
+Perception of acoustic correlates of major phrasal units by young
+  infants.
+Cognitive Psychology, 24:252-293.
+</REFERENCE>
+<REFERENCE>
+Deborah G. <SURNAME>Kemler</SURNAME> <SURNAME>Nelson</SURNAME>, Kathy <SURNAME>Hirsh-Pasek</SURNAME>, Peter W. <SURNAME>Jusczyk</SURNAME>, and K.
+  Wright Cassidy.
+<DATE>1989</DATE>.
+How the prosodic cues in motherese might assist language learning.
+Journal of Child Language, 16:55-68.
+</REFERENCE>
+<REFERENCE>
+Ming <SURNAME>Li</SURNAME>, and Paul <SURNAME>Vitnyi</SURNAME>.
+<DATE>1993</DATE>.
+An Introduction to Kolmogorov Complexity and its Applications.,
+  Springer-Verlag, New York, NY.
+</REFERENCE>
+<REFERENCE>
+Brian <SURNAME>MacWhinney</SURNAME>, and C. <SURNAME>Snow</SURNAME>.
+<DATE>1990</DATE>.
+The Child Language Data Exchange System: An update.
+Journal of Child Language, 17:457-472.
+</REFERENCE>
+<REFERENCE>
+J. R. <SURNAME>Quinlan</SURNAME>, and R. L. <SURNAME>Rivest</SURNAME>.
+<DATE>1989</DATE>.
+Inferring decision trees using the minimum description length
+  principle.
+Information and Computing, 80:227-248.
+</REFERENCE>
+<REFERENCE>
+J. <SURNAME>Rissanen</SURNAME>.
+<DATE>1978</DATE>.
+Modeling by shortest data description.
+Automatica, 14:465-471.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

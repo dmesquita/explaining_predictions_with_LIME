@@ -1,0 +1,6 @@
+{
+  "dataset_reader_test.py::TestSemanticScholarDatasetReader::test_read_from_file": true,
+  "label_test.py::AllenNlpTestCase": true,
+  "label_test.py::TestLabelField": true,
+  "tests/dataset_readers/dataset_reader_test.py": true
+}

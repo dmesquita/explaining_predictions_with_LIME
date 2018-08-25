@@ -1,0 +1,528 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9503018</FILENO>
+<REFLABEL>Walker 1994c</REFLABEL>
+<APPEARED><CONFERENCE>COLING</CONFERENCE><YEAR>1994</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.Dc </CLASSIFICATION>
+</METADATA>
+<TITLE> Discourse and Deliberation : Testing a Collaborative Strategy </TITLE>
+<AUTHORLIST>
+<AUTHOR>Marilyn A. Walker</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' AZ='BKG'> A discourse strategy is a strategy for communicating with another agent . </A-S>
+<A-S ID='A-1' AZ='OWN' DOCUMENTC='S-162;S-2'> Designing effective dialogue systems requires designing agents that can choose among discourse strategies . </A-S>
+<A-S ID='A-2' AZ='AIM'> We claim that the design of effective strategies must take cognitive factors into account , propose a new method for testing the hypothesized factors , and present experimental results on an effective strategy for supporting deliberation . </A-S>
+<A-S ID='A-3' DOCUMENTC='S-165' AZ='OWN'> The proposed method of computational dialogue simulation provides a new empirical basis for computational linguistics . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> A discourse strategy is a strategy for communicating with another agent . </S>
+<S ID='S-1' AZ='BKG'> Agents make strategy choices via decisions about when to talk , when to let the other agent talk , what to say , and how to say it . </S>
+<S ID='S-2' ABSTRACTC='A-1' AZ='BKG'> One choice a conversational agent must make is whether an utterance should include some relevant , but optional , information in what is communicated . </S>
+<S ID='S-3' AZ='BKG'> For example , consider <CREF/> : </S>
+</P>
+<EXAMPLE ID='E-0'>
+<EX-S> Let 's walk along Walnut St. </EX-S>
+<EX-S> It 's shorter . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-4' AZ='BKG'> The speaker made a strategic choice in <CREF/> to include <CREF/> since she could have simply said <CREF/> . </S>
+<S ID='S-5' AZ='BKG'> What determines the speaker 's choice ?</S>
+<S ID='S-6' AZ='OTH' TYPE='ITEM'> Existing dialogue systems have two modes for dealing with optional information : </S>
+<S ID='S-7' TYPE='ITEM' AZ='OTH' > include all optional information that is not already known to the hearer ; </S>
+<S ID='S-8' TYPE='ITEM' AZ='OTH' > include no optional information <REF TYPE='P'>Moore and Paris 1993</REF> . </S>
+<S ID='S-9' AZ='CTR'> But these modes are simply the extremes of possibility and to my knowledge , no previous work has proposed any principles for when to include optional information , or any way of testing the proposed principles to see how they are affected by the conversants and their processing abilities , by the task , by the communication channel , or by the domain . </S>
+</P>
+<P>
+<S ID='S-10' AZ='AIM'> This paper presents a new experimental method for determining whether a discourse strategy is effective and presents experimental results on a strategy for supporting deliberation . </S>
+<S ID='S-11' AZ='BAS'> The method is based on earlier simulation work by <REFAUTHOR>Carletta and Pollack</REFAUTHOR> <REF  TYPE='P'>Carletta 1992</REF>, <REF  TYPE='P'>Pollack and Ringuette 1990</REF> . </S>
+<S ID='S-12' AZ='TXT'> Section <CREF/> outlines hypotheses about the factors that affect which strategies are effective . </S>
+<S ID='S-13' AZ='TXT'> Section <CREF/> presents a new method for testing the role of the hypothesized factors . </S>
+<S ID='S-14' AZ='TXT'> The experimental results in section <CREF/> show that effective strategies to support deliberation are determined by both cognitive and task variables . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Deliberation in Discourse </HEADER>
+<IMAGE ID='I-0'/>
+<P>
+<S ID='S-15' AZ='BKG'> Deliberation is the process by which an agent decides what to believe and what to do <REF  TYPE='P'>Galliers 1991</REF>, <REF  TYPE='P'>Doyle 1992</REF> . </S>
+<S ID='S-16' AZ='OTH'> One strategy that supports deliberation is the Explicit-Warrant strategy , as in <CREF/> . </S>
+<S ID='S-17' AZ='OTH'> The WARRANT in <CREF/> can be used by the hearer in deliberating whether to ACCEPT or REJECT the speaker 's PROPOSAL in <CREF/> . </S>
+</P>
+<P>
+<S ID='S-18' AZ='OTH'> An analysis of proposals in a corpus of 55 problem-solving dialogues shows that communicating agents don't always include warrants in a proposal , and suggest a number of hypotheses about which factors affect their decision <REF  SELF="YES" TYPE='P'>Walker 1993</REF>, <REF  TYPE='P'>Pollack et al. 1982</REF> . </S>
+</P>
+<P>
+<S ID='S-19' AZ='OTH'> Consider a situation in which an agent A wants an agent B to accept a proposal P . </S>
+<S ID='S-20' AZ='OTH'> If B is a ` helpful ' agent ( nonautonomous ) , B will accept A 's proposal without a warrant . </S>
+<S ID='S-21' AZ='OTH'> Alternatively , if B deliberates whether to accept P , but B knows of no competing options , then P will be the best option whether or not A tells B the warrant for P . </S>
+<S ID='S-22' AZ='OTH'> Since a warrant makes the dialogue longer , the Explicit-Warrant strategy might be inefficient whenever either of these situations hold . </S>
+<S ID='S-23' AZ='BKG'> Now consider a situation where B is an autonomous agent <REF TYPE='P'>Galliers 1991</REF> . </S>
+<S ID='S-24' AZ='BKG'> B always deliberates every proposal and B probably knows of options which compete with proposal P. Then B cannot decide whether to accept P without a warrant . </S>
+<S ID='S-25' AZ='BKG'> Supposedly agent A should omit a warrant is if it is already believed by B , so that the speaker in <CREF/> would not have said It 's shorter if she believed that the hearer knew that the Walnut St. route was shorter . </S>
+<S ID='S-26' AZ='BKG'> However , consider <CREF/> , said in discussing which Indian restaurant to go to for lunch : </S>
+</P>
+<EXAMPLE ID='E-1'>
+<EX-S> Listen to Ramesh . </EX-S>
+<EX-S> He 's Indian . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-27' AZ='BKG'> The warrant in <CREF/> was included despite the fact that it was common knowledge among the conversants . </S>
+<S ID='S-28' AZ='OTH'> Its inclusion violates the rule of Don't tell people facts that they already know . </S>
+<S ID='S-29' AZ='OTH'> Clearly the rule does not hold . </S>
+<S ID='S-30' AZ='OTH'> These already-known warrants are a type of INFORMATIONALLY REDUNDANT UTTERANCE , henceforth IRU , which are surprisingly frequent in naturally-occurring dialogue <REF SELF="YES" TYPE='P'>Walker 1993</REF> . </S>
+</P>
+<P>
+<S ID='S-31' AZ='OWN'> A Warrant IRU such as that in <CREF/> suggests that B 's cognitive limitations may be a factor in what A chooses to say , so that even if B knows a warrant for adopting A 's proposal , what is critical is whether the warrant is salient for B , i.e. whether the warrant is already accessible in B 's working memory <REF  TYPE='P'>Prince 1981</REF>, <REF  TYPE='P'>Baddeley 1986</REF> . </S>
+<S ID='S-32' AZ='OWN'> If the warrant is not already salient , then B must either infer or retrieve the warrant information or obtain it from an external source in order to evaluate A 's proposal . </S>
+<S ID='S-33' AZ='OWN'> Thus A 's strategy choice may depend on A 's model of B 's attentional state , as well as the costs of retrieval and inference as opposed to communication . </S>
+<S ID='S-34' AZ='OWN'> In other words , A may decide that it is easier to just say the warrant rather than require B to infer or retrieve it . </S>
+</P>
+<P>
+<S ID='S-35' AZ='OWN'> Finally , the task determines whether there are penalties for leaving a warrant implicit and relying on B to infer or retrieve it . </S>
+<S ID='S-36' AZ='OWN'> Some tasks require that two agents agree on the reasons for adopting a proposal , e.g. in order to ensure robustness in situations of environmental change . </S>
+<S ID='S-37' AZ='OWN'> Other tasks , such as a management / union negotiation , only require the agents to agree on the actions to be carried out and each agent can have its own reasons for wanting those actions to be done without affecting success in the task . </S>
+</P>
+<P>
+<S ID='S-38' AZ='OWN'> Figure <CREF/> summarizes these hypotheses by proposing a hypothetical decision tree for an agent 's choice of whether to use the Explicit-Warrant strategy . </S>
+<S ID='S-39' AZ='OWN'> The choice is hypothesized to depend on cognitive properties of B , e.g. what B knows , B 's attentional state , and B 's processing capabilities , as well as properties of the task and the communication channel . </S>
+<S ID='S-40' AZ='CTR'> To my knowledge , all previous work on dialogue has simply assumed that an agent should never tell an agent facts that the other agent already knows . </S>
+<S ID='S-41' AZ='CTR'> The hypotheses in figure <CREF/> seem completely plausible , but the relationship of cognitive effort to dialogue behavior has never been explored . </S>
+<S ID='S-42' AZ='OWN'> Given these hypotheses , what is required is a way to test the hypothesized relationship of task and cognitive factors to effective discourse strategies . </S>
+<S ID='S-43' AZ='TXT'> Section <CREF/> describes a new method for testing hypotheses about effective discourse strategies in dialogue . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-2'> Design-World </HEADER>
+<P>
+<S ID='S-44' AZ='OTH'> Design-World is an experimental environment for testing the relationship between discourse strategies , task parameters and agents ' cognitive capabilities , similar to the single agent TileWorld simulation environment <REF  TYPE='P'>Pollack and Ringuette 1990</REF>, <REF  TYPE='P'>Hanks et al. 1993</REF> . </S>
+<S ID='S-45' AZ='OTH'> Design-World agents can be parametrized as to discourse strategy , and the effects of this strategy can be measured against a range of cognitive and task parameters . </S>
+<S ID='S-46' AZ='AIM'> This paper compares the Explicit-Warrant strategy to the All-Implicit strategy as strategies for supporting deliberation . </S>
+<S ID='S-47' AZ='OTH'> Other strategies tested in Design-World are presented elsewhere <REF TYPE='P' SELF="YES">Walker 1993</REF> , <REF  SELF="YES" TYPE='P'>Walker 1994a</REF>, <REF  SELF="YES" TYPE='P'>Rambow and Walker 1994</REF> . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-3'> Design World Domain and Task </HEADER>
+<IMAGE ID='I-1'/>
+<P>
+<S ID='S-48' AZ='OTH'> The Design-World task requires two agents to carry out a dialogue in order to negotiate an agreement on the design of the floor plan of a two room house <REF TYPE='P'>Whittaker et al. 1993</REF> . </S>
+<S ID='S-49' AZ='OTH'> The DESIGN-HOUSE plan requires the agents to agree on how to DESIGN-ROOM - 1 and DESIGN-ROOM - 2 . </S>
+<S ID='S-50' AZ='OTH'> Both agents know what the DESIGN-HOUSE plan requires and start out with a set of furniture pieces that can be used to design each room . </S>
+</P>
+<P>
+<S ID='S-51' AZ='OTH'> To negotiate an agreement , each agent carries out means-end reasoning about the furniture pieces that they have that can be used in the floor plan . </S>
+<S ID='S-52' AZ='OTH'> Means-end reasoning generates OPTIONS - these options are the content of PROPOSALS to the other agent to PUT a piece of furniture into one of the rooms . </S>
+<S ID='S-53' AZ='OTH'> Dialogue <CREF/> illustrates agents ' communication for part of designing room - 1 , including both the artificial language that the agents communicate with and a gloss generated from that language in italics : </S>
+</P>
+<EXAMPLE ID='E-2'>
+<EX-S> BILL : First , let 's put the green rug in the study . </EX-S>
+</EXAMPLE>
+<IMAGE ID='I-2'/>
+<EXAMPLE ID='E-3'>
+<EX-S> KIM : Next , let 's put the green lamp there . </EX-S>
+</EXAMPLE>
+<IMAGE ID='I-3'/>
+<EXAMPLE ID='E-4'>
+<EX-S> BILL : Then , let 's put the green couch in the study . </EX-S>
+</EXAMPLE>
+<IMAGE ID='I-4'/>
+<EXAMPLE ID='E-5'>
+<EX-S> KIM : No , instead let 's put in the purple couch . </EX-S>
+</EXAMPLE>
+<IMAGE ID='I-5'/>
+<P>
+<S ID='S-54' AZ='OTH'> On receiving a proposal , an agent deliberates whether to ACCEPT or REJECT the proposal <REF TYPE='P'>Doyle 1992</REF> . </S>
+<S ID='S-55' AZ='OTH'> As potential warrants to support deliberation , and to provide a way of objectively evaluating agents ' performance , each piece of furniture has a score . </S>
+<S ID='S-56' AZ='OTH'> The score propositions for all the pieces of furniture are stored in both agents ' memories at the beginning of the dialogue . </S>
+</P>
+<P>
+<S ID='S-57' AZ='OTH'> Agents REJECT a proposal if deliberation leads them to believe that they know of a better option or if they believe the preconditions for the proposal do not hold . </S>
+<S ID='S-58' AZ='OTH'> The content of rejections is determined by the COLLABORATIVE PLANNING PRINCIPLES , abstracted from analyzing four different types of problem solving dialogues <REF  SELF="YES" TYPE='P'>Walker and Whittaker 1990</REF>, <REF  SELF="YES" TYPE='P'>Walker 1994b</REF> . </S>
+<S ID='S-59' AZ='OTH'> For example , in <CREF/> Kim rejects the proposal in <CREF/> , and gives as her reason that option - 56 is a counter-proposal . </S>
+</P>
+<P>
+<S ID='S-60' AZ='OTH'> Proposals <CREF/> and <CREF/> are inferred to be implicitly ACCEPTED because they are not rejected <REF  SELF="YES" TYPE='P'>Walker and Whittaker 1990</REF>, <REF  SELF="YES" TYPE='P'>Walker 1992</REF> . </S>
+<S ID='S-61' AZ='OTH'> If a proposal is ACCEPTED , either implicitly or explicitly , then the option that was the content of the proposal becomes a mutual intention that contributes to the final design plan <REF  TYPE='P'>Power 1984</REF>, <REF  TYPE='P'>Sidner 1992</REF> . </S>
+<S ID='S-62' AZ='OTH'> A potential final design plan negotiated via a dialogue is shown in figure <CREF/> . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-4'> Varying Discourse Strategies </HEADER>
+<P>
+<S ID='S-63' AZ='BAS'> The Design-World experiments reported here compare the All-Implicit strategy with the Explicit-Warrant strategy . </S>
+<S ID='S-64' AZ='OWN'> Agents are parametrized for different discourse strategies by placing different expansions of discourse plans in their plan libraries . </S>
+<S ID='S-65' AZ='OWN'> Discourse plans are plans for PROPOSAL , REJECTION , ACCEPTANCE , CLARIFICATION , OPENING and CLOSING . </S>
+<S ID='S-66' AZ='OWN'> The only variations discussed here are variations in the expansions of PROPOSALS . </S>
+</P>
+<P>
+<S ID='S-67' AZ='OWN'> The All-Implicit strategy is an expansion of a discourse plan to make a PROPOSAL , in which a PROPOSAL decomposes trivially to the communicative act of PROPOSE . </S>
+<S ID='S-68' AZ='OWN'> In dialogue <CREF/> , both Design-World agents communicate using the All-Implicit strategy , and the proposals are shown in utterances <CREF/> , <CREF/> , and <CREF/> . </S>
+<S ID='S-69' AZ='OWN'> The All-Implicit strategy never includes warrants in proposals , leaving it up to the other agent to retrieve them from memory . </S>
+</P>
+<P>
+<S ID='S-70' AZ='OWN'> The Explicit-Warrant strategy expands the PROPOSAL discourse act to be a WARRANT followed by a PROPOSE utterance . </S>
+<S ID='S-71' AZ='OWN'> Since agents already know the point values for pieces of furniture , warrants are always IRUs in the experiments here . </S>
+<S ID='S-72' AZ='OWN'> For example , <CREF/> is a WARRANT for the proposal in <CREF/> : The names of agents who use the Explicit-Warrant strategy are a numbered version of the string `` IEI '' to help the experimenter keep track of the simulation data files ; IEI stands for Implicit acceptance , Explicit warrant , Implicit opening and closing . </S>
+</P>
+<EXAMPLE ID='E-6'>
+<EX-S> IEI : Putting in the green rug is worth 56 . </EX-S>
+</EXAMPLE>
+<IMAGE ID='I-6'/>
+<EXAMPLE ID='E-7'>
+<EX-S> IEI : Then , let 's put the green rug in the study . </EX-S>
+</EXAMPLE>
+<IMAGE ID='I-7'/>
+<EXAMPLE ID='E-8'>
+<EX-S> IEI 2 : Putting in the green lamp is worth 55 . </EX-S>
+</EXAMPLE>
+<IMAGE ID='I-8'/>
+<EXAMPLE ID='E-9'>
+<EX-S> IEI 2 : Then , let 's put the green lamp in the study . </EX-S>
+</EXAMPLE>
+<IMAGE ID='I-9'/>
+<P>
+<S ID='S-73' AZ='OWN'> The fact that the green rug is worth 56 points supports deliberation about whether to adopt the intention of putting the green rug in the study . </S>
+<S ID='S-74' AZ='OWN'> The Explicit-Warrant strategy models naturally occurring examples such as those in <CREF/> because the points information used by the hearer to deliberate whether to accept or reject the proposal is already mutually believed . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-5'> Cognitive and Task Parameters </HEADER>
+<P>
+<S ID='S-75' AZ='TXT'> Section <CREF/> introduced a range of factors motivated by the corpus analysis that were hypothesized to determine when Explicit-Warrant is an effective strategy . </S>
+<S ID='S-76' AZ='TXT'> This section discusses how Design-World supports the parametrization of these factors . </S>
+</P>
+<P>
+<S ID='S-77' AZ='BAS'> The agent architecture for deliberation and means-end reasoning is based on the IRMA architecture , also used in the TileWorld simulation environment <REF TYPE='P'>Pollack and Ringuette 1990</REF> , with the addition of a model of limited Attention / Working memory , AWM . </S>
+<S ID='S-78' AZ='OTH'> <REF TYPE='A' SELF="YES">Walker 1993</REF> includes a fuller discussion of the Design-World deliberation and means-end reasoning mechanism and the underlying mechanisms assumed in collaborative planning . </S>
+<S ID='S-79' AZ='OWN'> We hypothesized that a warrant must be SALIENT for both agents ( as shown by example <CREF/> ) . </S>
+<S ID='S-80' AZ='OTH'> In Design-World , salience is modeled by AWM model , adapted from <REF TYPE='A'>Landauer 1975</REF> . </S>
+<S ID='S-81' AZ='OTH'> While the AWM model is extremely simple , <REFAUTHOR>Landauer</REFAUTHOR> showed that it could be parameterized to fit many empirical results on human memory and learning <REF TYPE='P'>Baddeley 1986</REF> . </S>
+<S ID='S-82' AZ='OTH'> AWM consists of a three dimensional space in which propositions acquired from perceiving the world are stored in chronological sequence according to the location of a moving memory pointer . </S>
+<S ID='S-83' AZ='OTH'> The sequence of memory loci used for storage constitutes a random walk through memory with each loci a short distance from the previous one . </S>
+<S ID='S-84' AZ='OTH'> If items are encountered multiple times , they are stored multiple times <REF TYPE='P'>Hintzmann and Block 1971</REF> . </S>
+</P>
+<P>
+<S ID='S-85' AZ='OTH'> When an agent retrieves items from memory , search starts from the current pointer location and spreads out in a spherical fashion . </S>
+<S ID='S-86' AZ='OTH'> Search is restricted to a particular search radius : radius is defined in Hamming distance . </S>
+<S ID='S-87' AZ='OTH'> For example if the current memory pointer loci is <EQN/> , the loci distance 1 away would be <EQN/> . </S>
+<S ID='S-88' AZ='OTH'> The actual locations are calculated modulo the memory size . </S>
+<S ID='S-89' AZ='OTH'> The limit on the search radius defines the capacity of attention / working memory and hence defines which stored beliefs and intentions are SALIENT . </S>
+</P>
+<P>
+<S ID='S-90' AZ='OTH'> The radius of the search sphere in the AWM model is used as the parameter for Design-World agents ' resource-bound on attentional capacity . </S>
+<S ID='S-91' AZ='OWN'> In the experiments below , memory is 16x16x16 and the radius parameter varies between 1 and 16 , where AWM of 1 gives severely attention limited agents and AWM of 16 means that everything an agent knows is accessible . </S>
+<S ID='S-92' AZ='OWN'> This parameter lets us distinguish between an agent 's ability to access all the information stored in its memory , and the effort involved in doing so . </S>
+</P>
+<P>
+<S ID='S-93' AZ='OTH'> The advantages of the AWM model is that it was shown to reproduce , in simulation , many results on human memory and learning . </S>
+<S ID='S-94' AZ='OTH'> Because search starts from the current pointer location , items that have been stored most recently are more likely to be retrieved , predicting recency effects <REF TYPE='P'>Baddeley 1986</REF> . </S>
+<S ID='S-95' AZ='OTH'> Because items that are stored in multiple locations are more likely to be retrieved , the model predicts frequency effects <REF TYPE='P'>Hintzmann and Block 1971</REF> . </S>
+<S ID='S-96' AZ='OTH'> Because items are stored in chronological sequence , the model produces natural associativity effects <REF TYPE='P'>Landauer 1975</REF> . </S>
+<S ID='S-97' AZ='OTH'> Because deliberation and means-end reasoning can only operate on salient beliefs , limited attention produces a concomitant inferential limitation , i.e. if a belief is not salient it cannot be used in deliberation or means-end-reasoning . </S>
+<S ID='S-98' AZ='OTH'> This means that mistakes that agents make in their planning process have a plausible cognitive basis . </S>
+<S ID='S-99' AZ='OTH'> Agents can both fail to access a belief that would allow them to produce an optimal plan , as well as make a mistake in planning if a belief about how the world has changed as a result of planning is not salient . </S>
+<S ID='S-100' AZ='OTH'> Depending on the preceding discourse , and the agent 's attentional capacity , the propositions that an agent knows may or may not be salient when a proposal is made . </S>
+</P>
+<P>
+<S ID='S-101' AZ='OWN'> Another hypothetical factor was the relative cost of retrieval and communication . </S>
+<S ID='S-102' AZ='OWN'> AWM also gives us a way to measure the number of retrievals from memory in terms of the number of locations searched to find a proposition . </S>
+<S ID='S-103' AZ='OWN'> The amount of effort required for each retrieval step is a parameter , as is the cost of each inference step and the cost of each communicated message . </S>
+<S ID='S-104' AZ='OWN'> These cost parameters support modeling various cognitive architectures , e.g. varying the cost of retrieval models different assumptions about memory . </S>
+<S ID='S-105' AZ='OWN'> For example , if retrieval is free then all items in working memory are instantly accessible , as they would be if they were stored in registers with fast parallel access . </S>
+<S ID='S-106' AZ='OWN'> If AWM is set to 16 , but retrieval isn't free , the model approximates slow spreading activation that is quite effortful , yet the agent still has the ability to access all of memory , given enough time . </S>
+<S ID='S-107' AZ='OWN'> If AWM is set lower than 16 and retrieval isn't free , then we model slow spreading activation with a timeout when effort exceeds a certain amount , so that an agent does not have the ability to access all of memory . </S>
+</P>
+<P>
+<S ID='S-108' AZ='OWN'> It does not make sense to fix absolute values for the retrieval , inference and communication cost parameters in relation to human processing . </S>
+<S ID='S-109' AZ='OWN'> However , Design-World supports exploring issues about the relative costs of various processes . </S>
+<S ID='S-110' AZ='OWN'> These relative costs might vary depending on the language that the agents are communicating with , properties of the communication channel , how smart the agents are , how much time they have , and what the demands of the task are <REF TYPE='P'>Norman and Bobrow 1975</REF> . </S>
+<S ID='S-111' AZ='OWN'> Below we vary the relative cost of communication and retrieval . </S>
+</P>
+<P>
+<S ID='S-112' AZ='OWN'> Finally , we hypothesized that the Explicit-Warrant strategy may be beneficial if the relationship between the warrant and the proposal must be mutually believed . </S>
+<S ID='S-113' AZ='OWN'> Thus the definition of success for the task is a Design-World parameter : the Standard task does not require a shared warrant , whereas the Zero NonMatching Beliefs task gives a zero score to any negotiated plan without agreed-upon warrants . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-6'> Evaluating Performance </HEADER>
+<P>
+<S ID='S-114' AZ='OWN'> To evaluate PERFORMANCE , we compare the Explicit-Warrant strategy with the All-Implicit strategy in situations where we vary the task requirements , agents ' attentional capacity , and the cost of retrieval , inference and communication . </S>
+<S ID='S-115' AZ='OWN'> Evaluation of the resulting DESIGN-HOUSE plan is parametrized by </S>
+<S ID='S-116' TYPE='ITEM' AZ='OWN' > COMMCOST : cost of sending a message ; </S>
+<S ID='S-117' TYPE='ITEM' AZ='OWN' > INFCOST : cost of inference ; and </S>
+<S ID='S-118' TYPE='ITEM' AZ='OWN' > RETCOST : cost of retrieval from memory : </S>
+<S ID='S-119' AZ='OWN'> PERFORMANCE = <EQN/> . </S>
+</P>
+<P>
+<S ID='S-120' AZ='OWN'> RAW SCORE is task specific : in the Standard task we simply summarize the point values of the furniture pieces in each PUT-ACT in the final Design , while in the Zero NonMatching Beliefs task , agents get no points for a plan unless they agree on the reasons underlying each action that contributes to the plan . </S>
+</P>
+<P>
+<S ID='S-121' AZ='OWN'> The way PERFORMANCE is defined reflects the fact that agents are meant to collaborate on the task . </S>
+<S ID='S-122' AZ='OWN'> The costs that are deducted from the RAW SCORE are the costs for both agents ' communication , inference , and retrieval . </S>
+<S ID='S-123' AZ='OWN'> Thus PERFORMANCE is a measure of LEAST COLLABORATIVE EFFORT <REF  TYPE='P'>Clark and Schaefer 1989</REF>, <REF  TYPE='P'>Brennan 1990</REF> . </S>
+<S ID='S-124' AZ='OWN'> Since the parameters for cognitive effort are fixed while discourse strategy and AWM settings are varied , we can directly test the benefits of different discourse strategies under different assumptions about cognitive effort and the cognitive demands of the task . </S>
+<S ID='S-125' AZ='OWN'> This is impossible to do with corpus analysis alone . </S>
+</P>
+<P>
+<S ID='S-126' AZ='OWN'> We simulate 100 dialogues at each parameter setting for each strategy . </S>
+<S ID='S-127' AZ='OWN'> Differences in performance distributions are evaluated for significance over the 100 dialogues using the Kolmogorov-Smirnov ( KS ) two sample test <REF TYPE='P'>Siegel 1956</REF> . </S>
+</P>
+<P>
+<S ID='S-128' AZ='OWN'> A strategy A is BENEFICIAL as compared to a strategy B , for a set of fixed parameter settings , if the difference in distributions using the Kolmogorov-Smirnov two sample test is significant at p # LT .05 , in the positive direction , for two or more AWM settings . </S>
+<S ID='S-129' AZ='OWN'> A strategy is DETRIMENTAL if the differences go in the negative direction . </S>
+<S ID='S-130' AZ='OWN'> Strategies may be neither BENEFICIAL or DETRIMENTAL , as there may be no difference between two strategies . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-7'> Results : Explicit Warrant </HEADER>
+<P>
+<S ID='S-131' AZ='TXT'> This section discusses the results of comparing the Explicit-Warrant discourse strategy with the All-Implicit discourse strategy to determine when each strategy is BENEFICIAL . </S>
+<S ID='S-132' AZ='OWN'> We test 4 factors outlined in figure <CREF/> : when the warrant is salient or not , when the warrant is required for the task or not , when the costs of retrieval and communication vary , and when retrieval is indeterminate . </S>
+</P>
+<P>
+<S ID='S-133' AZ='OWN'> Differences in performance between the Explicit-Warrant strategy and the All-Implicit strategy are shown via a DIFFERENCE PLOT such as figure <CREF/> . </S>
+<S ID='S-134' AZ='OWN'> In figure <CREF/> performance differences are plotted on the Y-axis and AWM settings are shown on the X-axis . </S>
+<S ID='S-135' AZ='OWN'> If the plot is above the dotted line for 2 or more AWM settings , then the Explicit-Warrant strategy may be BENEFICIAL depending on whether the differences are significant by the KS test . </S>
+<S ID='S-136' AZ='OWN'> Each point represents the difference in the means of 100 runs of each strategy at a particular AWM setting . </S>
+<S ID='S-137' AZ='OWN'> These plots summarize the results of 1800 simulated dialogues : 100 for each AWM setting for each strategy . </S>
+</P>
+<DIV DEPTH='3'>
+<HEADER ID='H-8'> Explicit Warrant reduces Retrievals </HEADER>
+<IMAGE ID='I-10'/>
+<IMAGE ID='I-11'/>
+<IMAGE ID='I-12'/>
+<P>
+<S ID='S-138' AZ='OWN'> Dialogues in which one or both agents use the Explicit-Warrant strategy are more efficient when retrieval has a cost . </S>
+</P>
+<P>
+<S ID='S-139' AZ='OWN'> Figure <CREF/> shows that the Explicit-Warrant strategy is DETRIMENTAL at AWM of 3,4,5 for the Standard task , in comparison with the All-Implicit strategy , if retrieval from memory is free ( KS 3,4,5 # GT .19 , p # LT .05 ) . </S>
+<S ID='S-140' AZ='OWN'> This is because making the warrant salient displaces information about other pieces of furniture when agents are attention-limited . </S>
+<S ID='S-141' AZ='OWN'> In the Standard task , agents aren't required to share beliefs about the value of a proposal , so remembering what pieces they have is more important than remembering their value . </S>
+</P>
+<P>
+<S ID='S-142' AZ='OWN'> However , figure <CREF/> shows that Explicit-Warrant is beneficial when retrieval is one tenth the cost of communication and inference . </S>
+<S ID='S-143' AZ='OWN'> By AWM values of 3 , performance with Explicit-Warrant is better than All-Implicit because the beliefs necessary for deliberation are made salient with each proposal ( KS for AWM of 3 and above # GT .23 , p # LT .01 ) . </S>
+<S ID='S-144' AZ='OWN'> At AWM parameter settings of 16 , where agents have the ability to search all their beliefs for warrants , the saving in processing time is substantial . </S>
+<S ID='S-145' AZ='OWN'> Again at the lowest AWM settings , the strategy is not beneficial because it displaces information about other pieces from AWM . </S>
+<S ID='S-146' AZ='OWN'> However in figure <CREF/> , in contrast with figure <CREF/> , retrieval has an associated cost . </S>
+<S ID='S-147' AZ='OWN'> Thus the savings in retrieval balance out with the loss of raw score so that the strategy is not DETRIMENTAL . </S>
+<S ID='S-148' AZ='OWN'> Other experiments show that even when the relative cost of retrieval is .0001 , that Explicit-Warrant is still beneficial at AWM settings of 11 and 16 ( KS for 11,16 # GT .23 , p # LT .01 ) . </S>
+</P>
+</DIV>
+<DIV DEPTH='3'>
+<HEADER ID='H-9'> Explicit Warrant is detrimental if Communication is Expensive </HEADER>
+<P>
+<S ID='S-149' AZ='OWN'> If we change the relative costs of the different processes in the situation , we change whether a strategy is beneficial . </S>
+<S ID='S-150' AZ='OWN'> Figure <CREF/> shows that if communication cost is 10 , and inference and retrieval are free , then the Explicit-Warrant strategy is DETRIMENTAL ( KS for AWM 1 to 5 # GT .23 , p # LT .01 ) . </S>
+<S ID='S-151' AZ='OWN'> This is because the Explicit-Warrant strategy increases the number of utterances required to perform the task ; it doubles the number of messages in every proposal . </S>
+<S ID='S-152' AZ='OWN'> If communication is expensive compared to retrieval , communication cost can dominate the other benefits . </S>
+</P>
+</DIV>
+<DIV DEPTH='3'>
+<HEADER ID='H-10'> Explicit Warrant Achieves a High Level of Agreement </HEADER>
+<P>
+<S ID='S-153' AZ='OWN'> If we change the definition of success in the task , we change whether a strategy is beneficial . </S>
+<S ID='S-154' AZ='OWN'> When the task is Zero-Nonmatching-Beliefs , the Explicit-Warrant strategy is beneficial even if retrieval is free ( KS # GT .23 for AWM from 2 to 11 , p # LT .01 ) The warrant information that is redundantly provided is exactly the information that is needed in order to achieve matching beliefs about the warrants for intended actions . </S>
+<S ID='S-155' AZ='OWN'> The strategy virtually guarantees that the agents will agree on the reasons for carrying out a particular course of action . </S>
+<S ID='S-156' AZ='OWN'> The fact that retrieval is indeterminate produces this effect ; a similar result is obtained when warrants are required and retrieval costs something . </S>
+</P>
+<IMAGE ID='I-13'/>
+<P>
+<S ID='S-157' AZ='OWN'> To my great surprise , the beneficial effect of Explicit-Warrant for the Zero-NonMatching-Beliefs task is so robust that even if communication cost is 10 and retrieval and inference are free , Explicit-Warrant is better than All-Implicit at AWM of 3 <EQN/> 11 ( KS # GT .23 , p # LT .01 ) . </S>
+<S ID='S-158' AZ='OWN'> See figure <CREF/> . </S>
+<S ID='S-159' AZ='OWN'> In other words , even when every extra WARRANT message incurs a penalty of 10 points , if the task is Zero-NonMatching-Beliefs , agents using Explicit-Warrant do better . </S>
+<S ID='S-160' AZ='OWN'> Contrast figure <CREF/> with the Standard task and same cost parameters in <CREF/> . </S>
+</P>
+<P>
+<S ID='S-161' AZ='OWN'> These result suggests that including warrants is highly effective when agents must agree on a specific warrant , if they are attention-limited to any extent . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-11'> Conclusion </HEADER>
+<P>
+<S ID='S-162' ABSTRACTC='A-1' AZ='AIM'> This paper has discussed an instance of a general problem in the design of conversational agents : when to include optional information . </S>
+<S ID='S-163' AZ='AIM'> We presented and tested a number of hypotheses about the factors that contribute to the decision of when to include a warrant in a proposal . </S>
+<S ID='S-164' AZ='OWN'> We showed that warrants are useful when the task requires agreement on the warrant , when the warrant is not currently salient , when retrieval of the warrant is indeterminate , or when retrieval has some associated cost , and that warrants hinder performance if communication is costly and if the warrant can displace information that is needed to complete the task , e.g. when AWM is very limited and warrants are not required to be shared . </S>
+</P>
+<P>
+<S ID='S-165' ABSTRACTC='A-3' AZ='OWN'> The method used here is a new experimental methodology for computational linguistics that supports testing hypotheses about beneficial discourse strategies <REF  TYPE='P'>Carletta 1992</REF>, <REF  TYPE='P'>Pollack and Ringuette 1990</REF> . </S>
+<S ID='S-166' AZ='BAS'> The Design-World environment is based on a cognitive model of limited attention and supports experiments on the interaction of discourse strategies with agents ' cognitive limitations . </S>
+<S ID='S-167' AZ='CTR'> The use of the method and the focus of this work are novel : previous work has focused on determining underlying mechanisms for cooperative strategies rather than on investigating when a strategy is effective . </S>
+</P>
+<P>
+<S ID='S-168' AZ='CTR'> To my knowledge , no previous work on dialogue has ever argued that conversational agents ' resource limits are a major factor in determining effective conversational strategies in collaboration . </S>
+<S ID='S-169' AZ='OWN'> The results presented here suggest that cooperative strategies cannot be defined in the abstract , but cooperation arises from the interaction of two agents in dialogue . </S>
+<S ID='S-170' AZ='OWN'> If one agent has limited working memory , then the other agent can make the dialogue go more smoothly by adopting a strategy that makes deliberative premises salient . </S>
+<S ID='S-171' AZ='OWN'> In other words , strategies are cooperative for certain conversational partners , under particular task definitions , for particular communication situations . </S>
+</P>
+<P>
+<S ID='S-172' AZ='CTR'> Here we compared two discourse strategies : All-Implicit and Explicit-Warrant . </S>
+<S ID='S-173' AZ='OTH'> Explicit-Warrant is a type of discourse strategy called an Attention strategy in <REF TYPE='P' SELF="YES">Walker 1993</REF> because its main function is to manipulate agents ' attentional state . </S>
+<S ID='S-174' AZ='OTH' TYPE='ITEM'> Elsewhere we show that </S>
+<S ID='S-175' TYPE='ITEM' AZ='OTH' > some IRU strategies are only beneficial when inferential complexity is higher than in the Standard Task <REF  SELF="YES" TYPE='P'>Rambow and Walker 1994</REF>, <REF  SELF="YES" TYPE='P'>Walker 1994a</REF> . </S>
+<S ID='S-176' TYPE='ITEM' AZ='OTH' > IRUs that make inferences explicit can help inference limited agents perform as well as logically omniscient ones <REF SELF="YES" TYPE='P'>Walker 1993</REF> . </S>
+</P>
+<P>
+<S ID='S-177' AZ='OWN'> Although much work remains to be done , there is reason to believe that these results are domain independent . </S>
+<S ID='S-178' AZ='OWN'> The simplicity of the Design-World task means that its structure is a subcomponent of many other tasks . </S>
+<S ID='S-179' AZ='OWN'> The model of limited resources is cognitively based , but the cost parameters support modeling different agent architectures , and we explored the effects of different cost parameters . </S>
+<S ID='S-180' AZ='OWN'> The Explicit-Warrant strategy is based on simple relationships between different facts which we would expect to occur in any domain , i.e. the fact that some belief can be used as a WARRANT for accepting a proposal should occur in almost any task . </S>
+<S ID='S-181' AZ='OWN'> Future work should extend these results , showing that a ` cooperative strategy ' need not always be ` cooperative ' , and investigate additional factors that determine when strategies are effective . </S>
+</P>
+</DIV>
+</BODY>
+ <REFERENCELIST>
+<REFERENCE>
+Alan <SURNAME>Baddeley</SURNAME>.
+Working Memory.
+Oxford University Press, <DATE>1986</DATE>.
+</REFERENCE>
+<REFERENCE>
+Susan E. <SURNAME>Brennan</SURNAME>.
+Seeking and Providing Evidence for Mutual Understanding.
+PhD thesis, Stanford University Psychology Dept., <DATE>1990</DATE>.
+Unpublished Manuscript.
+</REFERENCE>
+<REFERENCE>
+Jean C. <SURNAME>Carletta</SURNAME>.
+Risk Taking and Recovery in Task-Oriented Dialogue.
+PhD thesis, Edinburgh University, <DATE>1992</DATE>.
+</REFERENCE>
+<REFERENCE>
+Herbert H. <SURNAME>Clark</SURNAME> and Edward F. <SURNAME>Schaefer</SURNAME>.
+Contributing to discourse.
+Cognitive Science, 13:259-294, <DATE>1989</DATE>.
+</REFERENCE>
+<REFERENCE>
+Jon <SURNAME>Doyle</SURNAME>.
+Rationality and its roles in reasoning.
+Computational Intelligence, November <DATE>1992</DATE>.
+</REFERENCE>
+<REFERENCE>
+Julia R. <SURNAME>Galliers</SURNAME>.
+Autonomous belief revision and communication.
+In P. Gardenfors, editor, Belief Revision, pages 220 - 246.
+  Cambridge University Press, <DATE>1991</DATE>.
+</REFERENCE>
+<REFERENCE>
+Steve <SURNAME>Hanks</SURNAME>, Martha E. <SURNAME>Pollack</SURNAME>, and Paul R. <SURNAME>Cohen</SURNAME>.
+Benchmarks, testbeds, controlled experimentation and the design of
+  agent architectures.
+AI Magazine, December <DATE>1993</DATE>.
+</REFERENCE>
+<REFERENCE>
+D. L. <SURNAME>Hintzmann</SURNAME> and R. A. <SURNAME>Block</SURNAME>.
+Repetition and memory: evidence for a multiple trace hypothesis.
+Journal of Experimental Psychology, 88:297-306, <DATE>1971</DATE>.
+</REFERENCE>
+<REFERENCE>
+Thomas K. <SURNAME>Landauer</SURNAME>.
+Memory without organization: Properties of a model with random
+  storage and undirected retrieval.
+Cognitive Psychology, pages 495-531, <DATE>1975</DATE>.
+</REFERENCE>
+<REFERENCE>
+W.C. <SURNAME>Mann</SURNAME> and S.A. <SURNAME>Thompson</SURNAME>.
+Rhetorical structure theory: Description and construction of text
+  structures.
+In Gerard Kempen, editor, Natural Language Generation, pages
+  83-96. Martinus Nijhoff, <DATE>1987</DATE>.
+</REFERENCE>
+<REFERENCE>
+Johanna D. <SURNAME>Moore</SURNAME> and Ccile L. <SURNAME>Paris</SURNAME>.
+Planning text for advisory dialogues: Capturing intentional and
+  rhetorical information.
+Computational Linguistics, 19(4), <DATE>1993</DATE>.
+</REFERENCE>
+<REFERENCE>
+Donald A. <SURNAME>Norman</SURNAME> and Daniel G. <SURNAME>Bobrow</SURNAME>.
+On data-limited and resource-limited processes.
+Cognitive Psychology, 7(1):44-6, <DATE>1975</DATE>.
+</REFERENCE>
+<REFERENCE>
+Martha <SURNAME>Pollack</SURNAME>, Julia <SURNAME>Hirschberg</SURNAME>, and Bonnie <SURNAME>Webber</SURNAME>.
+User participation in the reasoning process of expert systems.
+In AAAI82, <DATE>1982</DATE>.
+</REFERENCE>
+<REFERENCE>
+Martha E. <SURNAME>Pollack</SURNAME> and Marc <SURNAME>Ringuette</SURNAME>.
+Introducing the Tileworld: Experimentally Evaluating Agent
+  Architectures.
+In AAAI90, pages 183-189, <DATE>1990</DATE>.
+</REFERENCE>
+<REFERENCE>
+Richard <SURNAME>Power</SURNAME>.
+Mutual intention.
+Journal for the Theory of Social Behaviour, 14, <DATE>1984</DATE>.
+</REFERENCE>
+<REFERENCE>
+Ellen F. <SURNAME>Prince</SURNAME>.
+Toward a taxonomy of given-new information.
+In Radical Pragmatics, pages 223-255. Academic Press, <DATE>1981</DATE>.
+</REFERENCE>
+<REFERENCE>
+Owen <SURNAME>Rambow</SURNAME> and Marilyn A. <SURNAME>Walker</SURNAME>.
+The role of cognitive modeling in communicative intentions.
+In The 7th International Conference on Natural Language
+  Generation, <DATE>1994</DATE>.
+</REFERENCE>
+<REFERENCE>
+Candace <SURNAME>Sidner</SURNAME>.
+Using discourse to negotiate in collaborative activity: An artificial
+  language.
+AAAI Workshop on Cooperation among Heterogeneous Agents, <DATE>1992</DATE>.
+</REFERENCE>
+<REFERENCE>
+Sidney <SURNAME>Siegel</SURNAME>.
+Nonparametric Statistics for the Behavioral Sciences.
+McGraw Hill, <DATE>1956</DATE>.
+</REFERENCE>
+<REFERENCE>
+Marilyn A. <SURNAME>Walker</SURNAME>.
+Redundancy in collaborative dialogue.
+In Fourteenth International Conference on Computational
+  Linguistics, pages 345-351, <DATE>1992</DATE>.
+</REFERENCE>
+<REFERENCE>
+Marilyn A. <SURNAME>Walker</SURNAME>.
+Informational Redundancy and Resource Bounds in Dialogue.
+PhD thesis, University of Pennsylvania, <DATE>1993</DATE>.
+</REFERENCE>
+<REFERENCE>
+Marilyn A. <SURNAME>Walker</SURNAME>.
+Experimentally evaluating communicative strategies: The effect of the
+  task.
+In AAAI94, <DATE>1994</DATE>.
+</REFERENCE>
+<REFERENCE>
+Marilyn A. <SURNAME>Walker</SURNAME>.
+Rejection by implicature.
+In Proceedings of the 20th Meeting of the Berkeley Lingustics
+  Society, <DATE>1994</DATE>.
+</REFERENCE>
+<REFERENCE>
+Marilyn A. <SURNAME>Walker</SURNAME> and Steve <SURNAME>Whittaker</SURNAME>.
+Mixed initiative in dialogue: An investigation into discourse
+  segmentation.
+In Proc. 28th Annual Meeting of the ACL, pages 70-79, <DATE>1990</DATE>.
+</REFERENCE>
+<REFERENCE>
+Bonnie <SURNAME>Webber</SURNAME> and Aravind <SURNAME>Joshi</SURNAME>.
+Taking the initiative in natural language database interaction:
+  Justifying why.
+In COLING84: Proc. 9th International Conference on Computational
+  Linguistics. Prague, <DATE>1982</DATE>.
+</REFERENCE>
+<REFERENCE>
+Steve <SURNAME>Whittaker</SURNAME>, Erik <SURNAME>Geelhoed</SURNAME>, and Elizabeth <SURNAME>Robinson</SURNAME>.
+Shared workspaces: How do they work and when are they useful?
+IJMMS, 39:813-842, <DATE>1993</DATE>.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

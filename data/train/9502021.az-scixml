@@ -1,0 +1,379 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9502021</FILENO>
+<APPEARED><CONFERENCE>EACL</CONFERENCE><YEAR>1995</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.Gr.Fm  </CLASSIFICATION>
+</METADATA>
+<TITLE> A Tractable Extension of Linear Indexed Grammars </TITLE>
+<AUTHORLIST>
+<AUTHOR>Bill Keller</AUTHOR>
+<AUTHOR>David Weir</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' AZ='OTH'> <REF TYPE='A' SELF="YES">Vijay-Shanker and Weir 1993</REF> show that Linear Indexed Grammars ( LIG ) can be processed in polynomial time by exploiting constraints which make possible the extensive use of structure-sharing . </A-S>
+<A-S ID='A-1' AZ='AIM'> This paper describes a formalism that is more powerful than LIG , but which can also be processed in polynomial time using similar techniques . </A-S>
+<A-S ID='A-2' DOCUMENTC='S-20' AZ='OWN'> The formalism , which we refer to as Partially Linear PATR ( PLPATR ) manipulates feature structures rather than stacks . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> Unification-based grammar formalisms can be viewed as generalizations of Context-Free Grammars ( CFG ) where the nonterminal symbols are replaced by an infinite domain of feature structures . </S>
+<S ID='S-1' AZ='BKG'> Much of their popularity stems from the way in which syntactic generalization may be elegantly stated by means of constraints amongst features and their values . </S>
+<S ID='S-2' AZ='BKG'> Unfortunately , the expressivity of these formalisms can have undesirable consequences for their processing . </S>
+<S ID='S-3' AZ='BKG'> In naive implementations of unification grammar parsers , feature structures play the same role as nonterminals in standard context-free grammar parsers . </S>
+<S ID='S-4' AZ='BKG'> Potentially large feature structures are stored at intermediate steps in the computation , so that the space requirements of the algorithm are expensive . </S>
+<S ID='S-5' AZ='BKG'> Furthermore , the need to perform non-destructive unification means that a large proportion of the processing time is spent copying feature structures . </S>
+</P>
+<P>
+<S ID='S-6' AZ='OTH'> One approach to this problem is to refine parsing algorithms by developing techniques such as restrictions , structure-sharing , and lazy unification that reduce the amount of structure that is stored and hence the need for copying of features structures <REF TYPE='P'>Shieber 1985</REF> , <REF TYPE='P'>Pereira 1985</REF> , <REF TYPE='P'>Karttunen and Kay 1985</REF> , <REF TYPE='P'>Wroblewski 1987</REF> , <REF TYPE='P'>Gerdemann 1989</REF> , <REF TYPE='P'>Godden 1990</REF> , <REF TYPE='P'>Kogure 1990</REF> , <REF TYPE='P'>Emele 1991</REF> , <REF TYPE='P'>Tomabechi 1991</REF> , <REF TYPE='P'>Harrison and Ellison 1992</REF> . </S>
+<S ID='S-7' AZ='CTR'> While these techniques can yield significant improvements in performance , the generality of unification-based grammar formalisms means that there are still cases where expensive processing is unavoidable . </S>
+<S ID='S-8' AZ='CTR'> This approach does not address the fundamental issue of the tradeoff between the descriptive capacity of a formalism and its computational power . </S>
+</P>
+<P>
+<S ID='S-9' AZ='AIM'> In this paper we identify a set of constraints that can be placed on unification-based grammar formalisms in order to guarantee the existence of polynomial time parsing algorithms . </S>
+<S ID='S-10' AZ='OWN'> Our choice of constraints is motivated by showing how they generalize constraints inherent in Linear Indexed Grammar ( LIG ) . </S>
+<S ID='S-11' AZ='TXT'> We begin by describing how constraints inherent in LIG admit tractable processing algorithms and then consider how these constraints can be generalized to a formalism that manipulates trees rather than stacks . </S>
+<S ID='S-12' AZ='OWN'> The constraints that we identify for the tree-based system can be regarded equally well as constraints on unification-based grammar formalisms such as PATR <REF TYPE='P'>Shieber 1984</REF> . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> From Stacks to Trees </HEADER>
+<P>
+<S ID='S-13' AZ='OTH'> An Indexed Grammar ( IG ) can be viewed as a cfg in which each nonterminal is associated with a stack of indices . </S>
+<S ID='S-14' AZ='OTH'> Productions specify not only how nonterminals can be rewritten but also how their associated stacks are modified . </S>
+<S ID='S-15' AZ='OTH'> LIG , which were first described by <REF TYPE='A'>Gazdar 1988</REF> , are constrained such that stacks are passed from the mother to at most a single daughter . </S>
+</P>
+<P>
+<S ID='S-16' AZ='OTH'> For , the size of the domain of nonterminals and associated stacks ( the analogue of the nonterminals in cfg ) is not bound by the grammar . </S>
+<S ID='S-17' AZ='OTH'> However , <REF TYPE='A' SELF="YES">Vijay-Shanker and Weir 1993</REF> demonstrate that polynomial time performance can be achieved through the use of structure-sharing made possible by constraints in the way that LIG use stacks . </S>
+<S ID='S-18' AZ='OTH'> Although stacks of unbounded size can arise during a derivation , it is not possible for a to specify that two dependent , unbounded stacks must appear at distinct places in the derivation tree . </S>
+<S ID='S-19' AZ='OTH'> Structure-sharing can therefore be used effectively because checking the applicability of rules at each step in the derivation involves the comparison of structures of limited size . </S>
+</P>
+<P>
+<S ID='S-20' ABSTRACTC='A-2' AZ='AIM'> Our goal is to generalize the constraints inherent in LIG , to a formalism that manipulates feature structures rather than stacks . </S>
+<S ID='S-21' AZ='OWN'> As a guiding heuristic we will avoid formalisms that generate tree sets with an unbounded number of unbounded , dependent branches . </S>
+<S ID='S-22' AZ='OWN'> It appears that the structure-sharing techniques used with LIG cannot be generalized in a straightforward way to such formalisms . </S>
+</P>
+<P>
+<S ID='S-23' AZ='OWN'> Suppose that we generalize LIG to allow the stack to be passed from the mother to two daughters . </S>
+<S ID='S-24' AZ='OWN'> If this is done recursion can be used to produce an unbounded number of unbounded , dependent branches . </S>
+<S ID='S-25' AZ='OWN'> An alternative is to allow an unbounded stack to be shared between two ( or more ) daughters but not with the mother . </S>
+<S ID='S-26' AZ='OWN'> Thus , rules may mention more than one unbounded stack , but the stack associated with the mother is still associated with at most one daughter . </S>
+<S ID='S-27' AZ='OWN'> We refer to this extension as Partially Linear Indexed Grammars ( PLIG ) . </S>
+</P>
+<IMAGE ID='I-0'/>
+<IMAGE ID='I-1'/>
+<IMAGE ID='I-2'/>
+<IMAGE ID='I-3'/>
+<P>
+<S ID='S-28' AZ='OWN'> In PLIG , stacks shared amongst siblings cannot be passed to the mother . </S>
+<S ID='S-29' AZ='OWN'> As a consequence , there is no possibility that recursion can be used to increase the number of dependent branches . </S>
+<S ID='S-30' AZ='OWN'> In fact , the number of dependent branches is bounded by the length of the right-hand-side of productions . </S>
+<S ID='S-31' AZ='OWN'> By the same token , however , PLIG may only generate structural descriptions in which dependent branches begin at nodes that are siblings of one another . </S>
+<S ID='S-32' AZ='OWN'> Note that the tree shown in Figure <CREF/> is unobtainable because the branch rooted at <EQN/> is dependent on more than one of the branches originating at its sibling <EQN/> . </S>
+</P>
+<IMAGE ID='I-4'/>
+<P>
+<S ID='S-33' AZ='OWN'> This limitation can be overcome by moving to a formalism that manipulates trees rather than stacks . </S>
+<S ID='S-34' AZ='OWN'> We consider an extension of cfg in which each nonterminal A is associated with a tree <EQN/> . </S>
+<S ID='S-35' AZ='OWN'> Productions now specify how the tree associated with the mother is related to the trees associated with the daughters . </S>
+<S ID='S-36' AZ='OWN'> We denote trees with first order terms . </S>
+<S ID='S-37' AZ='OWN'> For example , the following production requires that the x and y subtrees of the mother 's tree are shared with the B and C daughters , respectively . </S>
+<S ID='S-38' AZ='OWN'> In addition , the daughters have in common the subtree z . </S>
+</P>
+<IMAGE ID='I-5'/>
+<P>
+<S ID='S-39' AZ='OWN'> There is a need to incorporate some kind of generalized notion of linearity into such a system . </S>
+<S ID='S-40' AZ='OWN'> Corresponding to the linearity restriction in LIG we require that any part of the mother 's tree is passed to at most one daughter . </S>
+<S ID='S-41' AZ='OWN'> Corresponding to the partial linearity of PLIG , we permit subtrees that are not shared with the mother to be shared amongst the daughters . </S>
+<S ID='S-42' AZ='OWN'> Under these conditions , the tree set shown in Figure <CREF/> can be generated . </S>
+<S ID='S-43' AZ='OWN'> The nodes <EQN/> and <EQN/> share the tree <EQN/> , which occurs twice at the node <EQN/> . </S>
+<S ID='S-44' AZ='OWN'> At <EQN/> the two copies of <EQN/> are distributed across the daughters . </S>
+</P>
+<IMAGE ID='I-6'/>
+<P>
+<S ID='S-45' AZ='OWN'> The formalism as currently described can be used to simulate arbitrary Turing Machine computations . </S>
+<S ID='S-46' AZ='OWN'> To see this , note that an instantaneous description of a Turing Machine can be encoded with a tree as shown in Figure <CREF/> . </S>
+<S ID='S-47' AZ='OWN'> Moves of the Turing Machine can be simulated by unary productions . </S>
+<S ID='S-48' AZ='OWN'> The following production may be glossed : `` if in state q and scanning the symbol X , then change state to q ' , write the symbol Y and move left '' . </S>
+</P>
+<IMAGE ID='I-7'/>
+<P>
+<S ID='S-49' AZ='OWN'> One solution to this problem is to prevent a single daughter sharing more than one of its subtrees with the mother . </S>
+<S ID='S-50' AZ='OWN'> However , we do not impose this restriction because it still leaves open the possibility of generating trees in which every branch has the same length , thus violating the condition that trees have at most a bounded number of unbounded , dependent branches . </S>
+<S ID='S-51' AZ='OWN'> Figure <CREF/> shows how a set of such trees can be generated by illustrating the effect of the following production . </S>
+</P>
+<IMAGE ID='I-8'/>
+<P>
+<S ID='S-52' AZ='OWN'> To see this , assume ( by induction ) that all four of the daughter nonterminals are associated with the full binary tree of height i ( <EQN/> ) . </S>
+<S ID='S-53' AZ='OWN'> All four of these trees are constrained to be equal by the production given above , which requires that they have identical left ( i.e. z ) subtrees ( these subtrees must be the full binary tree <EQN/> ) . </S>
+<S ID='S-54' AZ='OWN'> Passing the right subtrees ( x , y , x ' and y ' ) to the mother as shown allows the construction of a full binary tree with height i + 1 ( <EQN/> ) . </S>
+<S ID='S-55' AZ='OWN'> This can be repeated an unbounded number of times so that all full binary trees are produced . </S>
+</P>
+<IMAGE ID='I-9'/>
+<P>
+<S ID='S-56' AZ='OWN'> To overcome both of these problems we impose the following additional constraint on the productions of a grammar . </S>
+<S ID='S-57' AZ='OWN'> We require that subtrees of the mother that are passed to daughters that share subtrees with one another must appear as siblings in the mother 's tree . </S>
+<S ID='S-58' AZ='OWN'> Note that this condition rules out the production responsible for building full binary trees since the x , y , x ' and y ' subtrees are not siblings in the mother 's tree despite the fact that all of the daughters share a common subtree z. </S>
+<S ID='S-59' AZ='OWN'> Moreover , since a daughter shares subtrees with itself , a special case of the condition is that subtrees occurring within some daughter can only appear as siblings in the mother . </S>
+<S ID='S-60' AZ='OWN'> This condition also rules out the Turing Machine simulation . </S>
+<S ID='S-61' AZ='OWN'> We refer to this formalism as Partially Linear Tree Grammars ( PLTG ) . </S>
+<S ID='S-62' AZ='OWN'> As a further illustration of the constraints places on shared subtrees , Figure <CREF/> shows a local tree that could appear in a derivation tree . </S>
+<S ID='S-63' AZ='OWN'> This local tree is licensed by the following production which respects all of the constraints on PLTG productions . </S>
+</P>
+<IMAGE ID='I-10'/>
+<P>
+<S ID='S-64' AZ='OWN'> Note that in Figure <CREF/> the daughter nodes labelled B and D share a common subtree and the subtrees shared between the mother and the B and D daughters appear as siblings in the tree associated with the mother . </S>
+</P>
+<IMAGE ID='I-11'/>
+<IMAGE ID='I-12'/>
+<IMAGE ID='I-13'/>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-2'> Trees to Feature Structures </HEADER>
+<P>
+<S ID='S-65' AZ='OWN'> Finally , we note that acyclic feature structures without re-entrancy can be viewed as trees with branches labelled by feature names and atomic values only found at leaf nodes ( interior nodes being unlabelled ) . </S>
+<S ID='S-66' AZ='OWN'> Based on this observation , we can consider the constraints we have formulated for the tree system PLTG as constraints on a unification-based grammar formalism such as PATR . </S>
+<S ID='S-67' AZ='OWN'> We will call this system Partially Linear PATR ( PLPATR ) . </S>
+<S ID='S-68' AZ='OWN'> Having made the move from trees to feature structures , we consider the possibility of re-entrancy in PLPATR . </S>
+</P>
+<P>
+<S ID='S-69' AZ='OWN'> Note that the feature structure at the root of a PLPATR derivation tree will not involve re-entrancy . </S>
+<S ID='S-70' AZ='OWN'> However , for the following reasons we believe that this does not constitute as great a limitation as it might appear . </S>
+<S ID='S-71' AZ='OWN'> In unification-based grammar , the feature structure associated with the root of the tree is often regarded as the structure that has been derived from the input ( i.e. , the output of a parser ) . </S>
+<S ID='S-72' AZ='OWN'> As a consequence there is a tendency to use the grammar rules to accumulate a single , large feature structure giving a complete encoding of the analysis . </S>
+<S ID='S-73' AZ='OWN'> To do this , unbounded feature information is passed up the tree in a way that violates the constraints developed in this paper . </S>
+<S ID='S-74' AZ='OWN'> Rather than giving such prominence to the root feature structure , we suggest that the entire derivation tree should be seen as the object that is derived from the input , i.e. , this is what the parser returns . </S>
+<S ID='S-75' AZ='OWN'> Because feature structures associated with all nodes in the tree are available , feature information need only be passed up the tree when it is required in order to establish dependencies within the derivation tree . </S>
+<S ID='S-76' AZ='OWN'> When this approach is taken , there may be less need for re-entrancy in the root feature structure . </S>
+<S ID='S-77' AZ='OWN'> Furthermore , re-entrancy in the form of shared feature structures within and across nodes will be found in PLPATR ( see for example Figure <CREF/> ) . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-3'> Generative Capacity </HEADER>
+<P>
+<S ID='S-78' AZ='CTR'> LIG are more powerful than CFG and are known to be weakly equivalent to Tree Adjoining Grammar , Combinatory Categorial Grammar , and Head Grammar <REF SELF="YES" TYPE='P'>Vijay-Shanker and Weir 1994</REF> . </S>
+<S ID='S-79' AZ='OWN'> PLIG are more powerful than LIG since they can generate the k-copy language for any fixed k ( see Example <CREF/> ) . </S>
+<S ID='S-80' AZ='OWN'> Slightly more generally , PLIG can generate the language </S>
+</P>
+<IMAGE ID='I-14'/>
+<P>
+<S ID='S-81' AZ='OWN'> for any <EQN/> and regular language R . </S>
+<S ID='S-82' AZ='OWN'> We believe that the language involving copies of strings of matching brackets described in Example <CREF/> cannot be generated by PLIG but , as shown in Example <CREF/> , it can be generated by PLTG and therefore PLPATR . </S>
+<S ID='S-83' AZ='OWN'> Slightly more generally , PLTG can generate the language </S>
+</P>
+<IMAGE ID='I-15'/>
+<P>
+<S ID='S-84' AZ='OWN'> for any <EQN/> and context-free language L . </S>
+<S ID='S-85' AZ='OWN'> It appears that the class of languages generated by PLTG is included in those languages generated by Linear Context-Free Rewriting Systems <REF TYPE='P' SELF="YES">Vijay-Shanker et al. 1987</REF> since the construction involved in a proof of this underlies the recognition algorithm discussed in the next section . </S>
+<S ID='S-86' AZ='OWN'> As is the case for the tree sets of IG , LIG and Tree Adjoining Grammar , the tree sets generated by PLTG have path sets that are context-free languages . </S>
+<S ID='S-87' AZ='OWN'> In other words , the set of all strings labelling root to frontier paths of derivation trees is a context-free language . </S>
+<S ID='S-88' AZ='OWN'> While the tree sets of LIG and Tree Adjoining Grammars have independent branches , PLTG tree sets exhibit dependent branches , where the number of dependent branches in any tree is bounded by the grammar . </S>
+<S ID='S-89' AZ='OWN'> Note that the number of dependent branches in the tree sets of IG is not bounded by the grammar ( e.g. , they generate sets of all full binary trees ) . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-4'> Tractable Recognition </HEADER>
+<P>
+<S ID='S-90' AZ='TXT'> In this section we outline the main ideas underlying a polynomial time recognition algorithm for PLPATR that generalizes the CKY algorithm <REF  TYPE='P'>Kasami 1965</REF>, <REF  TYPE='P'>Younger 1967</REF> . </S>
+<S ID='S-91' AZ='BAS'> The key to this algorithm is the use of structure sharing techniques similar to those used to process LIG efficiently <REF SELF="YES" TYPE='P'>Vijay-Shanker and Weir 1993</REF> . </S>
+<S ID='S-92' AZ='TXT'> To understand how these techniques are applied in the case of PLPATR , it is therefore helpful to consider first the somewhat simpler case of LIG . </S>
+</P>
+<P>
+<S ID='S-93' AZ='OTH'> The CKY algorithm is a bottom-up recognition algorithm for CFG . </S>
+<S ID='S-94' AZ='OTH'> For a given grammar G and input string <EQN/> the algorithm constructs an array P , having <EQN/> elements , where element <EQN/> stores all and only those nonterminals of G that derive the substring <EQN/> . </S>
+<S ID='S-95' AZ='OTH'> A naive adaptation of this algorithm for LIG recognition would involve storing a set of nonterminals and their associated stacks . </S>
+<S ID='S-96' AZ='OTH'> But since stack length is at least proportional to the length of the input string , the resultant algorithm would exhibit exponential space and time complexity in the worst case . </S>
+<S ID='S-97' AZ='OTH'> <REF TYPE='A' SELF="YES">Vijay-Shanker and Weir 1993</REF> showed that the behaviour of the naive algorithm can be improved upon . </S>
+<S ID='S-98' AZ='OTH'> In LIG derivations the application of a rule cannot depend on more than a bounded portion of the top of the stack . </S>
+<S ID='S-99' AZ='OTH'> Thus , rather than storing the whole of the potentially unbounded stack in a particular array entry , it suffices to store just a bounded portion together with a pointer to the residue . </S>
+</P>
+<IMAGE ID='I-16'/>
+<P>
+<S ID='S-100' AZ='BKG'> Consider Figure <CREF/> . </S>
+<S ID='S-101' AZ='BKG'> Tree <CREF/> shows a LIG derivation of the substring <EQN/> from the object <EQN/> . </S>
+<S ID='S-102' AZ='BKG'> In this derivation tree , the node labelled <EQN/> is a distinguished descendant of the root and is the first point below <EQN/> at which the top symbol ( <EQN/> ) of the ( unbounded ) stack <EQN/> is exposed . </S>
+<S ID='S-103' AZ='BKG'> This node is called the terminator of the node labelled <EQN/> . </S>
+<S ID='S-104' AZ='BKG'> It is not difficult to show that only that portion of the derivation below the terminator node is dependent on more than the top of the stack <EQN/> . </S>
+<S ID='S-105' AZ='BKG'> It follows that for any stack <EQN/> , if there is a derivation of the substring <EQN/> from <EQN/> ( see tree <CREF/> ) , then there is a corresponding derivation of <EQN/> from <EQN/> ( see tree <CREF/> ) . </S>
+<S ID='S-106' AZ='BKG'> This captures the sense in which LIG derivations exhibit `` context-freeness '' . </S>
+<S ID='S-107' AZ='OWN'> Efficient storage of stacks can therefore be achieved by storing in P [ i , j ] just that bounded amount of information ( nonterminal plus top of stack ) relevant to rule application , together with a pointer to any entry in <EQN/> representing a subderivation from an object <EQN/> . </S>
+</P>
+<P>
+<S ID='S-108' AZ='OWN'> Before describing how we adapt this technique to the case of PLPATR we discuss the sense in which PLPATR derivations exhibit a `` context-freeness '' property . </S>
+<S ID='S-109' AZ='OWN'> The constraints on PLPATR which we have identified in this paper ensure that these feature values can be manipulated independently of one another and that they behave in a stack-like way . </S>
+<S ID='S-110' AZ='OWN'> As a consequence , the storage technique used effectively for LIG recognition may be generalized to the case of PLPATR . </S>
+</P>
+<P>
+<S ID='S-111' AZ='OWN'> Suppose that we have the derived tree shown in Figure <CREF/> where the nodes at the root of the subtrees <EQN/> and <EQN/> are the so-called f-terminator and g-terminator of the tree 's root , respectively . </S>
+<S ID='S-112' AZ='OWN'> Roughly speaking , the f-terminator of a node is the node from which it gets the value for the feature f. Because of the constraints on the form of PLPATR productions , the derivations between the root of <EQN/> and these terminators cannot in general depend on more than a bounded part of the feature structures <EQN/> and <EQN/> . </S>
+<S ID='S-113' AZ='OWN'> At the root of the figure the feature structures <EQN/> and <EQN/> have been expanded to show the extent of the dependency in this example . </S>
+<S ID='S-114' AZ='OWN'> In this case , the value of the feature f in <EQN/> must be a , whereas , the feature g is not fixed . </S>
+<S ID='S-115' AZ='OWN'> Furthermore , the value of the feature g in <EQN/> must be b , whereas , the feature f is not fixed . </S>
+<S ID='S-116' AZ='OWN'> This means , for example , that the applicability of the productions used on the path from the root of <EQN/> to the root of <EQN/> depends on the feature f in <EQN/> having the value a but does not depend on the value of the feature g in <EQN/> . </S>
+<S ID='S-117' AZ='OWN'> Note that in this tree the value of the feature g in <EQN/> is </S>
+</P>
+<IMAGE ID='I-17'/>
+<P>
+<S ID='S-118' AZ='OWN'> and the value of the feature f in <EQN/> is </S>
+</P>
+<IMAGE ID='I-18'/>
+<P>
+<S ID='S-119' AZ='OWN'> Suppose that , in addition to the tree shown in Figure <CREF/> the grammar generates the pair of trees shown in Figure <CREF/> . </S>
+<S ID='S-120' AZ='OWN'> Notice that while the feature structures at the root of <EQN/> and <EQN/> are not compatible with <EQN/> and <EQN/> , they do agree with respect to those parts that are fully expanded at <EQN/> 's root node . </S>
+<S ID='S-121' AZ='OWN'> The `` context-freeness '' of PLPATR means that given the three trees shown in Figures <CREF/> and <CREF/> the tree shown in Figure <CREF/> will also be generated by the grammar . </S>
+</P>
+<IMAGE ID='I-19'/>
+<IMAGE ID='I-20'/>
+<IMAGE ID='I-21'/>
+<P>
+<S ID='S-122' AZ='OWN'> This gives us a means of efficiently storing the potentially unbounded feature structures associated with nodes in a derivation tree ( derived feature structures ) . </S>
+<S ID='S-123' AZ='OWN'> By analogy with the situation for , derived feature structures can be viewed as consisting of a bounded part ( relevant to rule application ) plus unbounded information about the values of features . </S>
+<S ID='S-124' AZ='OWN'> For each feature , we store in the recognition array a bounded amount of information about its value locally , together with a pointer to a further array element . </S>
+<S ID='S-125' AZ='OWN'> Entries in this element of the recognition array that are compatible ( i.e. unifiable ) with the bounded , local information correspond to different possible values for the feature . </S>
+<S ID='S-126' AZ='OWN'> For example , we can use a single entry in the recognition array to store the fact that all of the feature structures that can appear at the root of the trees in Figure <CREF/> derive the substring <EQN/> . </S>
+<S ID='S-127' AZ='OWN'> This entry would be underspecified , for example , the value of feature <EQN/> would be specified to be any feature stored in the array entry for the substring <EQN/> whose feature f had the value a . </S>
+</P>
+<P>
+<S ID='S-128' AZ='OWN'> However , this is not the end of the story . </S>
+<S ID='S-129' AZ='OWN'> In contrast to LIG , PLPATR licenses structure sharing on the right hand side of productions . </S>
+<S ID='S-130' AZ='OWN'> That is , partial linearity permits feature values to be shared between daughters where they are not also shared with the mother . </S>
+<S ID='S-131' AZ='OWN'> But in that case , it appears that checking the applicability of a production at some point in a derivation must entail the comparison of structures of unbounded size . </S>
+<S ID='S-132' AZ='OWN'> In fact , this is not so . </S>
+<S ID='S-133' AZ='OWN'> The PLPATR recognition algorithm employs a second array ( called the compatibility array ) , which encodes information about the compatibility of derived feature structures . </S>
+<S ID='S-134' AZ='OWN'> Tuples of compatible derived feature structures are stored in the compatibility array using exactly the same approach used to store feature structures in the main recognition array . </S>
+<S ID='S-135' AZ='OWN'> The presence of a tuple in the compatibility array ( the indices of which encode which input substrings are spanned ) indicates the existence of derivations of compatible feature structures . </S>
+<S ID='S-136' AZ='OWN'> Due to the `` context-freeness '' of PLPATR , new entries can be added to the compatibility array in a bottom-up manner based on existing entries without the need to reconstruct complete feature structures . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-5'> Conclusions </HEADER>
+<P>
+<S ID='S-137' AZ='AIM'> In considering ways of extending LIG , this paper has introduced the notion of partial linearity and shown how it can be manifested in the form of a constrained unification-based grammar formalism . </S>
+<S ID='S-138' AZ='OWN'> We have explored examples of the kinds of tree sets and string languages that this system can generate . </S>
+<S ID='S-139' AZ='OWN'> We have also briefly outlined the sense in which partial linearity gives rise to `` context-freeness '' in derivations and sketched how this can be exploited in order to obtain a tractable recognition algorithm . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+Martin <SURNAME>Emele</SURNAME>.
+<DATE>1991</DATE>.
+Unification with lazy non-redundant copying.
+In 29th meeting Assoc. Comput. Ling., pages 323--330,
+  Berkeley, CA.
+</REFERENCE>
+<REFERENCE>
+G. <SURNAME>Gazdar</SURNAME>.
+<DATE>1988</DATE>.
+Applicability of indexed grammars to natural languages.
+In U. Reyle and C. Rohrer, editors, Natural Language Parsing and
+  Linguistic Theories, pages 69--94. D. Reidel, Dordrecht, Holland.
+</REFERENCE>
+<REFERENCE>
+Dale <SURNAME>Gerdemann</SURNAME>.
+<DATE>1989</DATE>.
+Using restrictions to optimize unification parsing.
+In International Workshop of Parsing Technologies, pages
+  8--17, Pittsburgh, PA.
+</REFERENCE>
+<REFERENCE>
+Kurt <SURNAME>Godden</SURNAME>.
+<DATE>1990</DATE>.
+Lazy unification.
+In 28th meeting Assoc. Comput. Ling., pages 180--187,
+  Pittsburgh, PA.
+</REFERENCE>
+<REFERENCE>
+S. P. <SURNAME>Harrison</SURNAME> and T. M. <SURNAME>Ellison</SURNAME>.
+<DATE>1992</DATE>.
+Restriction and termination in parsing with feature-theoretic
+  grammars.
+Computational Linguistics, 18(4):519--531.
+</REFERENCE>
+<REFERENCE>
+L. <SURNAME>Karttunen</SURNAME> and M. <SURNAME>Kay</SURNAME>.
+<DATE>1985</DATE>.
+Structure sharing with binary trees.
+In 23th meeting Assoc. Comput. Ling., pages 133--136.
+</REFERENCE>
+<REFERENCE>
+T. <SURNAME>Kasami</SURNAME>.
+<DATE>1965</DATE>.
+An efficient recognition and syntax algorithm for context-free
+  languages.
+Technical Report AF-CRL-65-758, Air Force Cambridge Research
+  Laboratory, Bedford, MA.
+</REFERENCE>
+<REFERENCE>
+Kiyoshi <SURNAME>Kogure</SURNAME>.
+<DATE>1990</DATE>.
+Strategic lazy incremental copy graph unification.
+In 13th International Conference on Comput. Ling., pages
+  223--228, Helsinki.
+</REFERENCE>
+<REFERENCE>
+F. C. N. <SURNAME>Pereira</SURNAME>.
+<DATE>1985</DATE>.
+A structure-sharing representation for unification-based grammar
+  formalisms.
+In 23th meeting Assoc. Comput. Ling., pages 137--144.
+</REFERENCE>
+<REFERENCE>
+S. M. <SURNAME>Shieber</SURNAME>.
+<DATE>1984</DATE>.
+The design of a computer language for linguistic information.
+In 10th International Conference on Comput. Ling., pages
+  363-366.
+</REFERENCE>
+<REFERENCE>
+S. M. <SURNAME>Shieber</SURNAME>.
+<DATE>1985</DATE>.
+Using restriction to extend parsing algorithms for
+  complex-feature-based formalisms.
+In 23rd meeting Assoc. Comput. Ling., pages 82-93.
+</REFERENCE>
+<REFERENCE>
+Hideto <SURNAME>Tomabechi</SURNAME>.
+<DATE>1991</DATE>.
+Quasi-destructive graph unification.
+In 29th meeting Assoc. Comput. Ling., pages 315--322,
+  Berkeley, CA.
+</REFERENCE>
+<REFERENCE>
+K. <SURNAME>Vijay-Shanker</SURNAME> and D. J. <SURNAME>Weir</SURNAME>.
+<DATE>1993</DATE>.
+Parsing some constrained grammar formalisms.
+Computational Linguistics, 19(4):591--636.
+</REFERENCE>
+<REFERENCE>
+K. <SURNAME>Vijay-Shanker</SURNAME> and D. J. <SURNAME>Weir</SURNAME>.
+<DATE>1994</DATE>.
+The equivalence of four extensions of context-free grammars.
+Math. Syst. Theory, 27:511-546.
+</REFERENCE>
+<REFERENCE>
+K. <SURNAME>Vijay-Shanker</SURNAME>, D. J. <SURNAME>Weir</SURNAME>, and A. K. <SURNAME>Joshi</SURNAME>.
+<DATE>1987</DATE>.
+Characterizing structural descriptions produced by various
+  grammatical formalisms.
+In 25th meeting Assoc. Comput. Ling., pages 104-111.
+</REFERENCE>
+<REFERENCE>
+David <SURNAME>Wroblewski</SURNAME>.
+<DATE>1987</DATE>.
+Nondestructive graph unification.
+In 6th National Conference on Artificial Intelligence,
+  pages 582--587, Seattle, WA.
+</REFERENCE>
+<REFERENCE>
+D. H. <SURNAME>Younger</SURNAME>.
+<DATE>1967</DATE>.
+Recognition and parsing of context-free languages in time n3.
+Information and Control, 10(2):189-208.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

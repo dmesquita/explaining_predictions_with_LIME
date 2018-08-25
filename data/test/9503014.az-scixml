@@ -1,0 +1,608 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9503014</FILENO>
+<REFLABEL>Milward 1994b</REFLABEL>
+<APPEARED><CONFERENCE>COLING</CONFERENCE><YEAR>1994</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.Sm </CLASSIFICATION>
+</METADATA>
+<TITLE> Non-Constituent Coordination : Theory and Practice </TITLE>
+<AUTHORLIST>
+<AUTHOR>David Milward</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' AZ='OTH'> Despite the large amount of theoretical work done on non-constituent coordination during the last two decades , many computational systems still treat coordination using adapted parsing strategies , in a similar fashion to the SYSCONJ system developed for ATNs . </A-S>
+<A-S ID='A-1' DOCUMENTC='S-188' AZ='CTR'> This paper reviews the theoretical literature , and shows why many of the theoretical accounts actually have worse coverage than accounts based on processing . </A-S>
+<A-S ID='A-2' DOCUMENTC='S-191' AZ='AIM'> Finally , it shows how processing accounts can be described formally and declaratively in terms of Dynamic Grammars . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='AIM'> This paper is concerned with symmetrical coordination , where the order of the conjuncts ( the items being coordinated by a conjunction such as and or or ) can be altered without affecting acceptability . </S>
+<S ID='S-1' AZ='BKG'> Coordination of this kind is traditionally split into constituent coordination , where each conjunct forms a constituent according to ` standard ' phrase structure grammars , and non-constituent coordination . </S>
+<S ID='S-2' AZ='BKG'> Constituent and non-constituent coordination have been treated as entirely separate phenomena ( see <REF TYPE='A'>van Oirsouw 1987</REF> for discussion ) , and different mechanisms have been proposed for each . </S>
+<S ID='S-3' AZ='CTR'> However , by considering grammaticality judgements alone , there seems little justification for such a division . </S>
+<S ID='S-4' AZ='BKG'> To illustrate this , consider the sentence : </S>
+</P>
+<EXAMPLE ID='E-0'>
+<EX-S> John gave Mary some books </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-5' AZ='BKG'> Each of the final proper substrings of the sentence ( i.e. some books , Mary some books etc. ) can be used as a conjunct e.g. </S>
+</P>
+<EXAMPLE ID='E-1'>
+<EX-S> John gave Mary [ some books ] and [ some papers ] . </EX-S>
+<EX-S> John gave [ Mary some books ] and [ Peter some papers ] . </EX-S>
+<EX-S> John [ gave Mary some books ] and [ lent Peter some papers ] . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-6' AZ='BKG'> Similarly , each of the initial substrings can be used as a conjunct e.g . </S>
+</P>
+<EXAMPLE ID='E-2'>
+<EX-S> [ John gave ] and [ Peter lent ] Mary some books . </EX-S>
+<EX-S> [ John gave Mary ] and [ Peter lent George ] some books . </EX-S>
+<EX-S> [ John gave Mary some ] and [ Peter lent George many ] books . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-7' AZ='BKG'> and so can each of the middle substrings e.g . </S>
+</P>
+<EXAMPLE ID='E-3'>
+<EX-S> John [ gave Mary some ] and [ lent Peter many ] books . </EX-S>
+<EX-S> John [ gave Mary ] and [ lent Peter ] many books . </EX-S>
+<EX-S> John gave [ Mary some ] and [ Peter many ] books </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-8' AZ='BKG'> Only examples <CREF/> are constituent coordinations . </S>
+<S ID='S-9' AZ='BKG'> Example <CREF/> seems slightly unnatural , but it is much improved if we replace books by a heavier string such as books about gardening . </S>
+<S ID='S-10' AZ='BKG'> Thus , for this example , any substring of the sentence can form a viable conjunct . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Deletion Accounts </HEADER>
+<P>
+<S ID='S-11' AZ='OTH'> In the last twenty to thirty years there have been a series of accounts of coordination involving various deletion mechanisms ( from e.g. <REF TYPE='A'>Gleitman 1965</REF> to <REF TYPE='A'>van Oirsouw 1987</REF> ) . </S>
+<S ID='S-12' AZ='OTH'> For example , from the following ` antecedent ' sentence , </S>
+</P>
+<EXAMPLE ID='E-4'>
+<EX-S> Sue gave Fred a book by Chomsky and Sue gave Peter a paper by Chomsky </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-13' AZ='OTH'> <REFAUTHOR>van Oirsouw</REFAUTHOR> allows deletion of words to the left and to the right of the conjunction , </S>
+</P>
+<IMAGE ID='I-0'/>
+<P>
+<S ID='S-14' AZ='OTH'> resulting in the sentence : </S>
+</P>
+<EXAMPLE ID='E-5'>
+<EX-S> Sue gave Fred a book and Peter a paper by Chomsky . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-15' AZ='OTH'> Most deletion accounts assume that deletion is performed under identity of words , but don't analyse what it means for two words to be identical ( an exception is <REFAUTHOR>van Oirsouw</REFAUTHOR> who discusses phonological , morphological and referential identity ) . </S>
+<S ID='S-16' AZ='BKG'> Consider the following example of deletion . </S>
+</P>
+<EXAMPLE ID='E-6'>
+<EX-S> John will drive and Mary built the drive </EX-S>
+<EX-S> * [ John will ] and [ Mary built the ] drive </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-17' AZ='BKG'> Here the two cases of drive are phonologically identical , but have different syntactic categories . </S>
+<S ID='S-18' AZ='BKG'> Now consider : </S>
+</P>
+<EXAMPLE ID='E-7'>
+<EX-S> * John bored [ the new hole ] and [ his fellow workers ] . </EX-S>
+<EX-S> * Mary came in [ a hurry ] and [ a taxi ] </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-19' AZ='BKG'> These are cases of ` zeugma ' and are unacceptable except as jokes . </S>
+<S ID='S-20' AZ='BKG'> It therefore seems that the deleted words must have the same major syntactic category , and the same lexical meaning . </S>
+</P>
+<P>
+<S ID='S-21' AZ='BKG'> However , even if we fix both syntactic category and lexical meaning , we still get some weird coordinations . </S>
+<S ID='S-22' AZ='BKG'> For example , consider : </S>
+</P>
+<EXAMPLE ID='E-8'>
+<EX-S> * Sue saw <EQN/> the man <EQN/> [ through the telescope ] <EQN/> and [ with the troublesome kid ] <EQN/> . </EX-S>
+<EX-S> * I saw [ a friend of ] and [ the manufacturer of ] Mary 's handbag . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-23' AZ='BKG'> In example <CREF/> the two prepositions are attached differently , one to the verb saw , the other to the noun , man . </S>
+<S ID='S-24' AZ='OTH'> In example <CREF/> , attributed to Paul Dekker , the two conjuncts require Mary 's handbag to have a different syntactic structure : the bracketing appropriate for the first conjunct is [ [ a friend of Mary ] 's handbag ] . </S>
+<S ID='S-25' AZ='OWN'> The unacceptability of these examples suggests that word by word identity is insufficient , and that deleted material must have identical syntactic structure , as well as identical lexical meanings . </S>
+</P>
+<P>
+<S ID='S-26' AZ='OTH'> Some of the most compelling arguments against deletion have been semantic . </S>
+<S ID='S-27' AZ='CTR'> For example , <REF TYPE='A'>Lakoff and Peters 1969</REF> argued that deletion accounts are inappropriate for certain constituent coordinations such as : </S>
+</P>
+<EXAMPLE ID='E-9'>
+<EX-S> John and Mary are alike </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-28' AZ='CTR'> since the ` antecedent ' sentence John are alike and Mary are alike is nonsensical ( it is also ungrammatical if we consider number agreement ) . </S>
+</P>
+<P>
+<S ID='S-29' AZ='BKG'> However , semantically inappropriate or nonsensical ` antecedents ' are also possible when we consider non-constituent coordination . </S>
+<S ID='S-30' AZ='BKG'> For example , consider ` antecedents ' for the following : </S>
+</P>
+<EXAMPLE ID='E-10'>
+<EX-S> [ The man who buys ] and [ the woman who sells ] rattlesnakes met outside . </EX-S>
+<EX-S> Many former [ soldiers living in England ] and [ resistance members living in France ] have similar memories . </EX-S>
+<EX-S> John sold different dealers [ a vase using his intensive sales technique ] and [ a bookcase using his market-stall technique ] . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-31' AZ='BKG'> <CREF/> is non-constituent coordination under the primary reading where the scope of former does not contain living in England i.e. where the semantic bracketing is : </S>
+</P>
+<EXAMPLE ID='E-11'>
+<EX-S> [ [ former soldiers ] living in England ] </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-32' AZ='BKG'> Examples <CREF/> and <CREF/> could be expanded out at the NP level , but not at the S level . </S>
+<S ID='S-33' AZ='BKG'> However <CREF/> cannot be expanded out at any constituent level , whilst retaining an appropriate semantics . </S>
+<S ID='S-34' AZ='BKG'> For example , expansion at the VP level gives : </S>
+</P>
+<EXAMPLE ID='E-12'>
+<EX-S> John sold different dealers a vase using his intensive sales technique and different dealers a bookcase using his market-stall technique</EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-35' AZ='CTR'> Thus , although <REFAUTHOR>Lakoff and Peters</REFAUTHOR> 's arguments count against standard deletion analyses , they do not count as general arguments against a unified treatment of constituent and non-constituent coordination . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-2'> Shared Structure </HEADER>
+<P>
+<S ID='S-36' AZ='BKG'> Consider the sentence : </S>
+</P>
+<EXAMPLE ID='E-13'>
+<EX-S> John gave Mary a book and Peter a paper by Chomsky </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-37' AZ='BKG'> Instead of thinking of John gave and by Chomsky as deleted , we can also think of them as shared by the two conjuncts . </S>
+<S ID='S-38' AZ='BKG'> This structure can be represented as follows : </S>
+</P>
+<IMAGE ID='I-1'/>
+<P>
+<S ID='S-39' AZ='OWN'> From the result of the previous section , each conjunct must share not just the phonological material , but also the syntactic structure and the lexical meanings . </S>
+</P>
+<P>
+<S ID='S-40' AZ='OWN'> There are three main methods by which this sharing of structure can be achieved : phrasal coordination , 3-D coordination , and processing strategies . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-3'> Phrasal Coordination </HEADER>
+<P>
+<S ID='S-41' AZ='OWN'> At first sight , analysing non-constituent coordination using phrasal ( i.e. constituent ) coordination seems nonsensical . </S>
+<S ID='S-42' AZ='OWN'> This is not the case . </S>
+<S ID='S-43' AZ='OWN'> Coordinations are classified as non-constituent coordination if the conjuncts fail to be constituents in a ` standard ' phrase structure grammar . </S>
+<S ID='S-44' AZ='OWN'> However , they may well be constituents in other grammars . </S>
+<S ID='S-45' AZ='OTH'> For example , it has been argued that the weaker notion of constituency provided by Categorial Grammars is exactly what is required to allow all conjuncts to be treated as constituents <REF TYPE='P'>Steedman 1985</REF> . </S>
+</P>
+<P>
+<S ID='S-46' AZ='OTH'> Phrasal coordination is exemplified by the schema : X <EQN/> X Conj X The shared material is necessarily treated identically for each conjunct since there is only a single copy : the conjunction is embedded in a single syntax tree . </S>
+</P>
+<P>
+<S ID='S-47' AZ='OTH'> The phrasal coordination schema requires each conjunct to be given a single type , and for the conjuncts and the conjunction as a whole to be of the same type . </S>
+<S ID='S-48' AZ='CTR'> Problems with the latter requirement were pointed out by <REF TYPE='A'>Sag et al. 1985</REF> , who gave the following counterexamples : </S>
+</P>
+<EXAMPLE ID='E-14'>
+<EX-S> We walked slowly and with great care . </EX-S>
+<EX-S> Pat is a Republican and proud of it . </EX-S>
+<EX-S> I am hoping to get an invitation and optimistic about my chances . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-49' AZ='OTH'> <REFAUTHOR>Sag et al.</REFAUTHOR> deal with these examples by treating categories as feature bundles , and allowing coordination in cases where there are features in common . </S>
+<S ID='S-50' AZ='OTH'> For example , the two conjuncts in <CREF/> share the feature +MANNER . </S>
+<S ID='S-51' AZ='CTR'> As it stands , the account does not deal with examples such as the following , </S>
+</P>
+<EXAMPLE ID='E-15'>
+<EX-S> TNT deliver efficiently and on Sundays </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-52' AZ='CTR'> Here the adverbial phrase would presumably be +MANNER , and the prepositional phrase , +TEMP . </S>
+<S ID='S-53' AZ='CTR'> Further examples which are problematic for <REFAUTHOR>Sag et al.</REFAUTHOR> are given by <REF TYPE='A'>Jorgensen and Abeille 1992</REF> . </S>
+</P>
+<P>
+<S ID='S-54' AZ='OTH'> An alternative , suggested by <REF TYPE='A'>Morrill 1990</REF> and similar to <REF TYPE='A'>Jorgensen and Abeille 1992</REF> , is to use the following coordination schema : </S>
+<S ID='S-55' AZ='OTH'> X <EQN/> Y <EQN/> X Conj Y </S>
+<S ID='S-56' AZ='OTH'> This does not impose any condition that the two categories X and Y share anything in common . </S>
+<S ID='S-57' AZ='OTH'> However , the new category X <EQN/> Y is used to ensure that both categories are appropriate in the context . </S>
+<S ID='S-58' AZ='OTH'> For example , <CREF/> is acceptable since the coordination type is NP <EQN/> AP , and is subcategorises for both NPs and APs . </S>
+</P>
+<P>
+<S ID='S-59' AZ='BKG'> A rather more difficult problem is that of providing types for all possible conjuncts . </S>
+<S ID='S-60' AZ='BKG'> Consider the following : </S>
+</P>
+<EXAMPLE ID='E-16'>
+<EX-S> Sue gave Fred a book and Peter a paper . </EX-S>
+<EX-S> Mary admires and Sue thinks she likes Peter . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-61' AZ='BKG'> <CREF/> is a conjunction of two pairs of noun phrases . </S>
+<S ID='S-62' AZ='BKG'> <CREF/> is a case of ` unbounded Right-Node Raising ' where the noun phrase Peter is embedded at different depths in the two conjuncts . </S>
+</P>
+<P>
+<S ID='S-63' AZ='OTH'> There have been two main approaches to dealing with examples such as <CREF/> using phrasal coordination . </S>
+<S ID='S-64' AZ='OTH'> The first is to introduce an explicit product operator <REF TYPE='P'>Wood 1988</REF> , allowing types of the form NP * NP . </S>
+<S ID='S-65' AZ='OTH'> The second is to use a calculus in which types can undergo ` type-raising ' <REF TYPE='P'>Dowty 1988</REF> , or can be formed by abstraction ( as in the Lambek Calculus , <REF TYPE='P'>Lambek 1958</REF> ) . </S>
+<S ID='S-66' AZ='OTH'> The effect is to treat Fred a book as a verb phrase missing its verb . </S>
+</P>
+<P>
+<S ID='S-67' AZ='OTH'> The advantage of adopting a general abstraction mechanism , as in the Lambek Calculus , is that this also provides a treatment of examples such as <CREF/> . </S>
+<S ID='S-68' AZ='CTR'> Unfortunately , the ability to perform abstraction of categories with functional types ( which is required for <CREF/> ) also allows shared material to get different syntactic analyses , resulting in acceptance of all the sentences predicted by deletion accounts where identity of lexical categories and lexical semantics is respected , but not identity of syntactic structure . </S>
+<S ID='S-69' AZ='BKG'> Reconsider : </S>
+</P>
+<EXAMPLE ID='E-17'>
+<EX-S> * I saw [ a friend of ] and [ the manufacturer of ] Mary 's handbag </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-70' AZ='BKG'> We can obtain identical syntactic types for a friend of and the manufacturer of by subtracting the lexical types of I , saw , Mary , 's , and handbag from the sentence type S . </S>
+<S ID='S-71' AZ='BKG'> Since the types are identical , coordination can then take place . </S>
+<S ID='S-72' AZ='BKG'> Thus the ability to ` subtract ' one type from another allows the Lambek Calculus to replicate a deletion account , and it thereby suffers from the same problems . </S>
+</P>
+<P>
+<S ID='S-73' AZ='OTH'> There have been some proposals to restrict the Lambek Calculus in order to prevent such overgeneration . </S>
+<S ID='S-74' AZ='OTH'> <REF TYPE='A'>Barry and Pickering 1993</REF> propose a calculus in which <CREF/> is dealt with using a product operation , and abstraction is limited to categories which do not act as a function in the derivation . </S>
+<S ID='S-75' AZ='CTR'> This account makes reasonably good empirical predictions , though it does fail for the following examples : </S>
+</P>
+<EXAMPLE ID='E-18'>
+<EX-S> You can call me directly or after 3 pm through my secretary . </EX-S>
+<EX-S> Sue put a lamp on the table , and on the ledge a large antique punchbowl . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-76' AZ='CTR'> In <CREF/> , each conjunct contains different numbers of modifiers of different types ( an adverbial phrase with two prepositional phrases ) . </S>
+<S ID='S-77' AZ='CTR'> In <CREF/> the subcategorisation order is swapped in the two conjuncts . </S>
+</P>
+<P>
+<S ID='S-78' AZ='OWN'> Successful treatment of non-constituent coordination using phrasal coordination seems to require elaborate encoding in the conjunct type of a simple generalisation : conjuncts can coordinate provided they are acceptable within the same syntactic context . </S>
+<S ID='S-79' AZ='OTH'> The 3-D approaches and processing strategies use syntactic context more directly , and it is to these methods which we now turn . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-4'> 3-D Coordination </HEADER>
+<P>
+<S ID='S-80' AZ='OWN'> Let us briefly reconsider our explanation of deletion . </S>
+<S ID='S-81' AZ='OWN'> Example <CREF/> was explained by saying that the two strings by Chomsky and Sue gave are deleted under some notion of identity . </S>
+<S ID='S-82' AZ='OWN'> However , we could equally well have described this as a process whereby the first instance of by Chomsky is merged with the second ( under some notion of identity ) , and the second instance of Sue gave is merged with the first . </S>
+</P>
+<P>
+<S ID='S-83' AZ='OWN'> Merging word strings instead of deleting them does not help with the problems of deletion accounts which we outlined earlier . </S>
+<S ID='S-84' AZ='OWN'> In particular , it does not help to exclude examples <CREF/> and <CREF/> which suggest shared material must have identical syntactic structure . </S>
+<S ID='S-85' AZ='OWN'> However , once we have started to think in terms of merging , there is an obvious next step , which is to move from merging of word strings to merging of syntax trees . </S>
+<S ID='S-86' AZ='OTH'> This is the move made by <REF TYPE='A'>Goodall 1987</REF> , who advocates treating coordination as a union of phrase markers : `` a ` pasting together ' one on top of the other of two trees , with any identical nodes merging together '' <REF TYPE='P'>Goodall 1987 </REF> . </S>
+<S ID='S-87' AZ='OTH'> We can visualise the result in terms of a three-dimensional tree structure , where the merged material is on one plane , and the syntax trees for each conjunct are on two other planes . </S>
+<S ID='S-88' AZ='OTH'> For example , consider the 3-D tree for example <CREF/> given in Fig. <CREF/> . </S>
+</P>
+<IMAGE ID='I-2'/>
+<P>
+<S ID='S-89' AZ='OTH'> The merged part of the tree includes all the nodes which dominate the shared material Sue gave . </S>
+<S ID='S-90' AZ='OTH'> The conjuncts retain separate planes ( denoted here by using stars or crosses for branches ) . </S>
+</P>
+<P>
+<S ID='S-91' AZ='CTR'> <REFAUTHOR>Goodall</REFAUTHOR> 's account does not deal with examples such as <CREF/> , which he argues to be examples of a different phenomenon . </S>
+<S ID='S-92' AZ='OTH'> However these can be incorporated into a 3-D account <REF TYPE='P'>Moltmann 1992</REF> . </S>
+</P>
+<P>
+<S ID='S-93' AZ='CTR'> There are various technical difficulties with <REFAUTHOR>Goodall</REFAUTHOR> 's account <REF TYPE='P'>van Oirsouw 1987</REF> , <REF TYPE='P'>Moltmann 1992</REF> . </S>
+<S ID='S-94' AZ='CTR'> There is also a fundamental problem concerning semantic interpretation of coordinated structures ( see <REF TYPE='A'>Moltmann 1992</REF> which provides a revised and more complex 3-D account based on <REF TYPE='A'>Muadz 1991</REF> ) . </S>
+</P>
+<P>
+<S ID='S-95' AZ='OTH'> For coordination of unlike categories , as in the examples in <CREF/> , <REFAUTHOR>Goodall</REFAUTHOR> proposes a treatment somewhat similar to <REF TYPE='A'>Sag et al. 1985</REF> . </S>
+<S ID='S-96' AZ='CTR'> However there is still a problem in dealing with examples where there are different numbers of modifiers , such as <CREF/> or the following : </S>
+</P>
+<EXAMPLE ID='E-19'>
+<EX-S> We can meet at the office or in London outside the theatre . </EX-S>
+<EX-S> TNT deliver efficiently and after 5 pm in Edinburgh Consider example <CREF/> . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-97' AZ='CTR'> The syntactic structure appropriate for TNT deliver efficiently has one S node and two VP nodes . </S>
+<S ID='S-98' AZ='CTR'> However , the structure for TNT deliver after 5 pm in Edinburgh requires one S node and three VP nodes ( or three S nodes and one VP node ) . </S>
+<S ID='S-99' AZ='CTR'> The two structures therefore fail to merge since the structure dominating the shared material TNT deliver must be identical . </S>
+<S ID='S-100' AZ='CTR'> The use of ordered phrase structure trees also excludes examples such as <CREF/> . </S>
+</P>
+<P>
+<S ID='S-101' AZ='OTH'> In summary , the 3-D approaches correctly enforce identity of syntactic structure for shared material . </S>
+<S ID='S-102' AZ='CTR'> However , the way of characterising syntactic structure using ( parts of ) standard phrase structure trees results in an overly strict requirement of parallelism between the conjuncts . </S>
+<S ID='S-103' AZ='TXT'> We will now consider processing strategies , where syntactic structure of shared material is characterised more indirectly by the state of the parser . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-5'> Processing Strategies </HEADER>
+<P>
+<S ID='S-104' AZ='OTH'> There have been several attempts to treat coordination by adapting pre-existing parsing strategies . </S>
+<S ID='S-105' AZ='OTH'> For example , ATNs were adapted by <REF TYPE='A'>Woods 1973</REF> , DCGs by <REF TYPE='A'>Dahl and McCord 1983</REF> , and chart parsers by <REF TYPE='A'>Haugeneder 1992</REF> . </S>
+<S ID='S-106' AZ='OTH'> <REFAUTHOR>Woods</REFAUTHOR> and <REFAUTHOR>Dahl and McCord</REFAUTHOR> 's system are similar . </S>
+<S ID='S-107' AZ='OTH'> <REFAUTHOR>Haugeneder</REFAUTHOR> 's system has very limited coverage . </S>
+</P>
+<P>
+<S ID='S-108' AZ='OTH'> In <REFAUTHOR>Wood</REFAUTHOR> 's SYSCONJ system , the parser can back up to various points in the history of the parse , and parse the second conjunct according to the configuration found . </S>
+<S ID='S-109' AZ='OTH'> For example , in parsing , </S>
+</P>
+<EXAMPLE ID='E-20'>
+<EX-S> John gave some books to Peter and some papers to George </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-110' AZ='OTH'> at the point after encountering and , the parser can reaccess the configuration after parsing John gave i.e. a stack consisting of a sentence and a verb-phrase , and an arc traversal by the verb . </S>
+<S ID='S-111' AZ='OTH'> The second conjunct is then parsed according to this configuration . </S>
+</P>
+<P>
+<S ID='S-112' AZ='OTH'> SYSCONJ does not immediately merge the two stack configurations after completing the second conjunct , but , instead , separately parses both conjuncts in parallel until a constituent is completed . </S>
+<S ID='S-113' AZ='OTH'> For example , on parsing the sentence ,  </S>
+</P>
+<P>
+<S ID='S-114' AZ='OTH'> John gave Mary a book and Peter a paper about subjacency </S>
+<S ID='S-115' AZ='OTH'> the SYSCONJ system separately parses Peter a paper about subjacency and Mary a book about subjacency before conjoining at the level of some enclosing constituent ( for example the verb phase ) . </S>
+<S ID='S-116' AZ='OTH'> The result is therefore similar to starting with the sentence : </S>
+</P>
+<EXAMPLE ID='E-21'>
+<EX-S> John gave Mary a book about subjacency and gave Peter a paper about subjacency </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-117' AZ='CTR'> As noted by <REFAUTHOR>Dahl and McCord</REFAUTHOR> , this mechanism means that SYSCONJ inherits the problems of nonsensical semantics which plague the deletion accounts , since John and Mary are alike is treated the same as John are alike and Mary are alike . </S>
+<S ID='S-118' AZ='CTR'> The mechanism also causes problems for dealing with nested coordination . </S>
+<S ID='S-119' AZ='CTR'> Consider the sentence : </S>
+</P>
+<EXAMPLE ID='E-22'>
+<EX-S> John wanted to study medicine when he was eleven , law when he was twelve , and to study nothing at all when he was eighteen </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-120' AZ='CTR'> The smallest constituent containing to study medicine when he was eleven is the verb phase wanted to study medicine when he was eleven . </S>
+<S ID='S-121' AZ='CTR'> However , if coordination of the first two conjuncts occurs at this level , it is difficult to see how to deal with the final conjunct . </S>
+</P>
+<P>
+<S ID='S-122' AZ='OTH'> Both <REFAUTHOR>Woods</REFAUTHOR> and <REFAUTHOR>Dahl and McCord</REFAUTHOR> use stack based configurations rather than a full parsing history . </S>
+<S ID='S-123' AZ='CTR'> Thus once something is popped off the stack its internal structure cannot be accessed by the coordination routine . </S>
+<S ID='S-124' AZ='CTR'> This rules out examples such as the following , </S>
+</P>
+<EXAMPLE ID='E-23'>
+<EX-S> John gave some books to Mary and papers to George </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-125' AZ='CTR'> where the NP , some books is completed prior to the conjunction being reached . </S>
+<S ID='S-126' AZ='CTR'> Although processing accounts can provide reasonable coverage of the coordination data , the exact predictions often require detailed examination of the code . </S>
+<S ID='S-127' AZ='OWN'> This suggests a need for the more abstract level of description which dynamic grammars provide . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-6'> Dynamic Grammars </HEADER>
+<P>
+<S ID='S-128' AZ='OTH'> Dynamics is just the study of states and transitions between states . </S>
+<S ID='S-129' AZ='OTH'> It can be used to specify the states of a left to right parser and the possible mappings between states . </S>
+<S ID='S-130' AZ='OTH'> For example , <REF TYPE='A' SELF="YES">Milward 1994a</REF> provides a dynamic description of a shift reduce parser , and a dynamic description of a fully incremental parser based on dependency grammar . </S>
+<S ID='S-131' AZ='OTH'> Suitable languages for dynamics are both formal and declarative , and are therefore also appropriate to express linguistic generalisations . </S>
+</P>
+<P>
+<S ID='S-132' AZ='OTH'> In a Dynamic Grammar <REF TYPE='P' SELF="YES">Milward 1994a</REF> , each word is regarded as an action which performs some change in the syntactic and semantic context . </S>
+<S ID='S-133' AZ='OTH'> For example , a parse of the sentence John likes Mary becomes a mapping between an initial state , c <EQN/> , through some intermediate states , c <EQN/> , c <EQN/> to a final state c <EQN/> i.e. c <EQN/> <EQN/> c <EQN/> <EQN/> c <EQN/> <EQN/> c <EQN/> If we use a dynamic grammar to describe a shift reduce parser , states encode the current stack configuration , and are related by rules which correspond to shifting and reducing . </S>
+<S ID='S-134' AZ='OTH'> Since there are arbitrarily large numbers of different stack configurations ( the stack can be of arbitrary size ) , the dynamics for shift reduce parsing involves the use of an infinite number of states . </S>
+<S ID='S-135' AZ='OTH'> It thus differs from , say ATNs <REF TYPE='P'>Woods 1973</REF> , which have a finite number of states , augmented by an explicit recursion mechanism . </S>
+</P>
+<P>
+<S ID='S-136' AZ='OTH'> Dynamic grammars can be presented as rewrite grammars by using transition types instead of the more usual S or NP . </S>
+<S ID='S-137' AZ='OTH'> For example , to get the parse above we need the lexical entries : </S>
+</P>
+<IMAGE ID='I-3'/>
+<P>
+<S ID='S-138' AZ='OTH'> and a single combination rule schema which states that , </S>
+</P>
+<IMAGE ID='I-4'/>
+<P>
+<S ID='S-139' AZ='OTH'> A string of words is a sentence if it has the type , c <EQN/> c <EQN/> where c <EQN/> and c <EQN/> are appropriate initial and final states for a parse . </S>
+<S ID='S-140' AZ='OTH'> In a dynamic grammar , any substring of a sentence can be assigned a type . </S>
+<S ID='S-141' AZ='OTH'> For example , likes and Mary can be combined to get the type c <EQN/> <EQN/> c <EQN/> . </S>
+<S ID='S-142' AZ='OTH'> Thus we have an appropriate level to perform substring coordination . </S>
+<S ID='S-143' AZ='BAS'> Dynamic grammars may be extended using the following combination rule ( and and or are both given the special transition type CONJ ) : F</S>
+</P>
+<IMAGE ID='I-5'/>
+<P>
+<S ID='S-144' AZ='OWN'> Similar to SYSCONJ , this allows coordination when two conjuncts map between the same pairs of states . </S>
+<S ID='S-145' AZ='OWN'> Processing is also similar , with the encountering of a conjunction causing back-up to an earlier stage in the parsing history . </S>
+<S ID='S-146' AZ='OWN'> However , since there is no popping of a stack , the full parsing history is available . </S>
+<S ID='S-147' AZ='OWN'> For example , Ben gave some books to Sue has the transitions : </S>
+</P>
+<IMAGE ID='I-6'/>
+<P>
+<S ID='S-148' AZ='OWN'> we can then parse papers to Joe using the transitions : </S>
+</P>
+<IMAGE ID='I-7'/>
+<P>
+<S ID='S-149' AZ='OWN'> Since the final state c <EQN/> matches the state immediately before the conjunction , the two strings can combine . </S>
+<S ID='S-150' AZ='OWN'> The resulting transition diagram is as follows : </S>
+</P>
+<IMAGE ID='I-8'/>
+<P>
+<S ID='S-151' AZ='OWN'> Iterated coordination ( e.g. for examples such as Mary , Peter and Sue ) can be treated in the same way as iterated constituent coordination is treated in phrase structure grammars . </S>
+<S ID='S-152' AZ='OWN'> For example , each transition type can be augmented with a feature ( +/ - ) denoting whether or not that transition has been iterated . </S>
+<S ID='S-153' AZ='OWN'> The coordination rule becomes : </S>
+</P>
+<IMAGE ID='I-9'/>
+<P>
+<S ID='S-154' AZ='OWN'> Iterated types are formed as follows : </S>
+</P>
+<IMAGE ID='I-10'/>
+<P>
+<S ID='S-155' AZ='OWN'> The precise grammaticality predictions made by the dynamic approach depend upon the characterisation of the states , and hence depend on the particular parsing strategy which is specified by the dynamics . </S>
+<S ID='S-156' AZ='OWN'> However there are some general predictions which can be made . </S>
+<S ID='S-157' AZ='OWN'> Firstly , consider conjuncts which correspond one to one in the categories of the corresponding words . </S>
+<S ID='S-158' AZ='OWN'> Here the conjuncts must provide the same transitions , and hence must be able to coordinate ( this is a reflection of the fact that processing can back up to any point in the parsing history ) . </S>
+<S ID='S-159' AZ='OWN'> This predicts that any substring of a sentence can coordinate with itself , and hence that any substring of a sentence can act as a conjunct . </S>
+<S ID='S-160' AZ='OWN'> For convenience we will call this the substring hypothesis . </S>
+<S ID='S-161' AZ='OWN'> This hypothesis has been broadly adopted in the work of <REF TYPE='A'>van Oirsouw 1987</REF> , <REF TYPE='A'>Barry and Pickering 1993</REF> , and by work on the Lambek Calculus <REF TYPE='P'>Moortgat 1988</REF> . </S>
+</P>
+<P>
+<S ID='S-162' AZ='OWN'> Apparent counterexamples are as follows : </S>
+</P>
+<EXAMPLE ID='E-24'>
+<EX-S> * The woman spoke to George and man to Peter . </EX-S>
+<EX-S> * John told [ Mary Bill ] and [ Fred Sue ] was coming <REF TYPE='P'>Barry and Pickering 1993</REF> . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-163' AZ='OWN'> However it is difficult to exclude these using syntactic constraints , without also excluding the more acceptable : </S>
+</P>
+<EXAMPLE ID='E-25'>
+<EX-S> Every woman spoke to George and man spoke to Peter . </EX-S>
+<EX-S> John told the mothers that their daughters and the fathers that their sons were all at the party </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-164' AZ='OWN'> More natural examples where conjuncts are formed by fragments from different constituents are the following : </S>
+</P>
+<EXAMPLE ID='E-26'>
+<EX-S> The police found some [ cars inside ] and [ lorries outside ] the warehouse . </EX-S>
+<EX-S> Everyone who I [ admire most came ] and [ admire least stayed away ] . </EX-S>
+<EX-S> Mary showed many [ friends the weird books ] and [ colleagues the more respectable papers ] written by her mother . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-165' AZ='OWN'> The relative unacceptability of the examples in <CREF/> is perhaps best explained as due to violations of intonational requirements , rather than syntactic requirements <REF TYPE='P'>Steedman 1989</REF> . </S>
+</P>
+<P>
+<S ID='S-166' AZ='OWN'> One case where the dynamic grammars correctly violate the substring hypothesis is when a string already involves a coordination . </S>
+<S ID='S-167' AZ='OWN'> Here , the internal states are not accessible , so we can't get interleaving of two coordinations , as in : </S>
+</P>
+<EXAMPLE ID='E-27'>
+<EX-S> The girl and the or the boy and the adult came . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-168' AZ='OWN'> There may be an argument for similarly blocking coordination in cases which would involve the breaking apart of idioms or other structures which are not standard cases of lexical subcategorisation . </S>
+<S ID='S-169' AZ='OWN'> An example ( due to <REFAUTHOR>Mark Steedman</REFAUTHOR> ) , which may be such a case , is the following , </S>
+</P>
+<EXAMPLE ID='E-28'>
+<EX-S> One man in [ ten spoke against and twenty actually protested ] . </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-170' AZ='OWN'> As noted above , the precise grammaticality predictions depend on the kind of parsing model which is encoded in the states . </S>
+<S ID='S-171' AZ='OWN'> In <REF TYPE='A' SELF="YES">Milward 1992</REF> , the dynamics specifies a word-by-word incremental parser for a lexicalised version of dependency grammar . </S>
+<S ID='S-172' AZ='OWN'> Each state is a recursively defined category , similar to a category in Categorial Grammar . </S>
+<S ID='S-173' AZ='OWN'> For example , after parsing You can call me one possible state is a sentence missing a sentence modifier . </S>
+<S ID='S-174' AZ='OWN'> This state is appropriate as the initial state for a parse of both directly , or of after 3 pm through my secretary , resulting in a final state of category sentence . </S>
+<S ID='S-175' AZ='OWN'> Thus examples such as <CREF/> are dealt with , since the syntactic context after You can call me does not distinguish between one or more than one subsequent modifier . </S>
+<S ID='S-176' AZ='OWN'> This lack of distinction as to whether one or more modifier is expected is actually a necessary prerequisite for performing decidable fully word-by-word incremental interpretation <REF TYPE='P' SELF="YES">Milward and Cooper 1994</REF> . </S>
+</P>
+<P>
+<S ID='S-177' AZ='OWN'> Some of the problems with categorial grammar accounts of coordination do reoccur with a dynamic account based on the parser used in <REF SELF="YES" TYPE='A'>Milward 1992</REF> . </S>
+<S ID='S-178' AZ='OWN'> For example , </S>
+</P>
+<EXAMPLE ID='E-29'>
+<EX-S> [ John ] and [ Mary thought that Peter ] slept </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-179' AZ='OWN'> is predicted to be acceptable , as are the following , </S>
+</P>
+<EXAMPLE ID='E-30'>
+<EX-S> [ Today John ] and [ Mary thought that Peter ] slept . </EX-S>
+<EX-S> I heard [ that ] and [ that no-one else knew that ] Fred won the scholarship </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-180' AZ='OWN'> This second batch of examples is particularly difficult to exclude without making changes to the characterisation of the states . </S>
+<S ID='S-181' AZ='OWN'> A feature plus or minus tensed verb on each conjunct does block them , but is difficult to motivate . </S>
+</P>
+<P>
+<S ID='S-182' AZ='OWN'> Dynamic grammars can be regarded purely as formal systems , as direct representations of processing , or as something inbetween ( for example , in the packed parallel parser described in <REF TYPE='A' SELF="YES">Milward 1994a</REF> , the actual parsing states are packed versions of the states in the grammar ) . </S>
+<S ID='S-183' AZ='OWN'> If we consider the dynamics to be a direct representation of processing , then a dependence of linguistic data upon parsing states would only seem plausible if the parsing process corresponds , at least to some extent , with actual human language processing . </S>
+<S ID='S-184' AZ='OWN'> This brings up the intriguing possibility that we can predict coordination facts from known processing data , and vice versa . </S>
+<S ID='S-185' AZ='OWN'> For example , consider the well known example of garden pathing : </S>
+</P>
+<EXAMPLE ID='E-31'>
+<EX-S> The horse raced past the barn fell </EX-S>
+</EXAMPLE>
+<P>
+<S ID='S-186' AZ='OWN'> The choice between the use of raced as the main verb , or as part of the reduced relative is usually assumed to be within the fragment the horse raced , suggesting that there are two distinguished parsing states after raced . </S>
+<S ID='S-187' AZ='OWN'> Thus this correctly predicts the unacceptability of the following : </S>
+</P>
+<EXAMPLE ID='E-32'>
+<EX-S> * The horse raced [ past the barn fell ] and [ beside the hedge ] . </EX-S>
+</EXAMPLE>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-7'> Conclusion </HEADER>
+<P>
+<S ID='S-188' ABSTRACTC='A-1' AZ='CTR'> This paper has sketched various problems with some of the linguistic accounts of coordination . </S>
+<S ID='S-189' AZ='OWN'> It suggested that this was primarily due to difficulty in encoding a proper notion of syntactic context . </S>
+<S ID='S-190' AZ='OWN'> The paper then considered various processing accounts , where the syntactic context is encoded within the state of the parser . </S>
+<S ID='S-191' ABSTRACTC='A-2' AZ='AIM'> Finally it showed how dynamics can be used as a formal description of processing accounts which use a full parsing history , and how the characterisations of parsing states can be chosen to enforce the requisite degree of parallelism between conjuncts . </S>
+</P>
+</DIV>
+</BODY>
+ <REFERENCELIST>
+<REFERENCE>
+<SURNAME>Barry</SURNAME>, G. and M. <SURNAME>Pickering</SURNAME> (<DATE>1993</DATE>).
+Dependency Categorial Grammar and Coordination.
+Linguistics, 31(5), p.855-902.</REFERENCE>
+<REFERENCE>
+<SURNAME>Dahl</SURNAME>, V. and M.C. <SURNAME>McCord</SURNAME> (<DATE>1983</DATE>). Treating Coordination in Logic Grammars.
+Computational Linguistics, 9-2, p.69-91.</REFERENCE>
+<REFERENCE>
+<SURNAME>Dowty</SURNAME>, D. (<DATE>1988</DATE>). Type Raising, Functional Composition and Non-Constituent
+Conjunction. In R. Oehrle et al. Eds., Categorial Grammars and
+Natural Language Structures. D.Reidel. </REFERENCE>
+<REFERENCE>
+<SURNAME>Gleitman</SURNAME>, L.R. (<DATE>1965</DATE>). Coordinating Conjunctions in English.
+Language, 41, p.260-293. </REFERENCE>
+<REFERENCE>
+<SURNAME>Goodall</SURNAME>, G. (<DATE>1987</DATE>). Parallel Structures in Syntax: Coordination
+Causatives and Restructuring, Cambridge University Press.</REFERENCE>
+<REFERENCE>
+<SURNAME>Haugeneder</SURNAME>, H. (<DATE>1992</DATE>). A Computational Model for Processing Coordinate
+Structures: Parsing Coordination without Grammar. In Proceedings of
+ECAI 92. </REFERENCE>
+<REFERENCE>
+<SURNAME>Jorgensen</SURNAME>, H. and A. <SURNAME>Abeill</SURNAME> (<DATE>1992</DATE>). Coordination of ``Unlike'' Categories
+in TAG. In Proceedings of the 2nd TAG Workshop, Philadelphia. </REFERENCE>
+<REFERENCE>
+<SURNAME>Lakoff</SURNAME>, G. and S. <SURNAME>Peters</SURNAME> (<DATE>1969</DATE>). Phrasal Conjunction and
+Symmetric Predicates. In B. Reibel and S. Schane, Eds.,
+Modern Studies in English. Eaglewood Cliffs: Prentice-Hall.</REFERENCE>
+<REFERENCE>
+<SURNAME>Lambek</SURNAME>, J. (<DATE>1958</DATE>). The Mathematics of Sentence Structure. American
+Mathematical Monthly, 65, p.154-170.</REFERENCE>
+<REFERENCE>
+<SURNAME>Milward</SURNAME>, D.R. (<DATE>1992</DATE>). Dynamics, Dependency Grammar and Incremental
+Interpretation. In Proceedings of COLING 92, Nantes,
+p.<DATE>1095</DATE>-<DATE>1099</DATE>.</REFERENCE>
+<REFERENCE>
+<SURNAME>Milward</SURNAME>, D.R. (<DATE>1994</DATE>). Dynamic Dependency Grammar. <DATE>To appear</DATE> in
+Linguistics and Philosophy, 17, p.561-605. </REFERENCE>
+<REFERENCE>
+<SURNAME>Milward</SURNAME>, D.R. and R. <SURNAME>Cooper</SURNAME> (<DATE>1994</DATE>). Incremental Interpretation:
+Applications, Theory, and
+Relationship to Dynamic Semantics. In Proceedings of COLING 94, Kyoto,
+Japan.</REFERENCE>
+<REFERENCE>
+<SURNAME>Moltmann</SURNAME>, F. (<DATE>1992</DATE>). Coordination and Comparatives. Ph.D. dissertation,
+MIT, Cambridge Ma.</REFERENCE>
+<REFERENCE>
+<SURNAME>Moortgat</SURNAME>, M. (<DATE>1988</DATE>). Categorial Investigations: Logical and Linguistic
+Aspects of the Lambek Calculus, Dordrecht: Foris. </REFERENCE>
+<REFERENCE>
+<SURNAME>Morrill</SURNAME>, G. (<DATE>1990</DATE>). Grammar and Logical Types. In
+Proceedings of the 7th Amsterdam Colloquium. ITLI,
+University of Amsterdam.</REFERENCE>
+<REFERENCE>
+<SURNAME>Muadz</SURNAME>, H. (<DATE>1991</DATE>). Coordinate Structure: A Planar Representation.
+Ph.D. dissertation, University of Arizona, Tucson.</REFERENCE>
+<REFERENCE>
+van <SURNAME>Oirsouw</SURNAME>, R.R. (<DATE>1987</DATE>). The Syntax of Coordination.
+Croom-Helm.</REFERENCE>
+<REFERENCE>
+<SURNAME>Ross</SURNAME>, J.R. (<DATE>1967</DATE>). Constraints on Variables in Syntax, Ph.D. dissertation, MIT, Cambridge Ma.</REFERENCE>
+<REFERENCE>
+<SURNAME>Sag</SURNAME>, I.A., G. <SURNAME>Gazdar</SURNAME>, T. <SURNAME>Wasow</SURNAME>  and S. <SURNAME>Weisler</SURNAME> (<DATE>1985</DATE>).
+Coordination and How to Distinguish Categories.
+Natural Language and Linguistic Theory, 3, p.117-171. </REFERENCE>
+<REFERENCE>
+<SURNAME>Steedman</SURNAME>, M.J. (<DATE>1985</DATE>). Dependency and Coordination in the Grammar of Dutch
+and English. Language, 61, p.523-568.</REFERENCE>
+<REFERENCE>
+<SURNAME>Steedman</SURNAME>, M.J. (<DATE>1989</DATE>). Intonation and Syntax in Spoken Language Systems.
+Technical report, MV-CIS-89-20, Dept. of Computer and Information Science,
+University of Pennsylvania. </REFERENCE>
+<REFERENCE>
+<SURNAME>Wood</SURNAME>, M.M. (<DATE>1988</DATE>). A Categorial Syntax for Coordinate Constructions.
+Ph.D. Thesis, University College London. Available as Technical Report,
+UMCS-89-2-1, Dept. of Computer Science, University of
+Manchester.</REFERENCE>
+<REFERENCE>
+<SURNAME>Woods</SURNAME>, W. (<DATE>1973</DATE>). An Experimental Parsing System for Transition Network
+Grammars. In R. Rustin, Ed., Natural Language Processing, Algorithmics
+Press, New York.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>

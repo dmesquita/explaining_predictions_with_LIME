@@ -1,0 +1,568 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE PAPER SYSTEM "paper-structure.dtd">
+<PAPER>
+<METADATA>
+<FILENO>9504007</FILENO>
+<APPEARED><CONFERENCE>ACL</CONFERENCE><YEAR>1990</YEAR></APPEARED>
+<CLASSIFICATION> Lg.Pr.Dc </CLASSIFICATION>
+</METADATA>
+<TITLE> Mixed Initiative in Dialogue : An Investigation into Discourse Segmentation </TITLE>
+<AUTHORLIST>
+<AUTHOR>Marilyn Walker</AUTHOR>
+<AUTHOR>Steve Whittaker</AUTHOR>
+</AUTHORLIST>
+<ABSTRACT>
+<A-S ID='A-0' DOCUMENTC='S-5' AZ='BKG'> Conversation between two people is usually of MIXED-INITIATIVE , with CONTROL over the conversation being transferred from one person to another . </A-S>
+<A-S ID='A-1' DOCUMENTC='S-18' AZ='OWN'> We apply a set of rules for the transfer of control to 4 sets of dialogues consisting of a total of 1862 turns . </A-S>
+<A-S ID='A-2' DOCUMENTC='S-23' AZ='AIM'> The application of the control rules lets us derive domain-independent discourse structures . </A-S>
+<A-S ID='A-3' AZ='OWN'> The derived structures indicate that initiative plays a role in the structuring of discourse . </A-S>
+<A-S ID='A-4' AZ='AIM'> In order to explore the relationship of control and initiative to discourse processes like centering , we analyze the distribution of four different classes of anaphora for two data sets . </A-S>
+<A-S ID='A-5' DOCUMENTC='S-178;S-86' AZ='OWN'> This distribution indicates that some control segments are hierarchically related to others . </A-S>
+<A-S ID='A-6' AZ='OWN'> The analysis suggests that discourse participants often mutually agree to a change of topic . </A-S>
+<A-S ID='A-7' AZ='OWN'> We also compared initiative in Task Oriented and Advice Giving dialogues and found that both allocation of control and the manner in which control is transferred is radically different for the two dialogue types . </A-S>
+<A-S ID='A-8' DOCUMENTC='S-130' AZ='OWN'> These differences can be explained in terms of collaborative planning principles . </A-S>
+</ABSTRACT>
+<BODY>
+<DIV DEPTH='1'>
+<HEADER ID='H-0'> Introduction </HEADER>
+<P>
+<S ID='S-0' AZ='BKG'> Conversation between two people has a number of characteristics that have yet to be modeled adequately in human-computer dialogue . </S>
+<S ID='S-1' AZ='BKG'> Conversation is BIDIRECTIONAL ; there is a two way flow of information between participants . </S>
+<S ID='S-2' AZ='BKG'> Information is exchanged by MIXED-INITIATIVE . </S>
+<S ID='S-3' AZ='BKG'> Each participant will , on occasion , take the conversational lead . </S>
+<S ID='S-4' AZ='BKG'> Conversational partners not only respond to what others say , but feel free to volunteer information that is not requested and sometimes ask questions of their own <REF TYPE='P'>Nickerson 1976</REF> . </S>
+<S ID='S-5' ABSTRACTC='A-0' AZ='BKG'> As INITIATIVE passes back and forth between the discourse participants , we say that CONTROL over the conversation gets transferred from one discourse participant to another . </S>
+</P>
+<P>
+<S ID='S-6' AZ='BKG'> Why should we , as computational linguists , be interested in factors that contribute to the interactivity of a discourse ? </S>
+<S ID='S-7' AZ='BKG'> There are both theoretical and practical motivations . </S>
+<S ID='S-8' AZ='AIM'> First , we wish to extend formal accounts of single utterances produced by single speakers to explain multi-participant , multi-utterance discourses <REF  TYPE='P'>Pollack 1986</REF>, <REF  TYPE='P'>Cohen and Perrault 1986</REF> . </S>
+<S ID='S-9' AZ='CTR'> Previous studies of the discourse structure of multi-participant dialogues have often factored out the role of MIXED-INITIATIVE , by allocating control to one participant <REF TYPE='P'>Grosz 1977</REF> , <REF TYPE='P'>Cohen 1984</REF> , or by assuming a passive listener <REF  TYPE='P'>McKeown 1985</REF>, <REF  TYPE='P'>Cohen 1987</REF> . </S>
+<S ID='S-10' AZ='BKG'> Since conversation is a collaborative process <REF TYPE='P'>Clark and Wilkes-Gibbs 1986</REF> , <REF TYPE='P'>Sacks et al. 1974</REF> , models of conversation can provide the basis for extending planning theories <REF  TYPE='P'>Grosz and Sidner 1990</REF>, <REF  TYPE='P'>Cohen et al. 1990</REF> . </S>
+<S ID='S-11' AZ='BKG'> When the situation requires the negotiation of a collaborative plan , these theories must account for the interacting beliefs and intentions of multiple participants . </S>
+</P>
+<P>
+<S ID='S-12' AZ='CTR'> From a practical perspective , there is ample evidence that limited mixed-initiative has contributed to lack of system usability . </S>
+<S ID='S-13' AZ='CTR'> Many researchers have noted that the absence of mixed-initiative gives rise to two problems with expert systems : They don't allow users to participate in the reasoning process , or to ask the questions they want answered <REF TYPE='P'>Pollack et al. 1982</REF> , <REF  TYPE='P'>Kidd 1985</REF>, <REF  TYPE='P'>Frohlich and Luff 1989</REF> . </S>
+<S ID='S-14' AZ='CTR'> In addition , question answering systems often fail to take account of the system 's role as a conversational partner . </S>
+<S ID='S-15' AZ='CTR'> For example , fragmentary utterances may be interpreted with respect to the previous user input , but what users say is often in reaction to the system 's previous response <REF  TYPE='P'>Cohen and Perrault 1982</REF>, <REF  TYPE='P'>Sidner 1983</REF> . </S>
+</P>
+<P>
+<S ID='S-16' AZ='AIM'> In this paper we focus on interactive discourse . </S>
+<S ID='S-17' AZ='AIM'> We model mixed-initiative using an utterance type classification and a set of rules for transfer of control between discourse participants that were proposed by <REF SELF="YES" TYPE='A'>Whittaker and Stenton 1988</REF> . </S>
+<S ID='S-18' ABSTRACTC='A-1' AZ='OWN'> We evaluate the generality of this analysis by applying the control rules to 4 sets of dialogues , including both advisory dialogues ( ADs ) and task-oriented dialogues ( TODs ) . </S>
+<S ID='S-19' AZ='OWN'> We analysed both financial and support ADs . </S>
+<S ID='S-20' AZ='OWN'> The financial ADs are from the radio talk show `` Harry Gross : Speaking of Your Money '' . </S>
+<S ID='S-21' AZ='OWN'> The support ADs resulted from a client phoning an expert to help them diagnose and repair various software faults . </S>
+<S ID='S-22' AZ='OWN'> The TODs are about the construction of a plastic water pump in both telephone and keyboard modality . </S>
+</P>
+<P>
+<S ID='S-23' ABSTRACTC='A-2' AZ='OWN'> The application of the control rules to these dialogues lets us derive domain-independent discourse segments with each segment being controlled by one or other discourse participant . </S>
+<S ID='S-24' AZ='OWN'> We propose that control segments correspond to different subgoals in the evolving discourse plan . </S>
+<S ID='S-25' AZ='OWN'> In addition , we argue that various linguistic devices are necessary for conversational participants to coordinate their contributions to the dialogue and agree on their mutual beliefs with respect to a evolving plan , for example , to agree that a particular subgoal has been achieved . </S>
+<S ID='S-26' AZ='OWN'> A final phenomenon concerns shifts of control and the devices used to achieve this . </S>
+<S ID='S-27' AZ='OWN'> Control shifts occur because it is unusual for a single participant to be responsible for coordinating the achievement of the whole discourse plan . </S>
+<S ID='S-28' AZ='OWN'> When a different participant assumes control of a discourse subgoal then a control shift occurs and the participants must have mechanisms for achieving this . </S>
+<S ID='S-29' AZ='OWN'> The control framework distinguishes instances in which a control shift is negotiated by the participants and instances where one participant seizes control . </S>
+</P>
+<P>
+<S ID='S-30' AZ='AIM'> This paper has two objectives : </S>
+</P>
+<P>
+<S ID='S-31' AZ='AIM'> To explore the phenomenon of control in relation to ATTENTIONAL STATE <REF TYPE='P'>Grosz and Sidner 1986</REF> , <REF  TYPE='P'>Grosz et al. 1986</REF>, <REF  TYPE='P'>Sidner 1979</REF> . </S>
+<S ID='S-32' AZ='OWN'> We predict shifts of attentional state when shifts in control are negotiated and agreed by all participants , but not when control is seized by one participant without the acceptance of the others . </S>
+<S ID='S-33' AZ='OWN'> This should be reflected in different distribution of anaphora in the two cases . </S>
+</P>
+<P>
+<S ID='S-34' AZ='AIM'> To test predictions about the distribution of control in different types of dialogues . </S>
+<S ID='S-35' AZ='OWN'> Because the TOD 's embody the master-slave assumption <REF TYPE='P'>Grosz and Sidner 1990</REF> , and control is allocated to the expert , our expectation is that control should be located exclusively with one participant in the TODs in contrast with the ADs . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-1'> Rules for the Allocation and Transfer of Control </HEADER>
+<P>
+<S ID='S-36' AZ='BAS'> We use the framework for the allocation and transfer of control of <REF SELF="YES" TYPE='A'>Whittaker and Stenton 1988</REF> . </S>
+<S ID='S-37' AZ='OTH'> The analysis is based on a classification of utterances into 4 types . </S>
+<S ID='S-38' AZ='OTH'> These are : </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-2'> UTTERANCE TYPES </HEADER>
+<P>
+<S ID='S-39' AZ='OTH'> ASSERTIONS : </S>
+<S ID='S-40' AZ='OTH'> Declarative utterances used to state facts . </S>
+<S ID='S-41' AZ='OTH'> Yes and No in response to a question were classified as assertions on the basis that they are supplying information . </S>
+</P>
+<P>
+<S ID='S-42' AZ='OTH'> COMMANDS : </S>
+<S ID='S-43' AZ='OTH'> Utterances intended to instigate action . </S>
+<S ID='S-44' AZ='OTH'> Generally imperative form , but could be indirect such as My suggestion would be that you do .... </S>
+</P>
+<P>
+<S ID='S-45' AZ='OTH'> QUESTIONS : </S>
+<S ID='S-46' AZ='OTH'> Utterances which are intended to elicit information , including indirect forms such as I was wondering whether I should ... </S>
+</P>
+<P>
+<S ID='S-47' AZ='OTH'> PROMPTS : Utterances which did not express propositional content , such as Yeah , Okay , Uh-huh . </S>
+</P>
+<P>
+<S ID='S-48' AZ='OTH'> Note that prompts are in direct contrast to the other options that a participant has available at any point in the discourse . </S>
+<S ID='S-49' AZ='OTH'> By indicating that the speaker does not want the floor , prompts function on a number of levels , including the expression of understanding or agreement <REF TYPE='P'>Schegloff 1982</REF> . </S>
+</P>
+<P>
+<S ID='S-50' AZ='OTH'> The rules for the allocation of control are based on the utterance type classification and allow a dialogue to be divided into segments that correspond to which speaker is the controller of the segment . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-3'> CONTROL RULES </HEADER>
+<IMAGE ID='I-0'/>
+<P>
+<S ID='S-51' AZ='OTH'> The definition of controller can be seen to correspond to the intuitions behind the term INITIATING CONVERSATIONAL PARTICIPANT ( ICP ) , who is defined as the initiator of a given discourse segment <REF TYPE='P'>Grosz and Sidner 1986</REF> . </S>
+<S ID='S-52' AZ='OTH'> The OTHER CONVERSATIONAL PARTICIPANT ( S ) , OCP , may speak some utterances in a segment , but the DISCOURSE SEGMENT PURPOSE , must be the purpose of the ICP . </S>
+<S ID='S-53' AZ='OTH'> The control rules place a segment boundary whenever the roles of the participants ( ICP or OCP ) change . </S>
+<S ID='S-54' AZ='OTH'> For example : </S>
+<IMAGE ID='I-1'/>
+</P>
+<P>
+<S ID='S-55' AZ='OTH'> <REFAUTHOR SELF="YES">Whittaker and Stenton</REFAUTHOR> also performed a post-hoc analysis of the segment boundaries that are defined by the control rules . </S>
+<S ID='S-56' AZ='OTH'> The boundaries fell into one of three types : </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-4'> CONTROL SHIFT TYPES </HEADER>
+<P>
+<S ID='S-57' AZ='OTH'> ABDICATION : </S>
+<EXAMPLE ID='E-0'>
+<EX-S> Okay , go on . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-58' AZ='OTH'> REPETITION / SUMMARY : </S>
+<S ID='S-59' AZ='OTH'> That would be my recommendation and that will ensure that you get a logically integral set of files . </S>
+</P>
+<P>
+<S ID='S-60' AZ='OTH'> INTERRUPTION : </S>
+<EXAMPLE ID='E-1'>
+<EX-S> It is something new though um . </EX-S>
+</EXAMPLE>
+</P>
+<P>
+<S ID='S-61' AZ='OTH'> ABDICATIONS correspond to those cases where the controller produces a prompt as the last utterance of the segment . </S>
+<S ID='S-62' AZ='OTH'> The class REPETITION / SUMMARY corresponds to the controller producing a redundant utterance . </S>
+<S ID='S-63' AZ='OTH'> The utterance is either an exact repetition of previous propositional content , or a summary that realizes a proposition , P , which could have been inferred from what came before . </S>
+<S ID='S-64' AZ='OTH'> Thus orderly control shifts occur when the controller explicitly indicates that s / he wishes to relinquish control . </S>
+<S ID='S-65' AZ='OTH'> What unifies ABDICATIONS and REPETITION / SUMMARIES is that the controller supplies no new propositional content . </S>
+<S ID='S-66' AZ='OTH'> The remaining class , INTERRUPTIONS , characterize shifts occurring when the noncontroller displays initiative by seizing control . </S>
+<S ID='S-67' AZ='OTH'> This class is more general than other definitions of Interruptions . </S>
+<S ID='S-68' AZ='OTH'> It properly contains cross-speaker interruptions that involve topic shift , similar to the true-interruptions of <REF TYPE='A'>Grosz and Sidner 1986</REF> , as well as clarification subdialogues <REF  TYPE='P'>Sidner 1983</REF>, <REF  TYPE='P'>Litman and Allen 1990</REF> . </S>
+</P>
+<P>
+<S ID='S-69' AZ='OTH'> This classification suggests that the transfer of control is often a collaborative phenomenon . </S>
+<S ID='S-70' AZ='OTH'> Since a noncontroller ( OCP ) , has the option of seizing control at any juncture in discourse , it would seem that controllers ( ICPs ) , are in control because the noncontroller allows it . </S>
+<S ID='S-71' AZ='OTH'> These observations address problems raised by <REFAUTHOR>Grosz and Sidner</REFAUTHOR> , namely how ICPs signal and OCPs recognize segment boundaries . </S>
+<S ID='S-72' AZ='OTH'> The claim is that shifts of control often do not occur until the controller indicates the end of a discourse segment by abdicating or producing a repetition / summary . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-5'> Control Segmentation and Anaphora </HEADER>
+<P>
+<S ID='S-73' AZ='OWN'> To determine the relationship between the derived control segments and ATTENTIONAL STATE we looked at the distribution of anaphora with respect to the control segments in the ADs . </S>
+<S ID='S-74' AZ='OWN'> All data were analysed statistically by <EQN/> and all differences cited are significant at the 0.05 level . </S>
+<S ID='S-75' AZ='OWN'> We looked at all anaphors ( excluding first and second person ) , and grouped them into 4 classes . </S>
+<S ID='S-76' TYPE='ITEM' AZ='OWN' > Classes of Anaphors . </S>
+</P>
+<P>
+<S ID='S-77' AZ='OWN'> 3 RD PERSON : </S>
+<S ID='S-78' AZ='OWN'> it , they , them , their , she , he , her , him , his </S>
+</P>
+<P>
+<S ID='S-79' AZ='OWN'> ONE / SOME , </S>
+<S ID='S-80' AZ='OWN'> one of them , one of those , a new one , that one , the other one , some </S>
+</P>
+<P>
+<S ID='S-81' AZ='OWN'> DEICTIC :</S>
+<S ID='S-82' AZ='OWN'>  Noun phrases , e.g. this , that , this NP , that NP , those NP , these NP </S>
+</P>
+<P>
+<S ID='S-83' AZ='OWN'> EVENT : </S>
+<S ID='S-84' AZ='OWN'> Verb Phrases , Sentences , Segments , e.g. this , that , it . </S>
+</P>
+<P>
+<S ID='S-85' AZ='OWN'> The class DEICTIC refers to deictic references to material introduced by noun phrases , whereas the class EVENT refers to material introduced clausally . </S>
+</P>
+<DIV DEPTH='2'>
+<HEADER ID='H-6'> Hierarchical Relationships </HEADER>
+<P>
+<S ID='S-86' ABSTRACTC='A-5' AZ='OWN'> The first phenomenon we noted was that the anaphora distribution indicated that some segments are hierarchically related to others . </S>
+<S ID='S-87' AZ='OWN'> This was especially apparent in cases where one discourse participant interrupted briefly , then immediately passed control back to the other . </S>
+<IMAGE ID='I-2'/>
+</P>
+<P>
+<S ID='S-88' AZ='OWN'> The following example illustrates the same point . </S>
+<IMAGE ID='I-3'/>
+</P>
+<P>
+<S ID='S-89' AZ='OWN'> The control segments as defined would treat both of these cases as composed of 3 different segments . </S>
+<S ID='S-90' AZ='OWN'> But this ignores the fact that utterances <CREF/> and <CREF/> have closely related propositional content in the first example , and that the plural pronoun straddles the central subsegment with the same referents being picked out by they and their in the second example . </S>
+<S ID='S-91' AZ='OWN'> Thus we allowed for hierarchical segments by treating the interruptions of 2 - 4 as subsegments , and utterances 1 and 5 as related parts of the parent segments . </S>
+<S ID='S-92' AZ='OWN'> All interruptions were treated as embeddings in this way . </S>
+<S ID='S-93' AZ='OWN'> However the relationship of the segment after the interruption to the segment before must be determined on independent grounds such as topic or intentional structure . </S>
+</P>
+</DIV>
+<DIV DEPTH='2'>
+<HEADER ID='H-7'> Distribution </HEADER>
+<P>
+<S ID='S-94' AZ='OWN'> Once we extended the control framework to allow for the embedding of interrupts , we coded every anaphor with respect to whether its antecedent lay outside or within the current segment . </S>
+<S ID='S-95' AZ='OWN'> These are labelled X ( cross segment boundary antecedent ) NX ( no cross segment boundary ) , in Figure <CREF/> . </S>
+<S ID='S-96' AZ='OWN'> In addition we break these down as to which type of control shift occurred at the previous segment boundary . </S>
+<IMAGE ID='I-4'/>
+</P>
+<P>
+<S ID='S-97' AZ='OWN'> We also looked at the distribution of anaphora in the Support ADs and found similar results . </S>
+<IMAGE ID='I-5'/>
+</P>
+<P>
+<S ID='S-98' AZ='OWN'> For both dialogues , the distribution of anaphors varies according to which type of control shift occurred at the previous segment boundary . </S>
+<S ID='S-99' AZ='OWN'> When we look at the different types of anaphora , we find that third person and one anaphors cross boundaries extremely rarely , but the event anaphors and the deictic pronouns demonstrate a different pattern . </S>
+<S ID='S-100' AZ='OWN'> What does this mean ? </S>
+</P>
+<P>
+<S ID='S-101' AZ='OWN'> The fact that anaphora is more likely to cross segment boundaries following interruptions than for summaries or abdications is consistent with the control principles . </S>
+<S ID='S-102' AZ='OWN'> With both summaries and abdications the speaker gives an explicit signal that s / he wishes to relinquish control . </S>
+<S ID='S-103' AZ='OWN'> In contrast , interruptions are the unprompted attempts of the listener to seize control , often having to do with some ` problem ' with the controller 's utterance . </S>
+<S ID='S-104' AZ='OWN'> Therefore , interruptions are much more likely to be within topic . </S>
+</P>
+<P>
+<S ID='S-105' AZ='OWN'> But why should deixis and event anaphors behave differently from the other anaphors ? </S>
+<S ID='S-106' AZ='OWN'> Deixis serves to pick out objects that cannot be selected by the use of standard anaphora , i.e. we should expect the referents for deixis to be outside immediate focus and hence more likely to be outside the current segment <REF TYPE='P'>Webber 1986</REF> . </S>
+<S ID='S-107' AZ='OWN'> The picture is more complex for event anaphora , which seems to serve a number of different functions in the dialogue . </S>
+<S ID='S-108' AZ='OWN'> It is used to talk about the past events that lead up to the current situation , I did THAT in order to move the place . </S>
+<S ID='S-109' AZ='OWN'> It is also used to refer to sets of propositions of the preceding discourse , Now THAT 'S a little background <REF TYPE='P'>Webber 1988</REF> . </S>
+<S ID='S-110' AZ='OWN'> The most prevalent use , however , was to refer to future events or actions , THAT would be the move that I would make - but you have to do IT the same day . </S>
+<IMAGE ID='I-6'/>
+</P>
+<P>
+<S ID='S-111' AZ='OWN'> Since the task in the ADs is to develop a plan , speakers use event anaphora as concise references to the plans they have just negotiated and to discuss the status and quality of plans that have been suggested . </S>
+<S ID='S-112' AZ='OWN'> Thus the frequent cross-speaker references to future events and actions correspond to phases of plan negotiation <REF TYPE='P'>Pollack et al. 1982</REF> . </S>
+<S ID='S-113' AZ='OWN'> More importantly these references are closely related to the control structure . </S>
+<S ID='S-114' AZ='OWN'> The example above illustrates the clustering of event anaphora at segment boundaries . </S>
+<S ID='S-115' AZ='OWN'> One discourse participant uses an anaphor to summarize a plan , but when the other participant evaluates this plan there may be a control shift and any reference to the plan will necessarily cross a control boundary . </S>
+<S ID='S-116' AZ='OWN'> The distribution of event anaphora bears this out , since 23 / 25 references to future actions are within 2 utterances of a segment boundary ( See the example above ) . </S>
+<S ID='S-117' AZ='OWN'> More significantly every instance of event anaphora crossing a segment boundary occurs when the speaker is talking about future events or actions . </S>
+</P>
+<P>
+<S ID='S-118' AZ='OWN'> We also looked at the TODs for instances of anaphora being used to describe a future act in the way that we observed in the ADs. However , over the 938 turns in the TODs , there were only 18 instances of event anaphora , because in the main there were few occasions when it was necessary to talk about the plan . </S>
+<S ID='S-119' AZ='OWN'> The financial ADs had 45 event anaphors in 474 utterances . </S>
+</P>
+</DIV>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-8'> Control and Collaborative Plans </HEADER>
+<P>
+<S ID='S-120' AZ='OWN'> To explore the relationship of control to planning , we compare the TODs with both types of ADs ( financial and support ) . </S>
+<S ID='S-121' AZ='OWN'> We would expect these dialogues to differ in terms of initiative . </S>
+<S ID='S-122' AZ='OWN'> In the ADs , the objective is to develop a collaborative plan through a series of conversational exchanges . </S>
+<S ID='S-123' AZ='OWN'> Both discourse participants believe that the expert has knowledge about the domain , but only has partial information about the situation . </S>
+<S ID='S-124' AZ='OWN'> They also believe that the advisee must contribute both the problem description and also constraints as to how the problem can be solved . </S>
+<S ID='S-125' AZ='OWN'> This information must be exchanged , so that the mutual beliefs necessary to develop the collaborative plan are established in the conversation <REF TYPE='P'>Joshi 1982</REF> . </S>
+<S ID='S-126' AZ='OWN'> The situation is different in the TODs . </S>
+<S ID='S-127' AZ='OWN'> Both participants here believe at the outset that the expert has sufficient information about the situation and complete and correct knowledge about how to execute the Task . </S>
+<S ID='S-128' AZ='OWN'> Since the apprentice has no need to assert information to change the expert 's beliefs or to ask questions to verify the expert 's beliefs or to issue commands , we should not expect the apprentice to have control . </S>
+<S ID='S-129' AZ='OWN'> S / he is merely present to execute the actions indicated by the knowledgeable participant . </S>
+</P>
+<P>
+<S ID='S-130' ABSTRACTC='A-8' AZ='BAS'> The differences in the beliefs and knowledge states of the participants can be interpreted in the terms of the collaborative planning principles of <REF SELF="YES" TYPE='A'>Whittaker and Stenton 1988</REF> . </S>
+<S ID='S-131' AZ='OWN'> We generalize the principles of INFORMATION QUALITY and PLAN QUALITY , which predict when an interrupt should occur . </S>
+</P>
+<P>
+<S ID='S-132' AZ='OWN'> INFORMATION QUALITY : </S>
+<S ID='S-133' AZ='OWN'> The listener must believe that the information that the speaker has provided is true , unambiguous and relevant to the mutual goal . </S>
+<S ID='S-134' AZ='OWN'> This corresponds to the two rules : </S>
+<S ID='S-135' TYPE='ITEM' AZ='OWN' > (A1) TRUTH : </S>
+<S ID='S-136' AZ='OWN'> If the listener believes a fact P and believes that fact to be relevant and either believes that the speaker believes not P or that the speaker does not know P then interrupt ; </S>
+<S ID='S-137' TYPE='ITEM' AZ='OWN' > (A2) AMBIGUITY : </S>
+<S ID='S-138' AZ='OWN'> If the listener believes that the speaker 's assertion is relevant but ambiguous then interrupt . </S>
+</P>
+<P>
+<S ID='S-139' AZ='OWN'> PLAN QUALITY : </S>
+<S ID='S-140' AZ='OWN'> The listener must believe that the action proposed by the speaker is a part of an adequate plan to achieve the mutual goal and the action must also be comprehensible to the listener . </S>
+<S ID='S-141' AZ='OWN'> The two rules to express this are : </S>
+<S ID='S-142' TYPE='ITEM' AZ='OWN' > (B1) EFFECTIVENESS : </S>
+<S ID='S-143' AZ='OWN'> If the listener believes P and either believes that P presents an obstacle to the proposed plan or believes that P is part of the proposed plan that has already been satisfied , then interrupt ; </S>
+<S ID='S-144' TYPE='ITEM' AZ='OWN' > (B2) AMBIGUITY : </S>
+<S ID='S-145' AZ='OWN'> If the listener believes that an assertion about the proposed plan is ambiguous , then interrupt . </S>
+</P>
+<P>
+<S ID='S-146' AZ='OWN'> These principles indirectly provide a means to ensure mutual belief . </S>
+<S ID='S-147' AZ='OWN'> Since a participant must interrupt if any condition for an interrupt holds , then lack of interruption signals that there is no discrepancy in mutual beliefs . </S>
+<S ID='S-148' AZ='OWN'> If there is such a discrepancy , the interruption is a necessary contribution to a collaborative plan , not a distraction from the joint activity . </S>
+</P>
+<P>
+<S ID='S-149' AZ='OWN'> We compare ADs to TODs with respect to how often control is exchanged by calculating the average number of turns between control shifts . </S>
+<S ID='S-150' AZ='OWN'> We also investigate whether control is shared equally between participants and what percentage of control shifts are represented by abdications , interrupts , and summaries for each dialogue type . </S>
+<S ID='S-151' AZ='OWN'> See Figure <CREF/> . </S>
+<IMAGE ID='I-7'/>
+</P>
+<P>
+<S ID='S-152' AZ='OWN'> Three things are striking about this data . </S>
+<S ID='S-153' AZ='OWN'> As we predicted , the distribution of control between expert and client is completely different in the ADs and the TODs . </S>
+<S ID='S-154' AZ='OWN'> The expert has control for around 90 % of utterances in the TODs whereas control is shared almost equally in the ADs. Secondly , contrary to our expectations , we did find some instances of shifts in the TODs . </S>
+<S ID='S-155' AZ='OWN'> Thirdly , the distribution of interruptions and summaries differs across dialogue types . </S>
+<S ID='S-156' AZ='OWN'> How can the collaborative planning principles highlight the differences we observe ? </S>
+</P>
+<P>
+<S ID='S-157' AZ='OWN'> There seem to be two reasons why shifts occur in the TODs . </S>
+<S ID='S-158' AZ='OWN'> First , many interruptions in the TODs result from the apprentice seizing control just to indicate that there is a temporary problem and that plan execution should be delayed . </S>
+<IMAGE ID='I-8'/>
+</P>
+<P>
+<S ID='S-159' AZ='OWN'> Second , control was exchanged when the execution of the task started to go awry . </S>
+<IMAGE ID='I-9'/>
+</P>
+<P>
+<S ID='S-160' AZ='OWN'> The problem with the physical situation indicates to the apprentice that the relevant beliefs are no longer shared . </S>
+<S ID='S-161' AZ='OWN'> The Instructor is not in possession of critical information such as the current state of the apprentice 's pump . </S>
+<S ID='S-162' AZ='OWN'> This necessitates an information exchange to resynchronize mutual beliefs , so that the rest of the plan may be successfully executed . </S>
+<S ID='S-163' AZ='OWN'> However , since control is explicitly allocated to the instructor in TODs , there is no reason for that participant to believe that the other has any contribution to make . </S>
+<S ID='S-164' AZ='OWN'> Thus there are fewer attempts by the instructor to coordinate activity , such as by using summaries to synchronize mutual beliefs . </S>
+<S ID='S-165' AZ='OWN'> Therefore , if the apprentice needs to make a contribution , s / he must do so via interruption , explaining why there are many more interruptions in these dialogues . </S>
+<S ID='S-166' AZ='OWN'> In addition , the majority of Interruptions ( 73 % ) are initiated by apprentices , in contrast to the ADs in which only 29 % are produced by the Clients . </S>
+</P>
+<P>
+<S ID='S-167' AZ='OWN'> Summaries are more frequent in ADs . </S>
+<S ID='S-168' AZ='OWN'> In the ADs both participants believe that a plan cannot be constructed without contributions from both of them . </S>
+<S ID='S-169' AZ='OWN'> Abdications and summaries are devices which allow these contributions to be coordinated and participants use these devices to explicitly set up opportunities for one another to make a contribution , and to ensure mutual beliefs . </S>
+<S ID='S-170' AZ='OWN'> The increased frequency of summaries in the ADs may result from the fact that the participants start with discrepant mutual beliefs about the situation and that establishing and maintaining mutual beliefs is a key part of the ADs . </S>
+</P>
+</DIV>
+<DIV DEPTH='1'>
+<HEADER ID='H-9'> Discussion </HEADER>
+<P>
+<S ID='S-171' AZ='OTH'> It has often been stated that discourse is an inherently collaborative process and that this is manifested in certain phenomena , e.g. the use of anaphora and cue words <REF TYPE='P'>Grosz and Sidner 1986</REF> , <REF TYPE='P'>Hirschberg and Litman 1987</REF> , <REF TYPE='P'>Cohen 1987</REF> by which the speaker makes aspects of the discourse structure explicit . </S>
+<S ID='S-172' AZ='OWN'> We found shifts of attentional state when shifts in control are negotiated and agreed by all participants , but not when control is seized by one participant without the acceptance of the others . </S>
+<S ID='S-173' AZ='OWN'> This was reflected in different distribution of anaphora in the two cases . </S>
+<S ID='S-174' AZ='OWN'> Furthermore we found that not all types of anaphora behaved in the same way . </S>
+<S ID='S-175' AZ='OWN'> Event anaphora clustered at segment boundaries when it was used to refer to preceding segments and was more likely to cross segment boundaries because of its function in talking about the proposed plan . </S>
+<S ID='S-176' AZ='OWN'> We also found that control was distributed and exchanged differently in the ADs and TODs . </S>
+<S ID='S-177' AZ='OWN'> These results provide support for the control rules . </S>
+</P>
+<P>
+<S ID='S-178' ABSTRACTC='A-5' AZ='OWN'> In our analysis we argued for hierarchical organization of the control segments on the basis of specific examples of interruptions . </S>
+<S ID='S-179' AZ='OWN'> We also believe that there are other levels of structure in discourse that are not captured by the control rules , e.g. control shifts do not always correspond with task boundaries . </S>
+<S ID='S-180' AZ='OWN'> There can be topic shifts without change of initiation , change of control without a topic shift <REF SELF="YES" TYPE='P'>Whittaker and Stenton 1988</REF> . </S>
+<S ID='S-181' AZ='OWN'> The relationship of cue words , intonational contour <REF TYPE='P'>Pierrehumbert and Hirschberg 1990</REF> and the use of modal subordination <REF TYPE='P'>Roberts 1986</REF> to the segments derived from the control rules is a topic for future research . </S>
+</P>
+<P>
+<S ID='S-182' AZ='OWN'> A more controversial question concerns rhetorical relations and the extent to which these are detected and used by listeners <REF TYPE='P'>Grosz and Sidner 1986</REF> . </S>
+<S ID='S-183' AZ='OTH'> <REFAUTHOR>Hobbs</REFAUTHOR> has applied COHERENCE RELATIONS to face-to-face conversation in which mixed-initiative is displayed by participants <REF  TYPE='P'>Hobbs and Agar 1985</REF>, <REF  TYPE='P'>Hobbs 1979</REF> . </S>
+<S ID='S-184' AZ='OTH'> One category of rhetorical relation he describes is that of ELABORATION , in which a speaker repeats the propositional content of a previous utterance . </S>
+<S ID='S-185' AZ='CTR'> <REFAUTHOR>Hobbs</REFAUTHOR> has some difficulties determining the function of this repetition , but we maintain that the function follows from the more general principles of the control rules : speakers signal that they wish to shift control by supplying no new propositional content . </S>
+<S ID='S-186' AZ='OWN'> Abdications , repetitions and summaries all add no new information and function to signal to the listener that the speaker has nothing further to say right now . </S>
+<S ID='S-187' AZ='OWN'> The listener certainly must recognize this fact . </S>
+</P>
+<P>
+<S ID='S-188' AZ='OWN'> Summaries appear to have an additional function of synchronization , by allowing both participants to agree on what propositions are mutually believed at that point in the discussion . </S>
+<S ID='S-189' AZ='OWN'> Thus this work highlights aspects of collaboration in discourse , but should be formally integrated with research on collaborative planning <REF TYPE='P'>Grosz and Sidner 1990</REF> , <REF TYPE='P'>Cohen et al. 1990</REF> , particularly with respect to the relation between control shifts and the coordination of plans . </S>
+</P>
+</DIV>
+</BODY>
+<REFERENCELIST>
+<REFERENCE>
+Susan E. <SURNAME>Brennan</SURNAME>, Marilyn <SURNAME>Walker</SURNAME> Friedman, and Carl J. Pollard.
+A centering approach to pronouns.
+In Proc. 25th Annual Meeting of the ACL, Stanford, pages
+  155-162, <DATE>1987</DATE>.
+</REFERENCE>
+<REFERENCE>
+Phillip R. <SURNAME>Cohen</SURNAME>, Hector J. <SURNAME>Levesque</SURNAME>, Jose H. <SURNAME>T</SURNAME>. Nunes, and Sharon L. Oviatt.
+Task oriented dialogue as a consequence of joint activity.
+In Pacific Rim Conference on Artificial Intelligence, <DATE>1990</DATE>.
+</REFERENCE>
+<REFERENCE>
+Phillip R. <SURNAME>Cohen</SURNAME>.
+The pragmatics of referring and the modality of communication.
+Computational Linguistics, 10:97-146, <DATE>1984</DATE>.
+</REFERENCE>
+<REFERENCE>
+Robin <SURNAME>Cohen</SURNAME>.
+Analyzing the structure of argumentative discourse.
+Computational Linguistics, 13:11-24, <DATE>1987</DATE>.
+</REFERENCE>
+<REFERENCE>
+Phillip R. <SURNAME>Cohen</SURNAME>, C. Raymond <SURNAME>Perrault</SURNAME>, and James F. <SURNAME>Allen</SURNAME> <DATE>1982</DATE>.
+Beyond question answering.
+In Wendy Lehnert and Martin Ringle, editors, Strategies for
+  Natural Language Processing, pages 245-274. Lawrence Erlbaum Ass. Inc,
+  Hillsdale, N.J., <DATE>1982</DATE>.
+</REFERENCE>
+<REFERENCE>
+Philip R. <SURNAME>Cohen</SURNAME> and C. Raymond <SURNAME>Perrault</SURNAME>.
+Elements of a plan-based theory of speech acts.
+In Barbara J. Grosz, Karen Sparck Jones, and Bonnie Lynn Webber,
+  editors, Readings in Natural Language Processing, pages 423-440.
+  Morgan Kauffman, Los Altos, Ca., <DATE>1986</DATE>.
+</REFERENCE>
+<REFERENCE>
+Herbert H. <SURNAME>Clark</SURNAME> and Deanna <SURNAME>Wilkes-Gibbs</SURNAME>.
+Referring as a collaborative process.
+Cognition, 22:1-39, <DATE>1986</DATE>.
+</REFERENCE>
+<REFERENCE>
+David M. <SURNAME>Frohlich</SURNAME> and Paul <SURNAME>Luff</SURNAME>.
+Conversational resources for situated action.
+In Proc. Annual Meeting of the Computer Human Interaction of the
+  ACM, <DATE>1989</DATE>.
+</REFERENCE>
+<REFERENCE>
+Barbara J. <SURNAME>Grosz</SURNAME>, Aravind K. <SURNAME>Joshi</SURNAME>, and Scott <SURNAME>Weinstein</SURNAME>.
+Towards a computational theory of discourse interpretation.
+Unpublished Manuscript, <DATE>1986</DATE>.
+</REFERENCE>
+<REFERENCE>
+Barbara J. <SURNAME>Grosz</SURNAME>.
+The representation and use of focus in dialogue understanding.
+Technical Report 151, SRI International, 333 Ravenswood Ave, Menlo
+  Park, Ca. 94025, <DATE>1977</DATE>.
+</REFERENCE>
+<REFERENCE>
+Barbara J. <SURNAME>Grosz</SURNAME> and Candace L. <SURNAME>Sidner</SURNAME>.
+Attentions, intentions and the structure of discourse.
+Computational Linguistics, 12:175-204, <DATE>1986</DATE>.
+</REFERENCE>
+<REFERENCE>
+Barbara J. <SURNAME>Grosz</SURNAME> and Candace L. <SURNAME>Sidner</SURNAME>.
+Plans for discourse.
+In Cohen, Morgan and Pollack, eds. Intentions in Communication,
+  MIT Press, <DATE>1990</DATE>.
+</REFERENCE>
+<REFERENCE>
+Jerry R. <SURNAME>Hobbs</SURNAME> and Michael H. <SURNAME>Agar</SURNAME>.
+The coherence of incoherent discourse.
+Technical Report CSLI-85-38, Center for the Study of Language and
+  Information, Ventura Hall, Stanford University, Stanford, CA 94305, <DATE>1985</DATE>.
+</REFERENCE>
+<REFERENCE>
+Julia <SURNAME>Hirschberg</SURNAME> and Diane <SURNAME>Litman</SURNAME>.
+Now lets talk about now: Identifying cue phrases intonationally.
+In Proc. 25th Annual Meeting of the ACL, Stanford, pages
+  163-171, Stanford University, Stanford, Ca., <DATE>1987</DATE>.
+</REFERENCE>
+<REFERENCE>
+Jerry R. <SURNAME>Hobbs</SURNAME>.
+Coherence and coreference.
+Cognitive Science, 3:67-90, <DATE>1979</DATE>.
+</REFERENCE>
+<REFERENCE>
+Aravind K. <SURNAME>Joshi</SURNAME>.
+Mutual beliefs in question-answer systems.
+In Neil V. Smith, editor, Mutual Knowledge, pages 181-199.
+  Academic Press, New York, New York, <DATE>1982</DATE>.
+</REFERENCE>
+<REFERENCE>
+Alison <SURNAME>Kidd</SURNAME>.
+The consultative role of an expert system.
+In P. Johnson and S. Cook, editors, People and Computers:
+  Designing the Interface. Cambridge University Press, Cambridge, U.K., <DATE>1985</DATE>.
+</REFERENCE>
+<REFERENCE>
+Diane <SURNAME>Litman</SURNAME> and James <SURNAME>Allen</SURNAME>.
+Recognizing and relating discourse intentions and task-oriented
+  plans.
+In Cohen, Morgan and Pollack, eds. Intentions in Communication,
+  MIT Press, <DATE>1990</DATE>.
+</REFERENCE>
+<REFERENCE>
+Kathleen R. <SURNAME>McKeown</SURNAME>.
+Discourse strategies for generating natural language text.
+Artificial Intelligence, 27(1):1-42, September <DATE>1985</DATE>.
+</REFERENCE>
+<REFERENCE>
+R.S. <SURNAME>Nickerson</SURNAME>.
+On converational interaction with computers.
+In SiegFried Treu, editor, User-Oriented Design of Interactive
+  Graphics Systems, pages 101-65. Elsevier Science, <DATE>1976</DATE>.
+</REFERENCE>
+<REFERENCE>
+Sharon L. <SURNAME>Oviatt</SURNAME> and Philip R. <SURNAME>Cohen</SURNAME>.
+The effects of interaction on spoken discourse.
+In Proc. 27th Annual Meeting of the Association of Computational
+  Linguistics, pages 126-134, <DATE>1989</DATE>.
+</REFERENCE>
+<REFERENCE>
+Janet <SURNAME>Pierrehumbert</SURNAME> and Julia <SURNAME>Hirschberg</SURNAME>.
+The meaning of intonational contours in the interpretation of
+  discourse.
+In Cohen, Morgan and Pollack, eds. Intentions in Communication,
+  MIT Press, <DATE>1990</DATE>.
+</REFERENCE>
+<REFERENCE>
+Martha <SURNAME>Pollack</SURNAME>, Julia <SURNAME>Hirschberg</SURNAME>, and Bonnie <SURNAME>Webber</SURNAME>.
+User participation in the reasoning process of expert systems.
+In AAAI82, <DATE>1982</DATE>.
+</REFERENCE>
+<REFERENCE>
+Martha <SURNAME>Pollack</SURNAME>.
+Inferring domain plans in question answering.
+Technical Report 403, SRI International - Artificial Intelligence
+  Center, <DATE>1986</DATE>.
+University of Pennsylvania Dissertation.
+</REFERENCE>
+<REFERENCE>
+Craige <SURNAME>Roberts</SURNAME>.
+Modal Subordination and Anaphora.
+PhD thesis, Linguistics Dept, University of Massachusetts, Amherst,
+  <DATE>1986</DATE>.
+Published by Garland Press.
+</REFERENCE>
+<REFERENCE>
+Emanuel A. <SURNAME>Schegloff</SURNAME>.
+Discourse as an interactional achievement: Some uses of 'uh huh' and
+  other things that come between sentences.
+In D. Tannen, editor, Analyzing Discourse: Text and Talk, pages
+  71-93. Georgetown University Press, <DATE>1982</DATE>.
+</REFERENCE>
+<REFERENCE>
+Candace L. <SURNAME>Sidner</SURNAME>.
+Toward a computational theory of definite anaphora comprehension in
+  English.
+Technical Report AI-TR-537, MIT, <DATE>1979</DATE>.
+</REFERENCE>
+<REFERENCE>
+Candace <SURNAME>Sidner</SURNAME>.
+What the speaker means: the recognition of speakers plans in
+  discourse.
+International Journal of Computers and Mathematics, 9:71-82,
+  <DATE>1983</DATE>.
+</REFERENCE>
+<REFERENCE>
+Harvey <SURNAME>Sacks</SURNAME>, Emmanuel <SURNAME>Schegloff</SURNAME>, and Gail <SURNAME>Jefferson</SURNAME>.
+A simplest systematics for the organization of turn-taking in
+  conversation.
+Language, 50:325-345, <DATE>1974</DATE>.
+</REFERENCE>
+<REFERENCE>
+Marilyn A. <SURNAME>Walker</SURNAME>.
+Evaluating discourse processing algorithms.
+In Proc. 27th Annual Meeting of the Association of Computational
+  Linguistics, pages 251-261, <DATE>1989</DATE>.
+</REFERENCE>
+<REFERENCE>
+Bonnie <SURNAME>Lynn</SURNAME> Webber.
+Two steps closer to event reference.
+Technical Report MS-CIS-86-74, Linc Lab 42, Department of Computer
+  and Information Science, University of Pennsylvania, <DATE>1986</DATE>.
+</REFERENCE>
+<REFERENCE>
+Bonnie <SURNAME>Lynn</SURNAME> Webber.
+Discourse deixis: Reference to discourse segments.
+In Proc. 26th Annual Meeting of the ACL, Association of
+  Computational Linguistics, pages 113-123, <DATE>1988</DATE>.
+</REFERENCE>
+<REFERENCE>
+Steve <SURNAME>Whittaker</SURNAME> and Phil <SURNAME>Stenton</SURNAME>.
+Cues and control in expert client dialogues.
+In Proc. 26th Annual Meeting of the ACL, Association of
+  Computational Linguistics, pages 123-130, <DATE>1988</DATE>.
+</REFERENCE>
+</REFERENCELIST>
+</PAPER>
