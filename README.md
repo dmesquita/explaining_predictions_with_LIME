@@ -14,6 +14,6 @@ python3 run.py evaluate trained_model/model.tar.gz  --include-package sentence_c
 
 The notebook has the code to explain predictions with LIME.
 
-![prediction result and explanation with LIME]("example.png")
+![](example.png)
 
 
