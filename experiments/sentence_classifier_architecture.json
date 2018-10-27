@@ -19,7 +19,7 @@
       "bidirectional": true,
       "input_size": 100,
       "hidden_size": 100,
-      "num_layers": 1,
+      "num_layers": 3,
       "dropout": 0.2
     },
     "sentence_encoder": {
@@ -27,15 +27,15 @@
       "bidirectional": true,
       "input_size": 100,
       "hidden_size": 100,
-      "num_layers": 1,
+      "num_layers": 3,
       "dropout": 0.2
     },
     "classifier_feedforward": {
       "input_dim": 400,
-      "num_layers": 2,
-      "hidden_dims": [200, 7],
-      "activations": ["relu", "linear"],
-      "dropout": [0.2, 0.0]
+      "num_layers": 3,
+      "hidden_dims": [200,,100, 7],
+      "activations": ["relu", "relu", "linear"],
+      "dropout": [0.2, 0.1, 0.0]
     }
   },
   "iterator": {
